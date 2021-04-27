@@ -30,7 +30,6 @@ namespace Ryzm
 		protected override void Update ()
 		{
 			base.Update();
-			Debug.Log(UnityEngine.Input.touches);
 
 			if (input.magnitude > 0.01)
             {
