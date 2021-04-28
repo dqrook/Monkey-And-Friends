@@ -54,10 +54,10 @@ namespace Ryzm
 				}
 			}
 
-			animator.SetFloat ("speed_z", input.z);
-			animator.SetFloat ("speed_x", input.x);
-			animator.SetBool ("is_grounded", ctrl.isGrounded);
-			animator.SetInteger ("state", state);
+			animator.SetFloat("speed_z", input.z);
+			animator.SetFloat("speed_x", input.x);
+			animator.SetBool("is_grounded", ctrl.isGrounded);
+			animator.SetInteger("state", state);
 
 			if (IsAttacking()) 
             {

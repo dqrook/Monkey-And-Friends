@@ -49,8 +49,9 @@ namespace Ryzm
 			playerInput.Disable();
 		}
 
-        void GetMovement()
+        protected virtual void GetMovement()
         {
+			// Debug.Log(playerInput.Touch.Primary.ReadValue<float>());
 			_temp = playerInput.PlayerMain.Move.ReadValue<Vector2>();
 			input.x = _temp.x;
 			input.z = _temp.y;
