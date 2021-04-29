@@ -67,7 +67,8 @@ namespace Ryzm
 
         protected virtual bool IsJumping()
         {
-			return playerInput.PlayerMain.Jump.ReadValue<float>() > 0;
+			return playerInput.PlayerMain.Jump.WasPressedThisFrame();
+			// return playerInput.PlayerMain.Jump.ReadValue<float>() > 0;
             // # if UNITY_STANDALONE || UNITY_EDITOR
             // return Input.GetKey(keyJump);
 
@@ -96,8 +97,9 @@ namespace Ryzm
         }
 
         protected virtual bool IsAttacking()
-        {   
-			return playerInput.PlayerMain.Attack.ReadValue<float>() > 0;
+        {
+			return playerInput.PlayerMain.Attack.WasPressedThisFrame();
+			// return playerInput.PlayerMain.Attack.ReadValue<float>() > 0;
             // # if UNITY_STANDALONE || UNITY_EDITOR
             // return Input.GetKeyDown(keyAttack);
             

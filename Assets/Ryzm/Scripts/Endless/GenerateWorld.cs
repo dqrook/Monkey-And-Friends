@@ -6,39 +6,43 @@ namespace Ryzm.EndlessRunner
 {
     public class GenerateWorld : MonoBehaviour
     {
-        public GameObject[] platforms;
-        GameObject dummyTraveler;
-        Transform dummyTransform;
+        static public Transform dummyTransform;
+        static public GameObject lastPlatform;
 
-
-        // Start is called before the first frame update
-        void Start()
+        void Awake()
         {
-            dummyTraveler = new GameObject("dummy");
-            dummyTransform = dummyTraveler.transform;
+            dummyTransform = new GameObject("dummy").transform;
+        }
 
-            for(int i = 0; i < 20; i++)
+        public static void RunDummy()
+        {
+            GameObject p = EndlessPool.Instance.GetRandom();
+            if(p == null) return;
+            
+            if(lastPlatform != null)
             {
-                int platformNumber = Random.Range(0, platforms.Length);
-                string tag = platforms[platformNumber].tag;
-                Instantiate(platforms[platformNumber], dummyTransform.position, dummyTransform.rotation);
-
-                if(tag == "stairsUp") 
+                int move = lastPlatform.tag == "platformTSection" ? 20 : 10;
+                dummyTransform.position = lastPlatform.transform.position + RunnerController.player.transform.forward * move;
+                if(lastPlatform.tag == "stairsUp")
                 {
                     dummyTransform.Translate(0, 5, 0);
                 }
-                else if(tag == "stairsDown")
+                else if (lastPlatform.tag == "stairsDown")
                 {
                     dummyTransform.Translate(0, -5, 0);
                 }
-                else if(tag == "platformTSection")
-                {
-                    int angle = Random.Range(0, 2) == 0 ? 90 : -90;
-                    dummyTransform.Rotate(new Vector3(0, angle, 0));
-                    dummyTransform.Translate(Vector3.forward * -10);
-                }
-                dummyTransform.Translate(Vector3.forward * -10);
             }
+
+            lastPlatform = p;
+            p.transform.position = dummyTransform.position;
+            p.transform.rotation = dummyTransform.rotation;
+            p.SetActive(true);
+
+            // if(p.tag == "stairsDown")
+            // {
+            //     dummyTransform.Translate(0, -5, 0);
+            //     p.transform.position = dummyTransform.position;
+            // }
         }
     }
 }
