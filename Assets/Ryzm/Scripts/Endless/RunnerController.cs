@@ -33,8 +33,9 @@ namespace Ryzm.EndlessRunner
             set
             {
                 _currentPlatform = value;
-                currentTSection = value.GetComponent<EndlessTSection>();
-                currentSection = value.GetComponent<EndlessSection>();
+                GameObject _ = _currentPlatform.GetComponent<DeactivateSection>().section.gameObject;
+                currentTSection = _.GetComponent<EndlessTSection>();
+                currentSection = _.GetComponent<EndlessSection>();
                 turned = false;
             }
         }
@@ -146,17 +147,17 @@ namespace Ryzm.EndlessRunner
 
         public void Shift(Direction direction)
         {
-            if(IsGrounded())
+            // if(IsGrounded())
+            // {
+            // }
+            if(currentTSection != null)
             {
-                if(currentTSection != null)
-                {
-                    currentTSection.Shift(direction, this, turned);
-                    turned = true;
-                }
-                else
-                {
-                    currentSection.Shift(direction, this);
-                }
+                currentTSection.Shift(direction, this, turned);
+                turned = true;
+            }
+            else
+            {
+                currentSection.Shift(direction, this);
             }
         }
 
