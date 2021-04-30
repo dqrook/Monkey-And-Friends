@@ -7,6 +7,9 @@ namespace Ryzm.EndlessRunner
 {
     public class RunnerController : BaseController
     {
+        public Transform rootTransform;
+        public float distanceToGround = 0.7f;
+		public LayerMask groundLayer;
         public int currentPosition = 1;
         public RuntimeAnimatorController animatorController;
         public float shiftDistance = 0.1f;
@@ -14,6 +17,12 @@ namespace Ryzm.EndlessRunner
         bool canTurn = false;
         static GameObject _currentPlatform;
         static EndlessSection currentSection;
+        static EndlessTSection currentTSection;
+        // turned is set to true when on a TSection and the user has decided which direction they would like to go
+        static bool turned = false;
+        Vector3 _raycastPos;
+        RaycastHit hit;
+        Ray checkGround;
 
         public static GameObject CurrentPlatform
         {
@@ -24,7 +33,9 @@ namespace Ryzm.EndlessRunner
             set
             {
                 _currentPlatform = value;
+                currentTSection = value.GetComponent<EndlessTSection>();
                 currentSection = value.GetComponent<EndlessSection>();
+                turned = false;
             }
         }
 
@@ -54,8 +65,14 @@ namespace Ryzm.EndlessRunner
 
 			animator.runtimeAnimatorController = animatorController;
             player = this.gameObject;
-            // ctrl.attachedRigidbody.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
 		}
+        
+        bool IsGrounded()
+        {
+            checkGround = new Ray (rootTransform.position, Vector3.down);
+            bool grounded = Physics.Raycast(checkGround, out hit, distanceToGround, groundLayer);
+            return grounded;
+        }
 
         void Start()
         {
@@ -66,10 +83,10 @@ namespace Ryzm.EndlessRunner
         {
             if(other is BoxCollider && GenerateWorld.lastPlatform.tag != "platformTSection")
             {
-                Debug.Log("entered lol");
                 GenerateWorld.RunDummy();
             }
-            if(other is SphereCollider)
+            // means we are in the T section and we can turn
+            if(other is SphereCollider && other.gameObject.tag == "platformTSection")
             {
                 canTurn = true;
             }
@@ -83,27 +100,42 @@ namespace Ryzm.EndlessRunner
             }
         }
 
+        protected override void UpdateImpact()
+        {
+			if (!IsGrounded())
+            {
+				impact += Physics.gravity * gravity_multiplier * Time.deltaTime;
+			}
+
+			impact = Vector3.Lerp(impact, Vector3.zero, Time.deltaTime);
+			if (impact.magnitude > 0.2f)
+            {
+				move += impact;
+			}
+		}
+
+        protected override void UpdateMove()
+        {
+            trans.Translate(move * Time.deltaTime);
+        }
+
         protected override void Update()
         {
             base.Update();
-
+            
             move = Vector3.zero;
 			animator.SetFloat("speed_z", input.z);
 			animator.SetBool("is_grounded", ctrl.isGrounded);
 			// animator.SetFloat("time_to_idle", 0);
-            bool isGrounded = ctrl.isGrounded || !ctrl.enabled;
 
-			if (IsJumping() && isGrounded)
+			if (IsJumping() && IsGrounded())
             {
-				animator.SetTrigger("jump");
-				AddImpact(Vector3.up, jumpPower);
+                animator.SetTrigger("jump");
+                AddImpact(Vector3.up, jumpPower);
 			}
 
-			UpdateImpact();
-            if(ctrl.enabled)
-            {
-			    UpdateMove();
-            }
+			// UpdateImpact();
+			// UpdateMove();
         }
 
         protected override void GetMovement()
@@ -114,11 +146,23 @@ namespace Ryzm.EndlessRunner
 
         public void Shift(Direction direction)
         {
-            currentSection.Shift(direction, this);
+            if(IsGrounded())
+            {
+                if(currentTSection != null)
+                {
+                    currentTSection.Shift(direction, this, turned);
+                    turned = true;
+                }
+                else
+                {
+                    currentSection.Shift(direction, this);
+                }
+            }
         }
 
         public void Spin(Direction direction)
         {
+            return;
             if(canTurn)
             {
                 if(direction == Direction.Left)

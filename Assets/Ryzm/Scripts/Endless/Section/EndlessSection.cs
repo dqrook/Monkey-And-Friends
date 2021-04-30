@@ -27,7 +27,7 @@ namespace Ryzm.EndlessRunner
             }
         }
 
-        Transform GetPosition(int position)
+        protected virtual Transform GetPosition(int position)
         {
             switch(position)
             {
