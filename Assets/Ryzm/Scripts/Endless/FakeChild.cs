@@ -14,7 +14,7 @@ namespace Ryzm.EndlessRunner
         Vector3 currentPlatformPos;
         Transform _transform;
         Transform _parentTransform;
-
+        float initY;
         void Start()
         {
             if(runner != null)
@@ -27,20 +27,26 @@ namespace Ryzm.EndlessRunner
             fw = _parentTransform.InverseTransformDirection(_transform.forward);
             up = _parentTransform.InverseTransformDirection(_transform.up);
             prevPos = _transform.position;
+            initY = pos.y;
         }
         void Update()
         {
-            currentPlatformPos = RunnerController.CurrentSection.GetPosition(1).position;
             var newpos = _parentTransform.TransformPoint(pos);
             var newfw = _parentTransform.TransformDirection(fw);
-            if(Mathf.Abs(newfw.z) > Mathf.Abs(newfw.x))
+            EndlessSection currentSection = GameManager.Instance.CurrentSection;
+            if(currentSection != null)
             {
-                newpos.x = currentPlatformPos.x;
+                currentPlatformPos = GameManager.Instance.CurrentSection.GetPosition(1).position;
+                if(Mathf.Abs(newfw.z) > Mathf.Abs(newfw.x))
+                {
+                    newpos.x = currentPlatformPos.x;
+                }
+                else
+                {
+                    newpos.z = currentPlatformPos.z;
+                }
             }
-            else
-            {
-                newpos.z = currentPlatformPos.z;
-            }
+            // newpos.y = initY;
             
             var newup = Parent.transform.TransformDirection(up);
             var newrot = Quaternion.LookRotation(newfw, newup);

@@ -6,6 +6,9 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessSection : MonoBehaviour
     {
+        public DeactivateSection deactivate;
+        public Transform[] obstacleSpawnLocations;
+        [Header("Lane Positions")]
         public Transform position0;
         public Transform position1;
         public Transform position2;
@@ -23,14 +26,14 @@ namespace Ryzm.EndlessRunner
             }
             this.transform.position += runner.forward * -0.1f;
 
-            if(RunnerController.CurrentPlatform == null) return;
+            if(GameManager.Instance.CurrentPlatform == null) return;
 
-            if(RunnerController.CurrentPlatform.tag == "stairsUp") 
+            if(GameManager.Instance.CurrentPlatform.tag == "stairsUp") 
             {
                 this.transform.Translate(0, -0.06f, 0);
             }
 
-            if(RunnerController.CurrentPlatform.tag == "stairsDown") 
+            if(GameManager.Instance.CurrentPlatform.tag == "stairsDown") 
             {
                 this.transform.Translate(0, 0.06f, 0);
             }

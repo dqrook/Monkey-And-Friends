@@ -11,7 +11,7 @@ namespace Ryzm.EndlessRunner
         /// </summary>
         public Direction turnDirection;
 
-        [Header("Right Transforms")]
+        [Header("Right Lane Positions")]
         public Transform position3;
         public Transform position4;
         public Transform position5;
@@ -30,7 +30,6 @@ namespace Ryzm.EndlessRunner
                     return null;
             }
         }
-
 
         public void Shift(Direction direction, RunnerController controller, bool turned)
         {

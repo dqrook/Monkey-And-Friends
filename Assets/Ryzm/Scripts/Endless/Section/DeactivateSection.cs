@@ -10,9 +10,17 @@ namespace Ryzm.EndlessRunner
 
         bool dScheduled = false;
         
-        void OnCollisionExit(Collision player)
+        // void OnCollisionExit(Collision player)
+        // {
+        //     if(player.gameObject.tag == "Player")
+        //     {
+        //         Deactivate();
+        //     }
+        // }
+
+        public void Deactivate()
         {
-            if(player.gameObject.tag == "Player" && !dScheduled)
+            if(!dScheduled)
             {
                 Invoke("SetInactive", 5.0f);
                 dScheduled = true;

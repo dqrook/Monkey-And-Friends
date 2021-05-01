@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Ryzm.EndlessRunner.Messages;
+using CodeControl;
 
 namespace Ryzm.EndlessRunner
 {
@@ -15,11 +17,8 @@ namespace Ryzm.EndlessRunner
         public int currentPosition = 1;
         public RuntimeAnimatorController animatorController;
         public static GameObject player;
-        static GameObject _currentPlatform;
-        static EndlessSection currentSection;
-        static EndlessTSection currentTSection;
         // turned is set to true when on a TSection and the user has decided which direction they would like to go
-        static bool turned = false;
+        bool turned = false;
         RaycastHit hit;
         Ray checkGround;
         int state = 0;
@@ -29,41 +28,31 @@ namespace Ryzm.EndlessRunner
         IEnumerator shift;
         bool inJump;
 
-        public static GameObject CurrentPlatform
-        {
-            get
-            {
-                return _currentPlatform;
-            }
-            set
-            {
-                _currentPlatform = value;
-                GameObject _ = _currentPlatform.GetComponent<DeactivateSection>().section.gameObject;
-                currentTSection = _.GetComponent<EndlessTSection>();
-                currentSection = _.GetComponent<EndlessSection>();
-                turned = false;
-            }
-        }
-
-        public static EndlessSection CurrentSection
-        {
-            get
-            {
-                return currentTSection != null ? currentTSection : currentSection;
-            }
-        }
-
         void OnCollisionEnter(Collision other)
         {
+            // Debug.Log(LayerMask.LayerToName(other.gameObject.layer) + " " + groundLayer);
             if(other.gameObject.tag == "Fire")
             {
                 isDead = true;
                 Die();
             }
-            else
-            {
-                CurrentPlatform = other.gameObject;
-            }
+            // else
+            // {
+            //     turned = false;
+            //     GameManager.Instance.CurrentPlatform = other.gameObject;
+            // }
+        }
+
+        void OnTriggerEnter(Collider other)
+        {
+            // if(other is BoxCollider && GenerateWorld.lastSpawnedPlatform.tag != "platformTSection")
+            // {
+            //     GenerateWorld.RunDummy();
+            // }
+            // if(other is SphereCollider)
+            // {
+            //     Debug.Log(other.name);
+            // }
         }
 
 		protected override void Awake ()
@@ -83,26 +72,30 @@ namespace Ryzm.EndlessRunner
 			animator.runtimeAnimatorController = animatorController;
             player = this.gameObject;
             rb = GetComponent<Rigidbody>();
+            Message.AddListener<CurrentPlatformChange>(OnCurrentPlatformChange);
 		}
+
+        void OnDestory()
+        {
+            Message.RemoveListener<CurrentPlatformChange>(OnCurrentPlatformChange);
+        }
+
+        void OnCurrentPlatformChange(CurrentPlatformChange change)
+        {
+            turned = false;
+        }
+
+        void Start()
+        {
+            GenerateWorld.RunDummy();
+            // GenerateWorld.RunDummy();
+        }
         
         bool IsGrounded()
         {
             checkGround = new Ray (rootTransform.position, Vector3.down);
             bool grounded = Physics.Raycast(checkGround, out hit, distanceToGround, groundLayer);
             return grounded;
-        }
-
-        void Start()
-        {
-            GenerateWorld.RunDummy();
-        }
-
-        void OnTriggerEnter(Collider other)
-        {
-            if(other is BoxCollider && GenerateWorld.lastPlatform.tag != "platformTSection")
-            {
-                GenerateWorld.RunDummy();
-            }
         }
 
         public void Jump()
@@ -125,8 +118,8 @@ namespace Ryzm.EndlessRunner
         protected override void Update()
         {
             bool isGrounded = IsGrounded();
-            input.z = 1;
-            move = Vector3.zero;
+            // input.z = 1;
+            // move = Vector3.zero;
 			animator.SetFloat("speed_z", 1);
 			animator.SetFloat("speed_x", 0);
 			animator.SetBool("is_grounded", isGrounded);
@@ -182,14 +175,14 @@ namespace Ryzm.EndlessRunner
         {
             if(!inShift && !inJump)
             {
-                if(currentTSection != null)
+                if(GameManager.Instance.CurrentTSection != null)
                 {
-                    currentTSection.Shift(direction, this, turned);
+                    GameManager.Instance.CurrentTSection.Shift(direction, this, turned);
                     turned = true;
                 }
                 else
                 {
-                    currentSection.Shift(direction, this);
+                    GameManager.Instance.CurrentSection.Shift(direction, this);
                 }
             }
         }
@@ -237,9 +230,26 @@ namespace Ryzm.EndlessRunner
             return type == ShiftDistanceType.x ? target.InverseTransformPoint(trans.position).x : target.InverseTransformPoint(trans.position).z;
         }
 
+        IEnumerator _airAttack;
+        public void AirAttack()
+        {
+            _airAttack = _AirAttack();
+            StartCoroutine(_airAttack);
+        }
+
+        IEnumerator _AirAttack()
+        {
+            animator.SetTrigger("jump");
+            rb.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
+            yield return new WaitForSeconds(0.4f);
+            animator.SetTrigger("attack");
+            yield break;
+        }
+
         public void Attack()
         {
             animator.SetTrigger("attack");
+            // AirAttack();
         }
 
         public void Die()
