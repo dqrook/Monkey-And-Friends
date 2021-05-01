@@ -8,11 +8,6 @@ namespace Ryzm.EndlessRunner
     {
         private static InputManager _instance;
         public RunnerController runner;
-        public KeyCode moveRight = KeyCode.D;
-        public KeyCode moveLeft = KeyCode.A;
-        public KeyCode spinRight = KeyCode.RightArrow;
-        public KeyCode spinLeft = KeyCode.LeftArrow;
-        public KeyCode attack = KeyCode.Mouse0;
         public static InputManager Instance { get { return _instance; } }
 
         void Awake()
@@ -31,45 +26,14 @@ namespace Ryzm.EndlessRunner
             }
         }
 
-        void Update()
-        {
-            if(Input.GetKeyDown(moveRight))
-            {
-                Shift(Direction.Right);
-            }
-            else if(Input.GetKeyDown(moveLeft))
-            {
-                Shift(Direction.Left);
-            }
-
-            if(Input.GetKeyDown(spinRight))
-            {
-                Spin(Direction.Right);
-            }
-            else if(Input.GetKeyDown(spinLeft))
-            {
-                Spin(Direction.Left);
-            }
-
-            if(Input.GetKeyDown(attack))
-            {
-                Attack();
-            }
-        }
-
         public void Shift(Direction direction)
         {
             runner.Shift(direction);
         }
 
-        public void Spin(Direction direction)
+        public void Jump()
         {
-            runner.Spin(direction);
-        }
-
-        public void Attack()
-        {
-            runner.Attack();
+            runner.Jump();
         }
     }
 }

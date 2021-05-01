@@ -59,7 +59,7 @@ namespace Ryzm.EndlessRunner
 		}
 
 		/// <summary>
-		/// Determines a MMPossibleSwipeDirection out of an angle in degrees. 
+		/// Determines a Direction out of an angle in degrees. 
 		/// </summary>
 		/// <returns>The to swipe direction.</returns>
 		/// <param name="angle">Angle in degrees.</param>
@@ -86,7 +86,18 @@ namespace Ryzm.EndlessRunner
 
         void Swipe()
 		{
-			InputManager.Instance.Shift(_swipeDirection);
+			if(_swipeDirection == Direction.Up)
+			{
+				InputManager.Instance.Jump();
+			}
+			else if(_swipeDirection == Direction.Down)
+			{
+				// todo: sliding
+			}
+			else
+			{
+				InputManager.Instance.Shift(_swipeDirection);
+			}
 		}
 
         float AngleBetween(Vector2 vectorA, Vector2 vectorB)

@@ -9,10 +9,19 @@ namespace Ryzm.EndlessRunner
         public Transform position0;
         public Transform position1;
         public Transform position2;
+        Transform runner;
 
         void FixedUpdate()
         {
-            this.transform.position += RunnerController.player.transform.forward * -0.1f;
+            if(runner == null)
+            {
+                runner = RunnerController.player.transform;
+            }
+            if(RunnerController.isDead)
+            {
+                return;
+            }
+            this.transform.position += runner.forward * -0.1f;
 
             if(RunnerController.CurrentPlatform == null) return;
 
@@ -27,7 +36,7 @@ namespace Ryzm.EndlessRunner
             }
         }
 
-        protected virtual Transform GetPosition(int position)
+        public virtual Transform GetPosition(int position)
         {
             switch(position)
             {
@@ -51,8 +60,7 @@ namespace Ryzm.EndlessRunner
                 Transform pos = GetPosition(currentPosition - 1);
                 if(pos != null)
                 {
-                    float _shiftDistance = pos.InverseTransformPoint(trans.position).x;
-                    trans.Translate(_shiftDistance, 0, 0);
+                    controller.ShiftToPosition(pos);
                     controller.currentPosition--;
                 }
             }
@@ -61,8 +69,7 @@ namespace Ryzm.EndlessRunner
                 Transform pos = GetPosition(currentPosition + 1);
                 if(pos != null)
                 {
-                    float _shiftDistance = pos.InverseTransformPoint(trans.position).x;
-                    trans.Translate(_shiftDistance, 0, 0);
+                    controller.ShiftToPosition(pos);
                     controller.currentPosition++;
                 }
             }

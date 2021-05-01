@@ -60,14 +60,6 @@ namespace Ryzm
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
-                },
-                {
-                    ""name"": ""Shift"",
-                    ""type"": ""Button"",
-                    ""id"": ""bf6cf851-c34d-48da-adb8-11ce1404557e"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -191,39 +183,6 @@ namespace Ryzm
                     ""action"": ""Attack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""1D Axis"",
-                    ""id"": ""c8641bc6-1373-410d-8f29-eefc82d648bf"",
-                    ""path"": ""1DAxis"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Shift"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""negative"",
-                    ""id"": ""d18c9e84-9a47-4e92-bf91-935ba9f14f32"",
-                    ""path"": ""<Keyboard>/leftArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Shift"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""positive"",
-                    ""id"": ""59149089-19b0-4310-8d65-cd54f63ba9d2"",
-                    ""path"": ""<Keyboard>/rightArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Shift"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
                 }
             ]
         },
@@ -272,6 +231,52 @@ namespace Ryzm
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Endless"",
+            ""id"": ""63a7d170-caaa-4f97-9ad6-0fb40826a09b"",
+            ""actions"": [
+                {
+                    ""name"": ""ShiftLeft"",
+                    ""type"": ""Button"",
+                    ""id"": ""6a18f256-7ec9-4900-a7ea-21f179a4aa58"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""ShiftRight"",
+                    ""type"": ""Button"",
+                    ""id"": ""30f600ab-ddae-4c1a-8e57-fde7096f445c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""a5ab171c-2e61-46d6-ba0f-2789d3f1923d"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ShiftLeft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""51f8c1ef-3778-4e59-84d6-c26c4e3c8eaf"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ShiftRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -282,11 +287,14 @@ namespace Ryzm
             m_PlayerMain_Jump = m_PlayerMain.FindAction("Jump", throwIfNotFound: true);
             m_PlayerMain_Look = m_PlayerMain.FindAction("Look", throwIfNotFound: true);
             m_PlayerMain_Attack = m_PlayerMain.FindAction("Attack", throwIfNotFound: true);
-            m_PlayerMain_Shift = m_PlayerMain.FindAction("Shift", throwIfNotFound: true);
             // Touch
             m_Touch = asset.FindActionMap("Touch", throwIfNotFound: true);
             m_Touch_PrimaryContact = m_Touch.FindAction("PrimaryContact", throwIfNotFound: true);
             m_Touch_PrimaryPosition = m_Touch.FindAction("PrimaryPosition", throwIfNotFound: true);
+            // Endless
+            m_Endless = asset.FindActionMap("Endless", throwIfNotFound: true);
+            m_Endless_ShiftLeft = m_Endless.FindAction("ShiftLeft", throwIfNotFound: true);
+            m_Endless_ShiftRight = m_Endless.FindAction("ShiftRight", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -350,7 +358,6 @@ namespace Ryzm
         private readonly InputAction m_PlayerMain_Jump;
         private readonly InputAction m_PlayerMain_Look;
         private readonly InputAction m_PlayerMain_Attack;
-        private readonly InputAction m_PlayerMain_Shift;
         public struct PlayerMainActions
         {
             private @Player m_Wrapper;
@@ -359,7 +366,6 @@ namespace Ryzm
             public InputAction @Jump => m_Wrapper.m_PlayerMain_Jump;
             public InputAction @Look => m_Wrapper.m_PlayerMain_Look;
             public InputAction @Attack => m_Wrapper.m_PlayerMain_Attack;
-            public InputAction @Shift => m_Wrapper.m_PlayerMain_Shift;
             public InputActionMap Get() { return m_Wrapper.m_PlayerMain; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -381,9 +387,6 @@ namespace Ryzm
                     @Attack.started -= m_Wrapper.m_PlayerMainActionsCallbackInterface.OnAttack;
                     @Attack.performed -= m_Wrapper.m_PlayerMainActionsCallbackInterface.OnAttack;
                     @Attack.canceled -= m_Wrapper.m_PlayerMainActionsCallbackInterface.OnAttack;
-                    @Shift.started -= m_Wrapper.m_PlayerMainActionsCallbackInterface.OnShift;
-                    @Shift.performed -= m_Wrapper.m_PlayerMainActionsCallbackInterface.OnShift;
-                    @Shift.canceled -= m_Wrapper.m_PlayerMainActionsCallbackInterface.OnShift;
                 }
                 m_Wrapper.m_PlayerMainActionsCallbackInterface = instance;
                 if (instance != null)
@@ -400,9 +403,6 @@ namespace Ryzm
                     @Attack.started += instance.OnAttack;
                     @Attack.performed += instance.OnAttack;
                     @Attack.canceled += instance.OnAttack;
-                    @Shift.started += instance.OnShift;
-                    @Shift.performed += instance.OnShift;
-                    @Shift.canceled += instance.OnShift;
                 }
             }
         }
@@ -448,18 +448,63 @@ namespace Ryzm
             }
         }
         public TouchActions @Touch => new TouchActions(this);
+
+        // Endless
+        private readonly InputActionMap m_Endless;
+        private IEndlessActions m_EndlessActionsCallbackInterface;
+        private readonly InputAction m_Endless_ShiftLeft;
+        private readonly InputAction m_Endless_ShiftRight;
+        public struct EndlessActions
+        {
+            private @Player m_Wrapper;
+            public EndlessActions(@Player wrapper) { m_Wrapper = wrapper; }
+            public InputAction @ShiftLeft => m_Wrapper.m_Endless_ShiftLeft;
+            public InputAction @ShiftRight => m_Wrapper.m_Endless_ShiftRight;
+            public InputActionMap Get() { return m_Wrapper.m_Endless; }
+            public void Enable() { Get().Enable(); }
+            public void Disable() { Get().Disable(); }
+            public bool enabled => Get().enabled;
+            public static implicit operator InputActionMap(EndlessActions set) { return set.Get(); }
+            public void SetCallbacks(IEndlessActions instance)
+            {
+                if (m_Wrapper.m_EndlessActionsCallbackInterface != null)
+                {
+                    @ShiftLeft.started -= m_Wrapper.m_EndlessActionsCallbackInterface.OnShiftLeft;
+                    @ShiftLeft.performed -= m_Wrapper.m_EndlessActionsCallbackInterface.OnShiftLeft;
+                    @ShiftLeft.canceled -= m_Wrapper.m_EndlessActionsCallbackInterface.OnShiftLeft;
+                    @ShiftRight.started -= m_Wrapper.m_EndlessActionsCallbackInterface.OnShiftRight;
+                    @ShiftRight.performed -= m_Wrapper.m_EndlessActionsCallbackInterface.OnShiftRight;
+                    @ShiftRight.canceled -= m_Wrapper.m_EndlessActionsCallbackInterface.OnShiftRight;
+                }
+                m_Wrapper.m_EndlessActionsCallbackInterface = instance;
+                if (instance != null)
+                {
+                    @ShiftLeft.started += instance.OnShiftLeft;
+                    @ShiftLeft.performed += instance.OnShiftLeft;
+                    @ShiftLeft.canceled += instance.OnShiftLeft;
+                    @ShiftRight.started += instance.OnShiftRight;
+                    @ShiftRight.performed += instance.OnShiftRight;
+                    @ShiftRight.canceled += instance.OnShiftRight;
+                }
+            }
+        }
+        public EndlessActions @Endless => new EndlessActions(this);
         public interface IPlayerMainActions
         {
             void OnMove(InputAction.CallbackContext context);
             void OnJump(InputAction.CallbackContext context);
             void OnLook(InputAction.CallbackContext context);
             void OnAttack(InputAction.CallbackContext context);
-            void OnShift(InputAction.CallbackContext context);
         }
         public interface ITouchActions
         {
             void OnPrimaryContact(InputAction.CallbackContext context);
             void OnPrimaryPosition(InputAction.CallbackContext context);
+        }
+        public interface IEndlessActions
+        {
+            void OnShiftLeft(InputAction.CallbackContext context);
+            void OnShiftRight(InputAction.CallbackContext context);
         }
     }
 }

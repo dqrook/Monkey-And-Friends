@@ -7,22 +7,27 @@ namespace Ryzm.EndlessRunner
 {
     public class RunnerController : BaseController
     {
+        public float jumpCooldown = 0.2f;
+        public static bool isDead;
         public Transform rootTransform;
         public float distanceToGround = 0.7f;
 		public LayerMask groundLayer;
         public int currentPosition = 1;
         public RuntimeAnimatorController animatorController;
-        public float shiftDistance = 0.1f;
         public static GameObject player;
-        bool canTurn = false;
         static GameObject _currentPlatform;
         static EndlessSection currentSection;
         static EndlessTSection currentTSection;
         // turned is set to true when on a TSection and the user has decided which direction they would like to go
         static bool turned = false;
-        Vector3 _raycastPos;
         RaycastHit hit;
         Ray checkGround;
+        int state = 0;
+        Rigidbody rb;
+        IEnumerator monitorJump;
+        bool inShift;
+        IEnumerator shift;
+        bool inJump;
 
         public static GameObject CurrentPlatform
         {
@@ -40,14 +45,25 @@ namespace Ryzm.EndlessRunner
             }
         }
 
-        void OnCollisionEnter(Collision other)
+        public static EndlessSection CurrentSection
         {
-            CurrentPlatform = other.gameObject;
+            get
+            {
+                return currentTSection != null ? currentTSection : currentSection;
+            }
         }
 
-        void OnControllerColliderHit(ControllerColliderHit hit)
+        void OnCollisionEnter(Collision other)
         {
-            CurrentPlatform = hit.gameObject;
+            if(other.gameObject.tag == "Fire")
+            {
+                isDead = true;
+                Die();
+            }
+            else
+            {
+                CurrentPlatform = other.gameObject;
+            }
         }
 
 		protected override void Awake ()
@@ -66,6 +82,7 @@ namespace Ryzm.EndlessRunner
 
 			animator.runtimeAnimatorController = animatorController;
             player = this.gameObject;
+            rb = GetComponent<Rigidbody>();
 		}
         
         bool IsGrounded()
@@ -86,106 +103,166 @@ namespace Ryzm.EndlessRunner
             {
                 GenerateWorld.RunDummy();
             }
-            // means we are in the T section and we can turn
-            if(other is SphereCollider && other.gameObject.tag == "platformTSection")
+        }
+
+        public void Jump()
+        {
+            bool isGrounded = IsGrounded();
+            Jump(isGrounded);
+        }
+
+        public void Jump(bool isGrounded)
+        {
+            if(!inJump && isGrounded)
             {
-                canTurn = true;
+                monitorJump = MonitorJump();
+                StartCoroutine(monitorJump);
+                animator.SetTrigger("jump");
+                rb.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
             }
         }
-
-        void OnTriggerExit(Collider other)
-        {
-            if(other is SphereCollider)
-            {
-                canTurn = false;
-            }
-        }
-
-        protected override void UpdateImpact()
-        {
-			if (!IsGrounded())
-            {
-				impact += Physics.gravity * gravity_multiplier * Time.deltaTime;
-			}
-
-			impact = Vector3.Lerp(impact, Vector3.zero, Time.deltaTime);
-			if (impact.magnitude > 0.2f)
-            {
-				move += impact;
-			}
-		}
-
-        protected override void UpdateMove()
-        {
-            trans.Translate(move * Time.deltaTime);
-        }
-
+        
         protected override void Update()
         {
-            base.Update();
-            
+            bool isGrounded = IsGrounded();
+            input.z = 1;
             move = Vector3.zero;
-			animator.SetFloat("speed_z", input.z);
-			animator.SetBool("is_grounded", ctrl.isGrounded);
-			// animator.SetFloat("time_to_idle", 0);
-
-			if (IsJumping() && IsGrounded())
+			animator.SetFloat("speed_z", 1);
+			animator.SetFloat("speed_x", 0);
+			animator.SetBool("is_grounded", isGrounded);
+            animator.SetInteger("state", state);
+            
+            if(IsShifting(Direction.Left))
             {
-                animator.SetTrigger("jump");
-                AddImpact(Vector3.up, jumpPower);
-			}
+                Shift(Direction.Left);
+            }
+            else if(IsShifting(Direction.Right))
+            {
+                Shift(Direction.Right);
+            }
 
-			// UpdateImpact();
-			// UpdateMove();
+            if (IsJumping())
+            {
+                Jump(isGrounded);
+			}
+            if(IsAttacking())
+            {
+                Attack();
+            }
+        }
+        
+        IEnumerator MonitorJump()
+        {
+            inJump = true;
+            yield return new WaitForSeconds(0.3f);
+            while(!IsGrounded())
+            {
+                yield return null;
+            }
+            animator.SetBool("is_grounded", true);
+            yield return new WaitForSeconds(jumpCooldown);
+            inJump = false;
+            yield break;
         }
 
-        protected override void GetMovement()
+        bool IsShifting(Direction direction)
         {
-            input.x = 0;
-            input.z = 1;
+            if(direction == Direction.Left)
+            {
+                return playerInput.Endless.ShiftLeft.WasPressedThisFrame();
+            }
+            if(direction == Direction.Right)
+            {
+                return playerInput.Endless.ShiftRight.WasPressedThisFrame();
+            }
+            return false;
         }
 
         public void Shift(Direction direction)
         {
-            // if(IsGrounded())
-            // {
-            // }
-            if(currentTSection != null)
+            if(!inShift && !inJump)
             {
-                currentTSection.Shift(direction, this, turned);
-                turned = true;
+                if(currentTSection != null)
+                {
+                    currentTSection.Shift(direction, this, turned);
+                    turned = true;
+                }
+                else
+                {
+                    currentSection.Shift(direction, this);
+                }
+            }
+        }
+        
+        public void ShiftToPosition(Transform pos, ShiftDistanceType type = ShiftDistanceType.x)
+        {
+            shift = _Shift(pos, type);
+            StartCoroutine(shift);
+        }
+
+        IEnumerator _Shift(Transform target, ShiftDistanceType type = ShiftDistanceType.x)
+        {
+            inShift = true;
+            float _shiftDistance = GetShiftDistance(target, type);
+            Vector3 _move = Vector3.zero;
+            float _distance = Mathf.Lerp(0, _shiftDistance, 0.04f);
+            float signDistance = Mathf.Sign(_distance);
+
+            if(signDistance == 1)
+            {
+                animator.SetTrigger("shiftRight");
             }
             else
             {
-                currentSection.Shift(direction, this);
+                animator.SetTrigger("shiftLeft");
             }
+            
+            float absDistance = _distance * signDistance;
+            while(Mathf.Abs(_shiftDistance) > absDistance)
+            {
+                _shiftDistance = GetShiftDistance(target, type);
+                _move.x = _distance;
+                trans.Translate(_move);
+                yield return null;
+            }
+            _shiftDistance = GetShiftDistance(target, type);
+            trans.Translate(_shiftDistance, 0, 0);
+            yield return new WaitForSeconds(0.1f); // cooldown for shift
+            inShift = false;
+            yield break;
         }
 
-        public void Spin(Direction direction)
+        float GetShiftDistance(Transform target, ShiftDistanceType type = ShiftDistanceType.x)
         {
-            return;
-            if(canTurn)
-            {
-                if(direction == Direction.Left)
-                {
-                    trans.Rotate(Vector3.up * -90);
-                    GenerateWorld.dummyTransform.forward = -trans.forward;
-                    GenerateWorld.RunDummy();
-                }
-                else if(direction == Direction.Right)
-                {
-                    trans.Rotate(Vector3.up * 90);
-                    GenerateWorld.dummyTransform.forward = -trans.forward;
-                    GenerateWorld.RunDummy();
-                }
-            }
+            return type == ShiftDistanceType.x ? target.InverseTransformPoint(trans.position).x : target.InverseTransformPoint(trans.position).z;
         }
 
         public void Attack()
         {
             animator.SetTrigger("attack");
         }
+
+        public void Die()
+        {
+			state = 2;
+            StopAllCoroutines();
+		}
+
+        void Reset()
+        {
+            turned = false;
+            state = 1;
+            inJump = false;
+            inShift = false;
+        }
     }
+
+    public enum ShiftDistanceType
+    {
+        x,
+        z
+    }
+
     public enum Direction 
     {
         Left,

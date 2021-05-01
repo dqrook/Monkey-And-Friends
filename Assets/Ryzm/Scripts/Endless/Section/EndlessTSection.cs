@@ -16,7 +16,7 @@ namespace Ryzm.EndlessRunner
         public Transform position4;
         public Transform position5;
 
-        protected override Transform GetPosition(int position)
+        public override Transform GetPosition(int position)
         {
             switch(position)
             {
@@ -50,7 +50,9 @@ namespace Ryzm.EndlessRunner
                     GenerateWorld.RunDummy();
                 }
                 turnDirection = direction;
-                float _shiftDistance = GetPosition(1).InverseTransformPoint(trans.position).z;
+                Transform pos = GetPosition(1);
+                // controller.ShiftToPosition(pos, ShiftDistanceType.z);
+                float _shiftDistance = pos.InverseTransformPoint(trans.position).z;
                 trans.Translate(_shiftDistance, 0, 0);
                 controller.currentPosition = 1;
             }
@@ -69,8 +71,7 @@ namespace Ryzm.EndlessRunner
                 Transform pos = GetPosition(currentPosition - 1);
                 if(pos != null)
                 {
-                    float _shiftDistance = pos.InverseTransformPoint(trans.position).z;
-                    trans.Translate(_shiftDistance, 0, 0);
+                    controller.ShiftToPosition(pos, ShiftDistanceType.z);
                     controller.currentPosition--;
                 }
             }
@@ -79,8 +80,7 @@ namespace Ryzm.EndlessRunner
                 Transform pos = GetPosition(currentPosition + 1);
                 if(pos != null)
                 {
-                    float _shiftDistance = pos.InverseTransformPoint(trans.position).z;
-                    trans.Translate(_shiftDistance, 0, 0);
+                    controller.ShiftToPosition(pos, ShiftDistanceType.z);
                     controller.currentPosition++;
                 }
             }
