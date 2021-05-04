@@ -10,7 +10,6 @@ namespace Ryzm.EndlessRunner
     public class RunnerController : BaseController
     {
         public float jumpCooldown = 0.2f;
-        public static bool isDead;
         public Transform rootTransform;
         public float distanceToGround = 0.7f;
 		public LayerMask groundLayer;
@@ -29,14 +28,6 @@ namespace Ryzm.EndlessRunner
         bool inJump;
         EndlessSection _endlessSection;
         EndlessTSection _endlessTSection;
-
-        // void OnCollisionEnter(Collision other)
-        // {
-        //     if(other.gameObject.tag == "Fire")
-        //     {
-        //         Die();
-        //     }
-        // }
 
 		protected override void Awake ()
 		{
@@ -57,12 +48,20 @@ namespace Ryzm.EndlessRunner
             rb = GetComponent<Rigidbody>();
             Message.AddListener<CurrentSectionChange>(OnCurrentSectionChange);
             Message.AddListener<RunnerDie>(OnRunnerDie);
+            Message.AddListener<RunnerRequest>(OnRunnerRequest);
 		}
+
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            Message.Send(new RunnerResponse(this));
+        }
 
         void OnDestory()
         {
             Message.RemoveListener<CurrentSectionChange>(OnCurrentSectionChange);
             Message.RemoveListener<RunnerDie>(OnRunnerDie);
+            Message.RemoveListener<RunnerRequest>(OnRunnerRequest);
         }
 
         void OnCurrentSectionChange(CurrentSectionChange change)
@@ -75,6 +74,11 @@ namespace Ryzm.EndlessRunner
         void OnRunnerDie(RunnerDie runnerDie)
         {
             Die();
+        }
+
+        void OnRunnerRequest(RunnerRequest request)
+        {
+            Message.Send(new RunnerResponse(this));
         }
         
         bool IsGrounded()
@@ -220,7 +224,7 @@ namespace Ryzm.EndlessRunner
         IEnumerator _airAttack;
         public void AirAttack()
         {
-            if(airAttacking)
+            if(airAttacking || !IsGrounded())
             {
                 return;
             }
@@ -243,14 +247,14 @@ namespace Ryzm.EndlessRunner
                 float ratio = _time / maxT * 1.1f;
                 ratio = ratio < 1 ? ratio : 1;
                 float speed = Mathf.Lerp(maxSpeed, targetSpeed, ratio); 
-                Message.Send(new ChangeGameSpeed(speed));
+                Message.Send(new RequestGameSpeedChange(speed));
                 yield return null;
             }
             // Message.Send(new ChangeGameSpeed(targetSpeed, 0.4f));
-            Message.Send(new ChangeGameSpeed(targetSpeed));
+            Message.Send(new RequestGameSpeedChange(targetSpeed));
             animator.SetTrigger("airAttack");
             yield return new WaitForSeconds(0.4f);
-            Message.Send(new ChangeGameSpeed(0.2f, 0.2f));
+            Message.Send(new RequestGameSpeedChange(0.2f, 0.2f));
             _time = 0;
             float timeGrounded = 0;
             float cooldownTime = 0.15f;
@@ -281,7 +285,6 @@ namespace Ryzm.EndlessRunner
 
         public void Die()
         {
-            isDead = true;
 			state = 2;
             StopAllCoroutines();
 		}

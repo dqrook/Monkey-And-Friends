@@ -11,7 +11,8 @@ namespace Ryzm.EndlessRunner
         static public Transform dummyTransform;
         // last platform added
         static public GameObject lastSpawnedSection;
-
+        int numberSectionsSinceBarrier;
+        Transform runnerTrans;
         GameObject _currentSection;
 
         void Awake()
@@ -20,6 +21,12 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<CreateSection>(OnCreateSection);
             Message.AddListener<CreateBarrier>(OnCreateBarrier);
             Message.AddListener<CurrentSectionChange>(OnCurrentSectionChange);
+            Message.AddListener<RunnerResponse>(OnRunnerResponse);
+        }
+
+        void OnEnable()
+        {
+            Message.Send(new RunnerRequest());
         }
 
         void OnDestroy()
@@ -27,6 +34,7 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<CreateSection>(OnCreateSection);
             Message.RemoveListener<CreateBarrier>(OnCreateBarrier);
             Message.RemoveListener<CurrentSectionChange>(OnCurrentSectionChange);
+            Message.RemoveListener<RunnerResponse>(OnRunnerResponse);
         }
 
         void OnCreateSection(CreateSection createSection)
@@ -42,6 +50,14 @@ namespace Ryzm.EndlessRunner
         void OnCurrentSectionChange(CurrentSectionChange sectionChange)
         {
             _currentSection = sectionChange.section;
+            if(CanPlaceBarrier())
+            {
+                _CreateBarrier();
+            }
+            else
+            {
+                numberSectionsSinceBarrier++;
+            }
         }
 
         void RunDummy()
@@ -52,7 +68,7 @@ namespace Ryzm.EndlessRunner
             if(lastSpawnedSection != null)
             {
                 int move = lastSpawnedSection.tag == "platformTSection" ? 20 : 10;
-                dummyTransform.position = lastSpawnedSection.transform.position + RunnerController.player.transform.forward * move;
+                dummyTransform.position = lastSpawnedSection.transform.position + runnerTrans.forward * move;
                 if(lastSpawnedSection.tag == "stairsUp")
                 {
                     dummyTransform.Translate(0, 5, 0);
@@ -103,6 +119,18 @@ namespace Ryzm.EndlessRunner
             _barrier.section = _section;
             _barrier.transform.position = spawnLocation.position;
             _barrier.transform.rotation = spawnLocation.rotation;
+            _barrier.gameObject.SetActive(true);
+            numberSectionsSinceBarrier = 0;
+        }
+
+        bool CanPlaceBarrier()
+        {
+            return Random.Range(0, 4) < numberSectionsSinceBarrier;
+        }
+
+        void OnRunnerResponse(RunnerResponse response)
+        {
+            runnerTrans = response.runner.gameObject.transform;
         }
     }
 }

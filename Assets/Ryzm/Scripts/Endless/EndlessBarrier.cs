@@ -12,12 +12,13 @@ namespace Ryzm.EndlessRunner
         // the section that the barrier belongs to
         public EndlessSection section;
 
-        void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             Message.AddListener<SectionDeactivated>(OnSectionDeactivated);
         }
 
-        void OnCollisionEnter(Collision other)
+        protected void OnCollisionEnter(Collision other)
         {
             // RunnerController runner = other.gameObject.GetComponent<RunnerController>();
             Message.Send(new RunnerDie());
@@ -27,8 +28,9 @@ namespace Ryzm.EndlessRunner
             // }
         }
 
-        void OnDestroy()
+        protected override void OnDestroy()
         {
+            base.OnDestroy();
             Message.RemoveListener<SectionDeactivated>(OnSectionDeactivated);
         }
 
@@ -43,6 +45,7 @@ namespace Ryzm.EndlessRunner
 
     public enum BarrierType
     {
-        Fire
+        Fire,
+        Dragon
     }
 }

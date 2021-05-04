@@ -8,45 +8,77 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessScroller : MonoBehaviour
     {
-        protected Transform runner;
+        protected RunnerController runner;
+        protected Transform runnerTrans;
         protected GameObject _currentSection;
         protected GameStatus gameStatus;
+        protected float gameSpeed;
 
-        void OnEnable()
+        protected virtual void Awake()
         {
             Message.AddListener<CurrentSectionChange>(OnCurrentSectionChange);
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
-            Message.Send(new GameStatusRequest());
+            Message.AddListener<GameSpeedResponse>(OnGameSpeedResponse);
+            Message.AddListener<RunnerResponse>(OnRunnerResponse);
         }
 
-        void OnDisable()
+        protected virtual void OnEnable()
+        {
+            Message.Send(new GameStatusRequest());
+            Message.Send(new GameSpeedRequest());
+            Message.Send(new RunnerRequest());
+        }
+
+        protected virtual void OnDestroy()
         {
             Message.RemoveListener<CurrentSectionChange>(OnCurrentSectionChange);
             Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
+            Message.RemoveListener<GameSpeedResponse>(OnGameSpeedResponse);
+            Message.RemoveListener<RunnerResponse>(OnRunnerResponse);
         }
 
-        protected void FixedUpdate()
+        protected virtual void FixedUpdate()
         {
-            if(runner == null)
-            {
-                runner = RunnerController.player.transform;
-            }
-            if(RunnerController.isDead)
+            if(!CanMove())
             {
                 return;
             }
-            this.transform.position += runner.forward * - GameManager.Instance.speed;
+            GetRunner();
+            MoveForward(GameManager.Instance.speed);
+            MoveInY();
+        }
 
-            if(_currentSection == null) return;
+        protected bool CanMove()
+        {
+            return gameStatus == GameStatus.Active;
+        }
 
-            if(_currentSection.tag == "stairsUp") 
+        protected void GetRunner()
+        {
+            if(runnerTrans == null && runner != null)
             {
-                this.transform.Translate(0, -0.06f, 0);
+                runnerTrans = runner.gameObject.transform;
             }
+        }
 
-            if(_currentSection.tag == "stairsDown") 
+        protected virtual void MoveForward(float speed)
+        {
+            this.transform.position += runnerTrans.forward * - speed;
+        }
+
+        protected void MoveInY()
+        {
+            if(_currentSection != null)
             {
-                this.transform.Translate(0, 0.06f, 0);
+                if(_currentSection.tag == "stairsUp") 
+                {
+                    this.transform.Translate(0, -0.06f, 0);
+                }
+
+                if(_currentSection.tag == "stairsDown") 
+                {
+                    this.transform.Translate(0, 0.06f, 0);
+                }
             }
         }
 
@@ -58,6 +90,17 @@ namespace Ryzm.EndlessRunner
         void OnGameStatusResponse(GameStatusResponse gameStatusResponse)
         {
             gameStatus = gameStatusResponse.status;
+        }
+
+        void OnGameSpeedResponse(GameSpeedResponse response)
+        {
+            gameSpeed = response.speed;
+        }
+
+        void OnRunnerResponse(RunnerResponse response)
+        {
+            runner = response.runner;
+            runnerTrans = runner.gameObject.transform;
         }
     }
 }

@@ -33,7 +33,8 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<CurrentSectionChange>(OnCurrentSectionChange);
             Message.AddListener<GameStatusRequest>(OnGameStatusRequest);
             Message.AddListener<RunnerDie>(OnRunnerDie);
-            Message.AddListener<ChangeGameSpeed>(OnChangeGameSpeed);
+            Message.AddListener<RequestGameSpeedChange>(OnRequestGameSpeedChange);
+            Message.AddListener<GameSpeedRequest>(OnGameSpeedRequest);
         }
 
         void Start()
@@ -46,7 +47,8 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<CurrentSectionChange>(OnCurrentSectionChange);
             Message.RemoveListener<GameStatusRequest>(OnGameStatusRequest);
             Message.RemoveListener<RunnerDie>(OnRunnerDie);
-            Message.RemoveListener<ChangeGameSpeed>(OnChangeGameSpeed);
+            Message.RemoveListener<RequestGameSpeedChange>(OnRequestGameSpeedChange);
+            Message.RemoveListener<GameSpeedRequest>(OnGameSpeedRequest);
         }
 
         void OnCurrentSectionChange(CurrentSectionChange change)
@@ -71,15 +73,15 @@ namespace Ryzm.EndlessRunner
             Message.Send(new GameStatusResponse(status));
         }
 
-        void OnChangeGameSpeed(ChangeGameSpeed changeGameSpeed)
+        void OnRequestGameSpeedChange(RequestGameSpeedChange requestChangeSpeed)
         {
-            if(changeGameSpeed.lerpTime <= 0)
+            if(requestChangeSpeed.lerpTime <= 0)
             {
-                speed = changeGameSpeed.speed;
+                UpdateSpeed(requestChangeSpeed.speed);
             }
             else
             {
-                lerpGameSpeed = LerpGameSpeed(changeGameSpeed.speed, changeGameSpeed.lerpTime);
+                lerpGameSpeed = LerpGameSpeed(requestChangeSpeed.speed, requestChangeSpeed.lerpTime);
                 StartCoroutine(lerpGameSpeed);
             }
         }
@@ -90,11 +92,22 @@ namespace Ryzm.EndlessRunner
             float _time = 0;
             while(_time <= lerpTime)
             {
-                speed = Mathf.Lerp(speed, targetSpeed, _time / lerpTime);
+                UpdateSpeed(Mathf.Lerp(speed, targetSpeed, _time / lerpTime));
                 _time += Time.deltaTime;
             }
-            speed = targetSpeed;
+            UpdateSpeed(targetSpeed);
             yield break;
+        }
+
+        void UpdateSpeed(float newSpeed)
+        {
+            this.speed = newSpeed;
+            Message.Send(new GameSpeedResponse(newSpeed));
+        }
+
+        void OnGameSpeedRequest(GameSpeedRequest request)
+        {
+            UpdateSpeed(this.speed);
         }
     }
 

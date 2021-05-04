@@ -8,11 +8,12 @@ namespace Ryzm.EndlessRunner
     {
         private static EndlessPool _instance;
         public List<PoolItem> items = new List<PoolItem>();
-        public List<PooledItem> pooledSections = new List<PooledItem>();
         public List<BarrierPoolItem> barrierItems = new List<BarrierPoolItem>();
-        public List<PooledBarrierItem> pooledBarriers = new List<PooledBarrierItem>();
+        List<PooledItem> pooledSections = new List<PooledItem>();
+        List<PooledBarrierItem> pooledBarriers = new List<PooledBarrierItem>();
 
-        List<PooledBarrierItem> _pooledBarriers = new List<PooledBarrierItem>();
+        // contains only the barriers that an endless section could spawn
+        List<PooledBarrierItem> possiblePooledBarriers = new List<PooledBarrierItem>();
 
         public static EndlessPool Instance { get { return _instance; } }
 
@@ -84,21 +85,21 @@ namespace Ryzm.EndlessRunner
 
         GameObject GetRandom(List<PooledBarrierItem> pooledBarriers, List<BarrierPoolItem> possibleBarriers, List<BarrierType> types)
         {
-            _pooledBarriers.Clear();
+            possiblePooledBarriers.Clear();
             foreach(PooledBarrierItem item in pooledBarriers)
             {
                 if(types.Contains(item.type))
                 {
-                    _pooledBarriers.Add(item);
+                    possiblePooledBarriers.Add(item);
                 }
             }
 
-            EndlessUtils.Shuffle(_pooledBarriers);
-            for(int i = 0; i < _pooledBarriers.Count; i++)
+            EndlessUtils.Shuffle(possiblePooledBarriers);
+            for(int i = 0; i < possiblePooledBarriers.Count; i++)
             {
-                if(!_pooledBarriers[i].gameObject.activeInHierarchy)
+                if(!possiblePooledBarriers[i].gameObject.activeInHierarchy)
                 {
-                    return _pooledBarriers[i].gameObject;
+                    return possiblePooledBarriers[i].gameObject;
                 }
             }
 
