@@ -8,7 +8,11 @@ namespace Ryzm.EndlessRunner
     {
         private static EndlessPool _instance;
         public List<PoolItem> items = new List<PoolItem>();
-        public List<GameObject> pooledItems = new List<GameObject>();
+        public List<PooledItem> pooledSections = new List<PooledItem>();
+        public List<BarrierPoolItem> barrierItems = new List<BarrierPoolItem>();
+        public List<PooledBarrierItem> pooledBarriers = new List<PooledBarrierItem>();
+
+        List<PooledBarrierItem> _pooledBarriers = new List<PooledBarrierItem>();
 
         public static EndlessPool Instance { get { return _instance; } }
 
@@ -29,36 +33,93 @@ namespace Ryzm.EndlessRunner
                 {
                     GameObject obj = Instantiate(item.prefab);
                     obj.SetActive(false);
-                    pooledItems.Add(obj);
+                    pooledSections.Add(new PooledItem(obj));
+                }
+            }
+
+            foreach(BarrierPoolItem item in barrierItems)
+            {
+                for(int i = 0; i < item.amount; i++)
+                {
+                    GameObject obj = Instantiate(item.prefab);
+                    obj.SetActive(false);
+                    pooledBarriers.Add(new PooledBarrierItem(obj, item.type));
                 }
             }
         }
 
-        public GameObject GetRandom()
+        public GameObject GetRandomBarrier(List<BarrierType> types)
         {
-            Utils.Shuffle(pooledItems);
+            return GetRandom(pooledBarriers, barrierItems, types);
+        }
+
+        public GameObject GetRandomSection()
+        {
+            return GetRandom(pooledSections, items);
+        }
+
+        GameObject GetRandom(List<PooledItem> pooledItems, List<PoolItem> _items)
+        {
+            EndlessUtils.Shuffle(pooledItems);
             for(int i = 0; i < pooledItems.Count; i++)
             {
-                if(!pooledItems[i].activeInHierarchy)
+                if(!pooledItems[i].gameObject.activeInHierarchy)
                 {
-                    return pooledItems[i];
+                    return pooledItems[i].gameObject;
                 }
             }
-
-            foreach(PoolItem item in items)
+            
+            foreach(PoolItem item in _items)
             {
                 if(item.expandable)
                 {
                     GameObject obj = Instantiate(item.prefab);
                     obj.SetActive(false);
-                    pooledItems.Add(obj);
+                    pooledItems.Add(new PooledItem(obj));
                     return obj;
                 }
             }
-
             return null;
         }
 
+        GameObject GetRandom(List<PooledBarrierItem> pooledBarriers, List<BarrierPoolItem> possibleBarriers, List<BarrierType> types)
+        {
+            _pooledBarriers.Clear();
+            foreach(PooledBarrierItem item in pooledBarriers)
+            {
+                if(types.Contains(item.type))
+                {
+                    _pooledBarriers.Add(item);
+                }
+            }
+
+            EndlessUtils.Shuffle(_pooledBarriers);
+            for(int i = 0; i < _pooledBarriers.Count; i++)
+            {
+                if(!_pooledBarriers[i].gameObject.activeInHierarchy)
+                {
+                    return _pooledBarriers[i].gameObject;
+                }
+            }
+
+            foreach(BarrierPoolItem item in possibleBarriers)
+            {
+                if(item.expandable && types.Contains(item.type))
+                {
+                    GameObject obj = Instantiate(item.prefab);
+                    obj.SetActive(false);
+                    pooledBarriers.Add(new PooledBarrierItem(obj, item.type));
+                    return obj;
+                }
+            }
+            return null;
+        }
+    }
+
+    public enum ItemType
+    {
+        Section,
+        Barrier
     }
 
     [System.Serializable]
@@ -69,21 +130,35 @@ namespace Ryzm.EndlessRunner
         public bool expandable;
     }
 
-    public static class Utils
+    [System.Serializable]
+    public class BarrierPoolItem: PoolItem
     {
-        public static System.Random r = new System.Random();
-        public static void Shuffle<T>(this IList<T> list)
-        {
-            int n = list.Count;
-            while(n > 1)
-            {
-                n--;
-                int k = r.Next(n + 1);
-                T value = list[k];
-                list[k] = list[n];
-                list[n] = value;
-            }
-        }
-
+        public BarrierType type;
     }
+
+    [System.Serializable]
+    public class PooledItem 
+    {
+        public GameObject gameObject;
+
+        public PooledItem() {}
+
+        public PooledItem(GameObject gameObject)
+        {
+            this.gameObject = gameObject;
+        }
+    }
+
+    [System.Serializable]
+    public class PooledBarrierItem: PooledItem
+    {
+        public BarrierType type;
+
+        public PooledBarrierItem(GameObject gameObject, BarrierType type)
+        {
+            this.gameObject = gameObject;
+            this.type = type;
+        }
+    }
+
 }

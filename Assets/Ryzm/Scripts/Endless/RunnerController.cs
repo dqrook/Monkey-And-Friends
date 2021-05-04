@@ -27,33 +27,16 @@ namespace Ryzm.EndlessRunner
         bool inShift;
         IEnumerator shift;
         bool inJump;
+        EndlessSection _endlessSection;
+        EndlessTSection _endlessTSection;
 
-        void OnCollisionEnter(Collision other)
-        {
-            // Debug.Log(LayerMask.LayerToName(other.gameObject.layer) + " " + groundLayer);
-            if(other.gameObject.tag == "Fire")
-            {
-                isDead = true;
-                Die();
-            }
-            // else
-            // {
-            //     turned = false;
-            //     GameManager.Instance.CurrentPlatform = other.gameObject;
-            // }
-        }
-
-        void OnTriggerEnter(Collider other)
-        {
-            // if(other is BoxCollider && GenerateWorld.lastSpawnedPlatform.tag != "platformTSection")
-            // {
-            //     GenerateWorld.RunDummy();
-            // }
-            // if(other is SphereCollider)
-            // {
-            //     Debug.Log(other.name);
-            // }
-        }
+        // void OnCollisionEnter(Collision other)
+        // {
+        //     if(other.gameObject.tag == "Fire")
+        //     {
+        //         Die();
+        //     }
+        // }
 
 		protected override void Awake ()
 		{
@@ -72,23 +55,26 @@ namespace Ryzm.EndlessRunner
 			animator.runtimeAnimatorController = animatorController;
             player = this.gameObject;
             rb = GetComponent<Rigidbody>();
-            Message.AddListener<CurrentPlatformChange>(OnCurrentPlatformChange);
+            Message.AddListener<CurrentSectionChange>(OnCurrentSectionChange);
+            Message.AddListener<RunnerDie>(OnRunnerDie);
 		}
 
         void OnDestory()
         {
-            Message.RemoveListener<CurrentPlatformChange>(OnCurrentPlatformChange);
+            Message.RemoveListener<CurrentSectionChange>(OnCurrentSectionChange);
+            Message.RemoveListener<RunnerDie>(OnRunnerDie);
         }
 
-        void OnCurrentPlatformChange(CurrentPlatformChange change)
+        void OnCurrentSectionChange(CurrentSectionChange change)
         {
             turned = false;
+            _endlessSection = change.endlessSection;
+            _endlessTSection = change.endlessTSection;
         }
 
-        void Start()
+        void OnRunnerDie(RunnerDie runnerDie)
         {
-            GenerateWorld.RunDummy();
-            // GenerateWorld.RunDummy();
+            Die();
         }
         
         bool IsGrounded()
@@ -175,14 +161,14 @@ namespace Ryzm.EndlessRunner
         {
             if(!inShift && !inJump)
             {
-                if(GameManager.Instance.CurrentTSection != null)
+                if(_endlessTSection != null)
                 {
-                    GameManager.Instance.CurrentTSection.Shift(direction, this, turned);
+                    _endlessTSection.Shift(direction, this, turned);
                     turned = true;
                 }
                 else
                 {
-                    GameManager.Instance.CurrentSection.Shift(direction, this);
+                    _endlessSection.Shift(direction, this);
                 }
             }
         }
@@ -230,30 +216,72 @@ namespace Ryzm.EndlessRunner
             return type == ShiftDistanceType.x ? target.InverseTransformPoint(trans.position).x : target.InverseTransformPoint(trans.position).z;
         }
 
+        bool airAttacking;
         IEnumerator _airAttack;
         public void AirAttack()
         {
+            if(airAttacking)
+            {
+                return;
+            }
             _airAttack = _AirAttack();
             StartCoroutine(_airAttack);
         }
 
         IEnumerator _AirAttack()
         {
+            airAttacking = true;
             animator.SetTrigger("jump");
             rb.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
+            float _time = 0f;
+            float maxT = 0.4f;
+            float maxSpeed = 0.2f;
+            float targetSpeed = 0.1f;
+            while(_time < maxT)
+            {
+                _time += Time.deltaTime;
+                float ratio = _time / maxT * 1.1f;
+                ratio = ratio < 1 ? ratio : 1;
+                float speed = Mathf.Lerp(maxSpeed, targetSpeed, ratio); 
+                Message.Send(new ChangeGameSpeed(speed));
+                yield return null;
+            }
+            // Message.Send(new ChangeGameSpeed(targetSpeed, 0.4f));
+            Message.Send(new ChangeGameSpeed(targetSpeed));
+            animator.SetTrigger("airAttack");
             yield return new WaitForSeconds(0.4f);
-            animator.SetTrigger("attack");
+            Message.Send(new ChangeGameSpeed(0.2f, 0.2f));
+            _time = 0;
+            float timeGrounded = 0;
+            float cooldownTime = 0.15f;
+            while(timeGrounded < cooldownTime)
+            {
+                if(IsGrounded())
+                {
+                    timeGrounded += Time.deltaTime;
+                }
+                else
+                {
+                    timeGrounded = 0f;
+                }
+                _time += Time.deltaTime; 
+                yield return null;
+            }
+            Debug.Log("time not grounded: " + _time);
+            // yield return new WaitForSeconds(0.2f); // cooldown
+            airAttacking = false;
             yield break;
         }
 
         public void Attack()
         {
-            animator.SetTrigger("attack");
-            // AirAttack();
+            // animator.SetTrigger("attack");
+            AirAttack();
         }
 
         public void Die()
         {
+            isDead = true;
 			state = 2;
             StopAllCoroutines();
 		}

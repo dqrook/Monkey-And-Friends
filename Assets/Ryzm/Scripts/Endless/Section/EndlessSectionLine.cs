@@ -24,14 +24,13 @@ namespace Ryzm.EndlessRunner
             {
                 if(type == LineType.Start)
                 {
-                    Message.Send(new CurrentPlatformChange(section.gameObject));
-                    // GameManager.Instance.CurrentPlatform = other.gameObject;
+                    Message.Send(new CurrentSectionChange(section.gameObject));
                 }
                 else
                 {
-                    if(GenerateWorld.lastSpawnedPlatform.tag != "platformTSection")
+                    if(GenerateWorld.lastSpawnedSection.tag != "platformTSection")
                     {
-                        GenerateWorld.RunDummy();
+                        Message.Send(new CreateSection());
                     }
                     section.deactivate.Deactivate();
                 }

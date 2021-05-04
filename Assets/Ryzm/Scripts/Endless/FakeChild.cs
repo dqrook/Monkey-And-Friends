@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Ryzm.EndlessRunner.Messages;
+using CodeControl;
 
 namespace Ryzm.EndlessRunner
 {
@@ -15,6 +16,8 @@ namespace Ryzm.EndlessRunner
         Transform _transform;
         Transform _parentTransform;
         float initY;
+        EndlessSection currentSection;
+
         void Start()
         {
             if(runner != null)
@@ -29,14 +32,26 @@ namespace Ryzm.EndlessRunner
             prevPos = _transform.position;
             initY = pos.y;
         }
+
+        void OnEnable()
+        {
+            Message.AddListener<CurrentSectionChange>(OnCurrentSectionChange);
+        }
+
+        void OnDisable()
+        {
+            Message.RemoveListener<CurrentSectionChange>(OnCurrentSectionChange);
+        }
+
         void Update()
         {
             var newpos = _parentTransform.TransformPoint(pos);
             var newfw = _parentTransform.TransformDirection(fw);
-            EndlessSection currentSection = GameManager.Instance.CurrentSection;
             if(currentSection != null)
             {
-                currentPlatformPos = GameManager.Instance.CurrentSection.GetPosition(1).position;
+                currentPlatformPos = currentSection.GetPosition(1).position;
+                // todo: how to handle going on a curve?
+                // if we are going forward in the global z direction then we want to keep the global x location the same as the center of the platform
                 if(Mathf.Abs(newfw.z) > Mathf.Abs(newfw.x))
                 {
                     newpos.x = currentPlatformPos.x;
@@ -59,6 +74,11 @@ namespace Ryzm.EndlessRunner
             // abs(fw.z) > abs(fw.x) keep x the same
             // Debug.Log($"{newpos.x - prevPos.x}" + " " + $"{newpos.z - prevPos.z}" + $"{newfw} \t newpos: {newpos} \t currentPlatformpos: {currentPlatformPos}" + "");
             prevPos = newpos;
+        }
+
+        void OnCurrentSectionChange(CurrentSectionChange sectionChange)
+        {
+            currentSection = sectionChange.endlessSection;
         }
     }
 }

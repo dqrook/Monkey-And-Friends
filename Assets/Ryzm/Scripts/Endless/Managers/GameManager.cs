@@ -8,42 +8,13 @@ namespace Ryzm.EndlessRunner
 {
     public class GameManager : MonoBehaviour
     {
+        public GameStatus status = GameStatus.Active;
+        public float speed = 0.15f;
         public RunnerController runner;
         private static GameManager _instance;
         public static GameManager Instance { get { return _instance; } }
-        GameObject _currentPlatform;
         EndlessSection _currentSection;
         EndlessTSection _currentTSection;
-
-        public GameObject CurrentPlatform
-        {
-            get
-            {
-                return _currentPlatform;
-            }
-            set
-            {
-                _currentPlatform = value;
-                _currentTSection = _currentPlatform.GetComponent<EndlessTSection>();
-                _currentSection = _currentPlatform.GetComponent<EndlessSection>();
-            }
-        }
-
-        public EndlessSection CurrentSection
-        {
-            get
-            {
-                return _currentTSection != null ? _currentTSection : _currentSection;
-            }
-        }
-
-        public EndlessTSection CurrentTSection
-        {
-            get
-            {
-                return _currentTSection;
-            }
-        }
 
         void Awake()
         {
@@ -59,17 +30,78 @@ namespace Ryzm.EndlessRunner
             {
                 runner = FindObjectOfType<RunnerController>();
             }
-            Message.AddListener<CurrentPlatformChange>(OnCurrentPlatformChange);
+            Message.AddListener<CurrentSectionChange>(OnCurrentSectionChange);
+            Message.AddListener<GameStatusRequest>(OnGameStatusRequest);
+            Message.AddListener<RunnerDie>(OnRunnerDie);
+            Message.AddListener<ChangeGameSpeed>(OnChangeGameSpeed);
+        }
+
+        void Start()
+        {
+            Message.Send(new CreateSection());
         }
 
         void OnDestroy()
         {
-            Message.RemoveListener<CurrentPlatformChange>(OnCurrentPlatformChange);
+            Message.RemoveListener<CurrentSectionChange>(OnCurrentSectionChange);
+            Message.RemoveListener<GameStatusRequest>(OnGameStatusRequest);
+            Message.RemoveListener<RunnerDie>(OnRunnerDie);
+            Message.RemoveListener<ChangeGameSpeed>(OnChangeGameSpeed);
         }
 
-        void OnCurrentPlatformChange(CurrentPlatformChange change)
+        void OnCurrentSectionChange(CurrentSectionChange change)
         {
-            CurrentPlatform = change.platform;
+            _currentTSection = change.endlessTSection;
+            _currentSection = change.endlessSection;
         }
+
+        void OnRunnerDie(RunnerDie runnerDie)
+        {
+            UpdateGameStatus(GameStatus.Ended);
+        }
+
+        void OnGameStatusRequest(GameStatusRequest statusRequest)
+        {
+            UpdateGameStatus(status);
+        }
+
+        void UpdateGameStatus(GameStatus status)
+        {
+            this.status = status;
+            Message.Send(new GameStatusResponse(status));
+        }
+
+        void OnChangeGameSpeed(ChangeGameSpeed changeGameSpeed)
+        {
+            if(changeGameSpeed.lerpTime <= 0)
+            {
+                speed = changeGameSpeed.speed;
+            }
+            else
+            {
+                lerpGameSpeed = LerpGameSpeed(changeGameSpeed.speed, changeGameSpeed.lerpTime);
+                StartCoroutine(lerpGameSpeed);
+            }
+        }
+
+        IEnumerator lerpGameSpeed;
+        IEnumerator LerpGameSpeed(float targetSpeed, float lerpTime)
+        {
+            float _time = 0;
+            while(_time <= lerpTime)
+            {
+                speed = Mathf.Lerp(speed, targetSpeed, _time / lerpTime);
+                _time += Time.deltaTime;
+            }
+            speed = targetSpeed;
+            yield break;
+        }
+    }
+
+    public enum GameStatus
+    {
+        Active,
+        Paused,
+        Ended
     }
 }

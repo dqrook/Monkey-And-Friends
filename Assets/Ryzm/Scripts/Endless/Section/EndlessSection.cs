@@ -4,38 +4,27 @@ using UnityEngine;
 
 namespace Ryzm.EndlessRunner
 {
-    public class EndlessSection : MonoBehaviour
+    public class EndlessSection : EndlessScroller
     {
         public DeactivateSection deactivate;
-        public Transform[] obstacleSpawnLocations;
+        public List<SpawnLocation> barrierSpawnLocations = new List<SpawnLocation>();
+        
         [Header("Lane Positions")]
         public Transform position0;
         public Transform position1;
         public Transform position2;
-        Transform runner;
+        List<BarrierType> _possibleBarrierTypes = new List<BarrierType>();
 
-        void FixedUpdate()
+        public List<BarrierType> PossibleBarrierTypes
         {
-            if(runner == null)
+            get
             {
-                runner = RunnerController.player.transform;
-            }
-            if(RunnerController.isDead)
-            {
-                return;
-            }
-            this.transform.position += runner.forward * -0.1f;
-
-            if(GameManager.Instance.CurrentPlatform == null) return;
-
-            if(GameManager.Instance.CurrentPlatform.tag == "stairsUp") 
-            {
-                this.transform.Translate(0, -0.06f, 0);
-            }
-
-            if(GameManager.Instance.CurrentPlatform.tag == "stairsDown") 
-            {
-                this.transform.Translate(0, 0.06f, 0);
+                _possibleBarrierTypes.Clear();
+                foreach(SpawnLocation location in barrierSpawnLocations)
+                {
+                    _possibleBarrierTypes.Add(location.type);
+                }
+                return _possibleBarrierTypes;
             }
         }
 
@@ -52,6 +41,18 @@ namespace Ryzm.EndlessRunner
                 default:
                     return null;
             }
+        }
+
+        public Transform GetBarrierSpawnLocation(BarrierType type)
+        {
+            foreach(SpawnLocation location in barrierSpawnLocations)
+            {
+                if(location.type == type)
+                {
+                    return location.location;
+                }
+            }
+            return null;
         }
 
         public virtual void Shift(Direction direction, RunnerController controller)
@@ -77,5 +78,11 @@ namespace Ryzm.EndlessRunner
                 }
             }
         }
+    }
+    [System.Serializable]
+    public class SpawnLocation
+    {
+        public Transform location;
+        public BarrierType type;
     }
 }

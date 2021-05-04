@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Ryzm.EndlessRunner.Messages;
+using CodeControl;
 
 namespace Ryzm.EndlessRunner
 {
@@ -9,14 +11,6 @@ namespace Ryzm.EndlessRunner
         public EndlessSection section;
 
         bool dScheduled = false;
-        
-        // void OnCollisionExit(Collision player)
-        // {
-        //     if(player.gameObject.tag == "Player")
-        //     {
-        //         Deactivate();
-        //     }
-        // }
 
         public void Deactivate()
         {
@@ -29,6 +23,7 @@ namespace Ryzm.EndlessRunner
 
         void SetInactive()
         {
+            Message.Send(new SectionDeactivated(section));
             section.gameObject.SetActive(false);
             dScheduled = false;
         }

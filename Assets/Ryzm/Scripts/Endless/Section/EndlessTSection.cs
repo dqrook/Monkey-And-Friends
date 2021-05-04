@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Ryzm.EndlessRunner.Messages;
+using CodeControl;
 
 namespace Ryzm.EndlessRunner
 {
@@ -40,17 +42,17 @@ namespace Ryzm.EndlessRunner
                 {
                     trans.Rotate(Vector3.up * -90);
                     GenerateWorld.dummyTransform.forward = -trans.forward;
-                    GenerateWorld.RunDummy();
+                    Message.Send(new CreateSection());
+
                 }
                 else if(direction == Direction.Right)
                 {
                     trans.Rotate(Vector3.up * 90);
                     GenerateWorld.dummyTransform.forward = -trans.forward;
-                    GenerateWorld.RunDummy();
+                    Message.Send(new CreateSection());
                 }
                 turnDirection = direction;
                 Transform pos = GetPosition(1);
-                // controller.ShiftToPosition(pos, ShiftDistanceType.z);
                 float _shiftDistance = pos.InverseTransformPoint(trans.position).z;
                 trans.Translate(_shiftDistance, 0, 0);
                 controller.currentPosition = 1;
