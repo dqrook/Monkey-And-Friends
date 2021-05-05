@@ -1151,9 +1151,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9be5cd051b954ee999f56a9b484abc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnDistance: 10
   deactivate: {fileID: 3895325030188761976}
   barrierSpawnLocations:
-  - location: {fileID: 5490362020698768104}
+  - locations:
+    - {fileID: 5490362020698768104}
     type: 0
   position0: {fileID: 6970243670833775214}
   position1: {fileID: 5891064775475150035}

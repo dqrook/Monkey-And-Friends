@@ -6,6 +6,7 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessSection : EndlessScroller
     {
+        public int spawnDistance = 10;
         public DeactivateSection deactivate;
         public List<SpawnLocation> barrierSpawnLocations = new List<SpawnLocation>();
         
@@ -49,7 +50,12 @@ namespace Ryzm.EndlessRunner
             {
                 if(location.type == type)
                 {
-                    return location.location;
+                    if(location.locations.Length > 0)
+                    {
+                        EndlessUtils.Shuffle(location.locations);
+                        return location.locations[0];
+                    }
+                    break;
                 }
             }
             return null;
@@ -80,9 +86,9 @@ namespace Ryzm.EndlessRunner
         }
     }
     [System.Serializable]
-    public class SpawnLocation
+    public struct SpawnLocation
     {
-        public Transform location;
+        public Transform[] locations;
         public BarrierType type;
     }
 }

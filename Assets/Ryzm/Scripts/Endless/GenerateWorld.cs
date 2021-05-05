@@ -39,7 +39,17 @@ namespace Ryzm.EndlessRunner
 
         void OnCreateSection(CreateSection createSection)
         {
-            RunDummy();
+            if(createSection.numberOfSections <= 1)
+            {
+                RunDummy();
+            }
+            else
+            {
+                for(int i = 0; i < createSection.numberOfSections; i++)
+                {
+                    RunDummy();
+                }
+            }
         }
 
         void OnCreateBarrier(CreateBarrier createBarrier)
@@ -67,7 +77,7 @@ namespace Ryzm.EndlessRunner
             
             if(lastSpawnedSection != null)
             {
-                int move = lastSpawnedSection.tag == "platformTSection" ? 20 : 10;
+                int move = newSection.GetComponent<EndlessSection>().spawnDistance;
                 dummyTransform.position = lastSpawnedSection.transform.position + runnerTrans.forward * move;
                 if(lastSpawnedSection.tag == "stairsUp")
                 {
@@ -125,7 +135,7 @@ namespace Ryzm.EndlessRunner
 
         bool CanPlaceBarrier()
         {
-            return Random.Range(0, 4) < numberSectionsSinceBarrier;
+            return Random.Range(0, 2) < numberSectionsSinceBarrier;
         }
 
         void OnRunnerResponse(RunnerResponse response)

@@ -13,6 +13,7 @@ namespace Ryzm.EndlessRunner
         protected GameObject _currentSection;
         protected GameStatus gameStatus;
         protected float gameSpeed;
+        protected Transform trans;
 
         protected virtual void Awake()
         {
@@ -20,6 +21,7 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
             Message.AddListener<GameSpeedResponse>(OnGameSpeedResponse);
             Message.AddListener<RunnerResponse>(OnRunnerResponse);
+            trans = gameObject.transform;
         }
 
         protected virtual void OnEnable()
@@ -28,6 +30,8 @@ namespace Ryzm.EndlessRunner
             Message.Send(new GameSpeedRequest());
             Message.Send(new RunnerRequest());
         }
+
+        protected virtual void OnDisable() {}
 
         protected virtual void OnDestroy()
         {
@@ -63,7 +67,7 @@ namespace Ryzm.EndlessRunner
 
         protected virtual void MoveForward(float speed)
         {
-            this.transform.position += runnerTrans.forward * - speed;
+            trans.position += runnerTrans.forward * - speed;
         }
 
         protected void MoveInY()
@@ -72,12 +76,12 @@ namespace Ryzm.EndlessRunner
             {
                 if(_currentSection.tag == "stairsUp") 
                 {
-                    this.transform.Translate(0, -0.06f, 0);
+                    trans.Translate(0, -0.06f, 0);
                 }
 
                 if(_currentSection.tag == "stairsDown") 
                 {
-                    this.transform.Translate(0, 0.06f, 0);
+                    trans.Translate(0, 0.06f, 0);
                 }
             }
         }
