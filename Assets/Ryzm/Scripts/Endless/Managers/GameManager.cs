@@ -39,7 +39,7 @@ namespace Ryzm.EndlessRunner
 
         void Start()
         {
-            Message.Send(new CreateSection());
+            Message.Send(new CreateSectionRow());
         }
 
         void OnDestroy()

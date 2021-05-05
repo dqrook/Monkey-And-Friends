@@ -6,15 +6,17 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessPool : MonoBehaviour
     {
-        private static EndlessPool _instance;
-        public List<PoolItem> items = new List<PoolItem>();
-        public List<BarrierPoolItem> barrierItems = new List<BarrierPoolItem>();
-        List<PooledItem> pooledSections = new List<PooledItem>();
-        List<PooledBarrierItem> pooledBarriers = new List<PooledBarrierItem>();
+        public List<SectionPrefab> sectionPrefabs = new List<SectionPrefab>();
+        public List<BarrierPrefab> barrierPrefabs = new List<BarrierPrefab>();
+        
+        List<PooledSection> pooledSections = new List<PooledSection>();
+        List<PooledBarrier> pooledBarriers = new List<PooledBarrier>();
 
+        List<PooledSection> possiblePooledSections = new List<PooledSection>();
         // contains only the barriers that an endless section could spawn
-        List<PooledBarrierItem> possiblePooledBarriers = new List<PooledBarrierItem>();
+        List<PooledBarrier> possiblePooledBarriers = new List<PooledBarrier>();
 
+        private static EndlessPool _instance;
         public static EndlessPool Instance { get { return _instance; } }
 
         void Awake()
@@ -28,65 +30,74 @@ namespace Ryzm.EndlessRunner
                 _instance = this;
             }
 
-            foreach(PoolItem item in items)
+            foreach(SectionPrefab item in sectionPrefabs)
             {
                 for(int i = 0; i < item.amount; i++)
                 {
                     GameObject obj = Instantiate(item.prefab);
                     obj.SetActive(false);
-                    pooledSections.Add(new PooledItem(obj));
+                    pooledSections.Add(new PooledSection(obj));
                 }
             }
 
-            foreach(BarrierPoolItem item in barrierItems)
+            foreach(BarrierPrefab item in barrierPrefabs)
             {
                 for(int i = 0; i < item.amount; i++)
                 {
                     GameObject obj = Instantiate(item.prefab);
                     obj.SetActive(false);
-                    pooledBarriers.Add(new PooledBarrierItem(obj, item.type));
+                    pooledBarriers.Add(new PooledBarrier(obj, item.type));
                 }
             }
         }
 
         public GameObject GetRandomBarrier(List<BarrierType> types)
         {
-            return GetRandom(pooledBarriers, barrierItems, types);
+            return GetRandom(pooledBarriers, barrierPrefabs, types);
         }
 
-        public GameObject GetRandomSection()
+        public GameObject GetRandomSection(bool isTurn = false)
         {
-            return GetRandom(pooledSections, items);
+            return GetRandom(pooledSections, sectionPrefabs, isTurn);
         }
 
-        GameObject GetRandom(List<PooledItem> pooledItems, List<PoolItem> _items)
+        GameObject GetRandom(List<PooledSection> pooledSections, List<SectionPrefab> _items, bool isTurn)
         {
-            EndlessUtils.Shuffle(pooledItems);
-            for(int i = 0; i < pooledItems.Count; i++)
+            possiblePooledSections.Clear();
+            foreach(PooledSection item in pooledSections)
             {
-                if(!pooledItems[i].gameObject.activeInHierarchy)
+                if(item.isTurn == isTurn)
                 {
-                    return pooledItems[i].gameObject;
+                    possiblePooledSections.Add(item);
+                }
+            }
+
+            EndlessUtils.Shuffle(possiblePooledSections);
+            for(int i = 0; i < possiblePooledSections.Count; i++)
+            {
+                if(!possiblePooledSections[i].gameObject.activeInHierarchy)
+                {
+                    return possiblePooledSections[i].gameObject;
                 }
             }
             
-            foreach(PoolItem item in _items)
+            foreach(SectionPrefab item in _items)
             {
-                if(item.expandable)
+                if(item.expandable && item.isTurn == isTurn)
                 {
                     GameObject obj = Instantiate(item.prefab);
                     obj.SetActive(false);
-                    pooledItems.Add(new PooledItem(obj));
+                    pooledSections.Add(new PooledSection(obj));
                     return obj;
                 }
             }
             return null;
         }
 
-        GameObject GetRandom(List<PooledBarrierItem> pooledBarriers, List<BarrierPoolItem> possibleBarriers, List<BarrierType> types)
+        GameObject GetRandom(List<PooledBarrier> pooledBarriers, List<BarrierPrefab> possibleBarriers, List<BarrierType> types)
         {
             possiblePooledBarriers.Clear();
-            foreach(PooledBarrierItem item in pooledBarriers)
+            foreach(PooledBarrier item in pooledBarriers)
             {
                 if(types.Contains(item.type))
                 {
@@ -103,13 +114,13 @@ namespace Ryzm.EndlessRunner
                 }
             }
 
-            foreach(BarrierPoolItem item in possibleBarriers)
+            foreach(BarrierPrefab item in possibleBarriers)
             {
                 if(item.expandable && types.Contains(item.type))
                 {
                     GameObject obj = Instantiate(item.prefab);
                     obj.SetActive(false);
-                    pooledBarriers.Add(new PooledBarrierItem(obj, item.type));
+                    pooledBarriers.Add(new PooledBarrier(obj, item.type));
                     return obj;
                 }
             }
@@ -124,7 +135,7 @@ namespace Ryzm.EndlessRunner
     }
 
     [System.Serializable]
-    public class PoolItem
+    public abstract class ItemPrefab
     {
         public GameObject prefab;
         public int amount;
@@ -132,13 +143,19 @@ namespace Ryzm.EndlessRunner
     }
 
     [System.Serializable]
-    public class BarrierPoolItem: PoolItem
+    public class SectionPrefab: ItemPrefab
+    {
+        public bool isTurn;
+    }
+
+    [System.Serializable]
+    public class BarrierPrefab: ItemPrefab
     {
         public BarrierType type;
     }
 
     [System.Serializable]
-    public class PooledItem 
+    public abstract class PooledItem 
     {
         public GameObject gameObject;
 
@@ -151,11 +168,29 @@ namespace Ryzm.EndlessRunner
     }
 
     [System.Serializable]
-    public class PooledBarrierItem: PooledItem
+    public class PooledSection: PooledItem
+    {
+        public bool isTurn;
+
+        public PooledSection(GameObject gameObject)
+        {
+            this.gameObject = gameObject;
+            this.isTurn = false;
+        }
+
+        public PooledSection(GameObject gameObject, bool isTurn)
+        {
+            this.gameObject = gameObject;
+            this.isTurn = isTurn;
+        }
+    }
+
+    [System.Serializable]
+    public class PooledBarrier: PooledItem
     {
         public BarrierType type;
 
-        public PooledBarrierItem(GameObject gameObject, BarrierType type)
+        public PooledBarrier(GameObject gameObject, BarrierType type)
         {
             this.gameObject = gameObject;
             this.type = type;

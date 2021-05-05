@@ -42,14 +42,14 @@ namespace Ryzm.EndlessRunner
                 {
                     trans.Rotate(Vector3.up * -90);
                     GenerateWorld.dummyTransform.forward = -trans.forward;
-                    Message.Send(new CreateSection());
+                    Message.Send(new CreateSectionRow());
 
                 }
                 else if(direction == Direction.Right)
                 {
                     trans.Rotate(Vector3.up * 90);
                     GenerateWorld.dummyTransform.forward = -trans.forward;
-                    Message.Send(new CreateSection());
+                    Message.Send(new CreateSectionRow());
                 }
                 turnDirection = direction;
                 Transform pos = GetPosition(1);

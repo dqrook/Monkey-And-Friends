@@ -28,9 +28,13 @@ namespace Ryzm.EndlessRunner
                 }
                 else
                 {
-                    if(GenerateWorld.lastSpawnedSection.tag != "platformTSection")
+                    // if(GenerateWorld.lastSpawnedSection.tag != "platformTSection")
+                    // {
+                    //     Message.Send(new CreateSection());
+                    // }
+                    if(section.isLastSection)
                     {
-                        Message.Send(new CreateSection());
+                        Message.Send(new CreateSectionRow());
                     }
                     section.deactivate.Deactivate();
                 }

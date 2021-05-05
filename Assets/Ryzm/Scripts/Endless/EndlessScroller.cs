@@ -10,7 +10,8 @@ namespace Ryzm.EndlessRunner
     {
         protected RunnerController runner;
         protected Transform runnerTrans;
-        protected GameObject _currentSection;
+        protected GameObject _currentSectionGO;
+        protected EndlessSection _currentSection;
         protected GameStatus gameStatus;
         protected float gameSpeed;
         protected Transform trans;
@@ -52,7 +53,7 @@ namespace Ryzm.EndlessRunner
             MoveInY();
         }
 
-        protected bool CanMove()
+        protected virtual bool CanMove()
         {
             return gameStatus == GameStatus.Active;
         }
@@ -72,23 +73,24 @@ namespace Ryzm.EndlessRunner
 
         protected void MoveInY()
         {
-            if(_currentSection != null)
+            if(_currentSectionGO != null)
             {
-                if(_currentSection.tag == "stairsUp") 
+                if(_currentSectionGO.tag == "stairsUp") 
                 {
                     trans.Translate(0, -0.06f, 0);
                 }
 
-                if(_currentSection.tag == "stairsDown") 
+                if(_currentSectionGO.tag == "stairsDown") 
                 {
                     trans.Translate(0, 0.06f, 0);
                 }
             }
         }
 
-        void OnCurrentSectionChange(CurrentSectionChange sectionChange)
+        protected virtual void OnCurrentSectionChange(CurrentSectionChange sectionChange)
         {
-            _currentSection = sectionChange.section;
+            _currentSectionGO = sectionChange.section;
+            _currentSection = sectionChange.endlessSection;
         }
 
         void OnGameStatusResponse(GameStatusResponse gameStatusResponse)

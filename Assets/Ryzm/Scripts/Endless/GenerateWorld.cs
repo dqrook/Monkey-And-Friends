@@ -8,20 +8,28 @@ namespace Ryzm.EndlessRunner
 {
     public class GenerateWorld : MonoBehaviour
     {
+        public EndlessRow endlessRowPrefab;
+        public Transform startingSpawn;
         static public Transform dummyTransform;
         // last platform added
         static public GameObject lastSpawnedSection;
         int numberSectionsSinceBarrier;
         Transform runnerTrans;
         GameObject _currentSection;
+        EndlessRow currentRow;
 
         void Awake()
         {
+            if(startingSpawn == null)
+            {
+                startingSpawn = gameObject.transform;
+            }
             dummyTransform = new GameObject("dummy").transform;
             Message.AddListener<CreateSection>(OnCreateSection);
             Message.AddListener<CreateBarrier>(OnCreateBarrier);
             Message.AddListener<CurrentSectionChange>(OnCurrentSectionChange);
             Message.AddListener<RunnerResponse>(OnRunnerResponse);
+            Message.AddListener<CreateSectionRow>(OnCreateSectionRow);
         }
 
         void OnEnable()
@@ -35,38 +43,61 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<CreateBarrier>(OnCreateBarrier);
             Message.RemoveListener<CurrentSectionChange>(OnCurrentSectionChange);
             Message.RemoveListener<RunnerResponse>(OnRunnerResponse);
+            Message.RemoveListener<CreateSectionRow>(OnCreateSectionRow);
         }
 
         void OnCreateSection(CreateSection createSection)
         {
-            if(createSection.numberOfSections <= 1)
-            {
-                RunDummy();
-            }
-            else
-            {
-                for(int i = 0; i < createSection.numberOfSections; i++)
-                {
-                    RunDummy();
-                }
-            }
+            // CreateSections(createSection.numberOfSections);
         }
 
         void OnCreateBarrier(CreateBarrier createBarrier)
         {
-            _CreateBarrier();
+            // _CreateBarrier();
         }
 
         void OnCurrentSectionChange(CurrentSectionChange sectionChange)
         {
             _currentSection = sectionChange.section;
-            if(CanPlaceBarrier())
+            // if(CanPlaceBarrier())
+            // {
+            //     _CreateBarrier();
+            // }
+            // else
+            // {
+            //     numberSectionsSinceBarrier++;
+            // }
+        }
+
+        void OnCreateSectionRow(CreateSectionRow createSectionRow)
+        {
+            Transform spawnTransform = startingSpawn;
+            if(currentRow != null)
             {
-                _CreateBarrier();
+                spawnTransform = currentRow.FinalSpawn();
+            }
+            
+            currentRow = null;
+            currentRow = GameObject.Instantiate(endlessRowPrefab.gameObject).GetComponent<EndlessRow>();
+            currentRow.transform.position = spawnTransform.position;
+            currentRow.transform.rotation = spawnTransform.rotation;
+            currentRow.Initialize(createSectionRow.numberOfSections);
+
+            // CreateSections(createSectionRow.numberOfSections);
+        }
+
+        void CreateSections(int numberOfSections)
+        {
+            if(numberOfSections <= 1)
+            {
+                RunDummy();
             }
             else
             {
-                numberSectionsSinceBarrier++;
+                for(int i = 0; i < numberOfSections; i++)
+                {
+                    RunDummy();
+                }
             }
         }
 
@@ -126,7 +157,7 @@ namespace Ryzm.EndlessRunner
                 return;
             }
             
-            _barrier.section = _section;
+            _barrier.parentSection = _section;
             _barrier.transform.position = spawnLocation.position;
             _barrier.transform.rotation = spawnLocation.rotation;
             _barrier.gameObject.SetActive(true);

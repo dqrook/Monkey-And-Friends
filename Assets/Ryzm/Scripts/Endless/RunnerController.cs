@@ -12,7 +12,9 @@ namespace Ryzm.EndlessRunner
         public float jumpCooldown = 0.2f;
         public Transform rootTransform;
         public float distanceToGround = 0.7f;
+        public float distanceToBarriers = 2f;
 		public LayerMask groundLayer;
+        public LayerMask barrierLayer;
         public int currentPosition = 1;
         public RuntimeAnimatorController animatorController;
         public static GameObject player;
@@ -20,6 +22,7 @@ namespace Ryzm.EndlessRunner
         bool turned = false;
         RaycastHit hit;
         Ray checkGround;
+        Ray checkBarriers;
         int state = 0;
         Rigidbody rb;
         IEnumerator monitorJump;
@@ -83,9 +86,45 @@ namespace Ryzm.EndlessRunner
         
         bool IsGrounded()
         {
-            checkGround = new Ray (rootTransform.position, Vector3.down);
+            checkGround = new Ray(rootTransform.position, Vector3.down);
             bool grounded = Physics.Raycast(checkGround, out hit, distanceToGround, groundLayer);
             return grounded;
+        }
+
+        bool HasBarrier(Direction direction)
+        {
+            int sign = direction == Direction.Right ? 1 : -1;
+            Vector3 vec = trans.right * sign;
+
+            checkBarriers = new Ray(rootTransform.position, vec);
+            bool hasBarrier = Physics.Raycast(checkBarriers, out hit, distanceToBarriers, barrierLayer);
+
+            // Vector3 vector45 = Quaternion.Euler(0, -45 * sign, 0) * vec;
+            // if(!hasBarrier)
+            // {
+            //     checkBarriers = new Ray(rootTransform.position, vector45);
+            //     hasBarrier = Physics.Raycast(checkBarriers, out hit, distanceToBarriers * 1.4f, barrierLayer);
+            // }
+
+            Vector3 vector30 = Quaternion.Euler(0, -30 * sign, 0) * vec;
+            if(!hasBarrier)
+            {
+                checkBarriers = new Ray(rootTransform.position, vector30);
+                hasBarrier = Physics.Raycast(checkBarriers, out hit, distanceToBarriers * 1.15f, barrierLayer);
+            }
+
+            Vector3 vector15 = Quaternion.Euler(0, -15 * sign, 0) * vec;
+            if(!hasBarrier)
+            {
+                checkBarriers = new Ray(rootTransform.position, vector15);
+                hasBarrier = Physics.Raycast(checkBarriers, out hit, distanceToBarriers, barrierLayer);
+            }
+
+            // Debug.DrawRay(rootTransform.position, vector15 * distanceToBarriers, Color.red);
+            // Debug.DrawRay(rootTransform.position, vector30 * distanceToBarriers * 1.15f, Color.red);
+            // Debug.DrawRay(rootTransform.position, vector45 * distanceToBarriers * 1.4f, Color.red);
+            // Debug.DrawRay(rootTransform.position, vec * distanceToBarriers, Color.red);
+            return hasBarrier;
         }
 
         public void Jump()
@@ -108,6 +147,7 @@ namespace Ryzm.EndlessRunner
         protected override void Update()
         {
             bool isGrounded = IsGrounded();
+            // Debug.Log(HasBarrier(Direction.Right));
             // input.z = 1;
             // move = Vector3.zero;
 			animator.SetFloat("speed_z", 1);
@@ -165,6 +205,9 @@ namespace Ryzm.EndlessRunner
         {
             if(!inShift && !inJump)
             {
+                // if(!HasBarrier(direction))
+                // {
+                // }
                 if(_endlessTSection != null)
                 {
                     _endlessTSection.Shift(direction, this, turned);
