@@ -18,9 +18,13 @@ namespace Ryzm.EndlessRunner
             {
                 if(i > 0)
                 {
-                    trans = sections[i-1].nextSectionSpawn;
+                    trans = sections[i-1].NextSectionSpawn();
                 }
-                CreateSection(trans);
+                EndlessSection _section = CreateSection(trans, false);
+                if(_section != null)
+                {
+                    sections.Add(_section);
+                }
             }
             foreach(EndlessSection section in sections)
             {
@@ -33,21 +37,25 @@ namespace Ryzm.EndlessRunner
                     numberSectionsSinceBarrier++;
                 }
             }
-            sections[sections.Count - 1].isLastSection = true;
-            // todo: add a turn section
+            trans = sections[sections.Count - 1].NextSectionSpawn();
+            turnSection = CreateSection(trans, true);
+            if(turnSection == null)
+            {
+                sections[sections.Count - 1].isLastSection = true;
+            }
         }
 
-        void CreateSection(Transform spawnTransform)
+        EndlessSection CreateSection(Transform spawnTransform, bool isTurn)
         {
-            GameObject newSection = EndlessPool.Instance.GetRandomSection();
-            if(newSection == null) return;
+            GameObject newSection = EndlessPool.Instance.GetRandomSection(isTurn);
+            if(newSection == null) return null;
 
             newSection.transform.position = spawnTransform.position;
             newSection.transform.rotation = spawnTransform.rotation;
 
             EndlessSection _section = newSection.GetComponent<EndlessSection>();
             newSection.SetActive(true);
-            sections.Add(_section);
+            return _section;
         }
 
         void CreateBarrier(EndlessSection _section)
@@ -91,9 +99,9 @@ namespace Ryzm.EndlessRunner
         {
             if(turnSection != null)
             {
-                return turnSection.nextSectionSpawn;
+                return turnSection.NextSectionSpawn();
             }
-            return sections[sections.Count - 1].nextSectionSpawn;
+            return sections[sections.Count - 1].NextSectionSpawn();
         }
     }
 }

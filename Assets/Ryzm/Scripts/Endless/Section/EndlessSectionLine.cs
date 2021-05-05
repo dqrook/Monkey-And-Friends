@@ -28,10 +28,6 @@ namespace Ryzm.EndlessRunner
                 }
                 else
                 {
-                    // if(GenerateWorld.lastSpawnedSection.tag != "platformTSection")
-                    // {
-                    //     Message.Send(new CreateSection());
-                    // }
                     if(section.isLastSection)
                     {
                         Message.Send(new CreateSectionRow());

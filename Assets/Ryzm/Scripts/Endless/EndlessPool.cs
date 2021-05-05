@@ -36,7 +36,7 @@ namespace Ryzm.EndlessRunner
                 {
                     GameObject obj = Instantiate(item.prefab);
                     obj.SetActive(false);
-                    pooledSections.Add(new PooledSection(obj));
+                    pooledSections.Add(new PooledSection(obj, item.isTurn));
                 }
             }
 

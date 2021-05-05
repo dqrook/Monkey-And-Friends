@@ -39,6 +39,11 @@ namespace Ryzm.EndlessRunner
             isLastSection = false;
         }
 
+        public virtual Transform NextSectionSpawn()
+        {
+            return nextSectionSpawn;
+        }
+
         public virtual Transform GetPosition(int position)
         {
             switch(position)

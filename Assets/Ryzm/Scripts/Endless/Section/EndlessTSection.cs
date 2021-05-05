@@ -9,7 +9,7 @@ namespace Ryzm.EndlessRunner
     public class EndlessTSection : EndlessSection
     {
         /// <summary>
-        /// direction that the user turned in initially
+        /// direction that the user turned in
         /// </summary>
         public Direction turnDirection;
 
@@ -17,6 +17,22 @@ namespace Ryzm.EndlessRunner
         public Transform position3;
         public Transform position4;
         public Transform position5;
+
+        [Header("Right Spawn")]
+        public Transform rightNextSectionSpawn;
+
+        public override Transform NextSectionSpawn()
+        {
+            if(turnDirection == Direction.Left)
+            {
+                return nextSectionSpawn;
+            }
+            if(turnDirection == Direction.Right)
+            {
+                return rightNextSectionSpawn;
+            }
+            return null;
+        }
 
         public override Transform GetPosition(int position)
         {
@@ -38,20 +54,20 @@ namespace Ryzm.EndlessRunner
             if(!turned)
             {
                 Transform trans = controller.gameObject.transform;
+                turnDirection = direction;
                 if(direction == Direction.Left)
                 {
                     trans.Rotate(Vector3.up * -90);
-                    GenerateWorld.dummyTransform.forward = -trans.forward;
+                    // GenerateWorld.dummyTransform.forward = -trans.forward;
                     Message.Send(new CreateSectionRow());
 
                 }
                 else if(direction == Direction.Right)
                 {
                     trans.Rotate(Vector3.up * 90);
-                    GenerateWorld.dummyTransform.forward = -trans.forward;
+                    // GenerateWorld.dummyTransform.forward = -trans.forward;
                     Message.Send(new CreateSectionRow());
                 }
-                turnDirection = direction;
                 Transform pos = GetPosition(1);
                 float _shiftDistance = pos.InverseTransformPoint(trans.position).z;
                 trans.Translate(_shiftDistance, 0, 0);
