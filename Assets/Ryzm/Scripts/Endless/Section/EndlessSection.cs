@@ -8,16 +8,21 @@ namespace Ryzm.EndlessRunner
     {
         public DeactivateSection deactivate;
         public List<SpawnLocation> barrierSpawnLocations = new List<SpawnLocation>();
-        public bool isLastSection; // true
         /// <summary>
         /// Position where to spawn next section
         /// </summary>
         public Transform nextSectionSpawn; 
+        [Range(0, 1)]
+        public float barrierLikelihood = 0.5f;
         
         [Header("Lane Positions")]
         public Transform position0;
         public Transform position1;
         public Transform position2;
+        
+        [HideInInspector]
+        public bool isLastSection;
+        
         List<BarrierType> _possibleBarrierTypes = new List<BarrierType>();
 
         public List<BarrierType> PossibleBarrierTypes
@@ -64,28 +69,58 @@ namespace Ryzm.EndlessRunner
             {
                 if(location.type == type)
                 {
-                    if(location.locations.Length > 0)
+                    if(location.spawnTransforms.Length > 0)
                     {
-                        EndlessUtils.Shuffle(location.locations);
-                        return location.locations[0];
+                        EndlessUtils.Shuffle(location.spawnTransforms);
+                        return location.spawnTransforms[0].location;
                     }
-                    break;
                 }
             }
+            return null;
+        }
+
+        public SpawnLocation GetSpawnLocationForBarrier(BarrierType type)
+        {
+            foreach(SpawnLocation location in barrierSpawnLocations)
+            {
+                if(location.type == type)
+                {
+                    return location;
+                }
+            }
+            return new SpawnLocation();
+        }
+
+        public Transform GetSpawnTransformForBarrierPosition(BarrierType type, int position)
+        {
+            SpawnLocation loc = GetSpawnLocationForBarrier(type);
+            if(loc.spawnTransforms.Length == 0)
+            {
+                return null;
+            }
+            
+            foreach(SpawnTransform spawnTransform in loc.spawnTransforms)
+            {
+                if(spawnTransform.position == position)
+                {
+                    return spawnTransform.location;
+                }
+            }
+
             return null;
         }
 
         public virtual void Shift(Direction direction, RunnerController controller)
         {
             Transform trans = controller.gameObject.transform;
-            int currentPosition = controller.currentPosition;
+            int currentPosition = controller.CurrentPosition;
             if(direction == Direction.Left && currentPosition > 0)
             {
                 Transform pos = GetPosition(currentPosition - 1);
                 if(pos != null)
                 {
                     controller.ShiftToPosition(pos);
-                    controller.currentPosition--;
+                    controller.CurrentPosition--;
                 }
             }
             else if(direction == Direction.Right && currentPosition < 2)
@@ -94,7 +129,7 @@ namespace Ryzm.EndlessRunner
                 if(pos != null)
                 {
                     controller.ShiftToPosition(pos);
-                    controller.currentPosition++;
+                    controller.CurrentPosition++;
                 }
             }
         }
@@ -102,7 +137,14 @@ namespace Ryzm.EndlessRunner
     [System.Serializable]
     public struct SpawnLocation
     {
-        public Transform[] locations;
         public BarrierType type;
+        public SpawnTransform[] spawnTransforms;
+    }
+
+    [System.Serializable]
+    public struct SpawnTransform
+    {
+        public Transform location;
+        public int position;
     }
 }

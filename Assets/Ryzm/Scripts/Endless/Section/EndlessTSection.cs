@@ -71,7 +71,7 @@ namespace Ryzm.EndlessRunner
                 Transform pos = GetPosition(1);
                 float _shiftDistance = pos.InverseTransformPoint(trans.position).z;
                 trans.Translate(_shiftDistance, 0, 0);
-                controller.currentPosition = 1;
+                controller.CurrentPosition = 1;
             }
             else
             {
@@ -82,14 +82,14 @@ namespace Ryzm.EndlessRunner
         public override void Shift(Direction direction, RunnerController controller)
         {
             Transform trans = controller.gameObject.transform;
-            int currentPosition = controller.currentPosition;
+            int currentPosition = controller.CurrentPosition;
             if(direction == Direction.Left && currentPosition > 0)
             {
                 Transform pos = GetPosition(currentPosition - 1);
                 if(pos != null)
                 {
                     controller.ShiftToPosition(pos, ShiftDistanceType.z);
-                    controller.currentPosition--;
+                    controller.CurrentPosition--;
                 }
             }
             else if(direction == Direction.Right && currentPosition < 2)
@@ -98,7 +98,7 @@ namespace Ryzm.EndlessRunner
                 if(pos != null)
                 {
                     controller.ShiftToPosition(pos, ShiftDistanceType.z);
-                    controller.currentPosition++;
+                    controller.CurrentPosition++;
                 }
             }
         }

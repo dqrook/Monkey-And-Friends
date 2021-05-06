@@ -11,11 +11,20 @@ namespace Ryzm.EndlessRunner
         public BarrierType type;
         // the section that the barrier belongs to
         public EndlessSection parentSection;
+        public Transform[] spawnLocations;
+        protected int runnerPosition;
 
         protected override void Awake()
         {
             base.Awake();
             Message.AddListener<SectionDeactivated>(OnSectionDeactivated);
+            Message.AddListener<CurrentPositionResponse>(OnCurrentPositionResponse);
+        }
+        
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            Message.Send(new CurrentPositionRequest());
         }
 
         protected void OnCollisionEnter(Collision other)
@@ -27,6 +36,7 @@ namespace Ryzm.EndlessRunner
         {
             base.OnDestroy();
             Message.RemoveListener<SectionDeactivated>(OnSectionDeactivated);
+            Message.RemoveListener<CurrentPositionResponse>(OnCurrentPositionResponse);
         }
 
         protected virtual void OnSectionDeactivated(SectionDeactivated sectionDeactivated)
@@ -35,6 +45,11 @@ namespace Ryzm.EndlessRunner
             {
                 gameObject.SetActive(false);
             }
+        }
+
+        protected virtual void OnCurrentPositionResponse(CurrentPositionResponse response)
+        {
+            runnerPosition = response.position;
         }
     }
 

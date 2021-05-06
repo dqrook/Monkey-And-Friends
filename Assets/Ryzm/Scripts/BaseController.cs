@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Ryzm
+namespace Ryzm.Monkey
 {
     public class BaseController : MonoBehaviour
     {
@@ -17,6 +17,14 @@ namespace Ryzm
 
 		public Animator animator;
 
+		[Header("Monkey Emotion")]
+		public MonkeyEmotions emotions;	
+		public SkinnedMeshRenderer eyes;
+		public SkinnedMeshRenderer mouth;
+		public SkinnedMeshRenderer eyebrows;
+		public SkinnedMeshRenderer blush;
+
+		MonkeyEmotion currentEmotion = MonkeyEmotion.Happy;
 		protected Player playerInput;
 
 		protected float timeToIdle = 0f;
@@ -37,6 +45,11 @@ namespace Ryzm
 			trans = GetComponent<Transform> ();
 			ctrl = GetComponent<CharacterController> ();
 			playerInput = new Player();
+			if(emotions == null)
+			{
+				emotions = gameObject.GetComponent<MonkeyEmotions>();
+			}
+			ChangeEmotion(MonkeyEmotion.Happy);
 		}
 		
 		protected virtual void OnEnable()
@@ -47,6 +60,48 @@ namespace Ryzm
 		protected virtual void OnDisable()
 		{
 			playerInput.Disable();
+		}
+
+		protected virtual void ChangeEmotion(MonkeyEmotion emotion)
+		{
+			if(emotions == null)
+			{
+				return;
+			}
+			
+			MonkeyEmotionPrefab emotionPrefab = emotions.GetEmotion(emotion);
+			if(emotionPrefab == null)
+			{
+				return;
+			}
+			
+			Material _eyes = emotionPrefab.eyes;
+			if(_eyes != null)
+			{
+				eyes.material = _eyes;
+			}
+
+			Material _mouth = emotionPrefab.mouth;
+			if(_mouth != null)
+			{
+				mouth.material = _mouth;
+			}
+			
+			Material _eyebrows = emotionPrefab.eyebrows;
+			if(_eyebrows != null)
+			{
+				eyebrows.material = _eyebrows;
+			}
+			eyebrows.gameObject.SetActive(_eyebrows != null);
+
+			Material _blush = emotionPrefab.blush;
+			if(_blush != null)
+			{
+				blush.material = _blush;
+			}
+			blush.gameObject.SetActive(_blush != null);
+			
+			currentEmotion = emotion;
 		}
 
         protected virtual void GetMovement()
@@ -149,27 +204,13 @@ namespace Ryzm
 
 		public virtual void SwitchAttackType()
         {
-			if (attackType == 0) {
+			if (attackType == 0) 
+			{
 				attackType = 1;
-			} else {
+			} else 
+			{
 				attackType = 0;
 			}		
-		}
-
-		public virtual string GetAttackType(string pre_text)
-        {
-			string tmp = pre_text;
-
-			switch (attackType) {
-			case 0:
-				tmp += "Melee";
-				break;
-			case 1:
-				tmp += "Range";
-				break;
-			}
-
-			return tmp;
 		}
     }
 }

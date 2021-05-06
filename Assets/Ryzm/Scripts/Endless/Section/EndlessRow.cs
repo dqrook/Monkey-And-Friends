@@ -28,7 +28,7 @@ namespace Ryzm.EndlessRunner
             }
             foreach(EndlessSection section in sections)
             {
-                if(CanPlaceBarrier())
+                if(CanPlaceBarrier(section.barrierLikelihood))
                 {
                     CreateBarrier(section);
                 }
@@ -90,9 +90,10 @@ namespace Ryzm.EndlessRunner
             numberSectionsSinceBarrier = 0;
         }
 
-        bool CanPlaceBarrier()
+        bool CanPlaceBarrier(float barrierLikelihood)
         {
-            return Random.Range(0, 2) < numberSectionsSinceBarrier;
+            return Random.Range(0, 1f) < barrierLikelihood;
+            // return Random.Range(0, 2) < numberSectionsSinceBarrier;
         }
 
         public Transform FinalSpawn()

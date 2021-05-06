@@ -34,7 +34,7 @@ namespace Ryzm.EndlessRunner
         {
             // Debug.Log(other.tag);
             collisionTime += Time.deltaTime;
-            if(collisionTime > Time.deltaTime * 5)
+            if(collisionTime > Time.deltaTime * 3)
             {
                 Message.Send(new RunnerDie());
             }

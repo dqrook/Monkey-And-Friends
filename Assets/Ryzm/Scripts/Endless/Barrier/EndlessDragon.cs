@@ -21,8 +21,8 @@ namespace Ryzm.EndlessRunner
             if(childTransform == null)
             {
                 childTransform = GetComponentInChildren<Transform>();
-                childGO = childTransform.gameObject;
             }
+            childGO = childTransform.gameObject;
             initialPosition = childTransform.localPosition;
             initialEulerAngles = childTransform.localEulerAngles;
             if(animator == null)
@@ -31,40 +31,44 @@ namespace Ryzm.EndlessRunner
             }
         }
 
-        protected override bool CanMove()
-        {
-            bool canMove = base.CanMove();
-            if(!canMove)
-            {
-                return false;
-            }
-            return parentSection == _currentSection;
-        }
-
         protected override void FixedUpdate()
         {
             if(!CanMove())
             {
-                if(childGO.activeSelf)
-                {
-                    childGO.SetActive(false);
-                }
                 return;
             }
-            else if(!childGO.activeSelf)
-            {
-                childTransform.gameObject.SetActive(true);
-            }
-            
+
             GetRunner();
-            float dragonSpeed = GameManager.Instance.speed;
-            MoveForward(dragonSpeed);
+            MoveForward(GameManager.Instance.speed);
             MoveInY();
+
             if(!startedCoroutine)
             {
-                _flyToPosition = FlyToPosition();
-                StartCoroutine(_flyToPosition);
+                childGO.SetActive(parentSection == _currentSection);
+                if(parentSection != _currentSection)
+                {
+                    return;
+                }
+                else
+                {
+                    Transform location = parentSection.GetSpawnTransformForBarrierPosition(BarrierType.Dragon, runnerPosition);
+                    if(location != null)
+                    {
+                        Vector3 init = gameObject.transform.position;
+                        gameObject.transform.position = location.position;
+                        gameObject.transform.rotation = location.rotation;
+                    }
+                    _flyToPosition = FlyToPosition();
+                    StartCoroutine(_flyToPosition);
+                }
             }
+            
+            // if(!startedCoroutine)
+            // {
+            //     childGO.SetActive(true);
+            //     _flyToPosition = FlyToPosition();
+            //     StartCoroutine(_flyToPosition);
+            // }
         }
 
         IEnumerator FlyToPosition()

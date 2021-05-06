@@ -128,12 +128,6 @@ namespace Ryzm.EndlessRunner
         }
     }
 
-    public enum ItemType
-    {
-        Section,
-        Barrier
-    }
-
     [System.Serializable]
     public abstract class ItemPrefab
     {
@@ -196,5 +190,4 @@ namespace Ryzm.EndlessRunner
             this.type = type;
         }
     }
-
 }

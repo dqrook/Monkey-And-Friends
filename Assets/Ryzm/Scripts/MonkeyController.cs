@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Ryzm
+namespace Ryzm.Monkey
 {
     public class MonkeyController : BaseController
     {

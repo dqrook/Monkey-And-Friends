@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Ryzm.EndlessRunner.Messages;
 using CodeControl;
+using Ryzm.Monkey;
 
 namespace Ryzm.EndlessRunner
 {
@@ -15,9 +16,8 @@ namespace Ryzm.EndlessRunner
         public float distanceToBarriers = 2f;
 		public LayerMask groundLayer;
         public LayerMask barrierLayer;
-        public int currentPosition = 1;
+        public int _currentPosition = 1;
         public RuntimeAnimatorController animatorController;
-        public static GameObject player;
         // turned is set to true when on a TSection and the user has decided which direction they would like to go
         bool turned = false;
         RaycastHit hit;
@@ -31,6 +31,19 @@ namespace Ryzm.EndlessRunner
         bool inJump;
         EndlessSection _endlessSection;
         EndlessTSection _endlessTSection;
+
+        public int CurrentPosition
+        {
+            get
+            {
+                return _currentPosition;
+            }
+            set
+            {
+                _currentPosition = value;
+                Message.Send(new CurrentPositionResponse(value));
+            }
+        }
 
 		protected override void Awake ()
 		{
@@ -47,11 +60,11 @@ namespace Ryzm.EndlessRunner
 			}
 
 			animator.runtimeAnimatorController = animatorController;
-            player = this.gameObject;
             rb = GetComponent<Rigidbody>();
             Message.AddListener<CurrentSectionChange>(OnCurrentSectionChange);
             Message.AddListener<RunnerDie>(OnRunnerDie);
             Message.AddListener<RunnerRequest>(OnRunnerRequest);
+            Message.AddListener<CurrentPositionRequest>(OnCurrentPositionRequest);
 		}
 
         protected override void OnEnable()
@@ -65,6 +78,7 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<CurrentSectionChange>(OnCurrentSectionChange);
             Message.RemoveListener<RunnerDie>(OnRunnerDie);
             Message.RemoveListener<RunnerRequest>(OnRunnerRequest);
+            Message.RemoveListener<CurrentPositionRequest>(OnCurrentPositionRequest);
         }
 
         void OnCurrentSectionChange(CurrentSectionChange change)
@@ -82,6 +96,11 @@ namespace Ryzm.EndlessRunner
         void OnRunnerRequest(RunnerRequest request)
         {
             Message.Send(new RunnerResponse(this));
+        }
+
+        void OnCurrentPositionRequest(CurrentPositionRequest request)
+        {
+            Message.Send(new CurrentPositionResponse(CurrentPosition));
         }
         
         bool IsGrounded()
@@ -277,11 +296,12 @@ namespace Ryzm.EndlessRunner
 
         IEnumerator _AirAttack()
         {
+            ChangeEmotion(MonkeyEmotion.Focused);
             airAttacking = true;
             animator.SetTrigger("jump");
             rb.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
             float _time = 0f;
-            float maxT = 0.4f;
+            float maxT = 0.45f;
             float maxSpeed = 0.2f;
             float targetSpeed = 0.1f;
             while(_time < maxT)
@@ -296,6 +316,7 @@ namespace Ryzm.EndlessRunner
             // Message.Send(new ChangeGameSpeed(targetSpeed, 0.4f));
             Message.Send(new RequestGameSpeedChange(targetSpeed));
             animator.SetTrigger("airAttack");
+            ChangeEmotion(MonkeyEmotion.Angry);
             yield return new WaitForSeconds(0.4f);
             Message.Send(new RequestGameSpeedChange(0.2f, 0.2f));
             _time = 0;
@@ -314,9 +335,12 @@ namespace Ryzm.EndlessRunner
                 _time += Time.deltaTime; 
                 yield return null;
             }
+            ChangeEmotion(MonkeyEmotion.Focused);
             Debug.Log("time not grounded: " + _time);
             // yield return new WaitForSeconds(0.2f); // cooldown
             airAttacking = false;
+            yield return new WaitForSeconds(0.5f);
+            ChangeEmotion(MonkeyEmotion.Happy);
             yield break;
         }
 
