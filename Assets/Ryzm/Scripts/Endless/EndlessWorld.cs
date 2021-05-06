@@ -6,7 +6,7 @@ using Ryzm.EndlessRunner.Messages;
 
 namespace Ryzm.EndlessRunner
 {
-    public class GenerateWorld : MonoBehaviour
+    public class EndlessWorld : MonoBehaviour
     {
         public EndlessRow endlessRowPrefab;
         public Transform startingSpawn;
