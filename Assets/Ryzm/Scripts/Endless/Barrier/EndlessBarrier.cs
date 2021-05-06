@@ -29,7 +29,7 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<SectionDeactivated>(OnSectionDeactivated);
         }
 
-        void OnSectionDeactivated(SectionDeactivated sectionDeactivated)
+        protected virtual void OnSectionDeactivated(SectionDeactivated sectionDeactivated)
         {
             if(sectionDeactivated.section == parentSection)
             {
@@ -41,6 +41,7 @@ namespace Ryzm.EndlessRunner
     public enum BarrierType
     {
         Fire,
-        Dragon
+        Dragon,
+        InstantFire
     }
 }

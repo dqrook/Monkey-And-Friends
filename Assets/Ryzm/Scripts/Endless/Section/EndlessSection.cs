@@ -6,7 +6,6 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessSection : EndlessScroller
     {
-        public int spawnDistance = 10;
         public DeactivateSection deactivate;
         public List<SpawnLocation> barrierSpawnLocations = new List<SpawnLocation>();
         public bool isLastSection; // true

@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 6248956804477369852}
   - component: {fileID: 6202127457284125668}
   - component: {fileID: 8592109480048775370}
-  - component: {fileID: 4100565079415123382}
+  - component: {fileID: -8641444949073629109}
   m_Layer: 10
-  m_Name: Fire Barrier
+  m_Name: Instant Fire
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -63,7 +63,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 5, y: 1.25, z: 0.5}
   m_Center: {x: 0, y: 0.5, z: 0}
---- !u!114 &4100565079415123382
+--- !u!114 &-8641444949073629109
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -72,13 +72,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2303393656533570972}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00bb012cd5a444a8089bf9f9291e54e2, type: 3}
+  m_Script: {fileID: 11500000, guid: f0c5037ac3fda40f3b32eb4a666872c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 0
+  type: 2
   parentSection: {fileID: 0}
-  part: {fileID: 6310922106297560078}
-  _collider: {fileID: 0}
 --- !u!1 &6310922106297560076
 GameObject:
   m_ObjectHideFlags: 0
@@ -127,7 +125,7 @@ ParticleSystem:
   ringBufferLoopRange: {x: 0, y: 1}
   looping: 1
   prewarm: 0
-  playOnAwake: 0
+  playOnAwake: 1
   useUnscaledTime: 0
   autoRandomSeed: 1
   useRigidbodyForVelocity: 1
