@@ -8,46 +8,71 @@ namespace Ryzm.EndlessRunner
     {
         public List<EndlessSection> sections = new List<EndlessSection>();
         // also have a single EndlessTurnSection (which will inherit from EndlessSection)
-        EndlessSection turnSection;
-        int numberSectionsSinceBarrier;
+        public EndlessSection turnSection;
 
         public void Initialize(int numberOfSections)
         {
             Transform trans = gameObject.transform;
-            for(int i = 0; i < numberOfSections; i++)
+
+            // only create sections if none provided
+            if(sections.Count == 0)
             {
-                if(i > 0)
+                for(int i = 0; i < numberOfSections; i++)
                 {
-                    trans = sections[i-1].NextSectionSpawn();
-                }
-                EndlessSection _section = CreateSection(trans, false);
-                if(_section != null)
-                {
-                    sections.Add(_section);
+                    if(i > 0)
+                    {
+                        trans = sections[i-1].NextSectionSpawn();
+                    }
+                    EndlessSection _section = CreateSection(trans, false);
+                    if(_section != null)
+                    {
+                        sections.Add(_section);
+                    }
                 }
             }
+            else
+            {
+                numberOfSections = sections.Count;
+                for(int i = 0; i < numberOfSections; i++)
+                {
+                    if(i > 0)
+                    {
+                        trans = sections[i-1].NextSectionSpawn();
+                    }
+                    CreateSection(trans, false, sections[i].gameObject);
+                }
+            }
+
             foreach(EndlessSection section in sections)
             {
                 if(CanPlaceBarrier(section.barrierLikelihood))
                 {
                     CreateBarrier(section);
                 }
-                else
-                {
-                    numberSectionsSinceBarrier++;
-                }
             }
+
             trans = sections[sections.Count - 1].NextSectionSpawn();
-            turnSection = CreateSection(trans, true);
+            if(turnSection == null)
+            {
+                turnSection = CreateSection(trans, true);
+            }
+            else
+            {
+                CreateSection(trans, true, turnSection.gameObject);
+            }
+
             if(turnSection == null)
             {
                 sections[sections.Count - 1].isLastSection = true;
             }
         }
 
-        EndlessSection CreateSection(Transform spawnTransform, bool isTurn)
+        EndlessSection CreateSection(Transform spawnTransform, bool isTurn, GameObject newSection = null)
         {
-            GameObject newSection = EndlessPool.Instance.GetRandomSection(isTurn);
+            if(newSection == null)
+            {
+                newSection = EndlessPool.Instance.GetRandomSection(isTurn);
+            }
             if(newSection == null) return null;
 
             newSection.transform.position = spawnTransform.position;
@@ -87,13 +112,11 @@ namespace Ryzm.EndlessRunner
             _barrier.transform.position = spawnLocation.position;
             _barrier.transform.rotation = spawnLocation.rotation;
             _barrier.gameObject.SetActive(true);
-            numberSectionsSinceBarrier = 0;
         }
 
         bool CanPlaceBarrier(float barrierLikelihood)
         {
             return Random.Range(0, 1f) < barrierLikelihood;
-            // return Random.Range(0, 2) < numberSectionsSinceBarrier;
         }
 
         public Transform FinalSpawn()

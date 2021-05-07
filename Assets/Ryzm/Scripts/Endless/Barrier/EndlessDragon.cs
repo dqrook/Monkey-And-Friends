@@ -62,13 +62,6 @@ namespace Ryzm.EndlessRunner
                     StartCoroutine(_flyToPosition);
                 }
             }
-            
-            // if(!startedCoroutine)
-            // {
-            //     childGO.SetActive(true);
-            //     _flyToPosition = FlyToPosition();
-            //     StartCoroutine(_flyToPosition);
-            // }
         }
 
         IEnumerator FlyToPosition()

@@ -8,9 +8,12 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessWorld : MonoBehaviour
     {
-        public EndlessRow endlessRowPrefab;
+        public List<EndlessRowPrefab> endlessRowPrefabs = new List<EndlessRowPrefab>();
+        public List<string> prefabOrder = new List<string>();
         public Transform startingSpawn;
-        EndlessRow currentRow;
+        EndlessRowPrefab currentRow;
+        int prefabIndex;
+        EndlessRowPrefab defaultPrefab;
 
         void Awake()
         {
@@ -19,6 +22,18 @@ namespace Ryzm.EndlessRunner
                 startingSpawn = gameObject.transform;
             }
             Message.AddListener<CreateSectionRow>(OnCreateSectionRow);
+            if(prefabOrder.Count == 0)
+            {
+                prefabOrder.Add("default");
+            }
+            foreach(EndlessRowPrefab prefab in endlessRowPrefabs)
+            {
+                if(prefab.id == "default")
+                {
+                    defaultPrefab = prefab;
+                    break;
+                }
+            }
         }
 
         void OnDestroy()
@@ -29,17 +44,53 @@ namespace Ryzm.EndlessRunner
         void OnCreateSectionRow(CreateSectionRow createSectionRow)
         {
             Transform spawnTransform = startingSpawn;
-            if(currentRow != null)
+            if(currentRow != null && currentRow.row != null)
             {
-                spawnTransform = currentRow.FinalSpawn();
+                spawnTransform = currentRow.row.FinalSpawn();
             }
+            string prefabType = prefabOrder[prefabIndex];
             
-            currentRow = null;
-            currentRow = GameObject.Instantiate(endlessRowPrefab.gameObject).GetComponent<EndlessRow>();
-            currentRow.transform.position = spawnTransform.position;
-            currentRow.transform.rotation = spawnTransform.rotation;
-            currentRow.Initialize(createSectionRow.numberOfSections);
+            // cant place the same row one after each other
+            if(currentRow != null && prefabType == currentRow.id)
+            {
+                prefabType = "default";
+            }
+            currentRow = GetPrefab(prefabType);
+            
+            if(currentRow.id == "default" || currentRow.row == null)
+            {
+                currentRow.row = GameObject.Instantiate(currentRow.rowPrefab).GetComponent<EndlessRow>();
+            }
+
+            currentRow.row.transform.position = spawnTransform.position;
+            currentRow.row.transform.rotation = spawnTransform.rotation;
+            currentRow.row.Initialize(createSectionRow.numberOfSections);
+            prefabIndex = prefabIndex < endlessRowPrefabs.Count - 1 ? prefabIndex + 1 : 0;
         }
+
+        EndlessRowPrefab GetPrefab(string type)
+        {
+            if(type == "default")
+            {
+                return defaultPrefab;
+            }
+            foreach(EndlessRowPrefab fab in endlessRowPrefabs)
+            {
+                if(fab.id == type)
+                {
+                    return fab;
+                }
+            }
+            return defaultPrefab;
+        }
+    }
+
+    [System.Serializable]
+    public class EndlessRowPrefab 
+    {
+        public EndlessRow rowPrefab;
+        public string id;
+        public EndlessRow row;
     }
 }
 
