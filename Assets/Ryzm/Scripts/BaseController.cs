@@ -192,6 +192,12 @@ namespace Ryzm.Monkey
 			ctrl.Move (move * Time.deltaTime);
 		}
 
+		protected virtual void UpdateMove(Vector3 move)
+		{
+			this.move = move;
+			UpdateMove();
+		}
+
 		protected virtual void AddImpact(Vector3 dir,float force)
         {
 			dir.Normalize ();

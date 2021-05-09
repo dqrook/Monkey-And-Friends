@@ -31,6 +31,7 @@ namespace Ryzm.EndlessRunner
         bool inJump;
         EndlessSection _endlessSection;
         EndlessTSection _endlessTSection;
+        GameStatus gameStatus;
 
         public int CurrentPosition
         {
@@ -65,12 +66,14 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<RunnerDie>(OnRunnerDie);
             Message.AddListener<RunnerRequest>(OnRunnerRequest);
             Message.AddListener<CurrentPositionRequest>(OnCurrentPositionRequest);
+            Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
 		}
 
         protected override void OnEnable()
         {
             base.OnEnable();
             Message.Send(new RunnerResponse(this));
+            Message.Send(new GameStatusRequest());
         }
 
         void OnDestory()
@@ -79,6 +82,7 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<RunnerDie>(OnRunnerDie);
             Message.RemoveListener<RunnerRequest>(OnRunnerRequest);
             Message.RemoveListener<CurrentPositionRequest>(OnCurrentPositionRequest);
+            Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
         }
 
         void OnCurrentSectionChange(CurrentSectionChange change)
@@ -101,6 +105,11 @@ namespace Ryzm.EndlessRunner
         void OnCurrentPositionRequest(CurrentPositionRequest request)
         {
             Message.Send(new CurrentPositionResponse(CurrentPosition));
+        }
+
+        void OnGameStatusResponse(GameStatusResponse response)
+        {
+            gameStatus = response.status;
         }
         
         bool IsGrounded()
@@ -152,6 +161,7 @@ namespace Ryzm.EndlessRunner
             Jump(isGrounded);
         }
 
+        float jumpVelocity;
         public void Jump(bool isGrounded)
         {
             if(!inJump && isGrounded)
@@ -159,12 +169,63 @@ namespace Ryzm.EndlessRunner
                 monitorJump = MonitorJump();
                 StartCoroutine(monitorJump);
                 animator.SetTrigger("jump");
+				// AddImpact(Vector3.up, jumpPower);
+                // Vector3 vel = rb.velocity;
+                // vel.y = 10;
+                // rb.velocity = vel;
                 rb.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
+                // jumpVelocity = 10;
             }
         }
+
+        // void FixedUpdate()
+        // {
+        //     if(gameStatus != GameStatus.Active)
+        //     {
+        //         return;
+        //     }
+        //     // rb.MovePosition(trans.position + trans.forward * forwardSpeed * Time.deltaTime);
+        //     move = trans.forward * forwardSpeed;
+        //     if(shiftSpeed != 0 && inShift)
+        //     {
+        //         move += trans.right * shiftSpeed * forwardSpeed * 0.75f ;
+        //     }
+        //     move *= Time.fixedDeltaTime;
+        //     move += trans.position;
+        //     UpdateMove(move);
+        //     // rb.AddForce(move, ForceMode.VelocityChange);
+        //     // Debug.Log(rb.velocity);
+        // }
         
         protected override void Update()
         {
+            animator.SetInteger("state", state);
+            if(gameStatus != GameStatus.Active)
+            {
+                return;
+            }
+            // move = trans.forward * forwardSpeed;
+            // ctrl.Move(move * Time.deltaTime);
+            // trans.position += trans.forward * GameManager.Instance.speed * 0.4f;
+            // trans.Translate(0, 0, 0.4f * GameManager.Instance.speed);
+            // if(!IsGrounded())
+            // {
+            //     jumpVelocity -= Time.deltaTime * Physics.gravity.y;
+            // }
+            // else
+            // {
+            //     jumpVelocity = 0;
+            // }
+            move.z = Time.deltaTime * forwardSpeed;
+            move.y = 0;
+            // trans.Translate(0, jumpVelocity * Time.deltaTime, Time.deltaTime * forwardSpeed);
+            move.x = shiftSpeed * forwardSpeed * 0.75f * Time.deltaTime;
+            trans.Translate(move);
+            // if(shiftSpeed != 0)
+            // {
+
+            // }
+            
             bool isGrounded = IsGrounded();
             // Debug.Log(HasBarrier(Direction.Right));
             // input.z = 1;
@@ -172,7 +233,6 @@ namespace Ryzm.EndlessRunner
 			animator.SetFloat("speed_z", 1);
 			animator.SetFloat("speed_x", 0);
 			animator.SetBool("is_grounded", isGrounded);
-            animator.SetInteger("state", state);
             
             if(IsShifting(Direction.Left))
             {
@@ -191,6 +251,28 @@ namespace Ryzm.EndlessRunner
             {
                 Attack();
             }
+            // move = new Vector3(0, 0, forwardSpeed);
+            // UpdateImpact();
+            // UpdateMove();
+        }
+        
+        protected override void UpdateImpact()
+        {
+            if(!IsGrounded())
+            {
+                impact += Physics.gravity * gravity_multiplier * Time.deltaTime;
+            }
+            impact = Vector3.Lerp(impact, Vector3.zero, Time.deltaTime);
+			if (impact.magnitude > 0.2f)
+            {
+				move += impact;
+			}
+        }
+
+        protected override void UpdateMove(Vector3 move)
+        {
+            // trans.Translate(Time.deltaTime * move);
+            rb.MovePosition(move);
         }
         
         IEnumerator MonitorJump()
@@ -244,7 +326,8 @@ namespace Ryzm.EndlessRunner
             shift = _Shift(pos, type);
             StartCoroutine(shift);
         }
-
+        
+        float shiftSpeed;
         IEnumerator _Shift(Transform target, ShiftDistanceType type = ShiftDistanceType.x)
         {
             inShift = true;
@@ -263,15 +346,22 @@ namespace Ryzm.EndlessRunner
             }
             
             float absDistance = _distance * signDistance;
+            shiftSpeed = signDistance;
             while(Mathf.Abs(_shiftDistance) > absDistance)
             {
+                // add = true;
                 _shiftDistance = GetShiftDistance(target, type);
                 _move.x = _distance;
-                trans.Translate(_move);
+                // _move = transform.position + trans.right * forwardSpeed * Time.deltaTime;
+                // UpdateMove(_move);
+                // Debug.Log(_move + " " + trans.right);
+                // trans.Translate(_move);
                 yield return null;
             }
             _shiftDistance = GetShiftDistance(target, type);
             trans.Translate(_shiftDistance, 0, 0);
+            // add = false;
+            shiftSpeed = 0;
             yield return new WaitForSeconds(0.1f); // cooldown for shift
             inShift = false;
             yield break;

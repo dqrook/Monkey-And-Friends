@@ -68,7 +68,7 @@ namespace Ryzm.EndlessRunner
 
         protected virtual void MoveForward(float speed)
         {
-            trans.position += runnerTrans.forward * - speed;
+            // trans.position += runnerTrans.forward * - speed;
         }
 
         protected void MoveInY()

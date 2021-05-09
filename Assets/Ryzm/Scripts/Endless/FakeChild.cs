@@ -12,6 +12,7 @@ namespace Ryzm.EndlessRunner
         public Transform Parent;//Remember to assign the parent transform 
         private Vector3 pos, fw, up;
         Vector3 prevPos;
+        Quaternion prevRot;
         Vector3 currentPlatformPos;
         Transform _transform;
         Transform _parentTransform;
@@ -30,6 +31,7 @@ namespace Ryzm.EndlessRunner
             fw = _parentTransform.InverseTransformDirection(_transform.forward);
             up = _parentTransform.InverseTransformDirection(_transform.up);
             prevPos = _transform.position;
+            prevRot = _transform.rotation;
             initY = pos.y;
         }
 
@@ -43,9 +45,10 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<CurrentSectionChange>(OnCurrentSectionChange);
         }
 
-        void Update()
+        void LateUpdate()
         {
             var newpos = _parentTransform.TransformPoint(pos);
+            // Debug.Log(newpos + " " + pos + " " + _parentTransform.position);
             var newfw = _parentTransform.TransformDirection(fw);
             if(currentSection != null)
             {
@@ -55,25 +58,29 @@ namespace Ryzm.EndlessRunner
                 if(Mathf.Abs(newfw.z) > Mathf.Abs(newfw.x))
                 {
                     newpos.x = currentPlatformPos.x;
+                    // newpos.z = Mathf.Lerp(_transform.position.z, newpos.z, 0.1f);
                 }
                 else
                 {
                     newpos.z = currentPlatformPos.z;
+                    // newpos.x = Mathf.Lerp(_transform.position.x, newpos.x, 0.1f);
                 }
             }
+            float newY = newpos.y;
+            // newpos = Vector3.Lerp(_transform.position, newpos, 0.01f);
+            // newpos.y = newY;
             // newpos.y = initY;
+            newpos.y = Mathf.Lerp(prevPos.y, newpos.y, 0.03f);
             
             var newup = Parent.transform.TransformDirection(up);
             var newrot = Quaternion.LookRotation(newfw, newup);
-            newrot = Quaternion.Lerp(_transform.rotation, newrot, 0.1f);
-            float newY = newpos.y;
-            newpos = Vector3.Lerp(_transform.position, newpos, 0.1f);
-            newpos.y = newY;
+            newrot = Quaternion.Lerp(prevRot, newrot, 0.05f);
             _transform.rotation = newrot;
             _transform.position = newpos;
             // abs(fw.z) > abs(fw.x) keep x the same
             // Debug.Log($"{newpos.x - prevPos.x}" + " " + $"{newpos.z - prevPos.z}" + $"{newfw} \t newpos: {newpos} \t currentPlatformpos: {currentPlatformPos}" + "");
             prevPos = newpos;
+            prevRot = newrot;
         }
 
         void OnCurrentSectionChange(CurrentSectionChange sectionChange)
