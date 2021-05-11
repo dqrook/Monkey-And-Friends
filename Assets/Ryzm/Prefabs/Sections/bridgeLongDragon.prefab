@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 5083332149068475555}
   - component: {fileID: 610126923923975262}
   m_Layer: 0
-  m_Name: bridgeLongDragon 1
+  m_Name: bridgeLongDragon
   m_TagString: platformZ
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -206,10 +206,16 @@ MonoBehaviour:
     spawnTransforms:
     - location: {fileID: 5735385835400685482}
       position: 0
+      locations:
+      - {fileID: 5735385835400685482}
     - location: {fileID: 9052691915862586949}
       position: 1
+      locations:
+      - {fileID: 9052691915862586949}
     - location: {fileID: 7004109875461403756}
       position: 2
+      locations:
+      - {fileID: 7004109875461403756}
   nextSectionSpawn: {fileID: 5388383719755325352}
   barrierLikelihood: 1
   position0: {fileID: 6828061758444498248}

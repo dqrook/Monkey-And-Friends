@@ -11,7 +11,6 @@ namespace Ryzm.EndlessRunner
         public BarrierType type;
         // the section that the barrier belongs to
         public EndlessSection parentSection;
-        public Transform[] spawnLocations;
         protected int runnerPosition;
 
         protected override void Awake()
@@ -57,6 +56,7 @@ namespace Ryzm.EndlessRunner
     {
         Fire,
         Dragon,
-        InstantFire
+        InstantFire,
+        PathDragon
     }
 }

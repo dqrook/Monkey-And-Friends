@@ -87,7 +87,7 @@ namespace Ryzm.EndlessRunner
                     if(location.spawnTransforms.Length > 0)
                     {
                         EndlessUtils.Shuffle(location.spawnTransforms);
-                        return location.spawnTransforms[0].location;
+                        return location.spawnTransforms[0].Location;
                     }
                 }
             }
@@ -118,7 +118,7 @@ namespace Ryzm.EndlessRunner
             {
                 if(spawnTransform.position == position)
                 {
-                    return spawnTransform.location;
+                    return spawnTransform.Location;
                 }
             }
 
@@ -161,5 +161,18 @@ namespace Ryzm.EndlessRunner
     {
         public Transform location;
         public int position;
+        public Transform[] locations;
+
+        public Transform Location 
+        {
+            get
+            {
+                if(locations.Length == 0)
+                {
+                    return null;
+                }
+                return locations[Random.Range(0, locations.Length)];
+            }
+        }
     }
 }

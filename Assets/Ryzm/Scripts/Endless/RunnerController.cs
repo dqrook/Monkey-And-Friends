@@ -313,7 +313,6 @@ namespace Ryzm.EndlessRunner
                 // }
                 if(_endlessTurnSection != null)
                 {
-                    Debug.Log("turn it ya know");
                     _endlessTurnSection.Shift(direction, this, turned);
                     turned = true;
                 }

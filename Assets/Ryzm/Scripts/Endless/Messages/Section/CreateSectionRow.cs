@@ -8,7 +8,7 @@ namespace Ryzm.EndlessRunner.Messages
 
         public CreateSectionRow()
         {
-            this.numberOfSections = 3;
+            this.numberOfSections = 4;
         }
 
         public CreateSectionRow(int numberOfSections)

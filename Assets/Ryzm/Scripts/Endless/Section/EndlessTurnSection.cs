@@ -26,7 +26,6 @@ namespace Ryzm.EndlessRunner
             {
                 return;
             }
-            Debug.Log("shifting in the turn nered");
             _Shift(direction, controller, turned);
         }
 

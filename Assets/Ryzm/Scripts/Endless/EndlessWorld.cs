@@ -90,6 +90,7 @@ namespace Ryzm.EndlessRunner
     {
         public EndlessRow rowPrefab;
         public string id;
+        [HideInInspector]
         public EndlessRow row;
     }
 }

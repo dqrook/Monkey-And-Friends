@@ -9,11 +9,11 @@ namespace Ryzm.EndlessRunner
         public Animator animator;
         public Transform childTransform;
         public DragonFire fire;
-        bool startedCoroutine;
-        IEnumerator _flyToPosition;
-        Vector3 initialPosition;
-        Vector3 initialEulerAngles;
-        GameObject childGO;
+        protected bool startedCoroutine;
+        protected IEnumerator _flyToPosition;
+        protected Vector3 initialPosition;
+        protected Vector3 initialEulerAngles;
+        protected GameObject childGO;
 
         protected override void Awake()
         {
@@ -51,7 +51,7 @@ namespace Ryzm.EndlessRunner
                 }
                 else
                 {
-                    Transform location = parentSection.GetSpawnTransformForBarrierPosition(BarrierType.Dragon, runnerPosition);
+                    Transform location = parentSection.GetSpawnTransformForBarrierPosition(type, runnerPosition);
                     if(location != null)
                     {
                         Vector3 init = gameObject.transform.position;
@@ -64,22 +64,8 @@ namespace Ryzm.EndlessRunner
             }
         }
 
-        IEnumerator FlyToPosition()
+        protected virtual IEnumerator FlyToPosition()
         {
-            startedCoroutine = true;
-            float diff = childTransform.localPosition.sqrMagnitude;
-            while(diff > 0.01f)
-            {
-                childTransform.localPosition = Vector3.Lerp(childTransform.localPosition, Vector3.zero, Time.deltaTime * 12);
-                childTransform.localEulerAngles = Vector3.Lerp(childTransform.localEulerAngles, Vector3.zero, Time.deltaTime * 12);
-                diff = childTransform.localPosition.sqrMagnitude;
-                yield return null;
-            }
-            childTransform.localPosition = Vector3.zero;
-            childTransform.localEulerAngles = Vector3.zero;
-            animator.SetBool("fireBreath", true);
-            yield return new WaitForSeconds(0.2f);
-            fire.Play();
             yield break;
         }
 
