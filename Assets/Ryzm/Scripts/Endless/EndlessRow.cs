@@ -95,7 +95,6 @@ namespace Ryzm.EndlessRunner
             {
                 return;
             }
-            
             EndlessBarrier _barrier = newBarrier.GetComponent<EndlessBarrier>();
             if(_barrier == null)
             {

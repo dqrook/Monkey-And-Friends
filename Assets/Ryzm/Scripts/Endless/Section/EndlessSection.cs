@@ -82,6 +82,7 @@ namespace Ryzm.EndlessRunner
         {
             foreach(SpawnLocation location in barrierSpawnLocations)
             {
+                Debug.Log("getting spawn location for" + type);
                 if(location.type == type)
                 {
                     if(location.spawnTransforms.Length > 0)
@@ -159,7 +160,6 @@ namespace Ryzm.EndlessRunner
     [System.Serializable]
     public struct SpawnTransform
     {
-        public Transform location;
         public int position;
         public Transform[] locations;
 

@@ -8,6 +8,7 @@ namespace Ryzm.EndlessRunner
     {
         public Transform middlePosition;
         public Transform finalPosition;
+
         protected override IEnumerator FlyToPosition()
         {
             animator.SetBool("fly", true);
@@ -23,7 +24,6 @@ namespace Ryzm.EndlessRunner
                     if(!openedMouth)
                     {
                         openedMouth = true;
-                        // animator.SetBool("fly", false);
                         animator.SetBool("fireBreath", true);
                     }
                     fireTime += Time.deltaTime;
@@ -33,8 +33,8 @@ namespace Ryzm.EndlessRunner
                         fire.Play();
                     }
                 }
-                childTransform.localPosition = Vector3.Lerp(childTransform.localPosition, middlePosition.localPosition, Time.deltaTime * 12);
-                childTransform.localEulerAngles = Vector3.Lerp(childTransform.localEulerAngles, middlePosition.localEulerAngles, Time.deltaTime * 12);
+                childTransform.localPosition = Vector3.Lerp(childTransform.localPosition, middlePosition.localPosition, Time.deltaTime * 11);
+                childTransform.localEulerAngles = Vector3.Lerp(childTransform.localEulerAngles, middlePosition.localEulerAngles, Time.deltaTime * 11);
                 diff = Vector3.Distance(childTransform.localPosition, middlePosition.localPosition);
                 yield return null;
             }
@@ -44,7 +44,6 @@ namespace Ryzm.EndlessRunner
             if(!openedMouth)
             {
                 openedMouth = true;
-                // animator.SetBool("fly", false);
                 animator.SetBool("fireBreath", true);
             }
 
@@ -61,8 +60,8 @@ namespace Ryzm.EndlessRunner
                     }
                 }
 
-                childTransform.localPosition = Vector3.Lerp(childTransform.localPosition, finalPosition.localPosition, Time.deltaTime * 3);
-                childTransform.localEulerAngles = Vector3.Lerp(childTransform.localEulerAngles, finalPosition.localEulerAngles, Time.deltaTime * 3);
+                childTransform.localPosition = Vector3.Lerp(childTransform.localPosition, finalPosition.localPosition, Time.deltaTime * 2.5f);
+                childTransform.localEulerAngles = Vector3.Lerp(childTransform.localEulerAngles, finalPosition.localEulerAngles, Time.deltaTime * 2.5f);
                 diff = Vector3.Distance(childTransform.localPosition, finalPosition.localPosition);
                 yield return null;
             }
