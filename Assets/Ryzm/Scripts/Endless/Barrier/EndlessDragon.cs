@@ -70,8 +70,8 @@ namespace Ryzm.EndlessRunner
             float diff = childTransform.localPosition.sqrMagnitude;
             while(diff > 0.01f)
             {
-                childTransform.localPosition = Vector3.Lerp(childTransform.localPosition, Vector3.zero, Time.deltaTime * 8);
-                childTransform.localEulerAngles = Vector3.Lerp(childTransform.localEulerAngles, Vector3.zero, Time.deltaTime * 8);
+                childTransform.localPosition = Vector3.Lerp(childTransform.localPosition, Vector3.zero, Time.deltaTime * 12);
+                childTransform.localEulerAngles = Vector3.Lerp(childTransform.localEulerAngles, Vector3.zero, Time.deltaTime * 12);
                 diff = childTransform.localPosition.sqrMagnitude;
                 yield return null;
             }

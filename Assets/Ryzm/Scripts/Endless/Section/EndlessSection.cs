@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using CodeControl;
+using Ryzm.EndlessRunner.Messages;
 
 namespace Ryzm.EndlessRunner
 {
@@ -43,6 +45,19 @@ namespace Ryzm.EndlessRunner
             isLastSection = false;
         }
 
+        public virtual void EnterSection()
+        {
+            Message.Send(new CurrentSectionChange(gameObject));
+        }
+
+        public virtual void ExitSection()
+        {
+            if(isLastSection)
+            {
+                Message.Send(new CreateSectionRow());
+            }
+        }
+
         public virtual Transform NextSectionSpawn()
         {
             return nextSectionSpawn;
@@ -79,7 +94,7 @@ namespace Ryzm.EndlessRunner
             return null;
         }
 
-        public SpawnLocation GetSpawnLocationForBarrier(BarrierType type)
+        protected SpawnLocation GetSpawnLocationForBarrier(BarrierType type)
         {
             foreach(SpawnLocation location in barrierSpawnLocations)
             {
@@ -119,7 +134,7 @@ namespace Ryzm.EndlessRunner
                 Transform pos = GetPosition(currentPosition - 1);
                 if(pos != null)
                 {
-                    controller.ShiftToPosition(pos);
+                    controller.ShiftToPosition(pos, ShiftDistanceType.x);
                     controller.CurrentPosition--;
                 }
             }
@@ -128,7 +143,7 @@ namespace Ryzm.EndlessRunner
                 Transform pos = GetPosition(currentPosition + 1);
                 if(pos != null)
                 {
-                    controller.ShiftToPosition(pos);
+                    controller.ShiftToPosition(pos, ShiftDistanceType.x);
                     controller.CurrentPosition++;
                 }
             }

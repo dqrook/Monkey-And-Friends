@@ -31,6 +31,7 @@ namespace Ryzm.EndlessRunner
         bool inJump;
         EndlessSection _endlessSection;
         EndlessTSection _endlessTSection;
+        EndlessTurnSection _endlessTurnSection;
         GameStatus gameStatus;
 
         public int CurrentPosition
@@ -89,6 +90,7 @@ namespace Ryzm.EndlessRunner
         {
             turned = false;
             _endlessSection = change.endlessSection;
+            _endlessTurnSection = change.endlessTurnSection;
             _endlessTSection = change.endlessTSection;
         }
 
@@ -309,9 +311,10 @@ namespace Ryzm.EndlessRunner
                 // if(!HasBarrier(direction))
                 // {
                 // }
-                if(_endlessTSection != null)
+                if(_endlessTurnSection != null)
                 {
-                    _endlessTSection.Shift(direction, this, turned);
+                    Debug.Log("turn it ya know");
+                    _endlessTurnSection.Shift(direction, this, turned);
                     turned = true;
                 }
                 else
@@ -321,7 +324,7 @@ namespace Ryzm.EndlessRunner
             }
         }
         
-        public void ShiftToPosition(Transform pos, ShiftDistanceType type = ShiftDistanceType.x)
+        public void ShiftToPosition(Transform pos, ShiftDistanceType type)
         {
             shift = _Shift(pos, type);
             StartCoroutine(shift);

@@ -24,14 +24,11 @@ namespace Ryzm.EndlessRunner
             {
                 if(type == LineType.Start)
                 {
-                    Message.Send(new CurrentSectionChange(section.gameObject));
+                    section.EnterSection();
                 }
                 else
                 {
-                    if(section.isLastSection)
-                    {
-                        Message.Send(new CreateSectionRow());
-                    }
+                    section.ExitSection();
                     section.deactivate.Deactivate();
                 }
             }

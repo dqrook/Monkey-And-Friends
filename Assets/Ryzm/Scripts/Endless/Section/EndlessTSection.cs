@@ -6,13 +6,8 @@ using CodeControl;
 
 namespace Ryzm.EndlessRunner
 {
-    public class EndlessTSection : EndlessSection
+    public class EndlessTSection : EndlessTurnSection
     {
-        /// <summary>
-        /// direction that the user turned in
-        /// </summary>
-        public Direction turnDirection;
-
         [Header("Right Lane Positions")]
         public Transform position3;
         public Transform position4;
@@ -23,11 +18,11 @@ namespace Ryzm.EndlessRunner
 
         public override Transform NextSectionSpawn()
         {
-            if(turnDirection == Direction.Left)
+            if(userTurnedDirection == Direction.Left)
             {
                 return nextSectionSpawn;
             }
-            if(turnDirection == Direction.Right)
+            if(userTurnedDirection == Direction.Right)
             {
                 return rightNextSectionSpawn;
             }
@@ -39,68 +34,26 @@ namespace Ryzm.EndlessRunner
             switch(position)
             {
                 case 0:
-                    return turnDirection == Direction.Left ? position0 : position3;
+                    return userTurnedDirection == Direction.Left ? position0 : position3;
                 case 1:
-                    return turnDirection == Direction.Left ? position1 : position4;
+                    return userTurnedDirection == Direction.Left ? position1 : position4;
                 case 2:
-                    return turnDirection == Direction.Left ? position2 : position5;
+                    return userTurnedDirection == Direction.Left ? position2 : position5;
                 default:
                     return null;
             }
         }
 
-        public void Shift(Direction direction, RunnerController controller, bool turned)
+        public override void EnterSection()
         {
-            if(!turned)
-            {
-                Transform trans = controller.gameObject.transform;
-                turnDirection = direction;
-                if(direction == Direction.Left)
-                {
-                    trans.Rotate(Vector3.up * -90);
-                    // GenerateWorld.dummyTransform.forward = -trans.forward;
-                    Message.Send(new CreateSectionRow());
-
-                }
-                else if(direction == Direction.Right)
-                {
-                    trans.Rotate(Vector3.up * 90);
-                    // GenerateWorld.dummyTransform.forward = -trans.forward;
-                    Message.Send(new CreateSectionRow());
-                }
-                Transform pos = GetPosition(1);
-                float _shiftDistance = pos.InverseTransformPoint(trans.position).z;
-                trans.Translate(_shiftDistance, 0, 0);
-                controller.CurrentPosition = 1;
-            }
-            else
-            {
-                Shift(direction, controller);
-            }
+            base.EnterSection();
         }
+        
+        public override void ExitSection() {}
 
-        public override void Shift(Direction direction, RunnerController controller)
+        public override void Shift(Direction direction, RunnerController controller, bool turned)
         {
-            Transform trans = controller.gameObject.transform;
-            int currentPosition = controller.CurrentPosition;
-            if(direction == Direction.Left && currentPosition > 0)
-            {
-                Transform pos = GetPosition(currentPosition - 1);
-                if(pos != null)
-                {
-                    controller.ShiftToPosition(pos, ShiftDistanceType.z);
-                    controller.CurrentPosition--;
-                }
-            }
-            else if(direction == Direction.Right && currentPosition < 2)
-            {
-                Transform pos = GetPosition(currentPosition + 1);
-                if(pos != null)
-                {
-                    controller.ShiftToPosition(pos, ShiftDistanceType.z);
-                    controller.CurrentPosition++;
-                }
-            }
+            _Shift(direction, controller, turned);
         }
     }
 }

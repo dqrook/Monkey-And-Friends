@@ -65,7 +65,7 @@ namespace Ryzm.EndlessRunner
             currentRow.row.transform.position = spawnTransform.position;
             currentRow.row.transform.rotation = spawnTransform.rotation;
             currentRow.row.Initialize(createSectionRow.numberOfSections);
-            prefabIndex = prefabIndex < endlessRowPrefabs.Count - 1 ? prefabIndex + 1 : 0;
+            prefabIndex = prefabIndex < prefabOrder.Count - 1 ? prefabIndex + 1 : 0;
         }
 
         EndlessRowPrefab GetPrefab(string type)

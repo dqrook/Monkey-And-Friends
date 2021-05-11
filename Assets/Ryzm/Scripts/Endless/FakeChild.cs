@@ -66,11 +66,11 @@ namespace Ryzm.EndlessRunner
                     // newpos.x = Mathf.Lerp(_transform.position.x, newpos.x, 0.1f);
                 }
             }
-            float newY = newpos.y;
+            // float newY = newpos.y;
             // newpos = Vector3.Lerp(_transform.position, newpos, 0.01f);
             // newpos.y = newY;
             // newpos.y = initY;
-            newpos.y = Mathf.Lerp(prevPos.y, newpos.y, 0.03f);
+            // newpos.y = Mathf.Lerp(prevPos.y, newpos.y, 0.03f);
             
             var newup = Parent.transform.TransformDirection(up);
             var newrot = Quaternion.LookRotation(newfw, newup);
