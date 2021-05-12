@@ -10,17 +10,17 @@ namespace Ryzm.EndlessRunner
     {
         public GameStatus status = GameStatus.Active;
         public float speed = 0.15f;
-        EndlessSection _currentSection;
-        EndlessTSection _currentTSection;
         IEnumerator lerpGameSpeed;
 
         void Awake()
         {
-            Message.AddListener<CurrentSectionChange>(OnCurrentSectionChange);
             Message.AddListener<GameStatusRequest>(OnGameStatusRequest);
             Message.AddListener<RunnerDie>(OnRunnerDie);
             Message.AddListener<RequestGameSpeedChange>(OnRequestGameSpeedChange);
             Message.AddListener<GameSpeedRequest>(OnGameSpeedRequest);
+            Message.AddListener<StartGame>(OnStartGame);
+            Message.AddListener<PauseGame>(OnPauseGame);
+            Message.AddListener<ResumeGame>(OnResumeGame);
         }
 
         void Start()
@@ -30,17 +30,28 @@ namespace Ryzm.EndlessRunner
 
         void OnDestroy()
         {
-            Message.RemoveListener<CurrentSectionChange>(OnCurrentSectionChange);
             Message.RemoveListener<GameStatusRequest>(OnGameStatusRequest);
             Message.RemoveListener<RunnerDie>(OnRunnerDie);
             Message.RemoveListener<RequestGameSpeedChange>(OnRequestGameSpeedChange);
             Message.RemoveListener<GameSpeedRequest>(OnGameSpeedRequest);
+            Message.RemoveListener<StartGame>(OnStartGame);
+            Message.RemoveListener<PauseGame>(OnPauseGame);
+            Message.RemoveListener<ResumeGame>(OnResumeGame);
         }
 
-        void OnCurrentSectionChange(CurrentSectionChange change)
+        void OnStartGame(StartGame start)
         {
-            _currentTSection = change.endlessTSection;
-            _currentSection = change.endlessSection;
+            UpdateGameStatus(GameStatus.Active);
+        }
+
+        void OnPauseGame(PauseGame pause)
+        {
+            UpdateGameStatus(GameStatus.Paused);
+        }
+
+        void OnResumeGame(ResumeGame resume)
+        {
+            UpdateGameStatus(GameStatus.Active);
         }
 
         void OnRunnerDie(RunnerDie runnerDie)
