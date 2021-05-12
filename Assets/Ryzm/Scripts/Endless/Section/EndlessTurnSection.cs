@@ -22,7 +22,7 @@ namespace Ryzm.EndlessRunner
 
         public virtual void Shift(Direction direction, RunnerController controller, bool turned)
         {
-            if(direction != turnDirection)
+            if(direction != turnDirection && !turned)
             {
                 return;
             }

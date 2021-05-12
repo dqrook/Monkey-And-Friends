@@ -8,8 +8,6 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessScroller : MonoBehaviour
     {
-        protected RunnerController runner;
-        protected Transform runnerTrans;
         protected GameObject _currentSectionGO;
         protected EndlessSection _currentSection;
         protected GameStatus gameStatus;
@@ -21,7 +19,6 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<CurrentSectionChange>(OnCurrentSectionChange);
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
             Message.AddListener<GameSpeedResponse>(OnGameSpeedResponse);
-            Message.AddListener<RunnerResponse>(OnRunnerResponse);
             trans = gameObject.transform;
         }
 
@@ -29,7 +26,6 @@ namespace Ryzm.EndlessRunner
         {
             Message.Send(new GameStatusRequest());
             Message.Send(new GameSpeedRequest());
-            Message.Send(new RunnerRequest());
         }
 
         protected virtual void OnDisable() {}
@@ -39,7 +35,6 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<CurrentSectionChange>(OnCurrentSectionChange);
             Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
             Message.RemoveListener<GameSpeedResponse>(OnGameSpeedResponse);
-            Message.RemoveListener<RunnerResponse>(OnRunnerResponse);
         }
 
         protected virtual void FixedUpdate()
@@ -48,27 +43,12 @@ namespace Ryzm.EndlessRunner
             {
                 return;
             }
-            GetRunner();
-            MoveForward(GameManager.Instance.speed);
             MoveInY();
         }
 
         protected virtual bool CanMove()
         {
             return gameStatus == GameStatus.Active;
-        }
-
-        protected void GetRunner()
-        {
-            if(runnerTrans == null && runner != null)
-            {
-                runnerTrans = runner.gameObject.transform;
-            }
-        }
-
-        protected virtual void MoveForward(float speed)
-        {
-            // trans.position += runnerTrans.forward * - speed;
         }
 
         protected void MoveInY()
@@ -101,12 +81,6 @@ namespace Ryzm.EndlessRunner
         void OnGameSpeedResponse(GameSpeedResponse response)
         {
             gameSpeed = response.speed;
-        }
-
-        void OnRunnerResponse(RunnerResponse response)
-        {
-            runner = response.runner;
-            runnerTrans = runner.gameObject.transform;
         }
     }
 }

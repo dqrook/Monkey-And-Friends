@@ -10,26 +10,12 @@ namespace Ryzm.EndlessRunner
     {
         public GameStatus status = GameStatus.Active;
         public float speed = 0.15f;
-        public RunnerController runner;
-        private static GameManager _instance;
-        public static GameManager Instance { get { return _instance; } }
         EndlessSection _currentSection;
         EndlessTSection _currentTSection;
+        IEnumerator lerpGameSpeed;
 
         void Awake()
         {
-            if (_instance != null && _instance != this)
-            {
-                Destroy(this.gameObject);
-            } 
-            else 
-            {
-                _instance = this;
-            }
-            if(runner == null)
-            {
-                runner = FindObjectOfType<RunnerController>();
-            }
             Message.AddListener<CurrentSectionChange>(OnCurrentSectionChange);
             Message.AddListener<GameStatusRequest>(OnGameStatusRequest);
             Message.AddListener<RunnerDie>(OnRunnerDie);
@@ -86,7 +72,6 @@ namespace Ryzm.EndlessRunner
             }
         }
 
-        IEnumerator lerpGameSpeed;
         IEnumerator LerpGameSpeed(float targetSpeed, float lerpTime)
         {
             float _time = 0;

@@ -57,6 +57,9 @@ namespace Ryzm.EndlessRunner
         Fire,
         Dragon,
         InstantFire,
-        PathDragon
+        PathDragon,
+        CoinRow1,
+        CoinRow2,
+        CoinRow3
     }
 }

@@ -33,6 +33,7 @@ namespace Ryzm.EndlessRunner
         EndlessTSection _endlessTSection;
         EndlessTurnSection _endlessTurnSection;
         GameStatus gameStatus;
+        float distanceTraveled;
 
         public int CurrentPosition
         {
@@ -77,7 +78,7 @@ namespace Ryzm.EndlessRunner
             Message.Send(new GameStatusRequest());
         }
 
-        void OnDestory()
+        void OnDestroy()
         {
             Message.RemoveListener<CurrentSectionChange>(OnCurrentSectionChange);
             Message.RemoveListener<RunnerDie>(OnRunnerDie);
@@ -218,21 +219,18 @@ namespace Ryzm.EndlessRunner
             // {
             //     jumpVelocity = 0;
             // }
-            move.z = Time.deltaTime * forwardSpeed;
+            
+            float zMove = Time.deltaTime * forwardSpeed;
+            move.z = zMove;
             move.y = 0;
             // trans.Translate(0, jumpVelocity * Time.deltaTime, Time.deltaTime * forwardSpeed);
             move.x = shiftSpeed * forwardSpeed * 0.75f * Time.deltaTime;
             trans.Translate(move);
-            // if(shiftSpeed != 0)
-            // {
-
-            // }
+            distanceTraveled += zMove;
+            Message.Send(new RunnerDistanceResponse(distanceTraveled));
             
             bool isGrounded = IsGrounded();
-            // Debug.Log(HasBarrier(Direction.Right));
-            // input.z = 1;
-            // move = Vector3.zero;
-			animator.SetFloat("speed_z", 1);
+            animator.SetFloat("speed_z", 1);
 			animator.SetFloat("speed_x", 0);
 			animator.SetBool("is_grounded", isGrounded);
             
@@ -316,7 +314,7 @@ namespace Ryzm.EndlessRunner
                     _endlessTurnSection.Shift(direction, this, turned);
                     turned = true;
                 }
-                else
+                else if(_endlessSection != null)
                 {
                     _endlessSection.Shift(direction, this);
                 }
@@ -454,6 +452,7 @@ namespace Ryzm.EndlessRunner
             state = 1;
             inJump = false;
             inShift = false;
+            distanceTraveled = 0;
         }
     }
 

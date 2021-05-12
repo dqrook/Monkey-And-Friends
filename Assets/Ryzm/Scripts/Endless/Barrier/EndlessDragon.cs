@@ -37,9 +37,6 @@ namespace Ryzm.EndlessRunner
             {
                 return;
             }
-
-            GetRunner();
-            MoveForward(GameManager.Instance.speed);
             MoveInY();
 
             if(!startedCoroutine)

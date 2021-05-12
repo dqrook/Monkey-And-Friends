@@ -6,7 +6,7 @@ using CodeControl;
 
 namespace Ryzm.EndlessRunner
 {
-    public class FakeChild : MonoBehaviour
+    public class EndlessCamera : MonoBehaviour
     {
         public RunnerController runner;
         public Transform Parent;//Remember to assign the parent transform 
