@@ -92,7 +92,7 @@ namespace Ryzm.EndlessRunner
 			}
 			else if(_swipeDirection == Direction.Down)
 			{
-				// todo: sliding
+				InputManager.Instance.Slide();
 			}
 			else
 			{

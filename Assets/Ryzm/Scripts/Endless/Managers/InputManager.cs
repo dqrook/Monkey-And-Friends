@@ -35,5 +35,10 @@ namespace Ryzm.EndlessRunner
         {
             runner.Jump();
         }
+
+        public void Slide()
+        {
+            runner.Slide();
+        }
     }
 }

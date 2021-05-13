@@ -8,7 +8,7 @@ namespace Ryzm.EndlessRunner
 {
     public class GameManager : MonoBehaviour
     {
-        public GameStatus status = GameStatus.Active;
+        public GameStatus status = GameStatus.Ended;
         public float speed = 0.15f;
         IEnumerator lerpGameSpeed;
 
@@ -25,7 +25,7 @@ namespace Ryzm.EndlessRunner
 
         void Start()
         {
-            Message.Send(new CreateSectionRow());
+            Message.Send(new StartGame());
         }
 
         void OnDestroy()
@@ -41,6 +41,7 @@ namespace Ryzm.EndlessRunner
 
         void OnStartGame(StartGame start)
         {
+            Message.Send(new CreateSectionRow());
             UpdateGameStatus(GameStatus.Active);
         }
 

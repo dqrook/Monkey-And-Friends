@@ -164,6 +164,8 @@ namespace Ryzm.EndlessRunner
             Jump(isGrounded);
         }
 
+        public void Slide() {}
+
         float jumpVelocity;
         public void Jump(bool isGrounded)
         {

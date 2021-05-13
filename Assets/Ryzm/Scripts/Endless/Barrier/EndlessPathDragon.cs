@@ -8,6 +8,16 @@ namespace Ryzm.EndlessRunner
     {
         public Transform middlePosition;
         public Transform finalPosition;
+        public GameObject instantDeath;
+
+        void StartFire()
+        {
+            if(instantDeath != null)
+            {
+                instantDeath.SetActive(true);
+            }
+            fire.Play();
+        }
 
         protected override IEnumerator FlyToPosition()
         {
@@ -30,7 +40,7 @@ namespace Ryzm.EndlessRunner
                     if(fireTime > 0.2f && !startedFire)
                     {
                         startedFire = true;
-                        fire.Play();
+                        StartFire();
                     }
                 }
                 childTransform.localPosition = Vector3.Lerp(childTransform.localPosition, middlePosition.localPosition, Time.deltaTime * 11);
@@ -38,8 +48,6 @@ namespace Ryzm.EndlessRunner
                 diff = Vector3.Distance(childTransform.localPosition, middlePosition.localPosition);
                 yield return null;
             }
-            childTransform.localPosition = middlePosition.localPosition;
-            childTransform.localEulerAngles = middlePosition.localEulerAngles;
             
             if(!openedMouth)
             {
@@ -55,19 +63,28 @@ namespace Ryzm.EndlessRunner
                     fireTime += Time.deltaTime;
                     if(fireTime > 0.2f)
                     {
-                        fire.Play();
                         startedFire = true;
+                        StartFire();
                     }
                 }
 
-                childTransform.localPosition = Vector3.Lerp(childTransform.localPosition, finalPosition.localPosition, Time.deltaTime * 2.5f);
-                childTransform.localEulerAngles = Vector3.Lerp(childTransform.localEulerAngles, finalPosition.localEulerAngles, Time.deltaTime * 2.5f);
+                childTransform.localPosition = Vector3.Lerp(childTransform.localPosition, finalPosition.localPosition, Time.deltaTime * 4f);
+                childTransform.localEulerAngles = Vector3.Lerp(childTransform.localEulerAngles, finalPosition.localEulerAngles, Time.deltaTime * 4f);
                 diff = Vector3.Distance(childTransform.localPosition, finalPosition.localPosition);
                 yield return null;
             }
             childTransform.localPosition = finalPosition.localPosition;
             childTransform.localEulerAngles = finalPosition.localEulerAngles;
             yield break;
+        }
+
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+            if(instantDeath != null)
+            {
+                instantDeath.SetActive(false);
+            }
         }
     }
 }

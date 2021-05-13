@@ -51,18 +51,34 @@ namespace Ryzm.EndlessRunner.UI
 
         protected virtual void Awake()
         {
+            if(canvas == null)
+            {
+                canvas = GetComponent<Canvas>();
+            }
             Message.AddListener<ActivateMenu>(OnActivateMenu);
+            Message.AddListener<DeactivateMenu>(OnDeactivateMenu);
         }
 
         protected virtual void OnDestroy()
         {
             Message.RemoveListener<ActivateMenu>(OnActivateMenu);
-
+            Message.RemoveListener<DeactivateMenu>(OnDeactivateMenu);
         }
 
         protected virtual void OnActivateMenu(ActivateMenu activate)
         {
-            if(!_isActive && activate.type == type)
+            if(activate.type == type)
+            {
+                IsActive = true;
+            }
+            else if(activate.useActivated)
+            {
+                if(activate.activatedTypes.Contains(type))
+                {
+                    IsActive = true;
+                }
+            }
+            else if(!activate.deactivatedTypes.Contains(type))
             {
                 IsActive = true;
             }
@@ -70,19 +86,16 @@ namespace Ryzm.EndlessRunner.UI
 
         protected virtual void OnDeactivateMenu(DeactivateMenu deactivate)
         {
-            if(_isActive)
+            if(deactivate.useActivated)
             {
-                if(deactivate.useActivated)
+                if(!deactivate.activatedTypes.Contains(type))
                 {
-                    if(!deactivate.activatedTypes.Contains(type))
-                    {
-                        IsActive = false; 
-                    }
-                } 
-                else if(deactivate.type == type)
-                {
-                    IsActive = false;
+                    IsActive = false; 
                 }
+            } 
+            else if(deactivate.type == type || deactivate.deactivatedTypes.Contains(type))
+            {
+                IsActive = false;
             }
         }
 
@@ -164,6 +177,7 @@ namespace Ryzm.EndlessRunner.UI
 
     public enum MenuType
     {
+        None,
         Score,
         Distance,
         SwipeZone,

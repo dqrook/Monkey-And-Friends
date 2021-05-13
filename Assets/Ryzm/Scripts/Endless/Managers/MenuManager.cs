@@ -15,6 +15,16 @@ namespace Ryzm.EndlessRunner.UI
             MenuType.SwipeZone
         };
 
+        List<MenuType> pauseMenus = new List<MenuType>
+        {
+            MenuType.Pause
+        };
+
+        List<MenuType> endMenus = new List<MenuType>
+        {
+            MenuType.EndGame
+        };
+
         void Awake()
         {
             Message.AddListener<RunnerDie>(OnRunnerDie);
@@ -33,25 +43,26 @@ namespace Ryzm.EndlessRunner.UI
 
         void OnStartGame(StartGame start)
         {
-            Message.Send(new ActivateMenu(MenuType.Score));
-            Message.Send(new ActivateMenu(MenuType.Distance));
-            Message.Send(new ActivateMenu(MenuType.SwipeZone));
+            Message.Send(new ActivateMenu(activatedTypes: startMenus));
             Message.Send(new DeactivateMenu(activatedTypes: startMenus));
         }
 
         void OnPauseGame(PauseGame pause)
         {
-            
+            Message.Send(new ActivateMenu(activatedTypes: pauseMenus));
+            Message.Send(new DeactivateMenu(activatedTypes: pauseMenus));
         }
 
         void OnResumeGame(ResumeGame resume)
         {
-            
+            Message.Send(new ActivateMenu(activatedTypes: startMenus));
+            Message.Send(new DeactivateMenu(activatedTypes: startMenus));
         }
 
         void OnRunnerDie(RunnerDie runnerDie)
         {
-            
+            Message.Send(new ActivateMenu(activatedTypes: endMenus));
+            Message.Send(new DeactivateMenu(activatedTypes: endMenus));
         }
     }
 }
