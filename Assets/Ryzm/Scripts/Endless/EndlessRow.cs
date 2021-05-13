@@ -9,6 +9,7 @@ namespace Ryzm.EndlessRunner
         public List<EndlessSection> sections = new List<EndlessSection>();
         // also have a single EndlessTurnSection (which will inherit from EndlessSection)
         public EndlessSection turnSection;
+        public List<GameObject> environments = new List<GameObject>();
 
         public void Initialize(int numberOfSections)
         {
@@ -65,6 +66,17 @@ namespace Ryzm.EndlessRunner
             {
                 sections[sections.Count - 1].isLastSection = true;
             }
+
+            if(environments.Count > 0)
+            {
+                EndlessUtils.Shuffle(environments);
+                int i = 0;
+                foreach(GameObject environment in environments)
+                {
+                    environment.SetActive(i == 0);
+                    i++;
+                }
+            }
         }
 
         EndlessSection CreateSection(Transform spawnTransform, bool isTurn, GameObject newSection = null)
@@ -101,7 +113,7 @@ namespace Ryzm.EndlessRunner
                 return;
             }
 
-            Transform spawnLocation = _section.GetBarrierSpawnLocation(_barrier.type);
+            Transform spawnLocation = _section.GetBarrierSpawnTransform(_barrier.type);
             if(spawnLocation == null) 
             {
                 return;

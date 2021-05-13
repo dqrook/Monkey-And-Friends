@@ -130,7 +130,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3682617590466403545}
-  - component: {fileID: 3682617590473831211}
   - component: {fileID: 8241121872820315431}
   - component: {fileID: 4369155959676167642}
   m_Layer: 0
@@ -163,25 +162,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &3682617590473831211
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3682617590466560249}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 9720b9ee7ea14446690c794965f2107e, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &8241121872820315431
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -198,10 +178,10 @@ MonoBehaviour:
   barrierSpawnLocations:
   - type: 2
     spawnTransforms:
-    - location: {fileID: 5088234576360924234}
-      position: 0
+    - position: 0
       locations:
       - {fileID: 5088234576360924234}
+    weight: 1
   nextSectionSpawn: {fileID: 9084505331046225452}
   barrierLikelihood: 0.5
   position0: {fileID: 7644828447669740748}

@@ -48,7 +48,7 @@ namespace Ryzm.EndlessRunner
                 }
                 else
                 {
-                    Transform location = parentSection.GetSpawnTransformForBarrierPosition(type, runnerPosition);
+                    Transform location = parentSection.GetSpawnTransformForBarrierByPosition(type, runnerPosition);
                     if(location != null)
                     {
                         Vector3 init = gameObject.transform.position;

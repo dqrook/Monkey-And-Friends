@@ -78,7 +78,7 @@ namespace Ryzm.EndlessRunner
             }
         }
 
-        public Transform GetBarrierSpawnLocation(BarrierType type)
+        public Transform GetBarrierSpawnTransform(BarrierType type)
         {
             foreach(SpawnLocation location in barrierSpawnLocations)
             {
@@ -106,7 +106,7 @@ namespace Ryzm.EndlessRunner
             return new SpawnLocation();
         }
 
-        public Transform GetSpawnTransformForBarrierPosition(BarrierType type, int position)
+        public Transform GetSpawnTransformForBarrierByPosition(BarrierType type, int position)
         {
             SpawnLocation loc = GetSpawnLocationForBarrier(type);
             if(loc.spawnTransforms.Length == 0)
@@ -150,10 +150,12 @@ namespace Ryzm.EndlessRunner
         }
     }
     [System.Serializable]
-    public struct SpawnLocation
+    public class SpawnLocation
     {
         public BarrierType type;
         public SpawnTransform[] spawnTransforms;
+        [Range(0, 10)]
+        public int weight = 1;
     }
 
     [System.Serializable]

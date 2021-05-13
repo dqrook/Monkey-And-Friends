@@ -12,11 +12,16 @@ namespace Ryzm.EndlessRunner
 
         void StartFire()
         {
+            ToggleInstantDeath(true);
+            fire.Play();
+        }
+
+        void ToggleInstantDeath(bool active)
+        {
             if(instantDeath != null)
             {
-                instantDeath.SetActive(true);
+                instantDeath.SetActive(active);
             }
-            fire.Play();
         }
 
         protected override IEnumerator FlyToPosition()
@@ -27,7 +32,7 @@ namespace Ryzm.EndlessRunner
             bool startedFire = false;
             float diff = Vector3.Distance(childTransform.localPosition, middlePosition.localPosition);
             float fireTime = 0;
-            while(diff > 0.01f)
+            while(diff > 0.1f)
             {
                 if(diff < 1)
                 {
@@ -81,10 +86,7 @@ namespace Ryzm.EndlessRunner
         protected override void OnDisable()
         {
             base.OnDisable();
-            if(instantDeath != null)
-            {
-                instantDeath.SetActive(false);
-            }
+            ToggleInstantDeath(false);
         }
     }
 }

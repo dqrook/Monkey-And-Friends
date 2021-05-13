@@ -571,11 +571,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8831590153286282189}
-  - component: {fileID: 8831590153293235263}
   - component: {fileID: 4311367551830823475}
   - component: {fileID: 8442289346075873998}
   m_Layer: 0
-  m_Name: bridgeCoinRow
+  m_Name: bridgeBasicCoinRow
   m_TagString: platformZ
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -607,25 +606,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &8831590153293235263
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8831590153285859309}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 9720b9ee7ea14446690c794965f2107e, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &4311367551830823475
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -647,18 +627,21 @@ MonoBehaviour:
       - {fileID: 8723584622799700304}
       - {fileID: 5870517334858357283}
       - {fileID: 6820773727321692373}
+    weight: 1
   - type: 5
     spawnTransforms:
     - position: 0
       locations:
       - {fileID: 6820773727321692373}
       - {fileID: 5870517334858357283}
+    weight: 1
   - type: 6
     spawnTransforms:
     - position: 0
       locations:
       - {fileID: 8723584622799700304}
       - {fileID: 5870517334858357283}
+    weight: 1
   nextSectionSpawn: {fileID: 4006497413312979256}
   barrierLikelihood: 1
   position0: {fileID: 2566127803016303576}
