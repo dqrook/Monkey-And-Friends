@@ -6,12 +6,13 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessRow : MonoBehaviour
     {
+        public string id;
         public List<EndlessSection> sections = new List<EndlessSection>();
         // also have a single EndlessTurnSection (which will inherit from EndlessSection)
         public EndlessSection turnSection;
         public List<GameObject> environments = new List<GameObject>();
 
-        public void Initialize(int numberOfSections)
+        public virtual void Initialize(int numberOfSections)
         {
             Transform trans = gameObject.transform;
 
@@ -44,13 +45,7 @@ namespace Ryzm.EndlessRunner
                 }
             }
 
-            foreach(EndlessSection section in sections)
-            {
-                if(CanPlaceBarrier(section.barrierLikelihood))
-                {
-                    CreateBarrier(section);
-                }
-            }
+            PlaceBarriers();
 
             trans = sections[sections.Count - 1].NextSectionSpawn();
             if(turnSection == null)
@@ -67,6 +62,22 @@ namespace Ryzm.EndlessRunner
                 sections[sections.Count - 1].isLastSection = true;
             }
 
+            ChooseEnvironment();
+        }
+
+        protected void PlaceBarriers()
+        {
+            foreach(EndlessSection section in sections)
+            {
+                if(CanPlaceBarrier(section.barrierLikelihood))
+                {
+                    CreateBarrier(section);
+                }
+            }
+        }
+
+        protected void ChooseEnvironment()
+        {
             if(environments.Count > 0)
             {
                 EndlessUtils.Shuffle(environments);
@@ -79,7 +90,7 @@ namespace Ryzm.EndlessRunner
             }
         }
 
-        EndlessSection CreateSection(Transform spawnTransform, bool isTurn, GameObject newSection = null)
+        protected EndlessSection CreateSection(Transform spawnTransform, bool isTurn, GameObject newSection = null)
         {
             if(newSection == null)
             {
@@ -95,7 +106,7 @@ namespace Ryzm.EndlessRunner
             return _section;
         }
 
-        void CreateBarrier(EndlessSection _section)
+        protected void CreateBarrier(EndlessSection _section)
         {
             if(_section == null)
             {
@@ -125,7 +136,7 @@ namespace Ryzm.EndlessRunner
             _barrier.gameObject.SetActive(true);
         }
 
-        bool CanPlaceBarrier(float barrierLikelihood)
+        protected bool CanPlaceBarrier(float barrierLikelihood)
         {
             return Random.Range(0, 1f) < barrierLikelihood;
         }

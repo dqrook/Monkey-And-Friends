@@ -8,6 +8,8 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessSection : EndlessScroller
     {
+        public SectionType type;
+        public bool isTurn;
         public DeactivateSection deactivate;
         public List<SpawnLocation> barrierSpawnLocations = new List<SpawnLocation>();
         /// <summary>
@@ -24,6 +26,7 @@ namespace Ryzm.EndlessRunner
         
         [HideInInspector]
         public bool isLastSection;
+
         
         List<BarrierType> _possibleBarrierTypes = new List<BarrierType>();
 
@@ -175,5 +178,20 @@ namespace Ryzm.EndlessRunner
                 return locations[Random.Range(0, locations.Length)];
             }
         }
+    }
+
+    public enum SectionType
+    {
+        BasicRandom,
+        BasicCoin,
+        BasicDiveDragon,
+        BasicPathDragon,
+        BasicInstantFire,
+        LongRandom,
+        LongCoin,
+        LongDiveDragon,
+        LongPathDragon,
+        TSection1,
+        LeftTurn1
     }
 }

@@ -245,14 +245,22 @@ MonoBehaviour:
   endlessRowPrefabs:
   - rowPrefab: {fileID: 1005925642107090064, guid: e32247cfc7a734ddb9a1b40d4728e570,
       type: 3}
-    id: default
     row: {fileID: 0}
   - rowPrefab: {fileID: 4594840337403054427, guid: 2c43e497b0b794f119095a66f4c9836c,
       type: 3}
-    id: R1
+    row: {fileID: 0}
+  - rowPrefab: {fileID: 3991648913488528193, guid: 1072b8044f4f248e69e68372e7223340,
+      type: 3}
+    row: {fileID: 0}
+  - rowPrefab: {fileID: 5289637590386959945, guid: 388e09c9184994b94a45b93a7375e419,
+      type: 3}
+    row: {fileID: 0}
+  - rowPrefab: {fileID: 8894219149121424622, guid: 1b74364bd091f4001bb0fcbca23b2ea6,
+      type: 3}
     row: {fileID: 0}
   prefabOrder:
-  - default
+  - M1
+  - M2
   startingSpawn: {fileID: 1958097644}
 --- !u!4 &317864200
 Transform:
@@ -1303,81 +1311,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fb84f025f37e4c5ab2a98a30c0bf4ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sectionPrefabs:
-  - prefab: {fileID: 3682617590466560249, guid: a10652ca5c9d3474d9b7f1000e72a934,
-      type: 3}
-    amount: 1
-    expandable: 1
-    isTurn: 0
-  - prefab: {fileID: 1775429846919135163, guid: ddad3c243dc7645dfa7f9b75b360c729,
-      type: 3}
-    amount: 2
-    expandable: 0
-    isTurn: 1
-  - prefab: {fileID: 6443572151774963108, guid: 1adb6b3edd6ea47e6a1a6f3a7e094166,
-      type: 3}
-    amount: 1
-    expandable: 1
-    isTurn: 0
-  - prefab: {fileID: 1764320095730412334, guid: 3737fea5c16eb4eb8ba207742d179720,
-      type: 3}
-    amount: 0
-    expandable: 0
-    isTurn: 1
-  - prefab: {fileID: 3682617590466560249, guid: e7fc2627353584744993968d63fa9b07,
-      type: 3}
-    amount: 1
-    expandable: 0
-    isTurn: 0
-  - prefab: {fileID: 3682617590466560249, guid: 0267c690b32024942b62a2f610834028,
-      type: 3}
-    amount: 1
-    expandable: 0
-    isTurn: 0
-  - prefab: {fileID: 8831590153285859309, guid: 2556dbd3c1eb54d0fa9760248b7402f9,
-      type: 3}
-    amount: 2
-    expandable: 0
-    isTurn: 0
-  - prefab: {fileID: 1741855632616710139, guid: 7d54f6ebcc8a842568d73dac5fd90b1d,
-      type: 3}
-    amount: 1
-    expandable: 1
-    isTurn: 0
-  barrierPrefabs:
-  - prefab: {fileID: 2303393656533570972, guid: 53ed815260d73411da15e8ee9a2b3220,
-      type: 3}
-    amount: 2
-    expandable: 0
-    type: 2
-  - prefab: {fileID: 2303393656533570972, guid: bc24a78251d2a4cb68956169522f3cc0,
-      type: 3}
-    amount: 2
-    expandable: 0
-    type: 0
-  - prefab: {fileID: 148099823991329105, guid: 810ad13eb94f34e209afe9c5ed814c4a, type: 3}
-    amount: 2
-    expandable: 1
-    type: 1
-  - prefab: {fileID: 2471083564763278122, guid: 5fef061ba5866445d8164ef4b88da781,
-      type: 3}
-    amount: 1
-    expandable: 1
-    type: 3
-  - prefab: {fileID: 5393897143773452787, guid: 874bf983caacd4f7397cd7f59a270280,
-      type: 3}
-    amount: 1
-    expandable: 1
-    type: 4
-  - prefab: {fileID: 7513610862427672757, guid: 6e3e96cfe61234d8b8589325795a1689,
-      type: 3}
-    amount: 1
-    expandable: 1
-    type: 5
-  - prefab: {fileID: 358364870380398989, guid: b0409bd34459f41258da028da5f4f174, type: 3}
-    amount: 1
-    expandable: 1
-    type: 6
+  prefabsScriptableObject: {fileID: 11400000, guid: 4f5d653bdecbb40edb9584a872db59a5,
+    type: 2}
 --- !u!4 &1203773582
 Transform:
   m_ObjectHideFlags: 0
@@ -1748,7 +1683,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1560966224}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.053193606, y: 0.99518216, z: 10.025436}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1643249638}

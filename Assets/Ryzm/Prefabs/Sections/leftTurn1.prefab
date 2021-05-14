@@ -1112,7 +1112,7 @@ GameObject:
   - component: {fileID: 3471789114882062041}
   - component: {fileID: 6987232083149639683}
   m_Layer: 0
-  m_Name: turn1Left
+  m_Name: leftTurn1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1156,6 +1156,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8658d8dab0bd24a87a7cc89d773bce88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 10
+  isTurn: 1
   deactivate: {fileID: 6987232083149639683}
   barrierSpawnLocations: []
   nextSectionSpawn: {fileID: 3640599575521952475}
@@ -3361,12 +3363,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9be5cd051b954ee999f56a9b484abc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 0
+  isTurn: 0
   deactivate: {fileID: 8085926448949162285}
   barrierSpawnLocations:
   - type: 2
     spawnTransforms:
-    - location: {fileID: 0}
-      position: 0
+    - position: 0
+      locations: []
+    weight: 1
   nextSectionSpawn: {fileID: 3640599575521952475}
   barrierLikelihood: 0.5
   position0: {fileID: 0}

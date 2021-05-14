@@ -268,6 +268,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8658d8dab0bd24a87a7cc89d773bce88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 0
+  isTurn: 0
   deactivate: {fileID: 2780202337284386510}
   barrierSpawnLocations: []
   nextSectionSpawn: {fileID: 7092148136031350036}
@@ -1427,6 +1429,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9be5cd051b954ee999f56a9b484abc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 0
+  isTurn: 0
   deactivate: {fileID: 3153595572615084465}
   barrierSpawnLocations: []
   nextSectionSpawn: {fileID: 3522892855026387262}
@@ -3172,9 +3176,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2898c9adb623a43e29684e69ed2765e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  id: R1
   sections:
   - {fileID: 6903960820083546633}
   turnSection: {fileID: 8982318495131022134}
+  environments: []
 --- !u!1 &8086024158046313994
 GameObject:
   m_ObjectHideFlags: 0

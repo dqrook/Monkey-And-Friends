@@ -28,7 +28,7 @@ namespace Ryzm.EndlessRunner
             }
             foreach(EndlessRowPrefab prefab in endlessRowPrefabs)
             {
-                if(prefab.id == "default")
+                if(prefab.Id == "default")
                 {
                     defaultPrefab = prefab;
                     break;
@@ -51,13 +51,13 @@ namespace Ryzm.EndlessRunner
             string prefabType = prefabOrder[prefabIndex];
             
             // cant place the same row one after each other
-            if(currentRow != null && prefabType == currentRow.id)
+            if(currentRow != null && prefabType == currentRow.Id)
             {
                 prefabType = "default";
             }
             currentRow = GetPrefab(prefabType);
             
-            if(currentRow.id == "default" || currentRow.row == null)
+            if(currentRow.Id == "default" || currentRow.row == null)
             {
                 currentRow.row = GameObject.Instantiate(currentRow.rowPrefab).GetComponent<EndlessRow>();
             }
@@ -76,7 +76,7 @@ namespace Ryzm.EndlessRunner
             }
             foreach(EndlessRowPrefab fab in endlessRowPrefabs)
             {
-                if(fab.id == type)
+                if(fab.Id == type)
                 {
                     return fab;
                 }
@@ -89,9 +89,16 @@ namespace Ryzm.EndlessRunner
     public class EndlessRowPrefab 
     {
         public EndlessRow rowPrefab;
-        public string id;
         [HideInInspector]
         public EndlessRow row;
+
+        public string Id
+        {
+            get
+            {
+                return rowPrefab.id;
+            }
+        }
     }
 }
 
