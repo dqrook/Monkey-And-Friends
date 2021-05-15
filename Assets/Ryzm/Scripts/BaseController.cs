@@ -188,14 +188,8 @@ namespace Ryzm.Monkey
 
 		protected virtual void UpdateMove()
         {
-			trans.Rotate (Vector3.up,turn);
-			ctrl.Move (move * Time.deltaTime);
-		}
-
-		protected virtual void UpdateMove(Vector3 move)
-		{
-			this.move = move;
-			UpdateMove();
+			trans.Rotate(Vector3.up, turn);
+			ctrl.Move(move * Time.deltaTime);
 		}
 
 		protected virtual void AddImpact(Vector3 dir,float force)

@@ -1,14 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using Ryzm.EndlessRunner.Messages;
 using CodeControl;
 using Ryzm.Monkey;
 
 namespace Ryzm.EndlessRunner
 {
-    public class RunnerController : BaseController
+    public class RunnerController : MonoBehaviour
     {
         public float jumpCooldown = 0.2f;
         public Transform rootTransform;
@@ -16,8 +15,24 @@ namespace Ryzm.EndlessRunner
         public float distanceToBarriers = 2f;
 		public LayerMask groundLayer;
         public LayerMask barrierLayer;
-        public int _currentPosition = 1;
         public RuntimeAnimatorController animatorController;
+        public float forwardSpeed = 1.66f;
+		public float jumpPower = 6.66f;
+		
+		public Animator animator;
+
+		[Header("Monkey Emotion")]
+		public MonkeyEmotions emotions;	
+		public SkinnedMeshRenderer eyes;
+		public SkinnedMeshRenderer mouth;
+		public SkinnedMeshRenderer eyebrows;
+		public SkinnedMeshRenderer blush;
+
+		MonkeyEmotion currentEmotion = MonkeyEmotion.Happy;
+		Player playerInput;
+		Vector3 move;
+		Transform trans;
+        int _currentPosition = 1;
         // turned is set to true when on a TSection and the user has decided which direction they would like to go
         bool turned = false;
         RaycastHit hit;
@@ -34,6 +49,9 @@ namespace Ryzm.EndlessRunner
         EndlessTurnSection _endlessTurnSection;
         GameStatus gameStatus;
         float distanceTraveled;
+        float shiftSpeed;
+        bool airAttacking;
+        IEnumerator _airAttack;
 
         public int CurrentPosition
         {
@@ -48,9 +66,15 @@ namespace Ryzm.EndlessRunner
             }
         }
 
-		protected override void Awake ()
+		void Awake()
 		{
-			base.Awake();
+            trans = GetComponent<Transform> ();
+			playerInput = new Player();
+			if(emotions == null)
+			{
+				emotions = gameObject.GetComponent<MonkeyEmotions>();
+			}
+			ChangeEmotion(MonkeyEmotion.Happy);
 
 			if (animator == null)
             {
@@ -66,23 +90,25 @@ namespace Ryzm.EndlessRunner
             rb = GetComponent<Rigidbody>();
             Message.AddListener<CurrentSectionChange>(OnCurrentSectionChange);
             Message.AddListener<RunnerDie>(OnRunnerDie);
-            Message.AddListener<RunnerRequest>(OnRunnerRequest);
             Message.AddListener<CurrentPositionRequest>(OnCurrentPositionRequest);
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
 		}
 
-        protected override void OnEnable()
+        void OnEnable()
         {
-            base.OnEnable();
-            Message.Send(new RunnerResponse(this));
+            playerInput.Enable();
             Message.Send(new GameStatusRequest());
         }
+
+        void OnDisable()
+		{
+			playerInput.Disable();
+		}
 
         void OnDestroy()
         {
             Message.RemoveListener<CurrentSectionChange>(OnCurrentSectionChange);
             Message.RemoveListener<RunnerDie>(OnRunnerDie);
-            Message.RemoveListener<RunnerRequest>(OnRunnerRequest);
             Message.RemoveListener<CurrentPositionRequest>(OnCurrentPositionRequest);
             Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
         }
@@ -98,11 +124,6 @@ namespace Ryzm.EndlessRunner
         void OnRunnerDie(RunnerDie runnerDie)
         {
             Die();
-        }
-
-        void OnRunnerRequest(RunnerRequest request)
-        {
-            Message.Send(new RunnerResponse(this));
         }
 
         void OnCurrentPositionRequest(CurrentPositionRequest request)
@@ -166,7 +187,6 @@ namespace Ryzm.EndlessRunner
 
         public void Slide() {}
 
-        float jumpVelocity;
         public void Jump(bool isGrounded)
         {
             if(!inJump && isGrounded)
@@ -174,12 +194,7 @@ namespace Ryzm.EndlessRunner
                 monitorJump = MonitorJump();
                 StartCoroutine(monitorJump);
                 animator.SetTrigger("jump");
-				// AddImpact(Vector3.up, jumpPower);
-                // Vector3 vel = rb.velocity;
-                // vel.y = 10;
-                // rb.velocity = vel;
                 rb.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
-                // jumpVelocity = 10;
             }
         }
 
@@ -202,7 +217,7 @@ namespace Ryzm.EndlessRunner
         //     // Debug.Log(rb.velocity);
         // }
         
-        protected override void Update()
+        void Update()
         {
             animator.SetInteger("state", state);
             if(gameStatus != GameStatus.Active)
@@ -221,18 +236,17 @@ namespace Ryzm.EndlessRunner
             // {
             //     jumpVelocity = 0;
             // }
-            
-            float zMove = Time.deltaTime * forwardSpeed;
+            float speedZ = state == 0 ? 1 : 0;
+            float zMove = Time.deltaTime * forwardSpeed * speedZ;
             move.z = zMove;
             move.y = 0;
-            // trans.Translate(0, jumpVelocity * Time.deltaTime, Time.deltaTime * forwardSpeed);
-            move.x = shiftSpeed * forwardSpeed * 0.75f * Time.deltaTime;
+            move.x = shiftSpeed * zMove * 0.75f;
             trans.Translate(move);
             distanceTraveled += zMove;
             Message.Send(new RunnerDistanceResponse(distanceTraveled));
             
             bool isGrounded = IsGrounded();
-            animator.SetFloat("speed_z", 1);
+            animator.SetFloat("speed_z", speedZ);
 			animator.SetFloat("speed_x", 0);
 			animator.SetBool("is_grounded", isGrounded);
             
@@ -257,25 +271,64 @@ namespace Ryzm.EndlessRunner
             // UpdateImpact();
             // UpdateMove();
         }
-        
-        protected override void UpdateImpact()
+
+        bool IsJumping()
         {
-            if(!IsGrounded())
-            {
-                impact += Physics.gravity * gravity_multiplier * Time.deltaTime;
-            }
-            impact = Vector3.Lerp(impact, Vector3.zero, Time.deltaTime);
-			if (impact.magnitude > 0.2f)
-            {
-				move += impact;
-			}
+			return playerInput.PlayerMain.Jump.WasPressedThisFrame();
         }
 
-        protected override void UpdateMove(Vector3 move)
+        bool IsAttacking()
         {
-            // trans.Translate(Time.deltaTime * move);
-            rb.MovePosition(move);
+			return playerInput.PlayerMain.Attack.WasPressedThisFrame();
         }
+
+        void ChangeEmotion(MonkeyEmotion emotion)
+		{
+			if(emotions == null)
+			{
+				return;
+			}
+			
+			MonkeyEmotionPrefab emotionPrefab = emotions.GetEmotion(emotion);
+			if(emotionPrefab == null)
+			{
+				return;
+			}
+			
+			Material _eyes = emotionPrefab.eyes;
+			if(_eyes != null)
+			{
+				eyes.material = _eyes;
+			}
+
+			Material _mouth = emotionPrefab.mouth;
+			if(_mouth != null)
+			{
+				mouth.material = _mouth;
+			}
+			
+			Material _eyebrows = emotionPrefab.eyebrows;
+			if(_eyebrows != null)
+			{
+				eyebrows.material = _eyebrows;
+			}
+			eyebrows.gameObject.SetActive(_eyebrows != null);
+
+			Material _blush = emotionPrefab.blush;
+			if(_blush != null)
+			{
+				blush.material = _blush;
+			}
+			blush.gameObject.SetActive(_blush != null);
+			
+			currentEmotion = emotion;
+		}
+
+        // protected override void UpdateMove(Vector3 move)
+        // {
+        //     // trans.Translate(Time.deltaTime * move);
+        //     rb.MovePosition(move);
+        // }
         
         IEnumerator MonitorJump()
         {
@@ -313,12 +366,12 @@ namespace Ryzm.EndlessRunner
                 // }
                 if(_endlessTurnSection != null)
                 {
-                    _endlessTurnSection.Shift(direction, this, turned);
+                    // _endlessTurnSection.Shift(direction, this, turned);
                     turned = true;
                 }
                 else if(_endlessSection != null)
                 {
-                    _endlessSection.Shift(direction, this);
+                    // _endlessSection.Shift(direction, this);
                 }
             }
         }
@@ -329,7 +382,6 @@ namespace Ryzm.EndlessRunner
             StartCoroutine(shift);
         }
         
-        float shiftSpeed;
         IEnumerator _Shift(Transform target, ShiftDistanceType type = ShiftDistanceType.x)
         {
             inShift = true;
@@ -374,8 +426,6 @@ namespace Ryzm.EndlessRunner
             return type == ShiftDistanceType.x ? target.InverseTransformPoint(trans.position).x : target.InverseTransformPoint(trans.position).z;
         }
 
-        bool airAttacking;
-        IEnumerator _airAttack;
         public void AirAttack()
         {
             if(airAttacking || !IsGrounded())
@@ -428,8 +478,6 @@ namespace Ryzm.EndlessRunner
                 yield return null;
             }
             ChangeEmotion(MonkeyEmotion.Focused);
-            Debug.Log("time not grounded: " + _time);
-            // yield return new WaitForSeconds(0.2f); // cooldown
             airAttacking = false;
             yield return new WaitForSeconds(0.5f);
             ChangeEmotion(MonkeyEmotion.Happy);
@@ -451,7 +499,7 @@ namespace Ryzm.EndlessRunner
         void Reset()
         {
             turned = false;
-            state = 1;
+            state = 0;
             inJump = false;
             inShift = false;
             distanceTraveled = 0;

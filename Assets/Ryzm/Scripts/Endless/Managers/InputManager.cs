@@ -6,7 +6,7 @@ namespace Ryzm.EndlessRunner
 {
     public class InputManager : MonoBehaviour
     {
-        public RunnerController runner;
+        public EndlessController runner;
         private static InputManager _instance;
         public static InputManager Instance { get { return _instance; } }
 
@@ -22,7 +22,7 @@ namespace Ryzm.EndlessRunner
             }
             if(runner == null)
             {
-                runner = FindObjectOfType<RunnerController>();
+                runner = FindObjectOfType<EndlessController>();
             }
         }
 

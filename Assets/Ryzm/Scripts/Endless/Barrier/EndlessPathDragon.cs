@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Ryzm.EndlessRunner
 {
-    public class EndlessPathDragon : EndlessDragon
+    public class EndlessPathDragon : EndlessEnemyDragon
     {
         public Transform middlePosition;
         public Transform finalPosition;

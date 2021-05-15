@@ -2,5 +2,5 @@
 
 namespace Ryzm.EndlessRunner.Messages
 {
-    public class RunnerRequest : Message {}
+    public class ControllerModeRequest : Message {}
 }

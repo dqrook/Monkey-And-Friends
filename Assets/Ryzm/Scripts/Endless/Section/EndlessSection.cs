@@ -128,7 +128,7 @@ namespace Ryzm.EndlessRunner
             return null;
         }
 
-        public virtual void Shift(Direction direction, RunnerController controller)
+        public virtual void Shift(Direction direction, EndlessController controller)
         {
             Transform trans = controller.gameObject.transform;
             int currentPosition = controller.CurrentPosition;

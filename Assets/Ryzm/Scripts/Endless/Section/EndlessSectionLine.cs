@@ -19,7 +19,7 @@ namespace Ryzm.EndlessRunner
         
         void OnTriggerEnter(Collider other)
         {
-            RunnerController runner = other.GetComponent<RunnerController>();
+            EndlessController runner = other.GetComponent<EndlessController>();
             if(runner != null)
             {
                 if(type == LineType.Start)

@@ -20,7 +20,7 @@ namespace Ryzm.EndlessRunner
         
         public override void ExitSection() {}
 
-        public virtual void Shift(Direction direction, RunnerController controller, bool turned)
+        public virtual void Shift(Direction direction, EndlessController controller, bool turned)
         {
             if(direction != turnDirection && !turned)
             {
@@ -29,7 +29,7 @@ namespace Ryzm.EndlessRunner
             _Shift(direction, controller, turned);
         }
 
-        public override void Shift(Direction direction, RunnerController controller)
+        public override void Shift(Direction direction, EndlessController controller)
         {
             Transform trans = controller.gameObject.transform;
             int currentPosition = controller.CurrentPosition;
@@ -53,7 +53,7 @@ namespace Ryzm.EndlessRunner
             }
         }
 
-        protected void _Shift(Direction direction, RunnerController controller, bool turned)
+        protected void _Shift(Direction direction, EndlessController controller, bool turned)
         {
             if(!turned)
             {

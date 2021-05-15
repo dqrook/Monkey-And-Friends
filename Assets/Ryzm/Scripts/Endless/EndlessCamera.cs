@@ -8,7 +8,7 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessCamera : MonoBehaviour
     {
-        public RunnerController runner;
+        public EndlessController runner;
         public Transform Parent;//Remember to assign the parent transform 
         private Vector3 pos, fw, up;
         Vector3 prevPos;
