@@ -212,11 +212,7 @@ namespace Ryzm.EndlessRunner
 
 		public virtual void Slide() {}
 
-        public virtual void Die()
-        {
-			state = 2;
-            StopAllCoroutines();
-		}
+        public virtual void Die() {}
 
         protected void Reset()
         {

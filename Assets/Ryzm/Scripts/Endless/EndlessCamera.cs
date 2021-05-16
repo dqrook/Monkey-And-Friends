@@ -8,9 +8,7 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessCamera : MonoBehaviour
     {
-        public EndlessController runner;
-        public Transform Parent;//Remember to assign the parent transform 
-        private Vector3 pos, fw, up;
+        Vector3 pos, fw, up;
         Vector3 prevPos;
         Quaternion prevRot;
         Vector3 currentPlatformPos;
@@ -18,15 +16,29 @@ namespace Ryzm.EndlessRunner
         Transform _parentTransform;
         float initY;
         EndlessSection currentSection;
+        Transform monkeyTrans;
+        Transform dragonTrans;
+        ControllerMode mode;
+
+        void Awake()
+        {
+            Message.AddListener<CurrentSectionChange>(OnCurrentSectionChange);
+            Message.AddListener<ControllersResponse>(OnControllersResponse);
+            Message.AddListener<ControllerModeResponse>(OnControllerModeResponse);
+            Message.Send(new ControllersRequest());
+        }
+
+        void OnDestroy()
+        {
+            Message.RemoveListener<CurrentSectionChange>(OnCurrentSectionChange);
+            Message.RemoveListener<ControllersResponse>(OnControllersResponse);
+            Message.RemoveListener<ControllerModeResponse>(OnControllerModeResponse);
+        }
 
         void Start()
         {
-            if(runner != null)
-            {
-                Parent = runner.transform;
-            }
             _transform = transform;
-            _parentTransform = Parent.transform;
+            _parentTransform = monkeyTrans;
             pos = _parentTransform.InverseTransformPoint(_transform.position);
             fw = _parentTransform.InverseTransformDirection(_transform.forward);
             up = _parentTransform.InverseTransformDirection(_transform.up);
@@ -35,18 +47,25 @@ namespace Ryzm.EndlessRunner
             initY = pos.y;
         }
 
-        void OnEnable()
+        void OnCurrentSectionChange(CurrentSectionChange sectionChange)
         {
-            Message.AddListener<CurrentSectionChange>(OnCurrentSectionChange);
+            currentSection = sectionChange.endlessSection;
         }
 
-        void OnDisable()
+        void OnControllersResponse(ControllersResponse response)
         {
-            Message.RemoveListener<CurrentSectionChange>(OnCurrentSectionChange);
+            monkeyTrans = response.monkey.transform;
+            dragonTrans = response.dragon.transform;
+        }
+
+        void OnControllerModeResponse(ControllerModeResponse response)
+        {
+            mode = response.mode;
         }
 
         void LateUpdate()
         {
+            _parentTransform = mode == ControllerMode.Dragon ? dragonTrans : monkeyTrans;
             var newpos = _parentTransform.TransformPoint(pos);
             // Debug.Log(newpos + " " + pos + " " + _parentTransform.position);
             var newfw = _parentTransform.TransformDirection(fw);
@@ -72,7 +91,7 @@ namespace Ryzm.EndlessRunner
             // newpos.y = initY;
             // newpos.y = Mathf.Lerp(prevPos.y, newpos.y, 0.03f);
             
-            var newup = Parent.transform.TransformDirection(up);
+            var newup = _parentTransform.TransformDirection(up);
             var newrot = Quaternion.LookRotation(newfw, newup);
             newrot = Quaternion.Lerp(prevRot, newrot, 0.05f);
             _transform.rotation = newrot;
@@ -81,11 +100,6 @@ namespace Ryzm.EndlessRunner
             // Debug.Log($"{newpos.x - prevPos.x}" + " " + $"{newpos.z - prevPos.z}" + $"{newfw} \t newpos: {newpos} \t currentPlatformpos: {currentPlatformPos}" + "");
             prevPos = newpos;
             prevRot = newrot;
-        }
-
-        void OnCurrentSectionChange(CurrentSectionChange sectionChange)
-        {
-            currentSection = sectionChange.endlessSection;
         }
     }
 }

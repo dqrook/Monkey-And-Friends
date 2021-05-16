@@ -192,6 +192,7 @@ namespace Ryzm.EndlessRunner
         LongDiveDragon,
         LongPathDragon,
         TSection1,
-        LeftTurn1
+        LeftTurn1,
+        BasicLauncher
     }
 }

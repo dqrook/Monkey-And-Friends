@@ -29,6 +29,7 @@ namespace Ryzm.Monkey
         Happy,
         Angry,
         Sad,
-        Focused
+        Focused,
+        Dead
     }
 }

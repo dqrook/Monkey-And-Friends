@@ -21,12 +21,17 @@ namespace Ryzm.EndlessRunner
             part.Play();
         }
 
+        public void Stop()
+        {
+            part.Stop();
+        }
+
         void OnDisable()
         {
             collisionTime = 0;
             if(part.isPlaying)
             {
-                part.Stop();
+                Stop();
             }
         }
 

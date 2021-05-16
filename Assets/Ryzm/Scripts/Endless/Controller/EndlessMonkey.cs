@@ -9,6 +9,7 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessMonkey : EndlessController
     {
+        public Collider playerCollider;
         public float jumpCooldown = 0.1f;
         public Transform rootTransform;
         public float distanceToGround = 0.5f;
@@ -42,6 +43,10 @@ namespace Ryzm.EndlessRunner
 			}
 			ChangeEmotion(MonkeyEmotion.Happy);
             rb = GetComponent<Rigidbody>();
+            if(playerCollider == null)
+            {
+                playerCollider = gameObject.GetComponent<Collider>();
+            }
         }
 
         void Update()
@@ -271,9 +276,35 @@ namespace Ryzm.EndlessRunner
             AirAttack();
         }
 
+        public override void Die()
+        {
+            state = 2;
+            StopAllCoroutines();
+            ChangeEmotion(MonkeyEmotion.Dead);
+        }
+
         public void RideDragon()
         {
+            rb.isKinematic = true;
+            playerCollider.enabled = false;
             state = 4;
+            ChangeEmotion(MonkeyEmotion.Angry);
+        }
+
+        IEnumerator maintain;
+        public void MaintainZeroPosition()
+        {
+            maintain = _Maintain();
+            StartCoroutine(maintain);
+        }
+
+        IEnumerator _Maintain()
+        {
+            while(true)
+            {
+                trans.localPosition = new Vector3(0, trans.localPosition.y, trans.localPosition.z);
+                yield return null;
+            }
         }
     }
 }

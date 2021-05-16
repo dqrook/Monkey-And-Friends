@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Ryzm.EndlessRunner
 {
-    public class EndlessDiveDragon : EndlessEnemyDragon
+    public class EndlessDiveDragon : EndlessAIDragon
     {
         protected override IEnumerator FlyToPosition()
         {
