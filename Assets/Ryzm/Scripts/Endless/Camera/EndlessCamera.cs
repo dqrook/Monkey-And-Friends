@@ -19,13 +19,16 @@ namespace Ryzm.EndlessRunner
         Transform monkeyTrans;
         Transform dragonTrans;
         ControllerMode mode;
+        GameStatus gameStatus = GameStatus.MainMenu;
 
         void Awake()
         {
             Message.AddListener<CurrentSectionChange>(OnCurrentSectionChange);
             Message.AddListener<ControllersResponse>(OnControllersResponse);
             Message.AddListener<ControllerModeResponse>(OnControllerModeResponse);
+            Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
             Message.Send(new ControllersRequest());
+            Message.Send(new GameStatusRequest());
         }
 
         void OnDestroy()
@@ -33,6 +36,7 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<CurrentSectionChange>(OnCurrentSectionChange);
             Message.RemoveListener<ControllersResponse>(OnControllersResponse);
             Message.RemoveListener<ControllerModeResponse>(OnControllerModeResponse);
+            Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
         }
 
         void Start()
@@ -63,11 +67,19 @@ namespace Ryzm.EndlessRunner
             mode = response.mode;
         }
 
+        void OnGameStatusResponse(GameStatusResponse response)
+        {
+            gameStatus = response.status;
+        }
+
         void LateUpdate()
         {
+            if(gameStatus != GameStatus.Active)
+            {
+                return;
+            }
             _parentTransform = mode == ControllerMode.Dragon ? dragonTrans : monkeyTrans;
             var newpos = _parentTransform.TransformPoint(pos);
-            // Debug.Log(newpos + " " + pos + " " + _parentTransform.position);
             var newfw = _parentTransform.TransformDirection(fw);
             if(currentSection != null)
             {

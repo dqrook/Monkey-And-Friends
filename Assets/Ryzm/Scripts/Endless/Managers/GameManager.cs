@@ -21,11 +21,7 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<StartGame>(OnStartGame);
             Message.AddListener<PauseGame>(OnPauseGame);
             Message.AddListener<ResumeGame>(OnResumeGame);
-        }
-
-        void Start()
-        {
-            Message.Send(new StartGame());
+            UpdateGameStatus(GameStatus.Starting);
         }
 
         void OnDestroy()
@@ -42,6 +38,7 @@ namespace Ryzm.EndlessRunner
         void OnStartGame(StartGame start)
         {
             Message.Send(new CreateSectionRow());
+            Debug.Log("CreateSectionRow");
             UpdateGameStatus(GameStatus.Active);
         }
 
@@ -110,6 +107,8 @@ namespace Ryzm.EndlessRunner
 
     public enum GameStatus
     {
+        MainMenu,
+        Starting,
         Active,
         Paused,
         Ended

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace NaCl
+namespace Ryzm.Utils
 {
     public class TweetNaCl
     {

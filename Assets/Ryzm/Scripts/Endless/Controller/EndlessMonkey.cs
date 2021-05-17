@@ -4,6 +4,9 @@ using UnityEngine;
 using Ryzm.Monkey;
 using CodeControl;
 using Ryzm.EndlessRunner.Messages;
+using System.Text;
+using System;
+using Ryzm.Utils;
 
 namespace Ryzm.EndlessRunner
 {
@@ -47,6 +50,21 @@ namespace Ryzm.EndlessRunner
             {
                 playerCollider = gameObject.GetComponent<Collider>();
             }
+            // string privateKey = "2FHGf2HNKa1dHeUgZuT3Xu1eG5Pmn1b9VvXH9EXN2pG86wzpRXgfWKoTLcJjP4Rj9rbknQHa8REfmkTFMkmDXY2Q";
+            // byte[] privateKeyBytes = Base58.Decode(privateKey);
+            // string publicKey = "dSKPhFp5d7k9cfBn7n4FWy6F9DymJukTuRV5mw55sCx";
+            // byte[] publicKeyBytes = Base58.Decode(publicKey);
+            // if(privateKeyBytes != null)
+            // {
+            //     string message = "Hello World";
+            //     byte[] messageBytes = Encoding.ASCII.GetBytes(message);
+            //     byte[] signedMessageBytes = TweetNaCl.CryptoSign(messageBytes, privateKeyBytes);
+            //     string signedMessage = Encoding.ASCII.GetString(signedMessageBytes);
+            //     // make api request with signedMessage, publicKey, message, and accountName (and possibly a login/password or jwt)
+            //     byte[] openedMessageBytes = TweetNaCl.CryptoSignOpen(signedMessageBytes, publicKeyBytes);
+            //     string openedMessage = Encoding.ASCII.GetString(openedMessageBytes);
+            //     Debug.Log(signedMessage);
+            // }
         }
 
         void Update()

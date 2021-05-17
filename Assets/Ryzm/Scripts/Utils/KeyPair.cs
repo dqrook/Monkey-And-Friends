@@ -7,7 +7,7 @@
 
 using System;
 
-namespace NaCl
+namespace Ryzm.Utils
 {
     public class KeyPair
     {

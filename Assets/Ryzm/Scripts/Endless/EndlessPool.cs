@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Ryzm.EndlessRunner.Messages;
+using CodeControl;
 
 namespace Ryzm.EndlessRunner
 {
@@ -17,6 +19,7 @@ namespace Ryzm.EndlessRunner
 
         private static EndlessPool _instance;
         public static EndlessPool Instance { get { return _instance; } }
+        bool madeWorld;
 
         List<SectionPrefab> SectionPrefabs 
         {
@@ -44,7 +47,20 @@ namespace Ryzm.EndlessRunner
             {
                 _instance = this;
             }
+            Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
+        }
 
+        void OnDestroy()
+        {
+            Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
+        }
+
+        void OnGameStatusResponse(GameStatusResponse response)
+        {
+            if(response.status == GameStatus.Active && !madeWorld)
+            {
+                madeWorld = true;
+            }
             foreach(SectionPrefab item in SectionPrefabs)
             {
                 for(int i = 0; i < item.amount; i++)

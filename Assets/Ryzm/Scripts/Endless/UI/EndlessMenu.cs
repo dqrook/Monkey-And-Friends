@@ -182,6 +182,7 @@ namespace Ryzm.EndlessRunner.UI
         Distance,
         SwipeZone,
         Pause,
-        EndGame
+        EndGame,
+        Main
     }
 }

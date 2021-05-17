@@ -8,6 +8,11 @@ namespace Ryzm.EndlessRunner.UI
 {
     public class MenuManager : MonoBehaviour
     {
+        List<MenuType> mainMenus = new List<MenuType>
+        {
+            MenuType.Main
+        };
+
         List<MenuType> startMenus = new List<MenuType>
         {
             MenuType.Score,
@@ -25,44 +30,54 @@ namespace Ryzm.EndlessRunner.UI
             MenuType.EndGame
         };
 
+        List<MenuType> noMenus = new List<MenuType> {};
+
         void Awake()
         {
+            Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
             Message.AddListener<RunnerDie>(OnRunnerDie);
-            Message.AddListener<StartGame>(OnStartGame);
-            Message.AddListener<PauseGame>(OnPauseGame);
-            Message.AddListener<ResumeGame>(OnResumeGame);
+            Message.Send(new GameStatusRequest());
         }
 
         void OnDestroy()
         {
+            Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
             Message.RemoveListener<RunnerDie>(OnRunnerDie);
-            Message.RemoveListener<StartGame>(OnStartGame);
-            Message.RemoveListener<PauseGame>(OnPauseGame);
-            Message.RemoveListener<ResumeGame>(OnResumeGame);
         }
 
-        void OnStartGame(StartGame start)
+        void OnGameStatusResponse(GameStatusResponse response)
         {
-            Message.Send(new ActivateMenu(activatedTypes: startMenus));
-            Message.Send(new DeactivateMenu(activatedTypes: startMenus));
-        }
-
-        void OnPauseGame(PauseGame pause)
-        {
-            Message.Send(new ActivateMenu(activatedTypes: pauseMenus));
-            Message.Send(new DeactivateMenu(activatedTypes: pauseMenus));
-        }
-
-        void OnResumeGame(ResumeGame resume)
-        {
-            Message.Send(new ActivateMenu(activatedTypes: startMenus));
-            Message.Send(new DeactivateMenu(activatedTypes: startMenus));
+            if(response.status == GameStatus.MainMenu)
+            {
+                ActivateMenus(mainMenus);
+            }
+            else if(response.status == GameStatus.Starting)
+            {
+                ActivateMenus(noMenus);
+            }
+            else if(response.status == GameStatus.Active)
+            {
+                ActivateMenus(startMenus);
+            }
+            else if(response.status == GameStatus.Paused)
+            {
+                ActivateMenus(pauseMenus);
+            }
+            else if(response.status == GameStatus.Active)
+            {
+                ActivateMenus(endMenus);
+            }
         }
 
         void OnRunnerDie(RunnerDie runnerDie)
         {
-            Message.Send(new ActivateMenu(activatedTypes: endMenus));
-            Message.Send(new DeactivateMenu(activatedTypes: endMenus));
+            ActivateMenus(endMenus);
+        }
+
+        void ActivateMenus(List<MenuType> menus)
+        {
+            Message.Send(new ActivateMenu(activatedTypes: menus));
+            Message.Send(new DeactivateMenu(activatedTypes: menus));
         }
     }
 }
