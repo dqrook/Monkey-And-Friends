@@ -18,10 +18,11 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<RunnerDie>(OnRunnerDie);
             Message.AddListener<RequestGameSpeedChange>(OnRequestGameSpeedChange);
             Message.AddListener<GameSpeedRequest>(OnGameSpeedRequest);
+            Message.AddListener<StartingGame>(OnStartingGame);
             Message.AddListener<StartGame>(OnStartGame);
             Message.AddListener<PauseGame>(OnPauseGame);
             Message.AddListener<ResumeGame>(OnResumeGame);
-            UpdateGameStatus(GameStatus.Starting);
+            UpdateGameStatus(GameStatus.MainMenu);
         }
 
         void OnDestroy()
@@ -30,9 +31,15 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<RunnerDie>(OnRunnerDie);
             Message.RemoveListener<RequestGameSpeedChange>(OnRequestGameSpeedChange);
             Message.RemoveListener<GameSpeedRequest>(OnGameSpeedRequest);
+            Message.RemoveListener<StartingGame>(OnStartingGame);
             Message.RemoveListener<StartGame>(OnStartGame);
             Message.RemoveListener<PauseGame>(OnPauseGame);
             Message.RemoveListener<ResumeGame>(OnResumeGame);
+        }
+
+        void OnStartingGame(StartingGame starting)
+        {
+            UpdateGameStatus(GameStatus.Starting);
         }
 
         void OnStartGame(StartGame start)

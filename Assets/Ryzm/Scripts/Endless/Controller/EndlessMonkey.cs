@@ -6,7 +6,7 @@ using CodeControl;
 using Ryzm.EndlessRunner.Messages;
 using System.Text;
 using System;
-using Ryzm.Utils;
+using Ryzm.Blockchain;
 
 namespace Ryzm.EndlessRunner
 {
@@ -65,6 +65,18 @@ namespace Ryzm.EndlessRunner
             //     string openedMessage = Encoding.ASCII.GetString(openedMessageBytes);
             //     Debug.Log(signedMessage);
             // }
+            // StartCoroutine(DoIt());
+        }
+
+        IEnumerator DoIt()
+        {
+            yield return new WaitForSeconds(1);
+            string privateKey = "2FHGf2HNKa1dHeUgZuT3Xu1eG5Pmn1b9VvXH9EXN2pG86wzpRXgfWKoTLcJjP4Rj9rbknQHa8REfmkTFMkmDXY2Q";
+            byte[] privateKeyBytes = Base58.Decode(privateKey);
+            string d = Base58.Encode(privateKeyBytes);
+            // Debug.Log(d == privateKey);
+            KeyPair kp = TweetNaCl.CryptoBoxKeypair();
+            Debug.Log(kp.secretKey);
         }
 
         void Update()

@@ -10,7 +10,8 @@ namespace Ryzm.EndlessRunner.UI
     {
         public void OnClickStart()
         {
-            Message.Send(new GameStatusResponse(GameStatus.Starting));
+            // Message.Send(new GameStatusResponse(GameStatus.Starting));
+            Message.Send(new MakeWorld());
         }
     }
 }

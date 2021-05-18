@@ -7,17 +7,17 @@
 
 using System;
 
-namespace Ryzm.Utils
+namespace Ryzm.Blockchain
 {
     public class KeyPair
     {
-        public Byte[] PublicKey { get; protected set; }
-        public Byte[] SecretKey { get; protected set; }
+        public string publicKey;
+        public string secretKey;
 
         public KeyPair(Byte[] publicKey, Byte[] secretKey)
         {
-            this.PublicKey = publicKey;
-            this.SecretKey = secretKey;
+            this.publicKey = Base58.Encode(publicKey);
+            this.secretKey = Base58.Encode(secretKey);
         }
     }
 }

@@ -49,7 +49,7 @@ namespace Ryzm.EndlessRunner.UI
         {
             if(response.status == GameStatus.MainMenu)
             {
-                ActivateMenus(mainMenus);
+                // ActivateMenus(mainMenus);
             }
             else if(response.status == GameStatus.Starting)
             {

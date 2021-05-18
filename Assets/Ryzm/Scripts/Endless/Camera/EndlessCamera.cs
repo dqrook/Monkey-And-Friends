@@ -20,6 +20,7 @@ namespace Ryzm.EndlessRunner
         Transform dragonTrans;
         ControllerMode mode;
         GameStatus gameStatus = GameStatus.MainMenu;
+        bool initialized;
 
         void Awake()
         {
@@ -29,6 +30,7 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
             Message.Send(new ControllersRequest());
             Message.Send(new GameStatusRequest());
+            _transform = transform;
         }
 
         void OnDestroy()
@@ -37,18 +39,6 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<ControllersResponse>(OnControllersResponse);
             Message.RemoveListener<ControllerModeResponse>(OnControllerModeResponse);
             Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
-        }
-
-        void Start()
-        {
-            _transform = transform;
-            _parentTransform = monkeyTrans;
-            pos = _parentTransform.InverseTransformPoint(_transform.position);
-            fw = _parentTransform.InverseTransformDirection(_transform.forward);
-            up = _parentTransform.InverseTransformDirection(_transform.up);
-            prevPos = _transform.position;
-            prevRot = _transform.rotation;
-            initY = pos.y;
         }
 
         void OnCurrentSectionChange(CurrentSectionChange sectionChange)
@@ -70,6 +60,18 @@ namespace Ryzm.EndlessRunner
         void OnGameStatusResponse(GameStatusResponse response)
         {
             gameStatus = response.status;
+            if(gameStatus == GameStatus.Active && !initialized)
+            {
+                initialized = true;
+                _parentTransform = monkeyTrans;
+                pos = _parentTransform.InverseTransformPoint(_transform.position);
+                fw = _parentTransform.InverseTransformDirection(_transform.forward);
+                up = _parentTransform.InverseTransformDirection(_transform.up);
+                prevPos = _transform.position;
+                prevRot = _transform.rotation;
+                initY = pos.y;
+                Debug.Log(pos);
+            }
         }
 
         void LateUpdate()

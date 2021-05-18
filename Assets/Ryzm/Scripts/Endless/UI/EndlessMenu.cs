@@ -36,14 +36,17 @@ namespace Ryzm.EndlessRunner.UI
             set
             {
                 PlaceResizer();
-                _isActive = value;
-                if(canvas != null)
+                if(value != _isActive)
                 {
-                    canvas.enabled = value;
-                }
-                foreach(Transform child in gameObject.transform)
-                {
-                   child.gameObject.SetActive(value);
+                    _isActive = value;
+                    if(canvas != null)
+                    {
+                        canvas.enabled = value;
+                    }
+                    foreach(Transform child in gameObject.transform)
+                    {
+                    child.gameObject.SetActive(value);
+                    }
                 }
             }
         }

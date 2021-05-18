@@ -47,38 +47,39 @@ namespace Ryzm.EndlessRunner
             {
                 _instance = this;
             }
-            Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
+            Message.AddListener<MakeWorld>(OnMakeWorld);
         }
 
         void OnDestroy()
         {
-            Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
+            Message.RemoveListener<MakeWorld>(OnMakeWorld);
         }
 
-        void OnGameStatusResponse(GameStatusResponse response)
+        void OnMakeWorld(MakeWorld makeWorld)
         {
-            if(response.status == GameStatus.Active && !madeWorld)
+            if(!madeWorld)
             {
                 madeWorld = true;
-            }
-            foreach(SectionPrefab item in SectionPrefabs)
-            {
-                for(int i = 0; i < item.amount; i++)
+                foreach(SectionPrefab item in SectionPrefabs)
                 {
-                    GameObject obj = Instantiate(item.prefab);
-                    obj.SetActive(false);
-                    pooledSections.Add(new PooledSection(obj, item.IsTurn, item.Type));
+                    for(int i = 0; i < item.amount; i++)
+                    {
+                        GameObject obj = Instantiate(item.prefab);
+                        obj.SetActive(false);
+                        pooledSections.Add(new PooledSection(obj, item.IsTurn, item.Type));
+                    }
                 }
-            }
 
-            foreach(BarrierPrefab item in BarrierPrefabs)
-            {
-                for(int i = 0; i < item.amount; i++)
+                foreach(BarrierPrefab item in BarrierPrefabs)
                 {
-                    GameObject obj = Instantiate(item.prefab);
-                    obj.SetActive(false);
-                    pooledBarriers.Add(new PooledBarrier(obj, item.Type));
+                    for(int i = 0; i < item.amount; i++)
+                    {
+                        GameObject obj = Instantiate(item.prefab);
+                        obj.SetActive(false);
+                        pooledBarriers.Add(new PooledBarrier(obj, item.Type));
+                    }
                 }
+                Message.Send(new MadeWorld());
             }
         }
 

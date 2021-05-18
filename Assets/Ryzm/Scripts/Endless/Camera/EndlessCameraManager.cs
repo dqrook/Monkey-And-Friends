@@ -18,12 +18,14 @@ namespace Ryzm.EndlessRunner
         void Awake()
         {
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
+            Message.AddListener<MadeWorld>(OnMadeWorld);
             cameraTrans = endlessCamera.gameObject.transform;
         }
 
         void OnDestroy()
         {
             Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
+            Message.RemoveListener<MadeWorld>(OnMadeWorld);
         }
 
         void OnGameStatusResponse(GameStatusResponse response)
@@ -34,12 +36,14 @@ namespace Ryzm.EndlessRunner
                 cameraTrans.position = startTransform.position;
                 cameraTrans.rotation = startTransform.rotation;
             }
-            else if(gameStatus == GameStatus.Starting)
-            {
-                rotateCamera = null;
-                rotateCamera = RotateCamera(endTransform, GameStatus.Active);
-                StartCoroutine(rotateCamera);
-            }
+        }
+
+        void OnMadeWorld(MadeWorld madeWorld)
+        {
+            rotateCamera = null;
+            rotateCamera = RotateCamera(endTransform, GameStatus.Active);
+            StartCoroutine(rotateCamera);
+            Message.Send(new StartingGame());
         }
 
         float GetTotalDifference(Transform target)
@@ -52,7 +56,7 @@ namespace Ryzm.EndlessRunner
         IEnumerator RotateCamera(Transform target, GameStatus targetStatus)
         {
             float diff = GetTotalDifference(target);
-            while(diff > 0.01f)
+            while(diff > 0.1f)
             {
                 cameraTrans.position = Vector3.Lerp(cameraTrans.position, target.position, Time.deltaTime * 2f);
                 cameraTrans.rotation = Quaternion.Lerp(cameraTrans.rotation, target.rotation, Time.deltaTime * 2f);
