@@ -14,9 +14,45 @@ namespace Ryzm.Blockchain
         public static NearLogin Instance { get { return _instance; } }
 
         public NearEnvs envs;
-        public string accountName;
-        public string publicKey;
-        public string secretKey;
+        AccessKeyResponse accessKeyResponse;
+        IEnumerator getAccessKeys;
+        bool fetchingKeys;
+
+        public string AccountName
+        {
+            get
+            {
+                return PlayerPrefs.GetString("accountName", "");
+            }
+            set
+            {
+                PlayerPrefs.SetString("accountName", value);
+            }
+        }
+
+        public string PublicKey
+        {
+            get
+            {
+                return PlayerPrefs.GetString("publicKey", "");
+            }
+            set
+            {
+                PlayerPrefs.SetString("publicKey", value);
+            }
+        }
+
+        public string SecretKey
+        {
+            get
+            {
+                return PlayerPrefs.GetString("secretKey", "");
+            }
+            set
+            {
+                PlayerPrefs.SetString("secretKey", value);
+            }
+        }
 
         void Awake()
         {
@@ -28,16 +64,114 @@ namespace Ryzm.Blockchain
             {
                 _instance = this;
             }
-            accountName = PlayerPrefs.GetString("accountName", "");
-            publicKey = PlayerPrefs.GetString("publicKey", "");
-            secretKey = PlayerPrefs.GetString("secretKey", "");
-            Debug.Log(GetUrl());
-            Message.AddListener<NearUrlRequest>(OnNearUrlRequest);
-            string[] p = new string[2];
-            p[0] = "access_key/ryzm.near";
-            p[1] = "";
-            string nj = new NearJson("query", p).ToJson();
-            StartCoroutine(SaveInterval("https://rpc.mainnet.near.org", nj));
+
+            Message.AddListener<NearInfoRequest>(OnNearInfoRequest);
+            Message.AddListener<LoginRequest>(OnLoginRequest);
+
+
+            // accountName = PlayerPrefs.GetString("accountName", "");
+            // publicKey = PlayerPrefs.GetString("publicKey", "");
+            // secretKey = PlayerPrefs.GetString("secretKey", "");
+            
+            // string[] p = new string[2];
+            // p[0] = "access_key/ryzm.near";
+            // p[1] = "";
+            // string nj = new NearJson("query", p).ToJson();
+            // StartCoroutine(_GetAccessKeys("https://rpc.mainnet.near.org", nj));
+        }
+
+        void OnDestroy()
+        {
+            Message.RemoveListener<NearInfoRequest>(OnNearInfoRequest);
+            Message.RemoveListener<LoginRequest>(OnLoginRequest);
+        }
+
+        void OnNearInfoRequest(NearInfoRequest request)
+        {
+            string _accountName = AccountName;
+            if(HasCredentials())
+            {
+                if(accessKeyResponse != null)
+                {
+                    if(CanAccessContract())
+                    {
+                        Message.Send(new NearInfoResponse(_accountName));
+                    }
+                    else
+                    {
+                        Logout();
+                    }
+                }
+                else
+                {
+                    if(!fetchingKeys)
+                    {
+                        getAccessKeys = null;
+                        string[] p = { "access_key/" + _accountName, "" };
+                        getAccessKeys = _GetAccessKeys(envs.nodeUrl, new NearJson("query", p).ToJson());
+                        StartCoroutine(getAccessKeys);
+                    }
+                }
+            }
+            else
+            {
+                Logout();
+            }
+        }
+
+        void OnLoginRequest(LoginRequest request)
+        {
+            if(!HasCredentials() || (!CanAccessContract() && !fetchingKeys))
+            {
+                Reset();
+                KeyPair kp = CreateKeyPair();
+                PublicKey = kp.publicKey;
+                SecretKey = kp.secretKey;
+                Message.Send(new LoginResponse(envs.LoginUrl()));
+            }
+        }
+
+        bool CanAccessContract()
+        {
+            if(accessKeyResponse != null)
+            {
+                string _publicKey = PublicKey;
+                foreach(ParentKey parentKey in accessKeyResponse.result.keys)
+                {
+                    if(_publicKey == parentKey.public_key && parentKey.access_key.permission.FunctionCall.receiver_id == envs.contractId)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        IEnumerator _GetAccessKeys(string url, string bodyJsonString)
+        {
+            fetchingKeys = true;
+            UnityWebRequest request = PostRequest(url, bodyJsonString);
+            yield return request.SendWebRequest();
+            if(request.isNetworkError || request.isHttpError)
+            {
+                Debug.LogError("ERROR");
+            }
+            else
+            {
+                Debug.Log("POST SUCCESS");
+                string res = request.downloadHandler.text;
+                accessKeyResponse = AccessKeyResponse.FromJson(res);
+                Debug.Log(accessKeyResponse.result.keys[0].access_key.permission.FunctionCall.receiver_id);
+                if(CanAccessContract())
+                {
+                    Message.Send(new NearInfoResponse(AccountName));
+                }
+                else
+                {
+                    Logout();
+                }
+            }
+            fetchingKeys = false;
         }
 
         UnityWebRequest PostRequest(string url, string bodyJsonString)
@@ -50,51 +184,9 @@ namespace Ryzm.Blockchain
             return request;
         }
 
-        IEnumerator SaveInterval(string url, string bodyJsonString)
-        {
-            UnityWebRequest request = PostRequest(url, bodyJsonString);
-            yield return request.SendWebRequest();
-            if(request.isNetworkError || request.isHttpError)
-            {
-                Debug.LogError("ERROR");
-            }
-            else
-            {
-                Debug.Log("POST SUCCESS");
-                string response = request.downloadHandler.text;
-                AccessKeyResponse akr = AccessKeyResponse.FromJson(response);
-                Debug.Log(akr.result.keys[0].access_key.permission.FunctionCall.receiver_id);
-                // string[] separatingStrings = { "result" };
-                // string[] words = response.Split(separatingStrings, System.StringSplitOptions.RemoveEmptyEntries);
-                // foreach(string word in words)
-                // {
-                //     Debug.Log(word);
-                //     if(word.Contains("keys"))
-                //     {
-
-                //     }
-                // }
-            }
-        }
-
-        void OnDestroy()
-        {
-            Message.RemoveListener<NearUrlRequest>(OnNearUrlRequest); 
-        }
-
-        void OnNearUrlRequest(NearUrlRequest request)
-        {
-            object o = new object();
-        }
-
-        public string GetUrl()
-        {
-            return envs.GetUrl();
-        }
-
         public bool HasCredentials()
         {
-            return accountName.Length > 0 && publicKey.Length > 0 && secretKey.Length > 0;
+            return AccountName.Length > 0 && PublicKey.Length > 0 && SecretKey.Length > 0;
         }
 
         public KeyPair CreateKeyPair()
@@ -102,41 +194,17 @@ namespace Ryzm.Blockchain
             return TweetNaCl.CryptoBoxKeypair();
         }
 
-        public string AccountName()
-        {
-            if(!IsLoggedIn())
-            {
-                return null;
-            }
-            return accountName;
-        }
-
-        public bool IsLoggedIn()
-        {
-            if(HasCredentials())
-            {
-
-            }
-            else
-            {
-                Reset();
-                KeyPair kp = CreateKeyPair();
-                PlayerPrefs.SetString("publicKey", kp.publicKey);
-                PlayerPrefs.SetString("secretKey", kp.secretKey);
-            }
-            return false;
-        }
-
         public void Logout()
         {
             Reset();
+            Message.Send(new NearInfoResponse(null));
         }
 
         void Reset()
         {
-            PlayerPrefs.SetString("accountName", "");
-            PlayerPrefs.SetString("publicKey", "");
-            PlayerPrefs.SetString("secretKey", "");
+            AccountName = "";
+            PublicKey = "";
+            SecretKey = "";
         }
     }
 
@@ -157,6 +225,7 @@ namespace Ryzm.Blockchain
 
         public string ToJson()
         {
+            // replace the @ in @params b/c params is a reserved keyword
             return JsonUtility.ToJson(this).Replace("@", "");
         } 
     }
@@ -166,7 +235,7 @@ namespace Ryzm.Blockchain
     {
         public string jsonrpc;
         public int id;
-        public AccessKeyResponseResult result;
+        public ResponseResult result;
 
         public static AccessKeyResponse FromJson(string jsonString)
         {
@@ -175,22 +244,22 @@ namespace Ryzm.Blockchain
     }
 
     [System.Serializable]
-    public class AccessKeyResponseResult
+    public class ResponseResult
     {
         public int block_height;
         public string block_hash;
-        public List<ResultKey> keys;
+        public List<ParentKey> keys;
     }
 
     [System.Serializable]
-    public class ResultKey
+    public class ParentKey
     {
         public string public_key;
-        public ResultAccessKey access_key;
+        public AccessKey access_key;
     }
 
     [System.Serializable]
-    public class ResultAccessKey
+    public class AccessKey
     {
         public int nonce;
         public AccessKeyPermission permission;

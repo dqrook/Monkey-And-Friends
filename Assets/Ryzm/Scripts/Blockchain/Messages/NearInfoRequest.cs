@@ -2,5 +2,5 @@
 
 namespace Ryzm.Blockchain.Messages
 {
-    public class NearUrlRequest : Message {}
+    public class NearInfoRequest : Message {}
 }

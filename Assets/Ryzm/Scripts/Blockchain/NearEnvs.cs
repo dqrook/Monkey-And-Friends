@@ -14,9 +14,7 @@ namespace Ryzm.Blockchain
         public string failureUrl;
         public string appUrl;
         public string contractId;
-
-        string testUrl = "";
-        string mainUrl = "";
+        public string nodeUrl = "https://rpc.testnet.near.org";
 
         string reservedCharacters = "!*'();:@&=+$,/?%#[]";
 
@@ -37,7 +35,7 @@ namespace Ryzm.Blockchain
             return sb.ToString();
         }
 
-        public string GetUrl()
+        public string LoginUrl()
         {
             return UrlEncode(appUrl);
         }
