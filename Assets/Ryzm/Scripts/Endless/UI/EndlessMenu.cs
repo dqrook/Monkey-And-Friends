@@ -45,7 +45,7 @@ namespace Ryzm.EndlessRunner.UI
                     }
                     foreach(Transform child in gameObject.transform)
                     {
-                    child.gameObject.SetActive(value);
+                        child.gameObject.SetActive(value);
                     }
                 }
             }
@@ -67,6 +67,10 @@ namespace Ryzm.EndlessRunner.UI
             Message.RemoveListener<ActivateMenu>(OnActivateMenu);
             Message.RemoveListener<DeactivateMenu>(OnDeactivateMenu);
         }
+
+        protected virtual void OnEnable() {}
+
+        protected virtual void OnDisable() {}
 
         protected virtual void OnActivateMenu(ActivateMenu activate)
         {

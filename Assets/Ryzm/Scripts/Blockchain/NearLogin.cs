@@ -27,6 +27,7 @@ namespace Ryzm.Blockchain
             set
             {
                 PlayerPrefs.SetString("accountName", value);
+                PlayerPrefs.Save();
             }
         }
 
@@ -39,6 +40,7 @@ namespace Ryzm.Blockchain
             set
             {
                 PlayerPrefs.SetString("publicKey", value);
+                PlayerPrefs.Save();
             }
         }
 
@@ -51,6 +53,7 @@ namespace Ryzm.Blockchain
             set
             {
                 PlayerPrefs.SetString("secretKey", value);
+                PlayerPrefs.Save();
             }
         }
 
@@ -65,7 +68,6 @@ namespace Ryzm.Blockchain
                 _instance = this;
             }
 
-            Message.AddListener<NearInfoRequest>(OnNearInfoRequest);
             Message.AddListener<LoginRequest>(OnLoginRequest);
 
 
@@ -82,7 +84,6 @@ namespace Ryzm.Blockchain
 
         void OnDestroy()
         {
-            Message.RemoveListener<NearInfoRequest>(OnNearInfoRequest);
             Message.RemoveListener<LoginRequest>(OnLoginRequest);
         }
 
@@ -95,7 +96,7 @@ namespace Ryzm.Blockchain
                 {
                     if(CanAccessContract())
                     {
-                        Message.Send(new NearInfoResponse(_accountName));
+                        Login();
                     }
                     else
                     {
@@ -108,7 +109,7 @@ namespace Ryzm.Blockchain
                     {
                         getAccessKeys = null;
                         string[] p = { "access_key/" + _accountName, "" };
-                        getAccessKeys = _GetAccessKeys(envs.nodeUrl, new NearJson("query", p).ToJson());
+                        getAccessKeys = _GetAccessKeys(envs.walletUrl, new NearJson("query", p).ToJson());
                         StartCoroutine(getAccessKeys);
                     }
                 }
@@ -121,24 +122,52 @@ namespace Ryzm.Blockchain
 
         void OnLoginRequest(LoginRequest request)
         {
-            if(!HasCredentials() || (!CanAccessContract() && !fetchingKeys))
+            bool needKeys = !CanAccessContract() && !fetchingKeys;
+            if(!HasCredentials() || needKeys)
             {
-                Reset();
+                // Reset();
                 KeyPair kp = CreateKeyPair();
-                PublicKey = kp.publicKey;
-                SecretKey = kp.secretKey;
-                Message.Send(new LoginResponse(envs.LoginUrl()));
+                if(PublicKey == "") 
+                {
+                    PublicKey = kp.publicKey;
+                }
+                if(SecretKey == "")
+                {
+                    SecretKey = kp.secretKey;
+                }
+                Debug.Log(envs.LoginUrl(PublicKey));
+                
+                bool fetchingKeys = needKeys && HasCredentials();
+                string _accountName = AccountName != "" ? AccountName : null;
+                if(needKeys && HasCredentials())
+                {
+                    // if you have all the necessary credentials but you havent gotten the access keys to check if they are ok 
+                    getAccessKeys = null;
+                    string[] p = { "access_key/" + _accountName, "" };
+                    getAccessKeys = _GetAccessKeys(envs.walletUrl, new NearJson("query", p).ToJson());
+                    StartCoroutine(getAccessKeys);
+                }
+                Message.Send(new LoginResponse(_accountName, envs.LoginUrl(PublicKey), false, fetchingKeys));
             }
+            else
+            {
+                Login();
+            }
+        }
+
+        void Login()
+        {
+            Message.Send(new LoginResponse(AccountName, envs.LoginUrl(PublicKey), true, false));
         }
 
         bool CanAccessContract()
         {
             if(accessKeyResponse != null)
             {
-                string _publicKey = PublicKey;
-                foreach(ParentKey parentKey in accessKeyResponse.result.keys)
+                string _publicKey = "ed25519:" + PublicKey;
+                foreach(FullKey fullKey in accessKeyResponse.result.keys)
                 {
-                    if(_publicKey == parentKey.public_key && parentKey.access_key.permission.FunctionCall.receiver_id == envs.contractId)
+                    if(_publicKey == fullKey.public_key && fullKey.access_key.permission.FunctionCall.receiver_id == envs.contractId)
                     {
                         return true;
                     }
@@ -164,7 +193,7 @@ namespace Ryzm.Blockchain
                 Debug.Log(accessKeyResponse.result.keys[0].access_key.permission.FunctionCall.receiver_id);
                 if(CanAccessContract())
                 {
-                    Message.Send(new NearInfoResponse(AccountName));
+                    Login();
                 }
                 else
                 {
@@ -197,7 +226,8 @@ namespace Ryzm.Blockchain
         public void Logout()
         {
             Reset();
-            Message.Send(new NearInfoResponse(null));
+            accessKeyResponse = null;
+            Message.Send(new LoginResponse(null, null, false, false));
         }
 
         void Reset()
@@ -248,11 +278,11 @@ namespace Ryzm.Blockchain
     {
         public int block_height;
         public string block_hash;
-        public List<ParentKey> keys;
+        public List<FullKey> keys;
     }
 
     [System.Serializable]
-    public class ParentKey
+    public class FullKey
     {
         public string public_key;
         public AccessKey access_key;
