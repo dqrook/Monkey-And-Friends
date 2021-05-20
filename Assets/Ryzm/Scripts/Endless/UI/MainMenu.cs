@@ -4,15 +4,48 @@ using UnityEngine;
 using Ryzm.EndlessRunner.Messages;
 using CodeControl;
 using Ryzm.Blockchain.Messages;
+using TMPro;
+using Ryzm.Blockchain;
 
 namespace Ryzm.EndlessRunner.UI
 {
     public class MainMenu : EndlessMenu
     {
+        public TextMeshProUGUI loginText;
+
+        public override bool IsActive 
+        { 
+            get
+            { 
+                return base.IsActive;
+            }
+            set 
+            {
+                if(value && !_isActive)
+                {
+                    Message.Send(new LoginRequest());
+                }
+                if(value)
+                {
+                    Message.AddListener<LoginResponse>(OnLoginResponse);
+                    Message.Send(new LoginRequest());
+                }
+                else
+                {
+                    Message.RemoveListener<LoginResponse>(OnLoginResponse);
+                }
+                base.IsActive = value;
+            }
+        }
+
         protected override void Awake()
         {
             base.Awake();
-            StartCoroutine(Wait2Send());
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
         }
         
         public void OnClickStart()
@@ -21,10 +54,26 @@ namespace Ryzm.EndlessRunner.UI
             Message.Send(new MakeWorld());
         }
 
-        IEnumerator Wait2Send(float time = 1)
+        public void OnClickLogin()
         {
-            yield return new WaitForSeconds(time);
-            Message.Send(new LoginRequest());
+            Message.Send(new ActivateMenu(MenuType.Login));
+            Message.Send(new DeactivateMenu(MenuType.Main));
+        }
+
+        void OnLoginResponse(LoginResponse response)
+        {
+            switch(response.status)
+            {
+                case LoginStatus.FetchingKeys:
+                    loginText.text = "Loading...";
+                    break;
+                case LoginStatus.LoggedIn:
+                    loginText.text = "Welcome " + response.accountName;
+                    break;
+                default:
+                    loginText.text = "Login";
+                    break;
+            }
         }
     }
 }

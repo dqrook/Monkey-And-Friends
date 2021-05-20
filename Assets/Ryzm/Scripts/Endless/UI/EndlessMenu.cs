@@ -68,10 +68,6 @@ namespace Ryzm.EndlessRunner.UI
             Message.RemoveListener<DeactivateMenu>(OnDeactivateMenu);
         }
 
-        protected virtual void OnEnable() {}
-
-        protected virtual void OnDisable() {}
-
         protected virtual void OnActivateMenu(ActivateMenu activate)
         {
             if(activate.type == type)
@@ -190,6 +186,7 @@ namespace Ryzm.EndlessRunner.UI
         SwipeZone,
         Pause,
         EndGame,
-        Main
+        Main,
+        Login
     }
 }

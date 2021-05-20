@@ -6,15 +6,13 @@ namespace Ryzm.Blockchain.Messages
     {
         public string accountName;
         public string nearUrl;
-        public bool loggedIn;
-        public bool fetchingAccessKeys;
+        public LoginStatus status;
 
-        public LoginResponse(string accountName, string nearUrl, bool loggedIn, bool fetchingAccessKeys)
+        public LoginResponse(string accountName, string nearUrl, LoginStatus status)
         {
             this.accountName = accountName;
             this.nearUrl = nearUrl;
-            this.loggedIn = loggedIn;
-            this.fetchingAccessKeys = fetchingAccessKeys;
+            this.status = status;
         }
     }
 }
