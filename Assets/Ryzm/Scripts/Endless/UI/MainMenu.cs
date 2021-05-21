@@ -21,14 +21,11 @@ namespace Ryzm.EndlessRunner.UI
             }
             set 
             {
-                if(value && !_isActive)
-                {
-                    Message.Send(new LoginRequest());
-                }
                 if(value)
                 {
                     Message.AddListener<LoginResponse>(OnLoginResponse);
                     Message.Send(new LoginRequest());
+                    Message.Send(new DisableHeaderBackButton());
                 }
                 else
                 {
@@ -50,14 +47,15 @@ namespace Ryzm.EndlessRunner.UI
         
         public void OnClickStart()
         {
-            // Message.Send(new GameStatusResponse(GameStatus.Starting));
             Message.Send(new MakeWorld());
         }
 
         public void OnClickLogin()
         {
+            Debug.Log("on click login");
             Message.Send(new ActivateMenu(MenuType.Login));
             Message.Send(new DeactivateMenu(MenuType.Main));
+            Message.Send(new EnableHeaderBackButton(MenuType.Main));
         }
 
         void OnLoginResponse(LoginResponse response)
@@ -68,7 +66,7 @@ namespace Ryzm.EndlessRunner.UI
                     loginText.text = "Loading...";
                     break;
                 case LoginStatus.LoggedIn:
-                    loginText.text = "Welcome " + response.accountName;
+                    loginText.text = response.accountName;
                     break;
                 default:
                     loginText.text = "Login";

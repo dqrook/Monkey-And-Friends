@@ -43,10 +43,10 @@ namespace Ryzm.EndlessRunner.UI
                     {
                         canvas.enabled = value;
                     }
-                    foreach(Transform child in gameObject.transform)
-                    {
-                        child.gameObject.SetActive(value);
-                    }
+                    // foreach(Transform child in gameObject.transform)
+                    // {
+                    //     child.gameObject.SetActive(value);
+                    // }
                 }
             }
         }
@@ -177,16 +177,4 @@ namespace Ryzm.EndlessRunner.UI
         }
     }
     public enum SimDevice { None, iPhoneX }
-
-    public enum MenuType
-    {
-        None,
-        Score,
-        Distance,
-        SwipeZone,
-        Pause,
-        EndGame,
-        Main,
-        Login
-    }
 }

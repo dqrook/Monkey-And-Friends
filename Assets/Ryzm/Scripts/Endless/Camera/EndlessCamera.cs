@@ -70,7 +70,6 @@ namespace Ryzm.EndlessRunner
                 prevPos = _transform.position;
                 prevRot = _transform.rotation;
                 initY = pos.y;
-                Debug.Log(pos);
             }
         }
 

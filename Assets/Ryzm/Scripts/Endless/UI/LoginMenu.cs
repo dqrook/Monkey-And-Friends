@@ -25,14 +25,14 @@ namespace Ryzm.EndlessRunner.UI
         [Header("Temp Credentials")]
         public GameObject tempCredentialsPanel;
         public TMP_InputField accountNameInput;
-
-        [Header("Rejected")]
-        public GameObject rejectedPanel;
         public TextMeshProUGUI rejectedText;
 
         [Header("Near Url")]
         public GameObject nearUrlPanel;
-        public TextMeshProUGUI nearUrl;
+        public TMP_InputField accountNameInput2;
+        public TextMeshProUGUI urlCopied;
+        
+        string _nearUrl;
 
         bool gettingCredentials;
 
@@ -52,7 +52,7 @@ namespace Ryzm.EndlessRunner.UI
                     loggedInPanel.SetActive(false);
                     loggedOutPanel.SetActive(false);
                     tempCredentialsPanel.SetActive(false);
-                    rejectedPanel.SetActive(false);
+                    rejectedText.gameObject.SetActive(false);
                     nearUrlPanel.SetActive(false);
                 }
                 if(value)
@@ -85,7 +85,12 @@ namespace Ryzm.EndlessRunner.UI
             Message.Send(new AttemptLogin(accountNameInput.text));
         }
 
-        public void ConnectToWallet()
+        public void SubmitAccountNameFromUrlPanel()
+        {
+            Message.Send(new AttemptLogin(accountNameInput2.text));
+        }
+
+        public void LoginWithNear()
         {
             loadingPanel.SetActive(true);
             loadingText.text = "Creating Credentials...";
@@ -93,11 +98,7 @@ namespace Ryzm.EndlessRunner.UI
             gettingCredentials = true;
         }
 
-        public void CloseRejectedPanel()
-        {
-            rejectedPanel.SetActive(false);
-            tempCredentialsPanel.SetActive(true);
-        }
+        public void Logout() {}
 
         public void CloseLogin()
         {
@@ -105,11 +106,22 @@ namespace Ryzm.EndlessRunner.UI
             Message.Send(new DeactivateMenu(MenuType.Login));
         }
 
+        public void CopyUrlToClipboard()
+        {
+            GUIUtility.systemCopyBuffer = _nearUrl;
+            urlCopied.gameObject.SetActive(true);
+        }
+
         void OnLoginResponse(LoginResponse response)
         {
+            nearUrlPanel.SetActive(false);
             if(!gettingCredentials)
             {
                 loadingPanel.SetActive(false);
+            }
+            if(response.status != LoginStatus.Rejected)
+            {
+                rejectedText.gameObject.SetActive(false);
             }
             switch(response.status)
             {
@@ -117,6 +129,7 @@ namespace Ryzm.EndlessRunner.UI
                     loggedOutPanel.SetActive(true);
                     break;
                 case LoginStatus.LoggedIn:
+                    accountName.text = "Welcome " + response.accountName + "!";
                     loggedInPanel.SetActive(true);
                     break;
                 case LoginStatus.TempCredentials:
@@ -127,7 +140,7 @@ namespace Ryzm.EndlessRunner.UI
                     loadingText.text = "Checking Credentials...";
                     break;
                 case LoginStatus.Rejected:
-                    rejectedPanel.SetActive(true);
+                    rejectedText.gameObject.SetActive(true);
                     rejectedText.text = "Error logging in for " + response.accountName;
                     break;
                 default:
@@ -137,10 +150,12 @@ namespace Ryzm.EndlessRunner.UI
 
         void OnCreateCredentialsResponse(CreateCredentialsResponse response)
         {
-            nearUrl.text = response.nearUrl;
+            urlCopied.gameObject.SetActive(true);
             nearUrlPanel.SetActive(true);
             loadingPanel.SetActive(false);
             gettingCredentials = false;
+            _nearUrl = response.nearUrl;
+            Application.OpenURL(_nearUrl);
         }
 
     }

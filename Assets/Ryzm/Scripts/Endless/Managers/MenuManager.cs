@@ -8,12 +8,15 @@ namespace Ryzm.EndlessRunner.UI
 {
     public class MenuManager : MonoBehaviour
     {
+        public EndlessMenuSets menuSets;
+
         List<MenuType> mainMenus = new List<MenuType>
         {
-            MenuType.Main
+            MenuType.Main,
+            MenuType.Header
         };
 
-        List<MenuType> startMenus = new List<MenuType>
+        List<MenuType> activeMenus = new List<MenuType>
         {
             MenuType.Score,
             MenuType.Distance,
@@ -50,6 +53,7 @@ namespace Ryzm.EndlessRunner.UI
             if(response.status == GameStatus.MainMenu)
             {
                 // ActivateMenus(mainMenus);
+                ActivateMenus(menuSets.GetMenuTypes(MenuSet.MainMenu));
             }
             else if(response.status == GameStatus.Starting)
             {
@@ -57,21 +61,24 @@ namespace Ryzm.EndlessRunner.UI
             }
             else if(response.status == GameStatus.Active)
             {
-                ActivateMenus(startMenus);
+                // ActivateMenus(activeMenus);
+                ActivateMenus(menuSets.GetMenuTypes(MenuSet.ActiveMenu));
             }
             else if(response.status == GameStatus.Paused)
             {
-                ActivateMenus(pauseMenus);
+                // ActivateMenus(pauseMenus);
+                ActivateMenus(menuSets.GetMenuTypes(MenuSet.PauseMenu));
             }
-            else if(response.status == GameStatus.Active)
+            else if(response.status == GameStatus.Ended)
             {
-                ActivateMenus(endMenus);
+                // ActivateMenus(endMenus);
+                ActivateMenus(menuSets.GetMenuTypes(MenuSet.EndMenu));
             }
         }
 
         void OnRunnerDie(RunnerDie runnerDie)
         {
-            ActivateMenus(endMenus);
+            ActivateMenus(menuSets.GetMenuTypes(MenuSet.EndMenu));
         }
 
         void ActivateMenus(List<MenuType> menus)
@@ -79,5 +86,27 @@ namespace Ryzm.EndlessRunner.UI
             Message.Send(new ActivateMenu(activatedTypes: menus));
             Message.Send(new DeactivateMenu(activatedTypes: menus));
         }
+    }
+
+    public enum MenuSet
+    {
+        MainMenu,
+        ActiveMenu,
+        PauseMenu,
+        EndMenu
+    }
+
+    public enum MenuType
+    {
+        None,
+        Score,
+        Distance,
+        SwipeZone,
+        Pause,
+        EndGame,
+        Main,
+        Login,
+        Header,
+        Entry
     }
 }
