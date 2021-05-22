@@ -157,7 +157,7 @@ RectTransform:
   - {fileID: 506194304661141730}
   - {fileID: 1934789149}
   m_Father: {fileID: 1560966225}
-  m_RootOrder: 0
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -177,7 +177,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvas: {fileID: 15191436}
-  type: 6
+  type: 0
   restricWidth: 0
   restricHeight: 0
   loginText: {fileID: 1967725473}
@@ -515,7 +515,7 @@ RectTransform:
   - {fileID: 141689129}
   - {fileID: 1522546471}
   m_Father: {fileID: 1560966225}
-  m_RootOrder: 4
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3849,7 +3849,7 @@ RectTransform:
   m_Children:
   - {fileID: 1332137293}
   m_Father: {fileID: 1560966225}
-  m_RootOrder: 3
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -5210,7 +5210,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1103233256
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5227,7 +5227,7 @@ RectTransform:
   - {fileID: 210197253}
   - {fileID: 1745081616}
   m_Father: {fileID: 1560966225}
-  m_RootOrder: 5
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -5322,7 +5322,6 @@ GameObject:
   - component: {fileID: 1110142744}
   - component: {fileID: 1110142743}
   - component: {fileID: 1110142742}
-  - component: {fileID: 1110142741}
   m_Layer: 0
   m_Name: water
   m_TagString: Untagged
@@ -5330,18 +5329,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1110142741
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1110142740}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd69bf1c3f8f54fac839cd4cac3a7729, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!64 &1110142742
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -7239,12 +7226,12 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 15191432}
-  - {fileID: 1643249638}
-  - {fileID: 1663218415}
   - {fileID: 928598570}
   - {fileID: 80294904}
   - {fileID: 1103233256}
+  - {fileID: 15191432}
+  - {fileID: 1643249638}
+  - {fileID: 1663218415}
   m_Father: {fileID: 0}
   m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -7505,7 +7492,7 @@ RectTransform:
   - {fileID: 1229480569}
   - {fileID: 878291664}
   m_Father: {fileID: 1560966225}
-  m_RootOrder: 1
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -7525,7 +7512,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvas: {fileID: 1643249637}
-  type: 2
+  type: 3
   restricWidth: 0
   restricHeight: 0
   distance: {fileID: 878291665}
@@ -7677,7 +7664,7 @@ RectTransform:
   - {fileID: 1807295651}
   - {fileID: 1705305137}
   m_Father: {fileID: 1560966225}
-  m_RootOrder: 2
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -7697,7 +7684,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvas: {fileID: 1663218419}
-  type: 1
+  type: 2
   restricWidth: 0
   restricHeight: 0
   score: {fileID: 1705305138}

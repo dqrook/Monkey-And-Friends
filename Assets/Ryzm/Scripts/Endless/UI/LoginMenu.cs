@@ -100,12 +100,6 @@ namespace Ryzm.EndlessRunner.UI
 
         public void Logout() {}
 
-        public void CloseLogin()
-        {
-            Message.Send(new ActivateMenu(MenuType.Main));
-            Message.Send(new DeactivateMenu(MenuType.Login));
-        }
-
         public void CopyUrlToClipboard()
         {
             GUIUtility.systemCopyBuffer = _nearUrl;
@@ -150,7 +144,7 @@ namespace Ryzm.EndlessRunner.UI
 
         void OnCreateCredentialsResponse(CreateCredentialsResponse response)
         {
-            urlCopied.gameObject.SetActive(true);
+            urlCopied.gameObject.SetActive(false);
             nearUrlPanel.SetActive(true);
             loadingPanel.SetActive(false);
             gettingCredentials = false;

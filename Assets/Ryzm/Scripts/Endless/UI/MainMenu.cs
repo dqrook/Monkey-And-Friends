@@ -13,6 +13,18 @@ namespace Ryzm.EndlessRunner.UI
     {
         public TextMeshProUGUI loginText;
 
+        List<MenuType> loginMenus = new List<MenuType>
+        {
+            MenuType.Login,
+            MenuType.Header
+        };
+
+        List<MenuType> mainMenus = new List<MenuType>
+        {
+            MenuType.Main,
+            MenuType.Header
+        };
+
         public override bool IsActive 
         { 
             get
@@ -53,9 +65,9 @@ namespace Ryzm.EndlessRunner.UI
         public void OnClickLogin()
         {
             Debug.Log("on click login");
-            Message.Send(new ActivateMenu(MenuType.Login));
-            Message.Send(new DeactivateMenu(MenuType.Main));
-            Message.Send(new EnableHeaderBackButton(MenuType.Main));
+            Message.Send(new ActivateMenu(activatedTypes: loginMenus));
+            Message.Send(new DeactivateMenu(activatedTypes: loginMenus));
+            Message.Send(new EnableHeaderBackButton(mainMenus));
         }
 
         void OnLoginResponse(LoginResponse response)

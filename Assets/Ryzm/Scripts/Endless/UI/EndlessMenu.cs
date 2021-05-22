@@ -70,36 +70,69 @@ namespace Ryzm.EndlessRunner.UI
 
         protected virtual void OnActivateMenu(ActivateMenu activate)
         {
-            if(activate.type == type)
+            if(activate.useActivated)
             {
-                IsActive = true;
+                bool _shouldActivate = false;
+                foreach(MenuType menuType in activate.activatedTypes)
+                {
+                    if(type == menuType)
+                    {
+                        _shouldActivate = true;
+                        break;
+                    }
+                }
+                IsActive = _shouldActivate;
+                // if(activate.activatedTypes.Contains(type))
+                // {
+                //     IsActive = true;
+                // }
+                // else
+                // {
+                //     IsActive = false;
+                // }
             }
-            else if(activate.useActivated)
+            else if(activate.useDeactivated)
             {
-                if(activate.activatedTypes.Contains(type))
+                if(!activate.deactivatedTypes.Contains(type))
                 {
                     IsActive = true;
                 }
+                else
+                {
+                    IsActive = false;
+                }
             }
-            else if(!activate.deactivatedTypes.Contains(type))
+            else if(activate.type == type)
             {
                 IsActive = true;
+            }
+            else
+            {
+                IsActive = false;
             }
         }
 
         protected virtual void OnDeactivateMenu(DeactivateMenu deactivate)
         {
-            if(deactivate.useActivated)
-            {
-                if(!deactivate.activatedTypes.Contains(type))
-                {
-                    IsActive = false; 
-                }
-            } 
-            else if(deactivate.type == type || deactivate.deactivatedTypes.Contains(type))
-            {
-                IsActive = false;
-            }
+            // if(deactivate.useActivated)
+            // {
+            //     if(!deactivate.activatedTypes.Contains(type))
+            //     {
+            //         Debug.Log(type + " is deactivated " + deactivate.activatedTypes.Count);
+            //         IsActive = false; 
+            //     }
+            // } 
+            // else if(deactivate.useDeactivated)
+            // {
+            //     if(deactivate.deactivatedTypes.Contains(type))
+            //     {
+            //         IsActive = false;
+            //     }
+            // }
+            // else if(deactivate.type == type)
+            // {
+            //     IsActive = false;
+            // }
         }
 
         // todo: figure out how to use this (if necessary)

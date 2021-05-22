@@ -10,49 +10,42 @@ namespace Ryzm.EndlessRunner.UI
     {
         public EndlessMenuSets menuSets;
 
-        List<MenuType> mainMenus = new List<MenuType>
-        {
-            MenuType.Main,
-            MenuType.Header
-        };
-
-        List<MenuType> activeMenus = new List<MenuType>
-        {
-            MenuType.Score,
-            MenuType.Distance,
-            MenuType.SwipeZone
-        };
-
-        List<MenuType> pauseMenus = new List<MenuType>
-        {
-            MenuType.Pause
-        };
-
-        List<MenuType> endMenus = new List<MenuType>
-        {
-            MenuType.EndGame
-        };
-
         List<MenuType> noMenus = new List<MenuType> {};
+        bool initializedGame;
+        GameStatus status;
 
         void Awake()
         {
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
-            Message.AddListener<RunnerDie>(OnRunnerDie);
-            Message.Send(new GameStatusRequest());
+            // Message.AddListener<RunnerDie>(OnRunnerDie);
         }
 
+        void Start()
+        {
+            StartCoroutine(GetGameStatus());
+        }
+        IEnumerator GetGameStatus()
+        {
+            yield return new WaitForSeconds(Time.deltaTime * 5);
+            Message.Send(new GameStatusRequest());
+        }
         void OnDestroy()
         {
             Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
-            Message.RemoveListener<RunnerDie>(OnRunnerDie);
+            // Message.RemoveListener<RunnerDie>(OnRunnerDie);
         }
 
         void OnGameStatusResponse(GameStatusResponse response)
         {
+            if(initializedGame && response.status == status)
+            {
+                return;
+            }
+            status = response.status;
+            initializedGame = true;
             if(response.status == GameStatus.MainMenu)
             {
-                // ActivateMenus(mainMenus);
+                Debug.Log("activating here");
                 ActivateMenus(menuSets.GetMenuTypes(MenuSet.MainMenu));
             }
             else if(response.status == GameStatus.Starting)
@@ -61,25 +54,22 @@ namespace Ryzm.EndlessRunner.UI
             }
             else if(response.status == GameStatus.Active)
             {
-                // ActivateMenus(activeMenus);
                 ActivateMenus(menuSets.GetMenuTypes(MenuSet.ActiveMenu));
             }
             else if(response.status == GameStatus.Paused)
             {
-                // ActivateMenus(pauseMenus);
                 ActivateMenus(menuSets.GetMenuTypes(MenuSet.PauseMenu));
             }
             else if(response.status == GameStatus.Ended)
             {
-                // ActivateMenus(endMenus);
                 ActivateMenus(menuSets.GetMenuTypes(MenuSet.EndMenu));
             }
         }
 
-        void OnRunnerDie(RunnerDie runnerDie)
-        {
-            ActivateMenus(menuSets.GetMenuTypes(MenuSet.EndMenu));
-        }
+        // void OnRunnerDie(RunnerDie runnerDie)
+        // {
+        //     ActivateMenus(menuSets.GetMenuTypes(MenuSet.EndMenu));
+        // }
 
         void ActivateMenus(List<MenuType> menus)
         {
@@ -98,13 +88,13 @@ namespace Ryzm.EndlessRunner.UI
 
     public enum MenuType
     {
+        Main,
         None,
         Score,
         Distance,
         SwipeZone,
         Pause,
         EndGame,
-        Main,
         Login,
         Header,
         Entry

@@ -97,7 +97,7 @@ namespace Ryzm.EndlessRunner
         void OnEnable()
         {
             playerInput.Enable();
-            Message.Send(new GameStatusRequest());
+            // Message.Send(new GameStatusRequest());
         }
 
         void OnDisable()

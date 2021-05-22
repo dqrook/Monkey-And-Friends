@@ -29,7 +29,7 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<ControllerModeResponse>(OnControllerModeResponse);
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
             Message.Send(new ControllersRequest());
-            Message.Send(new GameStatusRequest());
+            // Message.Send(new GameStatusRequest());
             _transform = transform;
         }
 

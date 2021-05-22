@@ -82,7 +82,7 @@ namespace Ryzm.EndlessRunner
         protected virtual void OnEnable()
         {
             playerInput.Enable();
-            Message.Send(new GameStatusRequest());
+            // Message.Send(new GameStatusRequest());
 			Message.Send(new ControllerModeRequest());
         }
 

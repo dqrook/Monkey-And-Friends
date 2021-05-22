@@ -6,12 +6,11 @@ namespace Ryzm.EndlessRunner.Messages
 {
     public class EnableHeaderBackButton : Message
     {
-        public MenuType previousMenu;
         public List<MenuType> previousMenus = new List<MenuType>();
 
         public EnableHeaderBackButton(MenuType previousMenu)
         {
-            this.previousMenu = previousMenu;
+            previousMenus.Add(previousMenu);
         }
 
         public EnableHeaderBackButton(List<MenuType> previousMenus)

@@ -40,7 +40,18 @@ namespace Ryzm.EndlessRunner.UI
 
         public void OnClickBackButton()
         {
+            MenuType[] menuTypes = new MenuType[previousMenus.Count];
+            int i = 0;
+            foreach(MenuType type in previousMenus)
+            {
+                menuTypes[i] = type;
+                i++;
+            }
             Message.Send(new ActivateMenu(activatedTypes: previousMenus));
+            foreach(MenuType menu in menuTypes)
+            {
+                Debug.Log(menu + " OnClickBackButton");
+            }
             Message.Send(new DeactivateMenu(activatedTypes: previousMenus));
         }
 
@@ -50,10 +61,6 @@ namespace Ryzm.EndlessRunner.UI
             if(enableButton.previousMenus.Count > 0)
             {
                 previousMenus = enableButton.previousMenus;
-            }
-            else
-            {
-                previousMenus.Add(enableButton.previousMenu);
             }
         }
 

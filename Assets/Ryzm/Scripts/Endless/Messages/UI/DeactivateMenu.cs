@@ -1,6 +1,7 @@
 ﻿using CodeControl;
 using Ryzm.EndlessRunner.UI;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Ryzm.EndlessRunner.Messages
 {
@@ -11,6 +12,7 @@ namespace Ryzm.EndlessRunner.Messages
         // can use this variable if you wish to deactivate all menus except the ones you specified here
         public List<MenuType> activatedTypes = new List<MenuType>();
         public bool useActivated;
+        public bool useDeactivated;
 
         public DeactivateMenu() {}
 
@@ -18,11 +20,14 @@ namespace Ryzm.EndlessRunner.Messages
         {
             this.type = type;
             this.useActivated = false;
+            this.useDeactivated = false;
         }
 
         public DeactivateMenu(List<MenuType> deactivatedTypes)
         {
             this.type = MenuType.None;
+            this.useActivated = true;
+            this.useDeactivated = false;
             AddDeactivated(deactivatedTypes);
         }
 
