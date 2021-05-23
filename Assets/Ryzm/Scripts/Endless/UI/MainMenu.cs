@@ -65,9 +65,12 @@ namespace Ryzm.EndlessRunner.UI
         public void OnClickLogin()
         {
             Debug.Log("on click login");
-            Message.Send(new ActivateMenu(activatedTypes: loginMenus));
-            Message.Send(new DeactivateMenu(activatedTypes: loginMenus));
-            Message.Send(new EnableHeaderBackButton(mainMenus));
+            if(IsActive)
+            {
+                Message.Send(new ActivateMenu(activatedTypes: loginMenus));
+                Message.Send(new DeactivateMenu(activatedTypes: loginMenus));
+                Message.Send(new EnableHeaderBackButton(mainMenus));
+            }
         }
 
         void OnLoginResponse(LoginResponse response)

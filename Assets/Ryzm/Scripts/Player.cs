@@ -196,7 +196,7 @@ namespace Ryzm
                     ""id"": ""4341cfdd-ed63-427a-b5c8-2af41e2d21d9"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": """"
+                    ""interactions"": ""Press""
                 },
                 {
                     ""name"": ""PrimaryPosition"",
@@ -212,7 +212,7 @@ namespace Ryzm
                     ""name"": """",
                     ""id"": ""c0e6b232-183a-41b7-8951-f233c0ea1680"",
                     ""path"": ""<Touchscreen>/primaryTouch/press"",
-                    ""interactions"": ""Press"",
+                    ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""PrimaryContact"",

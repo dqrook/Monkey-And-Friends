@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Ryzm.EndlessRunner 
+namespace Ryzm.EndlessRunner.UI
 {
-    public class SwipeZone: MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler, IPointerEnterHandler
+    public class SwipeZone: EndlessMenu, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler, IPointerEnterHandler
     {
 		/// the minimal length of a swipe
 		public float MinimalSwipeLength = 50f;
@@ -36,8 +36,8 @@ namespace Ryzm.EndlessRunner
 			// if the swipe has been long enough
 			if (_length > MinimalSwipeLength)
 			{
-				_angle = AngleBetween(_deltaSwipe, Vector2.right);
-				_swipeDirection = AngleToSwipeDirection(_angle);
+				_angle = EndlessUtils.AngleBetweenVectors(_deltaSwipe, Vector2.right);
+				_swipeDirection = EndlessUtils.AngleToSwipeDirection(_angle);
 				Swipe();
 			}
 		}
@@ -58,32 +58,6 @@ namespace Ryzm.EndlessRunner
 			OnPointerUp(data);	
 		}
 
-		/// <summary>
-		/// Determines a Direction out of an angle in degrees. 
-		/// </summary>
-		/// <returns>The to swipe direction.</returns>
-		/// <param name="angle">Angle in degrees.</param>
-		Direction AngleToSwipeDirection(float angle)
-		{
-			if ((angle < 45) || (angle >= 315))
-			{
-				return Direction.Right;
-			}
-			if ((angle >= 45) && (angle < 135))
-			{
-				return Direction.Up;
-			}
-			if ((angle >= 135) && (angle < 225))
-			{
-				return Direction.Left;
-			}
-			if ((angle >= 225) && (angle < 315))
-			{
-				return Direction.Down;
-			}
-			return Direction.Right;
-		}
-
         void Swipe()
 		{
 			if(_swipeDirection == Direction.Up)
@@ -98,19 +72,6 @@ namespace Ryzm.EndlessRunner
 			{
 				InputManager.Instance.Shift(_swipeDirection);
 			}
-		}
-
-        float AngleBetween(Vector2 vectorA, Vector2 vectorB)
-		{
-			float angle = Vector2.Angle(vectorA, vectorB);
-			Vector3 cross = Vector3.Cross(vectorA, vectorB);
-
-			if (cross.z > 0)
-			{
-				angle = 360 - angle;
-			}
-
-			return angle;
 		}
     }
 }

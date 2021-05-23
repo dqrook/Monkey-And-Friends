@@ -45,7 +45,6 @@ namespace Ryzm.EndlessRunner.UI
             initializedGame = true;
             if(response.status == GameStatus.MainMenu)
             {
-                Debug.Log("activating here");
                 ActivateMenus(menuSets.GetMenuTypes(MenuSet.MainMenu));
             }
             else if(response.status == GameStatus.Starting)

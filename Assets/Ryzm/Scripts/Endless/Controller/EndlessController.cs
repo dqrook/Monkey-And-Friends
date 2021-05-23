@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using CodeControl;
 using Ryzm.EndlessRunner.Messages;
+using UnityEngine.InputSystem;
 
 namespace Ryzm.EndlessRunner
 {
@@ -11,6 +12,13 @@ namespace Ryzm.EndlessRunner
         public RuntimeAnimatorController animatorController;
         public float forwardSpeed = 10;
 		public Animator animator;
+
+        #region Events
+        public delegate void StartTouch(Vector2 position, float time);
+        public event StartTouch OnStartTouch;
+        public delegate void EndTouch(Vector2 position, float time);
+        public event EndTouch OnEndTouch;
+        #endregion
 
 		protected Player playerInput;
 		protected Vector3 move;
@@ -29,6 +37,7 @@ namespace Ryzm.EndlessRunner
         protected float distanceTraveled;
         protected float shiftSpeed;
 		protected ControllerMode mode;
+        protected Camera mainCamera;
 
         public int CurrentPosition
         {
@@ -55,7 +64,7 @@ namespace Ryzm.EndlessRunner
                 Message.Send(new JumpStatusResponse(value));
             }
         }
-
+        
 		protected virtual void Awake()
 		{
             trans = GetComponent<Transform> ();
@@ -77,7 +86,31 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<CurrentPositionRequest>(OnCurrentPositionRequest);
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
             Message.AddListener<ControllerModeResponse>(OnControllerModeResponse);
+            mainCamera = Camera.main;
+            playerInput.Touch.PrimaryContact.started += (ctx) => StartTouchPrimary(ctx);
+            playerInput.Touch.PrimaryContact.canceled += (ctx) => EndTouchPrimary(ctx);
 		}
+
+        void StartTouchPrimary(InputAction.CallbackContext ctx)
+        {
+            if(OnStartTouch != null)
+            {
+                OnStartTouch(EndlessUtils.ScreenToWorld(mainCamera, playerInput.Touch.PrimaryPosition.ReadValue<Vector2>()), (float)ctx.startTime);
+            }
+        }
+
+        void EndTouchPrimary(InputAction.CallbackContext ctx)
+        {
+            if(OnEndTouch != null)
+            {
+                OnEndTouch(EndlessUtils.ScreenToWorld(mainCamera, playerInput.Touch.PrimaryPosition.ReadValue<Vector2>()), (float)ctx.time);
+            }
+        }
+
+        public Vector2 PrimaryPosition()
+        {
+            return EndlessUtils.ScreenToWorld(mainCamera, playerInput.Touch.PrimaryPosition.ReadValue<Vector2>());
+        }
 
         protected virtual void OnEnable()
         {
@@ -172,8 +205,7 @@ namespace Ryzm.EndlessRunner
         {
             inShift = true;
             float _shiftDistance = GetShiftDistance(target, type);
-            Vector3 _move = Vector3.zero;
-            float _distance = Mathf.Lerp(0, _shiftDistance, 0.04f);
+            float _distance = Mathf.Lerp(0, _shiftDistance, 0.1f);
             float signDistance = Mathf.Sign(_distance);
 
             if(signDistance == 1)
@@ -190,7 +222,6 @@ namespace Ryzm.EndlessRunner
             while(Mathf.Abs(_shiftDistance) > absDistance)
             {
                 _shiftDistance = GetShiftDistance(target, type);
-                _move.x = _distance;
                 yield return null;
             }
             _shiftDistance = GetShiftDistance(target, type);

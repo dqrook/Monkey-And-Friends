@@ -20,5 +20,50 @@ namespace Ryzm.EndlessRunner
             }
         }
 
+        public static Vector3 ScreenToWorld(Camera camera, Vector3 position)
+        {
+            position.z = camera.nearClipPlane;
+            return camera.ScreenToWorldPoint(position);
+        }
+
+        /// <summary>
+		/// Determines a Direction out of an angle in degrees. 
+		/// </summary>
+		/// <returns>The to swipe direction.</returns>
+		/// <param name="angle">Angle in degrees.</param>
+		public static Direction AngleToSwipeDirection(float angle)
+		{
+			if ((angle < 45) || (angle >= 315))
+			{
+				return Direction.Right;
+			}
+			if ((angle >= 45) && (angle < 135))
+			{
+				return Direction.Up;
+			}
+			if ((angle >= 135) && (angle < 225))
+			{
+				return Direction.Left;
+			}
+			if ((angle >= 225) && (angle < 315))
+			{
+				return Direction.Down;
+			}
+			return Direction.Right;
+		}
+
+        public static float AngleBetweenVectors(Vector2 vectorA, Vector2 vectorB)
+		{
+			float angle = Vector2.Angle(vectorA, vectorB);
+			Vector3 cross = Vector3.Cross(vectorA, vectorB);
+
+			if (cross.z > 0)
+			{
+				angle = 360 - angle;
+			}
+
+			return angle;
+		}
+
     }
 }
