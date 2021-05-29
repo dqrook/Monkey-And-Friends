@@ -1,7 +1,8 @@
-
-If you found any problem, please contact us.
-Mail : akaraphob_sur@suriyun.com,contact@suriyun.com
+﻿If you found any problem, please contact us.
+Mail : Contact@suriyun.com
 Site : www.suriyun.com
 
 ----------------------------------------------
-Shader by Unitychan! from http://unity-chan.com/
+Shader by Unitychan! 
+Please read the Unity chan license.
+http://unity-chan.com/
