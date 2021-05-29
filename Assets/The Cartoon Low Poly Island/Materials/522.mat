@@ -7,10 +7,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: FloatIsland Flatkit
-  m_Shader: {fileID: 4800000, guid: bee44b4a58655ee4cbff107302a3e131, type: 3}
-  m_ShaderKeywords: _CELPRIMARYMODE_SINGLE _NORMALMAP _TEXTUREBLENDINGMODE_MULTIPLY
-    _UNITYSHADOWMODE_NONE
+  m_Name: 522
+  m_Shader: {fileID: 4800000, guid: 48dca5b99d113b8d11006bab44295342, type: 3}
+  m_ShaderKeywords: _CELPRIMARYMODE_SINGLE _TEXTUREBLENDINGMODE_MULTIPLY _UNITYSHADOWMODE_NONE
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -46,11 +45,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
+        m_Scale: {x: 500, y: 500}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 12d8e536191af4c6c8936e6a51c9ce3b, type: 3}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 2800000, guid: da56fa6f9db6a45718566cc9b8734021, type: 3}
+        m_Scale: {x: 75, y: 75}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
@@ -65,19 +64,23 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Ramp:
-        m_Texture: {fileID: 2800000, guid: e3fbf9d9634964f47a1534740e8417ee, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _TextureRamp:
-        m_Texture: {fileID: 2800000, guid: e3fbf9d9634964f47a1534740e8417ee, type: 3}
+        m_Texture: {fileID: 2800000, guid: ca998b2130a7bec48835e08688dbc02f, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _TextureSample:
-        m_Texture: {fileID: 2800000, guid: 0dd1bebfb4cd44d6db226b01125f4a17, type: 3}
+    - _TextureSample1:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _TextureSample3:
-        m_Texture: {fileID: 2800000, guid: 021d1c71fb4c54bfca95d5ebbb555239, type: 3}
+        m_Texture: {fileID: 2800000, guid: 5c38e2edb8ae412468d3186b2e38caf1, type: 3}
+        m_Scale: {x: 200, y: 200}
+        m_Offset: {x: 0, y: 0}
+    - _ToonShade:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _texcoord:
@@ -97,7 +100,7 @@ Material:
     - _FlatRimSize: 0.5
     - _FlatSpecularEdgeSmoothness: 0
     - _FlatSpecularSize: 0.1
-    - _Flatness: 0.388
+    - _Flatness: 1
     - _FlatnessExtra: 1
     - _GlossMapScale: 1
     - _Glossiness: 0
@@ -111,15 +114,15 @@ Material:
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
-    - _Outline: 0.003
+    - _Outline: 0.002
     - _OutlineDepthOffset: 0
-    - _OutlineWidth: 0
-    - _OutlineWidth2: 0.0065
+    - _OutlineWidth: 0.01
+    - _OutlineWidth2: 0.0001
     - _Parallax: 0.02
     - _RimEnabled: 0
-    - _SelfShadingSize: 0.641
+    - _SelfShadingSize: 0.672
     - _SelfShadingSizeExtra: 0.6
-    - _ShadowEdgeSize: 0.325
+    - _ShadowEdgeSize: 0.252
     - _ShadowEdgeSizeExtra: 0.05
     - _SmoothnessTextureChannel: 0
     - _SpecularEnabled: 0
@@ -135,8 +138,8 @@ Material:
     - _ZWrite: 1
     - __dirty: 1
     m_Colors:
-    - _Color: {r: 0.77732605, g: 0.97900003, b: 0.78808194, a: 1}
-    - _ColorDim: {r: 0.333, g: 0.333, b: 0.333, a: 1}
+    - _Color: {r: 0.938, g: 0.7553725, b: 0.508396, a: 1}
+    - _ColorDim: {r: 0.8396226, g: 0.7811206, b: 0.6534799, a: 1}
     - _ColorDimCurve: {r: 0.85023, g: 0.85034, b: 0.85045, a: 0.85056}
     - _ColorDimExtra: {r: 0.85023, g: 0.85034, b: 0.85045, a: 0.85056}
     - _ColorDimSteps: {r: 0.85023, g: 0.85034, b: 0.85045, a: 0.85056}
