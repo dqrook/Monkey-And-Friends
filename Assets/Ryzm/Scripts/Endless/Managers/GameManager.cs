@@ -11,6 +11,7 @@ namespace Ryzm.EndlessRunner
         public GameStatus status = GameStatus.MainMenu;
         public float speed = 0.15f;
         IEnumerator lerpGameSpeed;
+        IEnumerator deactivateHomeIsland;
 
         void Awake()
         {
@@ -40,14 +41,17 @@ namespace Ryzm.EndlessRunner
 
         void OnStartingGame(StartingGame starting)
         {
+            Message.Send(new CreateSectionRow());
+            Debug.Log("CreateSectionRow");
             UpdateGameStatus(GameStatus.Starting);
         }
 
         void OnStartGame(StartGame start)
         {
-            Message.Send(new CreateSectionRow());
-            Debug.Log("CreateSectionRow");
             UpdateGameStatus(GameStatus.Active);
+            deactivateHomeIsland = null;
+            deactivateHomeIsland = DeactivateHomeIsland();
+            StartCoroutine(deactivateHomeIsland);
         }
 
         void OnPauseGame(PauseGame pause)
@@ -74,6 +78,12 @@ namespace Ryzm.EndlessRunner
         {
             this.status = status;
             Message.Send(new GameStatusResponse(status));
+        }
+
+        IEnumerator DeactivateHomeIsland()
+        {
+            yield return new WaitForSeconds(4);
+            Message.Send(new DeactivateHome());
         }
 
         void OnRequestGameSpeedChange(RequestGameSpeedChange requestChangeSpeed)

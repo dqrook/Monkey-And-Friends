@@ -12,28 +12,26 @@ namespace Ryzm.EndlessRunner.UI
         public TextMeshProUGUI distance;
         int currentDistance;
 
-        protected override void Awake()
+        public override bool IsActive
         {
-            base.Awake();
-            Message.AddListener<RunnerDistanceResponse>(OnRunnerDistanceResponse);
-        }
-
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-            Message.RemoveListener<RunnerDistanceResponse>(OnRunnerDistanceResponse);
-        }
-
-        protected override void OnActivateMenu(ActivateMenu activate)
-        {
-            Message.Send(new RunnerDistanceRequest());
-            base.OnActivateMenu(activate);
-        }
-
-        protected override void OnDeactivateMenu(DeactivateMenu deactivate)
-        {
-            base.OnDeactivateMenu(deactivate);
-            currentDistance = 0;
+            get
+            {
+                return base.IsActive;
+            }
+            set
+            {
+                if(value)
+                {
+                    Message.AddListener<RunnerDistanceResponse>(OnRunnerDistanceResponse);
+                    Message.Send(new RunnerDistanceRequest());
+                }
+                else
+                {
+                    Message.RemoveListener<RunnerDistanceResponse>(OnRunnerDistanceResponse);
+                    currentDistance = 0;
+                }
+                base.IsActive = value;
+            }
         }
 
         void OnRunnerDistanceResponse(RunnerDistanceResponse response)

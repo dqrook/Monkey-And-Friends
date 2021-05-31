@@ -12,28 +12,26 @@ namespace Ryzm.EndlessRunner.UI
         public TextMeshProUGUI score;
         int currentScore;
 
-        protected override void Awake()
+        public override bool IsActive
         {
-            base.Awake();
-            Message.AddListener<TotalCoinsResponse>(OnTotalCoinsResponse);
-        }
-
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-            Message.RemoveListener<TotalCoinsResponse>(OnTotalCoinsResponse);
-        }
-
-        protected override void OnActivateMenu(ActivateMenu activate)
-        {
-            Message.Send(new TotalCoinsRequest());
-            base.OnActivateMenu(activate);
-        }
-
-        protected override void OnDeactivateMenu(DeactivateMenu deactivate)
-        {
-            base.OnDeactivateMenu(deactivate);
-            currentScore = 0;
+            get
+            {
+                return base.IsActive;
+            }
+            set
+            {
+                if(value)
+                {
+                    Message.AddListener<TotalCoinsResponse>(OnTotalCoinsResponse);
+                    Message.Send(new TotalCoinsRequest());
+                }
+                else
+                {
+                    Message.RemoveListener<TotalCoinsResponse>(OnTotalCoinsResponse);
+                    currentScore = 0;
+                }
+                base.IsActive = value;
+            }
         }
 
         void OnTotalCoinsResponse(TotalCoinsResponse response)

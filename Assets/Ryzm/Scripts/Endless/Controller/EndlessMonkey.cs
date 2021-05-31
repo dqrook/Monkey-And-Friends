@@ -90,7 +90,7 @@ namespace Ryzm.EndlessRunner
             float zMove = Time.deltaTime * forwardSpeed * speedZ;
             move.z = zMove;
             move.y = 0;
-            move.x = shiftSpeed * zMove * 0.75f;
+            move.x = shiftSpeed * zMove;
             trans.Translate(move);
             distanceTraveled += zMove;
             Message.Send(new RunnerDistanceResponse(distanceTraveled));

@@ -86,6 +86,7 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<CurrentPositionRequest>(OnCurrentPositionRequest);
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
             Message.AddListener<ControllerModeResponse>(OnControllerModeResponse);
+            Message.AddListener<RunnerDistanceRequest>(OnRunnerDistanceRequest);
             mainCamera = Camera.main;
             playerInput.Touch.PrimaryContact.started += (ctx) => StartTouchPrimary(ctx);
             playerInput.Touch.PrimaryContact.canceled += (ctx) => EndTouchPrimary(ctx);
@@ -131,6 +132,7 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<CurrentPositionRequest>(OnCurrentPositionRequest);
             Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
             Message.RemoveListener<ControllerModeResponse>(OnControllerModeResponse);
+            Message.RemoveListener<RunnerDistanceRequest>(OnRunnerDistanceRequest);
         }
 
         protected virtual void OnCurrentSectionChange(CurrentSectionChange change)
@@ -160,6 +162,11 @@ namespace Ryzm.EndlessRunner
 		{
 			mode = response.mode;
 		}
+
+        protected virtual void OnRunnerDistanceRequest(RunnerDistanceRequest request)
+        {
+            Message.Send(new RunnerDistanceResponse(distanceTraveled));
+        }
 
 		protected bool IsAttacking()
         {
@@ -219,9 +226,11 @@ namespace Ryzm.EndlessRunner
             
             float absDistance = _distance * signDistance;
             shiftSpeed = signDistance;
-            while(Mathf.Abs(_shiftDistance) > absDistance)
+            float signShiftDistance = Mathf.Sign(_shiftDistance);
+            while(_shiftDistance * signShiftDistance > absDistance || signShiftDistance != signDistance)
             {
                 _shiftDistance = GetShiftDistance(target, type);
+                signShiftDistance = Mathf.Sign(_shiftDistance);
                 yield return null;
             }
             _shiftDistance = GetShiftDistance(target, type);
