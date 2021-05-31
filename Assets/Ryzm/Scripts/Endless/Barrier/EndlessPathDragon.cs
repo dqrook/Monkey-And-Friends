@@ -61,7 +61,7 @@ namespace Ryzm.EndlessRunner
             }
 
             diff = Vector3.Distance(childTransform.localPosition, finalPosition.localPosition);
-            while(diff > 0.01f)
+            while(diff > 0.01f && !startedFire)
             {
                 if(!startedFire)
                 {

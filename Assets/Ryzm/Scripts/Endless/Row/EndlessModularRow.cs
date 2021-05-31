@@ -24,21 +24,28 @@ namespace Ryzm.EndlessRunner
                 ModularSection modularSection = modularSections[i];
                 EndlessSection _section = null;
                 EndlessSection _turnSection = null;
-                if(modularSection.types.Length == 0)
+                if(modularSection.section == null)
                 {
-                    _section = CreateSection(trans, false);
-                }
-                else
-                {
-                    SectionType st = modularSection.types[Random.Range(0, modularSection.types.Length)];
-                    if(modularSection.isTurn)
+                    if(modularSection.types.Length == 0)
                     {
-                        _turnSection = CreateSection(trans, st);
+                        _section = CreateSection(trans, false);
                     }
                     else
                     {
-                        _section = CreateSection(trans, st);
+                        SectionType st = modularSection.types[Random.Range(0, modularSection.types.Length)];
+                        if(modularSection.isTurn)
+                        {
+                            _turnSection = CreateSection(trans, st);
+                        }
+                        else
+                        {
+                            _section = CreateSection(trans, st);
+                        }
                     }
+                }
+                else 
+                {
+                    _section = modularSection.section;
                 }
                 if(_turnSection != null)
                 {
@@ -79,5 +86,6 @@ namespace Ryzm.EndlessRunner
     {
         public SectionType[] types;
         public bool isTurn;
+        public EndlessSection section;
     }
 }

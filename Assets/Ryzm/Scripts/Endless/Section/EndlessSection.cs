@@ -18,6 +18,7 @@ namespace Ryzm.EndlessRunner
         public Transform nextSectionSpawn; 
         [Range(0, 1)]
         public float barrierLikelihood = 0.5f;
+        public List<GameObject> environments = new List<GameObject>();
         
         [Header("Lane Positions")]
         public Transform position0;
@@ -37,9 +38,27 @@ namespace Ryzm.EndlessRunner
                 _possibleBarrierTypes.Clear();
                 foreach(SpawnLocation location in barrierSpawnLocations)
                 {
-                    _possibleBarrierTypes.Add(location.type);
+                    if(location.weight > 0) 
+                    {
+                        _possibleBarrierTypes.Add(location.type);
+                    }
                 }
                 return _possibleBarrierTypes;
+            }
+        }
+
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            if(environments.Count > 1)
+            {
+                EndlessUtils.Shuffle(environments);
+                int i = 0;
+                foreach(GameObject go in environments)
+                {
+                    go.SetActive(i == 0);
+                    i++;
+                }
             }
         }
 
@@ -193,6 +212,10 @@ namespace Ryzm.EndlessRunner
         LongPathDragon,
         TSection1,
         LeftTurn1,
-        BasicLauncher
+        BasicLauncher,
+        BasicDragon,
+        BasicDiveDragonCoinRow,
+        TSectionBeach1,
+        TSectionGrass1
     }
 }
