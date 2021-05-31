@@ -55,8 +55,8 @@ namespace Ryzm.EndlessRunner
                         StartFire();
                     }
                 }
-                childTransform.localPosition = Vector3.Lerp(childTransform.localPosition, middlePosition.localPosition, Time.deltaTime * 11);
-                childTransform.localEulerAngles = Vector3.Lerp(childTransform.localEulerAngles, middlePosition.localEulerAngles, Time.deltaTime * 11);
+                childTransform.localPosition = Vector3.Lerp(childTransform.localPosition, middlePosition.localPosition, Time.deltaTime * 12);
+                childTransform.localEulerAngles = Vector3.Lerp(childTransform.localEulerAngles, middlePosition.localEulerAngles, Time.deltaTime * 12);
                 diff = Vector3.Distance(childTransform.localPosition, middlePosition.localPosition);
                 yield return null;
             }

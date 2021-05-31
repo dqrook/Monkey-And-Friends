@@ -48,10 +48,12 @@ namespace Ryzm.EndlessRunner
                     if(modularSection.isTurn)
                     {
                         _turnSection = modularSection.section;
+                        _turnSection.gameObject.SetActive(true);
                     }
                     else
                     {
                         _section = modularSection.section;
+                        _section.gameObject.SetActive(true);
                     }
                 }
                 if(_turnSection != null)
