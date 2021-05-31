@@ -19,7 +19,6 @@ namespace Ryzm.Utils
         public void OnClickCapture()
         {
             string name = "/Users/ryzm/Desktop/" + Time.frameCount.ToString() + ".png";
-            // Debug.Log(name);
             UnityEngine.ScreenCapture.CaptureScreenshot(name, superSize);
         }
     }

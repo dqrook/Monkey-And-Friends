@@ -299,19 +299,19 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 16.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1594540414}
-  - {fileID: 1010960848}
-  - {fileID: 1314318345}
   - {fileID: 1012426711}
   - {fileID: 888489550}
   - {fileID: 1148188426}
+  - {fileID: 1594540414}
+  - {fileID: 1010960848}
+  - {fileID: 1314318345}
   - {fileID: 150826367}
   - {fileID: 614444584}
   - {fileID: 1825983645}
   - {fileID: 379460956}
   - {fileID: 1833194882552515547}
-  - {fileID: 1713832306}
   - {fileID: 6599368789539501058}
+  - {fileID: 1713832306}
   m_Father: {fileID: 0}
   m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5152,6 +5152,7 @@ GameObject:
   - component: {fileID: 888489550}
   - component: {fileID: 888489552}
   - component: {fileID: 888489551}
+  - component: {fileID: 888489553}
   m_Layer: 0
   m_Name: Round Island
   m_TagString: Untagged
@@ -5171,7 +5172,7 @@ Transform:
   m_LocalScale: {x: 100.000015, y: 100, z: 100.000015}
   m_Children: []
   m_Father: {fileID: 15303772}
-  m_RootOrder: 4
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &888489551
 MeshRenderer:
@@ -5219,6 +5220,20 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 888489549}
+  m_Mesh: {fileID: -5543713868855199812, guid: aa8ea68078224447b988e12f5169db42, type: 3}
+--- !u!64 &888489553
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 888489549}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
   m_Mesh: {fileID: -5543713868855199812, guid: aa8ea68078224447b988e12f5169db42, type: 3}
 --- !u!1 &893631045
 GameObject:
@@ -6596,7 +6611,7 @@ Transform:
   m_Children:
   - {fileID: 814231639}
   m_Father: {fileID: 15303772}
-  m_RootOrder: 3
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1028198320
 GameObject:
@@ -7427,7 +7442,7 @@ Transform:
   - {fileID: 8978564422090321899}
   - {fileID: 5784520933289388820}
   m_Father: {fileID: 15303772}
-  m_RootOrder: 5
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1164574406
 GameObject:
@@ -29211,7 +29226,7 @@ Transform:
   m_LocalScale: {x: 0.37000012, y: 0.35, z: 0.30000004}
   m_Children: []
   m_Father: {fileID: 15303772}
-  m_RootOrder: 12
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6849690646334846764
 GameObject:
