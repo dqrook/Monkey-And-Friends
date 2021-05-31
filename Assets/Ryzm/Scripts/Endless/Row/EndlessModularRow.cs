@@ -45,7 +45,14 @@ namespace Ryzm.EndlessRunner
                 }
                 else 
                 {
-                    _section = modularSection.section;
+                    if(modularSection.isTurn)
+                    {
+                        _turnSection = modularSection.section;
+                    }
+                    else
+                    {
+                        _section = modularSection.section;
+                    }
                 }
                 if(_turnSection != null)
                 {

@@ -10,6 +10,13 @@ namespace Ryzm.EndlessRunner
         public Transform finalPosition;
         public GameObject instantDeath;
 
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            finalPosition.position = middlePosition.position;
+            finalPosition.rotation = middlePosition.rotation;
+        }
+
         void StartFire()
         {
             ToggleInstantDeath(true);
@@ -61,7 +68,7 @@ namespace Ryzm.EndlessRunner
             }
 
             diff = Vector3.Distance(childTransform.localPosition, finalPosition.localPosition);
-            while(diff > 0.01f && !startedFire)
+            while(diff > 0.01f || !startedFire)
             {
                 if(!startedFire)
                 {

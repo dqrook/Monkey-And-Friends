@@ -561,7 +561,7 @@ GameObject:
   - component: {fileID: 1188647848026950197}
   - component: {fileID: 6810261187763276488}
   m_Layer: 0
-  m_Name: woodBasicDragon
+  m_Name: woodBasicPathDragon
   m_TagString: platformZ
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -606,7 +606,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9be5cd051b954ee999f56a9b484abc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 12
+  type: 3
   isTurn: 0
   deactivate: {fileID: 6810261187763276488}
   barrierSpawnLocations:
@@ -621,7 +621,7 @@ MonoBehaviour:
     - position: 2
       locations:
       - {fileID: 2717767156925478848}
-    weight: 1
+    weight: 0
   - type: 3
     spawnTransforms:
     - position: 0

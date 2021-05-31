@@ -216,6 +216,9 @@ namespace Ryzm.EndlessRunner
         BasicDragon,
         BasicDiveDragonCoinRow,
         TSectionBeach1,
-        TSectionGrass1
+        TSectionGrass1,
+        LeftTurnGrass1,
+        RightTurnGrass1,
+        LeftTurnBeach1
     }
 }
