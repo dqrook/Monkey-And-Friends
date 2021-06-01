@@ -26,5 +26,14 @@ namespace Ryzm.EndlessRunner
             animator.SetBool("shrink", true);
             Message.Send(new CollectCoin());
         }
+
+        protected override void OnGameStatusResponse(GameStatusResponse gameStatusResponse)
+        {
+            base.OnGameStatusResponse(gameStatusResponse);
+            if(gameStatusResponse.status == GameStatus.Restart)
+            {
+                animator.SetBool("shrink", false);
+            }
+        }
     }
 }

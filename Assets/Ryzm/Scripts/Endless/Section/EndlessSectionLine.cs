@@ -29,7 +29,6 @@ namespace Ryzm.EndlessRunner
                 else
                 {
                     section.ExitSection();
-                    section.deactivate.Deactivate();
                 }
             }
         }

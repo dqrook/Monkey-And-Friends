@@ -163,10 +163,7 @@ namespace Ryzm.EndlessRunner
 			mode = response.mode;
 		}
 
-        protected virtual void OnRunnerDistanceRequest(RunnerDistanceRequest request)
-        {
-            Message.Send(new RunnerDistanceResponse(distanceTraveled));
-        }
+        protected virtual void OnRunnerDistanceRequest(RunnerDistanceRequest request) {}
 
 		protected bool IsAttacking()
         {
@@ -254,7 +251,7 @@ namespace Ryzm.EndlessRunner
 
         public virtual void Die() {}
 
-        protected void Reset()
+        protected virtual void Reset()
         {
             turned = false;
             state = 0;

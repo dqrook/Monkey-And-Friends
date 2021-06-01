@@ -63,6 +63,10 @@ namespace Ryzm.EndlessRunner.UI
             {
                 ActivateMenus(menuSets.GetMenuTypes(MenuSet.EndMenu));
             }
+            else if(response.status == GameStatus.Restart)
+            {
+                ActivateMenus(menuSets.GetMenuTypes(MenuSet.RestartMenu));
+            }
         }
 
         // void OnRunnerDie(RunnerDie runnerDie)
@@ -82,7 +86,8 @@ namespace Ryzm.EndlessRunner.UI
         MainMenu,
         ActiveMenu,
         PauseMenu,
-        EndMenu
+        EndMenu,
+        RestartMenu
     }
 
     public enum MenuType
@@ -96,6 +101,7 @@ namespace Ryzm.EndlessRunner.UI
         EndGame,
         Login,
         Header,
-        Entry
+        Entry,
+        Loading
     }
 }

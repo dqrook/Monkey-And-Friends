@@ -78,6 +78,7 @@ namespace Ryzm.EndlessRunner
             {
                 Message.Send(new CreateSectionRow());
             }
+            deactivate.Deactivate();
         }
 
         public virtual Transform NextSectionSpawn()
@@ -168,6 +169,15 @@ namespace Ryzm.EndlessRunner
                     controller.ShiftToPosition(pos, ShiftDistanceType.x);
                     controller.CurrentPosition++;
                 }
+            }
+        }
+
+        protected override void OnGameStatusResponse(GameStatusResponse gameStatusResponse)
+        {
+            base.OnGameStatusResponse(gameStatusResponse);
+            if(gameStatusResponse.status == GameStatus.Restart)
+            {
+                gameObject.SetActive(false);
             }
         }
     }

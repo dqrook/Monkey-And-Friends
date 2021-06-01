@@ -21,7 +21,6 @@ namespace Ryzm.EndlessRunner
             {
                 startingSpawn = gameObject.transform;
             }
-            Message.AddListener<CreateSectionRow>(OnCreateSectionRow);
             if(prefabOrder.Count == 0)
             {
                 prefabOrder.Add("default");
@@ -34,11 +33,14 @@ namespace Ryzm.EndlessRunner
                     break;
                 }
             }
+            Message.AddListener<CreateSectionRow>(OnCreateSectionRow);
+            Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
         }
 
         void OnDestroy()
         {
             Message.RemoveListener<CreateSectionRow>(OnCreateSectionRow);
+            Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
         }
 
         void OnCreateSectionRow(CreateSectionRow createSectionRow)
@@ -82,6 +84,15 @@ namespace Ryzm.EndlessRunner
                 }
             }
             return defaultPrefab;
+        }
+
+        void OnGameStatusResponse(GameStatusResponse response)
+        {
+            if(response.status == GameStatus.Restart)
+            {
+                currentRow = null;
+                prefabIndex = 0;
+            }
         }
     }
 

@@ -73,7 +73,7 @@ namespace Ryzm.EndlessRunner
             _currentSection = sectionChange.endlessSection;
         }
 
-        void OnGameStatusResponse(GameStatusResponse gameStatusResponse)
+        protected virtual void OnGameStatusResponse(GameStatusResponse gameStatusResponse)
         {
             gameStatus = gameStatusResponse.status;
         }

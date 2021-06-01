@@ -40,6 +40,19 @@ namespace Ryzm.EndlessRunner
                 gameObject.SetActive(false);
             }
         }
-        
+
+        protected override void OnGameStatusResponse(GameStatusResponse gameStatusResponse)
+        {
+            base.OnGameStatusResponse(gameStatusResponse);
+            if(gameStatusResponse.status == GameStatus.Restart)
+            {
+                _collider.enabled = false;
+                if(part.isPlaying)
+                {
+                    part.Stop();
+                }
+                gameObject.SetActive(false);
+            }
+        }
     }
 }

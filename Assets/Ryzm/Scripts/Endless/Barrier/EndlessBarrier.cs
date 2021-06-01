@@ -38,6 +38,15 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<CurrentPositionResponse>(OnCurrentPositionResponse);
         }
 
+        protected override void OnGameStatusResponse(GameStatusResponse gameStatusResponse)
+        {
+            base.OnGameStatusResponse(gameStatusResponse);
+            if(gameStatusResponse.status == GameStatus.Restart)
+            {
+                gameObject.SetActive(false);
+            }
+        }
+
         protected virtual void OnSectionDeactivated(SectionDeactivated sectionDeactivated)
         {
             if(sectionDeactivated.section == parentSection)

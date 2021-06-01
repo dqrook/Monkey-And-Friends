@@ -209,6 +209,14 @@ namespace Ryzm.EndlessRunner
             return hasBarrier;
         }
 
+        protected override void OnRunnerDistanceRequest(RunnerDistanceRequest request)
+        {
+            if(mode == ControllerMode.Monkey)
+            {
+                Message.Send(new RunnerDistanceResponse(distanceTraveled));
+            }
+        }
+
         public override void Jump()
         {
             bool isGrounded = IsGrounded();
@@ -319,6 +327,23 @@ namespace Ryzm.EndlessRunner
             playerCollider.enabled = false;
             state = 4;
             ChangeEmotion(MonkeyEmotion.Angry);
+        }
+
+        protected override void OnGameStatusResponse(GameStatusResponse response)
+        {
+            base.OnGameStatusResponse(response);
+            if(response.status == GameStatus.Restart)
+            {
+                Reset();
+            }
+        }
+
+        protected override void Reset()
+        {
+            base.Reset();
+            animator.SetFloat("speed_z", 0);
+            airAttacking = false;
+            ChangeEmotion(MonkeyEmotion.Happy);
         }
 
         IEnumerator maintain;

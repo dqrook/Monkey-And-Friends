@@ -36,14 +36,25 @@ namespace Ryzm.EndlessRunner
                 cameraTrans.position = startTransform.position;
                 cameraTrans.rotation = startTransform.rotation;
             }
+            else if(gameStatus == GameStatus.Starting)
+            {
+                rotateCamera = null;
+                rotateCamera = RotateCamera(endTransform);
+                StartCoroutine(rotateCamera);
+            }
+            else if(gameStatus == GameStatus.Restart)
+            {
+                cameraTrans.position = startTransform.position;
+                cameraTrans.rotation = startTransform.rotation;
+            }
         }
 
         void OnMadeWorld(MadeWorld madeWorld)
         {
-            rotateCamera = null;
-            rotateCamera = RotateCamera(endTransform, GameStatus.Active);
-            StartCoroutine(rotateCamera);
-            Message.Send(new StartingGame());
+            // rotateCamera = null;
+            // rotateCamera = RotateCamera(endTransform);
+            // StartCoroutine(rotateCamera);
+            // Message.Send(new StartingGame());
         }
 
         float GetTotalDifference(Transform target)
@@ -53,7 +64,7 @@ namespace Ryzm.EndlessRunner
             return posDiff + rotDiff;
         }
 
-        IEnumerator RotateCamera(Transform target, GameStatus targetStatus)
+        IEnumerator RotateCamera(Transform target)
         {
             float diff = GetTotalDifference(target);
             while(diff > 0.1f)
