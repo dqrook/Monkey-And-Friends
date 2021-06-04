@@ -117,6 +117,10 @@ namespace Ryzm.EndlessRunner
             {
                 Attack();
             }
+            if(IsSliding())
+            {
+                Slide();
+            }
         }
         
         void ChangeEmotion(MonkeyEmotion emotion)
@@ -173,6 +177,11 @@ namespace Ryzm.EndlessRunner
             return grounded;
         }
 
+        bool IsSliding()
+        {
+            return playerInput.Endless.Slide.WasPressedThisFrame();
+        }
+
         bool HasBarrier(Direction direction)
         {
             int sign = direction == Direction.Right ? 1 : -1;
@@ -223,11 +232,23 @@ namespace Ryzm.EndlessRunner
             Jump(isGrounded);
         }
 
-        public override void Slide() {}
+        public void FinishSlide()
+        {
+            inSlide = false;
+        }
+
+        public override void Slide() 
+        {
+            if(!InJump && !inShift && !inSlide)
+            {
+                animator.SetTrigger("slide");
+                inSlide = true;
+            }
+        }
 
         public void Jump(bool isGrounded)
         {
-            if(!InJump && isGrounded)
+            if(!InJump && isGrounded && !inShift)
             {
                 monitorJump = MonitorJump();
                 StartCoroutine(monitorJump);
@@ -342,6 +363,7 @@ namespace Ryzm.EndlessRunner
         {
             base.Reset();
             animator.SetFloat("speed_z", 0);
+            animator.SetFloat("time_to_idle", -1);
             airAttacking = false;
             ChangeEmotion(MonkeyEmotion.Happy);
         }

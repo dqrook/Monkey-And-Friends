@@ -38,6 +38,7 @@ namespace Ryzm.EndlessRunner
         protected float shiftSpeed;
 		protected ControllerMode mode;
         protected Camera mainCamera;
+        protected bool inSlide;
 
         public int CurrentPosition
         {
@@ -185,7 +186,7 @@ namespace Ryzm.EndlessRunner
 
         public virtual void Shift(Direction direction)
         {
-            if(!inShift && !InJump)
+            if(!inShift && !InJump && !inSlide)
             {
                 if(_endlessTurnSection != null)
                 {
@@ -224,7 +225,7 @@ namespace Ryzm.EndlessRunner
             float absDistance = _distance * signDistance;
             shiftSpeed = signDistance;
             float signShiftDistance = Mathf.Sign(_shiftDistance);
-            while(_shiftDistance * signShiftDistance > absDistance || signShiftDistance != signDistance)
+            while(_shiftDistance * signShiftDistance > absDistance && signShiftDistance == signDistance)
             {
                 _shiftDistance = GetShiftDistance(target, type);
                 signShiftDistance = Mathf.Sign(_shiftDistance);
@@ -233,7 +234,7 @@ namespace Ryzm.EndlessRunner
             _shiftDistance = GetShiftDistance(target, type);
             trans.Translate(_shiftDistance, 0, 0);
             shiftSpeed = 0;
-            yield return new WaitForSeconds(0.1f); // cooldown for shift
+            yield return new WaitForSeconds(0.1f);
             inShift = false;
             yield break;
         }
@@ -257,6 +258,7 @@ namespace Ryzm.EndlessRunner
             state = 0;
             InJump = false;
             inShift = false;
+            inSlide = false;
             distanceTraveled = 0;
         }
     }

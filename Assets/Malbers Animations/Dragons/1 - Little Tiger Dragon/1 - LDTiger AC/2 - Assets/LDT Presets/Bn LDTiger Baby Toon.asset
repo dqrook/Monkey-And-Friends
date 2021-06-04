@@ -1,0 +1,204 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9752e66000c12874890fb0ab6333c4c1, type: 3}
+  m_Name: Bn LDTiger Baby Toon
+  m_EditorClassIdentifier: 
+  positions: 1
+  scales: 1
+  Bones:
+  - name: Root
+    Position: {x: -1.129, y: 0, z: -2.087}
+    LocalEulerRotation: {x: -0, y: 0, z: 0}
+    Scale: {x: 0.5, y: 0.5, z: 0.5}
+  - name: Rotator
+    Position: {x: -0, y: 0, z: 0}
+    LocalEulerRotation: {x: 0, y: 0, z: 0}
+    Scale: {x: 1, y: 1, z: 1}
+  - name: CG
+    Position: {x: -0, y: 0.33903888, z: 0}
+    LocalEulerRotation: {x: 270, y: 89.99992, z: 0}
+    Scale: {x: 1, y: 1, z: 1}
+  - name: Pelvis
+    Position: {x: -0, y: 0, z: 0}
+    LocalEulerRotation: {x: 270, y: 89.99992, z: 0}
+    Scale: {x: 1, y: 1, z: 1}
+  - name: Spine
+    Position: {x: -0.031790502, y: 0.044920366, z: -0.00000028174958}
+    LocalEulerRotation: {x: -0.00009835977, y: 0.00023724508, z: 276.83112}
+    Scale: {x: 1, y: 1, z: 1}
+  - name: L Thigh
+    Position: {x: 0.04838273, y: 0.026221504, z: 0.13106002}
+    LocalEulerRotation: {x: 350.8127, y: 191.4852, z: 250.62592}
+    Scale: {x: 1, y: 1.1194204, z: 1.1872152}
+  - name: L Calf
+    Position: {x: -0.14343487, y: 0.000000009536743, z: 0}
+    LocalEulerRotation: {x: 0.0000024587948, y: 0.0000017509839, z: 80.45586}
+    Scale: {x: 0.9999999, y: 1, z: 1}
+  - name: L HorseLink
+    Position: {x: -0.12532574, y: -0.000000019073486, z: 0.000000095367426}
+    LocalEulerRotation: {x: -0.0000057558714, y: 0.000003986281, z: 287.72653}
+    Scale: {x: 1.0000001, y: 1, z: 1}
+  - name: L Foot
+    Position: {x: -0.098868236, y: 0.000000009536743, z: 0}
+    LocalEulerRotation: {x: 353.51587, y: 6.070674, z: 17.895761}
+    Scale: {x: 1, y: 0.99999994, z: 0.99999994}
+  - name: R Thigh
+    Position: {x: 0.048382718, y: 0.026222229, z: -0.13105915}
+    LocalEulerRotation: {x: 9.187005, y: 168.51482, z: 250.626}
+    Scale: {x: 1, y: 1.1194204, z: 1.1872152}
+  - name: R Calf
+    Position: {x: -0.143435, y: -0.000000009536743, z: 0.000000019073486}
+    LocalEulerRotation: {x: -0.000006169398, y: 0.000004500316, z: 80.45587}
+    Scale: {x: 1, y: 0.99999994, z: 1}
+  - name: R HorseLink
+    Position: {x: -0.12532568, y: 0.000000038146972, z: 0.00000015258789}
+    LocalEulerRotation: {x: 0.0000008466186, y: 0.0000029596144, z: 287.7265}
+    Scale: {x: 0.99999994, y: 0.99999994, z: 0.99999994}
+  - name: R Foot
+    Position: {x: -0.098868236, y: 0.000000028610229, z: 0}
+    LocalEulerRotation: {x: 3.6835206, y: 353.02347, z: 17.815508}
+    Scale: {x: 0.99999994, y: 1.0000002, z: 1.0000001}
+  - name: Spine1
+    Position: {x: -0.13074507, y: -0.00010402679, z: -2.8929206e-10}
+    LocalEulerRotation: {x: -0, y: -3.256888e-11, z: -0}
+    Scale: {x: 1, y: 1, z: 1}
+  - name: Neck
+    Position: {x: -0.14438486, y: 0.06294765, z: 0.00000010227857}
+    LocalEulerRotation: {x: 0.000017265427, y: -0.00014642143, z: 44.730213}
+    Scale: {x: 1.0000001, y: 1.0000001, z: 1}
+  - name: L Clavicle
+    Position: {x: 0.08774997, y: -0.006866245, z: -0.0021166657}
+    LocalEulerRotation: {x: 316.71884, y: 283.9245, z: 167.21774}
+    Scale: {x: 0.6584482, y: 0.9999999, z: 0.99999994}
+  - name: L UpperArm
+    Position: {x: -0.1167131, y: -0.000000019073486, z: -0.000000076293944}
+    LocalEulerRotation: {x: 353.77487, y: 273.83972, z: 86.78839}
+    Scale: {x: 1, y: 1.2434788, z: 2.0357049}
+  - name: L Forearm
+    Position: {x: -0.10569004, y: 0.000000114440915, z: -0.000000009536743}
+    LocalEulerRotation: {x: 0.000001192795, y: -0.000000667175, z: 9.439882}
+    Scale: {x: 1.0000001, y: 1, z: 1}
+  - name: L Hand
+    Position: {x: -0.11154832, y: 0.000000019073486, z: -0.000000028610229}
+    LocalEulerRotation: {x: 2.6440618, y: 350.66373, z: 346.6553}
+    Scale: {x: 1.0000001, y: 1.0000001, z: 1.0000001}
+  - name: L Finger0
+    Position: {x: -0.048640106, y: -0.0454636, z: 0.0011845111}
+    LocalEulerRotation: {x: 0.000009604838, y: -0.000014649643, z: 89.99999}
+    Scale: {x: 0.99999994, y: 1, z: 0.99999994}
+  - name: Neck1
+    Position: {x: -0.06878178, y: -0.00005302429, z: -1.470471e-10}
+    LocalEulerRotation: {x: 0.0000051761867, y: -0.000040229163, z: 14.663865}
+    Scale: {x: 0.3481842, y: 0.3481841, z: 0.34818414}
+  - name: Neck2
+    Position: {x: -0.06878193, y: -0.000053014755, z: -1.470471e-10}
+    LocalEulerRotation: {x: 0.000005176282, y: -0.00004022912, z: 14.663861}
+    Scale: {x: 1.6868825, y: 1.6868829, z: 1.6868826}
+  - name: Head
+    Position: {x: -0.06879566, y: 0.0000001335144, z: 0}
+    LocalEulerRotation: {x: 0.000033102377, y: -0.0000449469, z: 3.7225504}
+    Scale: {x: 2.3408232, y: 2.3408232, z: 2.3408234}
+  - name: DragonEyes
+    Position: {x: 0.644, y: -0.361, z: 0}
+    LocalEulerRotation: {x: 4.123503, y: 269.9999, z: 180}
+    Scale: {x: 1.0380816, y: 1.144142, z: 1.1441423}
+  - name: Jaw
+    Position: {x: -0.031175498, y: 0.14841147, z: 0.0000005585183}
+    LocalEulerRotation: {x: 0.00031157082, y: 0.00014409571, z: 281.40024}
+    Scale: {x: 0.99999994, y: 0.99999994, z: 1}
+  - name: R Clavicle
+    Position: {x: 0.087750055, y: -0.006866245, z: 0.0021166657}
+    LocalEulerRotation: {x: 43.28125, y: 76.075874, z: 167.21828}
+    Scale: {x: 0.65844816, y: 0.99999994, z: 0.99999994}
+  - name: R UpperArm
+    Position: {x: -0.11671314, y: -0.000000038146972, z: -0.000000076293944}
+    LocalEulerRotation: {x: 6.225124, y: 86.16029, z: 86.78839}
+    Scale: {x: 1, y: 1.2434787, z: 2.0357046}
+  - name: R Forearm
+    Position: {x: -0.105690114, y: -0.000000057220458, z: 0.000000019073486}
+    LocalEulerRotation: {x: -0.0000004906124, y: 0.0000016494168, z: 9.439882}
+    Scale: {x: 1, y: 0.99999994, z: 1}
+  - name: R Hand
+    Position: {x: -0.11154839, y: -0.000000019073486, z: 0.000000009536743}
+    LocalEulerRotation: {x: 357.35593, y: 9.3362665, z: 346.6553}
+    Scale: {x: 1, y: 1.0000001, z: 1}
+  - name: R Finger0
+    Position: {x: -0.048640147, y: -0.045463637, z: -0.001184597}
+    LocalEulerRotation: {x: -0.000008964756, y: 0.000014649673, z: 89.99999}
+    Scale: {x: 1, y: 1, z: 1}
+  - name: WingBoneL
+    Position: {x: -0.0886981, y: 0.00074474333, z: 0.06540851}
+    LocalEulerRotation: {x: 340.77924, y: 340.90695, z: 98.30796}
+    Scale: {x: 0.6956602, y: 0.6956602, z: 0.69566023}
+  - name: WingBone1L
+    Position: {x: -0.18006763, y: 0.000040740964, z: 0.0000017166137}
+    LocalEulerRotation: {x: 350.85684, y: 2.4188032, z: 79.13847}
+    Scale: {x: 1.0000001, y: 1.0000001, z: 1}
+  - name: WingBone1L02
+    Position: {x: -0.12354114, y: -0.000059661863, z: 0.000000038146972}
+    LocalEulerRotation: {x: 352.24255, y: 6.3622894, z: 50.395317}
+    Scale: {x: 1, y: 1, z: 0.9999999}
+  - name: WingBone1L03
+    Position: {x: -0.118234135, y: -0.00006973266, z: 0.000000057220458}
+    LocalEulerRotation: {x: 0.000046816258, y: -0.0001251841, z: 50.919277}
+    Scale: {x: 1.0000001, y: 1.0000001, z: 1}
+  - name: WingBone2L
+    Position: {x: -0.18006122, y: 0.00004547119, z: 0.0000020217894}
+    LocalEulerRotation: {x: 352.71298, y: 352.67975, z: 126.840935}
+    Scale: {x: 1.0000002, y: 1.0000002, z: 1}
+  - name: WingBone2L02
+    Position: {x: -0.09581627, y: -0.000036849975, z: -0.000000028610229}
+    LocalEulerRotation: {x: 0.000028361932, y: -0.00008935501, z: 34.621433}
+    Scale: {x: 0.99999994, y: 0.9999999, z: 0.99999994}
+  - name: WingBone2L03
+    Position: {x: -0.056306534, y: -0.000056078432, z: 0}
+    LocalEulerRotation: {x: 0.0000000813878, y: -0.000026759804, z: 8.659835}
+    Scale: {x: 1, y: 1, z: 1}
+  - name: WingBoneR
+    Position: {x: -0.088698134, y: 0.0007448959, z: -0.06540859}
+    LocalEulerRotation: {x: 19.221111, y: 19.092726, z: 98.30795}
+    Scale: {x: 0.6956602, y: 0.69566023, z: 0.69566023}
+  - name: WingBone1R
+    Position: {x: -0.18006767, y: 0.000040664672, z: 0.000004053116}
+    LocalEulerRotation: {x: 9.143405, y: 357.58087, z: 79.13841}
+    Scale: {x: 1.0000001, y: 1.0000001, z: 1.0000001}
+  - name: WingBone1R02
+    Position: {x: -0.12354116, y: -0.000059356687, z: -0.000000028610229}
+    LocalEulerRotation: {x: 7.757575, y: 353.63745, z: 50.395283}
+    Scale: {x: 1.0000001, y: 1, z: 1}
+  - name: WingBone1R03
+    Position: {x: -0.1182341, y: -0.00006973266, z: 0.00000014305114}
+    LocalEulerRotation: {x: 0.00006272826, y: -0.000119134005, z: 50.919277}
+    Scale: {x: 1.0000001, y: 1.0000002, z: 1.0000001}
+  - name: WingBone2R
+    Position: {x: -0.1800613, y: 0.000045394896, z: -0.000002069473}
+    LocalEulerRotation: {x: 7.287496, y: 7.319995, z: 126.84096}
+    Scale: {x: 1.0000002, y: 1.0000002, z: 1.0000001}
+  - name: WingBone2R02
+    Position: {x: -0.09581619, y: -0.00003686905, z: 0.000000019073486}
+    LocalEulerRotation: {x: 0.000030080588, y: -0.00009128088, z: 34.62142}
+    Scale: {x: 1.0000001, y: 1, z: 0.99999994}
+  - name: WingBone2R03
+    Position: {x: -0.05630695, y: -0.0000561285, z: -0.000000028610229}
+    LocalEulerRotation: {x: 0.00000715689, y: -0.000023954935, z: 8.659837}
+    Scale: {x: 0.99999994, y: 1, z: 1}
+  - name: Tail
+    Position: {x: 0.15568542, y: 0.110638194, z: 0.0000002529312}
+    LocalEulerRotation: {x: 0.00052433874, y: -0.00019138267, z: 183.825}
+    Scale: {x: 0.61812764, y: 0.77876884, z: 0.7787687}
+  - name: Tail1
+    Position: {x: -0.18845485, y: -0.00014717101, z: -4.0879966e-10}
+    LocalEulerRotation: {x: 0.0000030493013, y: 0.000030981075, z: 348.758}
+    Scale: {x: 0.99999994, y: 0.99999994, z: 1}
+  - name: Tail2
+    Position: {x: -0.18846089, y: -0.00017625808, z: -4.896719e-10}
+    LocalEulerRotation: {x: 0.0000030491212, y: 0.0000309811, z: 348.758}
+    Scale: {x: 1, y: 1, z: 1}

@@ -25,7 +25,6 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<PauseGame>(OnPauseGame);
             Message.AddListener<ResumeGame>(OnResumeGame);
             Message.AddListener<RestartGame>(OnRestartGame);
-            status = GameStatus.MainMenu;
             UpdateGameStatus(GameStatus.MainMenu);
         }
 
@@ -40,6 +39,14 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<PauseGame>(OnPauseGame);
             Message.RemoveListener<ResumeGame>(OnResumeGame);
             Message.RemoveListener<RestartGame>(OnRestartGame);
+        }
+
+        void Update()
+        {
+            if(Input.GetKeyDown(KeyCode.P))
+            {
+                Time.timeScale = Time.timeScale > 0 ? 0 : 1;
+            }
         }
 
         void OnMadeWorld(MadeWorld madeWorld)

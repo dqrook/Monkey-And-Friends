@@ -251,6 +251,14 @@ namespace Ryzm
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Slide"",
+                    ""type"": ""Button"",
+                    ""id"": ""09009cf5-8e75-4c5f-9bb9-67a75eb6a860"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -267,12 +275,56 @@ namespace Ryzm
                 },
                 {
                     ""name"": """",
+                    ""id"": ""2113932e-8e17-4ba3-9a14-492aeac083f2"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ShiftLeft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""51f8c1ef-3778-4e59-84d6-c26c4e3c8eaf"",
                     ""path"": ""<Keyboard>/d"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""ShiftRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""32486e87-ad43-47b0-b95a-61b90564520b"",
+                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ShiftRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""674006e0-5a85-4ba9-a5cb-8a7143ba8b7f"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Slide"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""148877ee-077c-41e8-a97e-5fa7f6a4ee0d"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Slide"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -295,6 +347,7 @@ namespace Ryzm
             m_Endless = asset.FindActionMap("Endless", throwIfNotFound: true);
             m_Endless_ShiftLeft = m_Endless.FindAction("ShiftLeft", throwIfNotFound: true);
             m_Endless_ShiftRight = m_Endless.FindAction("ShiftRight", throwIfNotFound: true);
+            m_Endless_Slide = m_Endless.FindAction("Slide", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -454,12 +507,14 @@ namespace Ryzm
         private IEndlessActions m_EndlessActionsCallbackInterface;
         private readonly InputAction m_Endless_ShiftLeft;
         private readonly InputAction m_Endless_ShiftRight;
+        private readonly InputAction m_Endless_Slide;
         public struct EndlessActions
         {
             private @Player m_Wrapper;
             public EndlessActions(@Player wrapper) { m_Wrapper = wrapper; }
             public InputAction @ShiftLeft => m_Wrapper.m_Endless_ShiftLeft;
             public InputAction @ShiftRight => m_Wrapper.m_Endless_ShiftRight;
+            public InputAction @Slide => m_Wrapper.m_Endless_Slide;
             public InputActionMap Get() { return m_Wrapper.m_Endless; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -475,6 +530,9 @@ namespace Ryzm
                     @ShiftRight.started -= m_Wrapper.m_EndlessActionsCallbackInterface.OnShiftRight;
                     @ShiftRight.performed -= m_Wrapper.m_EndlessActionsCallbackInterface.OnShiftRight;
                     @ShiftRight.canceled -= m_Wrapper.m_EndlessActionsCallbackInterface.OnShiftRight;
+                    @Slide.started -= m_Wrapper.m_EndlessActionsCallbackInterface.OnSlide;
+                    @Slide.performed -= m_Wrapper.m_EndlessActionsCallbackInterface.OnSlide;
+                    @Slide.canceled -= m_Wrapper.m_EndlessActionsCallbackInterface.OnSlide;
                 }
                 m_Wrapper.m_EndlessActionsCallbackInterface = instance;
                 if (instance != null)
@@ -485,6 +543,9 @@ namespace Ryzm
                     @ShiftRight.started += instance.OnShiftRight;
                     @ShiftRight.performed += instance.OnShiftRight;
                     @ShiftRight.canceled += instance.OnShiftRight;
+                    @Slide.started += instance.OnSlide;
+                    @Slide.performed += instance.OnSlide;
+                    @Slide.canceled += instance.OnSlide;
                 }
             }
         }
@@ -505,6 +566,7 @@ namespace Ryzm
         {
             void OnShiftLeft(InputAction.CallbackContext context);
             void OnShiftRight(InputAction.CallbackContext context);
+            void OnSlide(InputAction.CallbackContext context);
         }
     }
 }
