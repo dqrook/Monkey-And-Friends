@@ -190,8 +190,9 @@ namespace Ryzm.EndlessRunner
             {
                 if(_endlessTurnSection != null)
                 {
-                    _endlessTurnSection.Shift(direction, this, turned);
-                    turned = true;
+                    _endlessTurnSection.Shift(direction, this, ref turned);
+                    // turned = true;
+                    // Debug.Log(turned);
                 }
                 else if(_endlessSection != null)
                 {
@@ -221,7 +222,6 @@ namespace Ryzm.EndlessRunner
             {
                 animator.SetTrigger("shiftLeft");
             }
-            
             float absDistance = _distance * signDistance;
             shiftSpeed = signDistance;
             float signShiftDistance = Mathf.Sign(_shiftDistance);
@@ -234,9 +234,24 @@ namespace Ryzm.EndlessRunner
             _shiftDistance = GetShiftDistance(target, type);
             trans.Translate(_shiftDistance, 0, 0);
             shiftSpeed = 0;
-            yield return new WaitForSeconds(0.1f);
+            
+            float cooldownTime = 0;
+            float maxCooldown = 0.25f;
+            while(inShift && cooldownTime < maxCooldown) {
+                cooldownTime += Time.deltaTime;
+                yield return null;
+            }
+            // Debug.Log(inShift + " " + cooldownTime);
             inShift = false;
             yield break;
+        }
+
+        public void FinishShift()
+        {
+            inShift = false;
+            // Debug.Log("finished shift " + cooldownTime);
+            // float diff = Time.time - shiftTime;
+            // Debug.Log("shift finished " + diff);
         }
 
         protected float GetShiftDistance(Transform target, ShiftDistanceType type = ShiftDistanceType.x)

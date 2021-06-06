@@ -54,9 +54,10 @@ namespace Ryzm.EndlessRunner
             base.ExitSection();
         }
 
-        public override void Shift(Direction direction, EndlessController controller, bool turned)
+        public override void Shift(Direction direction, EndlessController controller, ref bool turned)
         {
             _Shift(direction, controller, turned);
+            turned = true;
         }
     }
 }
