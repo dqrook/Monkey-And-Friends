@@ -142,6 +142,11 @@ namespace Ryzm.EndlessRunner.UI
             }
         }
 
+        void ActivatePanel(LoginStatus status)
+        {
+            
+        }
+
         void OnCreateCredentialsResponse(CreateCredentialsResponse response)
         {
             urlCopied.gameObject.SetActive(false);
@@ -149,6 +154,7 @@ namespace Ryzm.EndlessRunner.UI
             loadingPanel.SetActive(false);
             gettingCredentials = false;
             _nearUrl = response.nearUrl;
+            Debug.Log(_nearUrl);
             Application.OpenURL(_nearUrl);
         }
 

@@ -4,15 +4,13 @@ using UnityEngine;
 using Ryzm.Blockchain.Messages;
 using CodeControl;
 using UnityEngine.Networking;
+using Ryzm.Utils;
 using System.Text;
 
 namespace Ryzm.Blockchain
 {
     public class NearLogin : MonoBehaviour
     {
-        private static NearLogin _instance;
-        public static NearLogin Instance { get { return _instance; } }
-
         public NearEnvs envs;
         AccessKeyResponse accessKeyResponse;
         IEnumerator getAccessKeys;
@@ -85,19 +83,11 @@ namespace Ryzm.Blockchain
 
         void Awake()
         {
-            if(_instance != null && _instance != this)
-            {
-                Destroy(this.gameObject);
-            }
-            else
-            {
-                _instance = this;
-            }
-
             Message.AddListener<LoginRequest>(OnLoginRequest);
             Message.AddListener<CreateCredentialsRequest>(OnCreateCredentialsRequest);
             Message.AddListener<AttemptLogin>(OnAttemptLogin);
-            Initialize();
+            Message.AddListener<SignMessageRequest>(OnSignMessageRequest);
+            TryLogin();
 
             // string[] p = new string[2];
             // p[0] = "access_key/ryzm.near";
@@ -111,9 +101,10 @@ namespace Ryzm.Blockchain
             Message.RemoveListener<LoginRequest>(OnLoginRequest);
             Message.RemoveListener<CreateCredentialsRequest>(OnCreateCredentialsRequest);
             Message.RemoveListener<AttemptLogin>(OnAttemptLogin);
+            Message.RemoveListener<SignMessageRequest>(OnSignMessageRequest);
         }
 
-        void Initialize()
+        void TryLogin()
         {
             // if there is an accountName, publicKey and secretKey
             if(HasCredentials())
@@ -122,7 +113,7 @@ namespace Ryzm.Blockchain
                 {
                     GetAccessKeys(AccountName);
                 }
-                else if(CanAccessContract())
+                else if(CanAccessContract(PublicKey))
                 {
                     Login(AccountName);
                 }
@@ -145,55 +136,7 @@ namespace Ryzm.Blockchain
 
         void OnLoginRequest(LoginRequest request)
         {
-            Initialize();
-            // bool needKeys = !CanAccessContract() && !fetchingKeys;
-            // if(!HasCredentials() || needKeys)
-            // {
-            //     KeyPair kp = CreateKeyPair();
-            //     bool hasPublicKey = PublicKey != "";
-            //     if(PublicKey == "") 
-            //     {
-            //         PublicKey = kp.publicKey;
-            //     }
-            //     if(SecretKey == "")
-            //     {
-            //         SecretKey = kp.secretKey;
-            //     }
-            //     Debug.Log(envs.LoginUrl(PublicKey));
-                
-            //     bool fetchingKeys = needKeys && HasCredentials();
-            //     string _accountName = AccountName != "" ? AccountName : null;
-            //     Message.Send(new LoginResponse(_accountName, envs.LoginUrl(PublicKey), false, hasPublicKey, fetchingKeys));
-            //     if(fetchingKeys)
-            //     {
-            //         // if you have all the necessary credentials but you havent gotten the access keys to check if they are ok 
-            //         getAccessKeys = null;
-            //         string[] p = { "access_key/" + _accountName, "" };
-            //         getAccessKeys = _GetAccessKeys(envs.walletUrl, new NearJson("query", p).ToJson());
-            //         StartCoroutine(getAccessKeys);
-            //     }
-            // }
-            // else
-            // {
-            //     Login();
-            // }
-        }
-
-        void OnAttemptLogin(AttemptLogin attemptLogin)
-        {
-            GetAccessKeys(attemptLogin.accountName);
-        }
-
-        void GetAccessKeys(string accountName)
-        {
-            if(!fetchingKeys)
-            {
-                getAccessKeys = null;
-                string[] p = { "access_key/" + accountName, "" };
-                getAccessKeys = _GetAccessKeys(envs.walletUrl, new NearJson("query", p).ToJson(), accountName);
-                StartCoroutine(getAccessKeys);
-            }
-            Message.Send(new LoginResponse(accountName, envs.LoginUrl(TempPublicKey), LoginStatus.FetchingKeys));
+            TryLogin();
         }
 
         void OnCreateCredentialsRequest(CreateCredentialsRequest request)
@@ -207,6 +150,39 @@ namespace Ryzm.Blockchain
             Message.Send(new CreateCredentialsResponse(envs.LoginUrl(TempPublicKey)));
         }
 
+        void OnAttemptLogin(AttemptLogin attemptLogin)
+        {
+            GetAccessKeys(attemptLogin.accountName);
+        }
+
+        void OnSignMessageRequest(SignMessageRequest request)
+        {
+            if(IsLoggedIn())
+            {
+                byte[] privateKeyBytes = Base58.Decode(SecretKey);
+                byte[] messageBytes = Encoding.ASCII.GetBytes(request.message);
+                byte[] signedMessageBytes = TweetNaCl.CryptoSign(messageBytes, privateKeyBytes);
+                // string signedMessage = Encoding.ASCII.GetString(signedMessageBytes);
+                Message.Send(new SignMessageResponse(request.sender, request.message, signedMessageBytes, PublicKey, AccountName));
+            }
+            else
+            {
+                Message.Send(new SignMessageResponse());
+            }
+        }
+
+        void GetAccessKeys(string accountName)
+        {
+            if(!fetchingKeys)
+            {
+                getAccessKeys = null;
+                string[] p = { "access_key/" + accountName, "" };
+                getAccessKeys = _GetAccessKeys(envs.nodeUrl, new NearJson("query", p).ToJson(), accountName);
+                StartCoroutine(getAccessKeys);
+            }
+            Message.Send(new LoginResponse(accountName, envs.LoginUrl(TempPublicKey), LoginStatus.FetchingKeys));
+        }
+
         void Login(string _accountName)
         {
             if(PublicKey == "" || SecretKey == "")
@@ -217,17 +193,18 @@ namespace Ryzm.Blockchain
             AccountName = _accountName;
             TempPublicKey = "";
             TempSecretKey = "";
+            Debug.Log("logged in!");
             Message.Send(new LoginResponse(AccountName, envs.LoginUrl(PublicKey), LoginStatus.LoggedIn));
         }
 
-        bool CanAccessContract()
+        bool CanAccessContract(string _publicKey)
         {
             if(accessKeyResponse != null)
             {
-                string _publicKey = "ed25519:" + PublicKey;
+                string transformedKey = "ed25519:" + _publicKey;
                 foreach(FullKey fullKey in accessKeyResponse.result.keys)
                 {
-                    if(_publicKey == fullKey.public_key && fullKey.access_key.permission.FunctionCall.receiver_id == envs.contractId)
+                    if(transformedKey == fullKey.public_key && fullKey.access_key.permission.FunctionCall.receiver_id == envs.contractId)
                     {
                         return true;
                     }
@@ -246,7 +223,7 @@ namespace Ryzm.Blockchain
         IEnumerator _GetAccessKeys(string url, string bodyJsonString, string _accountName)
         {
             fetchingKeys = true;
-            UnityWebRequest request = PostRequest(url, bodyJsonString);
+            UnityWebRequest request = RyzmUtils.PostRequest(url, bodyJsonString);
             yield return request.SendWebRequest();
             if(request.isNetworkError || request.isHttpError)
             {
@@ -258,8 +235,8 @@ namespace Ryzm.Blockchain
                 Debug.Log("POST SUCCESS");
                 string res = request.downloadHandler.text;
                 accessKeyResponse = AccessKeyResponse.FromJson(res);
-                Debug.Log(accessKeyResponse.result.keys[0].access_key.permission.FunctionCall.receiver_id);
-                if(CanAccessContract())
+                string _publicKey = PublicKey != "" ? PublicKey : TempPublicKey;
+                if(CanAccessContract(_publicKey))
                 {
                     Login(_accountName);
                 }
@@ -271,14 +248,9 @@ namespace Ryzm.Blockchain
             fetchingKeys = false;
         }
 
-        UnityWebRequest PostRequest(string url, string bodyJsonString)
+        bool IsLoggedIn()
         {
-            UnityWebRequest request = new UnityWebRequest(url, "POST");
-            byte[] bodyRaw = Encoding.UTF8.GetBytes(bodyJsonString);
-            request.uploadHandler = (UploadHandler) new UploadHandlerRaw(bodyRaw);
-            request.downloadHandler = (DownloadHandler) new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/json; charset=utf-8");
-            return request;
+            return HasCredentials() && CanAccessContract(PublicKey);
         }
 
         bool HasCredentials()
@@ -293,7 +265,7 @@ namespace Ryzm.Blockchain
 
         KeyPair CreateKeyPair()
         {
-            return TweetNaCl.CryptoBoxKeypair();
+            return TweetNaCl.CryptoSignKeypair();
         }
 
         void Logout()

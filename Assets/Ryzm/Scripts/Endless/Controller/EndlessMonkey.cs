@@ -332,7 +332,8 @@ namespace Ryzm.EndlessRunner
         public override void Attack()
         {
             // animator.SetTrigger("attack");
-            AirAttack();
+            animator.SetTrigger("kamehameha");
+            // AirAttack();
         }
 
         public override void Die()

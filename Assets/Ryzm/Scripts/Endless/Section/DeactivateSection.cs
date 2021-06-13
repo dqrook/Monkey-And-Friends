@@ -16,7 +16,7 @@ namespace Ryzm.EndlessRunner
         {
             if(!dScheduled)
             {
-                Invoke("SetInactive", 4.0f);
+                Invoke("SetInactive", 3.0f);
                 dScheduled = true;
             }
         }

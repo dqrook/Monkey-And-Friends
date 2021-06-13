@@ -247,8 +247,9 @@ namespace Ryzm.Blockchain
         /// <param name="publicKey"></param>
         /// <param name="secretKey"></param>
         /// <returns></returns>
-        public static Byte[] CryptoSignKeypair(Byte[] secretKey)
+        public static KeyPair CryptoSignKeypair()
         {
+            Byte[] secretKey = new Byte[SignSecretKeyBytes];
             Byte[] publicKey = new Byte[SignPublicKeyBytes];
             Byte[] d = new Byte[64];
             Int64[][] /*gf*/ p = new Int64[4][] { new Int64[GF_LEN], new Int64[GF_LEN], new Int64[GF_LEN], new Int64[GF_LEN] };
@@ -272,7 +273,7 @@ namespace Ryzm.Blockchain
                 secretKey[32 + i] = publicKey[i];
             }
 
-            return publicKey;
+            return new KeyPair(publicKey, secretKey);
         }
         
         /// <summary>
@@ -311,7 +312,7 @@ namespace Ryzm.Blockchain
 
             Byte[] smd = new Byte[signedMessage.Length];
             Array.Copy(signedMessage, 32, smd, 0, signedMessage.Length - 32);
-            CryptoHash(r, smd, message.Length + 64);
+            CryptoHash(r, smd, message.Length + 32);
 
             Reduce(r);
             Scalarbase(p, r, 0);

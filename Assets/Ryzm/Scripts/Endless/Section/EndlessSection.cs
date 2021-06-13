@@ -50,6 +50,7 @@ namespace Ryzm.EndlessRunner
         protected override void OnEnable()
         {
             base.OnEnable();
+            // Debug.Log(gameObject.name + " activated");
             if(environments.Count > 1)
             {
                 EndlessUtils.Shuffle(environments);
@@ -65,6 +66,7 @@ namespace Ryzm.EndlessRunner
         protected override void OnDisable()
         {
             isLastSection = false;
+            // Debug.Log(gameObject.name + " deactivated");
         }
 
         public virtual void EnterSection()

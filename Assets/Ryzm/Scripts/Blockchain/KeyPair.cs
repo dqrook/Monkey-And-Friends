@@ -6,6 +6,7 @@
  */
 
 using System;
+using UnityEngine;
 
 namespace Ryzm.Blockchain
 {
@@ -16,6 +17,7 @@ namespace Ryzm.Blockchain
 
         public KeyPair(Byte[] publicKey, Byte[] secretKey)
         {
+            Debug.Log("secret len" + secretKey.Length);
             this.publicKey = Base58.Encode(publicKey);
             this.secretKey = Base58.Encode(secretKey);
         }

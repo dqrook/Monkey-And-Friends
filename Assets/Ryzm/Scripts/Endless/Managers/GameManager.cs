@@ -56,6 +56,7 @@ namespace Ryzm.EndlessRunner
 
         void OnStartingGame()
         {
+            UpdateGameStatus(GameStatus.Transition);
             Message.Send(new CreateSectionRow());
             Debug.Log("CreateSectionRow");
             UpdateGameStatus(GameStatus.Starting);
@@ -81,6 +82,7 @@ namespace Ryzm.EndlessRunner
 
         void OnRunnerDie(RunnerDie runnerDie)
         {
+            StopAllCoroutines();
             UpdateGameStatus(GameStatus.Ended);
         }
 
@@ -105,6 +107,7 @@ namespace Ryzm.EndlessRunner
 
         IEnumerator DeactivateHomeIsland()
         {
+            Debug.Log("deactivating home");
             yield return new WaitForSeconds(4);
             Message.Send(new DeactivateHome());
         }
@@ -159,6 +162,7 @@ namespace Ryzm.EndlessRunner
         Active,
         Paused,
         Ended,
-        Restart
+        Restart,
+        Transition
     }
 }

@@ -96,6 +96,7 @@ namespace Ryzm.EndlessRunner
             {
                 newSection = EndlessPool.Instance.GetRandomSection(isTurn);
             }
+            
             if(newSection == null) return null;
 
             newSection.transform.position = spawnTransform.position;
@@ -103,6 +104,8 @@ namespace Ryzm.EndlessRunner
 
             EndlessSection _section = newSection.GetComponent<EndlessSection>();
             newSection.SetActive(true);
+            _section.gameObject.SetActive(true);
+            
             return _section;
         }
 
