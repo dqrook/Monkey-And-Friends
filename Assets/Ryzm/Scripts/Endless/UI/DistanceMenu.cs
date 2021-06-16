@@ -7,7 +7,7 @@ using CodeControl;
 
 namespace Ryzm.EndlessRunner.UI
 {
-    public class DistanceMenu : EndlessMenu
+    public class DistanceMenu : BaseMenu
     {
         public TextMeshProUGUI distance;
         int currentDistance;
@@ -20,15 +20,18 @@ namespace Ryzm.EndlessRunner.UI
             }
             set
             {
-                if(value)
+                if(!disable)
                 {
-                    Message.AddListener<RunnerDistanceResponse>(OnRunnerDistanceResponse);
-                    Message.Send(new RunnerDistanceRequest());
-                }
-                else
-                {
-                    Message.RemoveListener<RunnerDistanceResponse>(OnRunnerDistanceResponse);
-                    currentDistance = 0;
+                    if(value)
+                    {
+                        Message.AddListener<RunnerDistanceResponse>(OnRunnerDistanceResponse);
+                        Message.Send(new RunnerDistanceRequest());
+                    }
+                    else
+                    {
+                        Message.RemoveListener<RunnerDistanceResponse>(OnRunnerDistanceResponse);
+                        currentDistance = 0;
+                    }
                 }
                 base.IsActive = value;
             }

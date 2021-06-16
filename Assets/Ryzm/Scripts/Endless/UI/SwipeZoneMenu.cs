@@ -6,7 +6,7 @@ using CodeControl;
 
 namespace Ryzm.EndlessRunner.UI
 {
-    public class SwipeZoneMenu : EndlessMenu
+    public class SwipeZoneMenu : BaseMenu
     {
         public float minimumSwipeLength = 0.2f;
         

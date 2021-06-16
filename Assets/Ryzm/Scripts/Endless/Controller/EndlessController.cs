@@ -89,30 +89,30 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<ControllerModeResponse>(OnControllerModeResponse);
             Message.AddListener<RunnerDistanceRequest>(OnRunnerDistanceRequest);
             mainCamera = Camera.main;
-            playerInput.Touch.PrimaryContact.started += (ctx) => StartTouchPrimary(ctx);
-            playerInput.Touch.PrimaryContact.canceled += (ctx) => EndTouchPrimary(ctx);
+            // playerInput.Touch.PrimaryContact.started += (ctx) => StartTouchPrimary(ctx);
+            // playerInput.Touch.PrimaryContact.canceled += (ctx) => EndTouchPrimary(ctx);
 		}
 
-        void StartTouchPrimary(InputAction.CallbackContext ctx)
-        {
-            if(OnStartTouch != null)
-            {
-                OnStartTouch(EndlessUtils.ScreenToWorld(mainCamera, playerInput.Touch.PrimaryPosition.ReadValue<Vector2>()), (float)ctx.startTime);
-            }
-        }
+        // void StartTouchPrimary(InputAction.CallbackContext ctx)
+        // {
+        //     if(OnStartTouch != null)
+        //     {
+        //         OnStartTouch(EndlessUtils.ScreenToWorld(mainCamera, playerInput.Touch.PrimaryPosition.ReadValue<Vector2>()), (float)ctx.startTime);
+        //     }
+        // }
 
-        void EndTouchPrimary(InputAction.CallbackContext ctx)
-        {
-            if(OnEndTouch != null)
-            {
-                OnEndTouch(EndlessUtils.ScreenToWorld(mainCamera, playerInput.Touch.PrimaryPosition.ReadValue<Vector2>()), (float)ctx.time);
-            }
-        }
+        // void EndTouchPrimary(InputAction.CallbackContext ctx)
+        // {
+        //     if(OnEndTouch != null)
+        //     {
+        //         OnEndTouch(EndlessUtils.ScreenToWorld(mainCamera, playerInput.Touch.PrimaryPosition.ReadValue<Vector2>()), (float)ctx.time);
+        //     }
+        // }
 
-        public Vector2 PrimaryPosition()
-        {
-            return EndlessUtils.ScreenToWorld(mainCamera, playerInput.Touch.PrimaryPosition.ReadValue<Vector2>());
-        }
+        // public Vector2 PrimaryPosition()
+        // {
+        //     return EndlessUtils.ScreenToWorld(mainCamera, playerInput.Touch.PrimaryPosition.ReadValue<Vector2>());
+        // }
 
         protected virtual void OnEnable()
         {

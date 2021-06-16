@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Ryzm.EndlessRunner.UI
 {
-    public class EntryMenu : EndlessMenu
+    public class EntryMenu : BaseMenu
     {
         public void ContinueAsGuest()
         {

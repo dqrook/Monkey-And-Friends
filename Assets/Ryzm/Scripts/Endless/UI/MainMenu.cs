@@ -9,7 +9,7 @@ using Ryzm.Blockchain;
 
 namespace Ryzm.EndlessRunner.UI
 {
-    public class MainMenu : EndlessMenu
+    public class MainMenu : BaseMenu
     {
         public TextMeshProUGUI loginText;
 
@@ -33,15 +33,22 @@ namespace Ryzm.EndlessRunner.UI
             }
             set 
             {
-                if(value)
+                if(!disable)
                 {
-                    Message.AddListener<LoginResponse>(OnLoginResponse);
-                    Message.Send(new LoginRequest());
-                    Message.Send(new DisableHeaderBackButton());
-                }
-                else
-                {
-                    Message.RemoveListener<LoginResponse>(OnLoginResponse);
+                    if(value)
+                    {
+                        Message.AddListener<LoginResponse>(OnLoginResponse);
+                        Message.AddListener<MenuSetResponse>(OnMenuSetResponse);
+                        Message.Send(new LoginRequest());
+                        Message.Send(new DisableHeaderBackButton());
+                        Message.Send(new MenuSetRequest(MenuSet.MainMenu));
+                        Message.Send(new MenuSetRequest(MenuSet.LoginMenu));
+                    }
+                    else
+                    {
+                        Message.RemoveListener<LoginResponse>(OnLoginResponse);
+                        Message.AddListener<MenuSetResponse>(OnMenuSetResponse);
+                    }
                 }
                 base.IsActive = value;
             }
@@ -86,6 +93,18 @@ namespace Ryzm.EndlessRunner.UI
                 default:
                     loginText.text = "Login";
                     break;
+            }
+        }
+
+        void OnMenuSetResponse(MenuSetResponse response)
+        {
+            if(response.set == MenuSet.MainMenu)
+            {
+                mainMenus = response.menus;
+            }
+            else if(response.set == MenuSet.LoginMenu)
+            {
+                loginMenus = response.menus;
             }
         }
     }

@@ -7,7 +7,7 @@ using TMPro;
 
 namespace Ryzm.EndlessRunner.UI
 {
-    public class ScoreMenu : EndlessMenu
+    public class ScoreMenu : BaseMenu
     {
         public TextMeshProUGUI score;
         int currentScore;
@@ -20,15 +20,18 @@ namespace Ryzm.EndlessRunner.UI
             }
             set
             {
-                if(value)
+                if(!disable)
                 {
-                    Message.AddListener<TotalCoinsResponse>(OnTotalCoinsResponse);
-                    Message.Send(new TotalCoinsRequest());
-                }
-                else
-                {
-                    Message.RemoveListener<TotalCoinsResponse>(OnTotalCoinsResponse);
-                    currentScore = 0;
+                    if(value)
+                    {
+                        Message.AddListener<TotalCoinsResponse>(OnTotalCoinsResponse);
+                        Message.Send(new TotalCoinsRequest());
+                    }
+                    else
+                    {
+                        Message.RemoveListener<TotalCoinsResponse>(OnTotalCoinsResponse);
+                        currentScore = 0;
+                    }
                 }
                 base.IsActive = value;
             }

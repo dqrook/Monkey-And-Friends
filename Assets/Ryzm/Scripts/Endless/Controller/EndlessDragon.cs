@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using CodeControl;
 using Ryzm.EndlessRunner.Messages;
+using Ryzm.Dragon;
 
 namespace Ryzm.EndlessRunner
 {
     public class EndlessDragon : EndlessController
     {
+        public DragonMaterials materials;
         public Transform monkeyPos;
         public DragonFire fire;
+        public DragonResponse data;
 
         [HideInInspector]
         public Vector3 monkeyOffset;
@@ -26,10 +29,14 @@ namespace Ryzm.EndlessRunner
 
         void Update()
         {
-            if(mode != ControllerMode.Dragon || gameStatus != GameStatus.Active)
+            if(mode == ControllerMode.Dragon && gameStatus == GameStatus.Active)
             {
-                return;
+                EndlessRun();
             }
+        }
+
+        void EndlessRun()
+        {
             animator.SetBool("fly", true);
             float zMove = Time.deltaTime * forwardSpeed;
             move.z = zMove;

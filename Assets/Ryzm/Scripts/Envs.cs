@@ -7,12 +7,21 @@ namespace Ryzm
     {
         public string apiUrl;
         public string getDragonsPath;
+        public string breedDragonsPath;
 
         public string GetDragonsApiUrl
         {
             get
             {
                 return apiUrl + getDragonsPath;
+            }
+        }
+
+        public string BreedDragonsApiUrl
+        {
+            get
+            {
+                return apiUrl + breedDragonsPath;
             }
         }
     }

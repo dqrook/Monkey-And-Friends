@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 namespace Ryzm.EndlessRunner.UI
 {
-    public class SwipeZone: EndlessMenu, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler, IPointerEnterHandler
+    public class SwipeZone: BaseMenu, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler, IPointerEnterHandler
     {
 		/// the minimal length of a swipe
 		public float MinimalSwipeLength = 50f;

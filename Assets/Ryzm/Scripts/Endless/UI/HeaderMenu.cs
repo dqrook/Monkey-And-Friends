@@ -6,7 +6,7 @@ using CodeControl;
 
 namespace Ryzm.EndlessRunner.UI
 {
-    public class HeaderMenu : EndlessMenu
+    public class HeaderMenu : BaseMenu
     {
         public GameObject backButton;
         List<MenuType> previousMenus = new List<MenuType>();

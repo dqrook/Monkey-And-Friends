@@ -19,6 +19,7 @@ namespace Ryzm.EndlessRunner
         {
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
             Message.AddListener<MadeWorld>(OnMadeWorld);
+            Message.AddListener<CameraRequest>(OnCameraRequest);
             cameraTrans = endlessCamera.gameObject.transform;
         }
 
@@ -26,6 +27,7 @@ namespace Ryzm.EndlessRunner
         {
             Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
             Message.RemoveListener<MadeWorld>(OnMadeWorld);
+            Message.RemoveListener<CameraRequest>(OnCameraRequest);
         }
 
         void OnGameStatusResponse(GameStatusResponse response)
@@ -55,6 +57,11 @@ namespace Ryzm.EndlessRunner
             // rotateCamera = RotateCamera(endTransform);
             // StartCoroutine(rotateCamera);
             // Message.Send(new StartingGame());
+        }
+
+        void OnCameraRequest(CameraRequest request)
+        {
+            Message.Send(new CameraResponse(endlessCamera.gameObject));
         }
 
         float GetTotalDifference(Transform target)

@@ -4,12 +4,12 @@ namespace Ryzm.Blockchain.Messages
 {
     public class SignMessageRequest : Message
     {
-        public string sender;
+        public string action;
         public string message;
 
-        public SignMessageRequest(string sender, string message) 
+        public SignMessageRequest(string action, string message) 
         {
-            this.sender = sender;
+            this.action = action;
             this.message = message;
         }
     }

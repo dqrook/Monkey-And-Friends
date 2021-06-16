@@ -4,7 +4,7 @@ namespace Ryzm.Blockchain.Messages
 {
     public class SignMessageResponse : Message
     {
-        public string receiver;
+        public string action;
         public string message;
         public byte[] signedMessageBytes;
         public string publicKey;
@@ -15,9 +15,9 @@ namespace Ryzm.Blockchain.Messages
         {
             this.isSuccess = false;
         }
-        public SignMessageResponse(string receiver, string message, byte[] signedMessageBytes, string publicKey, string accountId)
+        public SignMessageResponse(string action, string message, byte[] signedMessageBytes, string publicKey, string accountId)
         {
-            this.receiver = receiver;
+            this.action = action;
             this.message = message;
             this.signedMessageBytes = signedMessageBytes;
             this.publicKey = publicKey;

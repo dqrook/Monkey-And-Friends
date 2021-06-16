@@ -14,5 +14,11 @@ namespace Ryzm.Utils
             request.SetRequestHeader("Content-Type", "application/json; charset=utf-8");
             return request;
         }
+
+        public static UnityWebRequest TextureRequest(string url)
+        {
+            UnityWebRequest request = UnityWebRequestTexture.GetTexture(url);
+            return request;
+        }
     }
 }

@@ -163,7 +163,7 @@ namespace Ryzm.Blockchain
                 byte[] messageBytes = Encoding.ASCII.GetBytes(request.message);
                 byte[] signedMessageBytes = TweetNaCl.CryptoSign(messageBytes, privateKeyBytes);
                 // string signedMessage = Encoding.ASCII.GetString(signedMessageBytes);
-                Message.Send(new SignMessageResponse(request.sender, request.message, signedMessageBytes, PublicKey, AccountName));
+                Message.Send(new SignMessageResponse(request.action, request.message, signedMessageBytes, PublicKey, AccountName));
             }
             else
             {

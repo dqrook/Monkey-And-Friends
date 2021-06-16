@@ -17,6 +17,7 @@ namespace Ryzm.EndlessRunner.UI
         void Awake()
         {
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
+            Message.AddListener<MenuSetRequest>(OnMenuSetRequest);
             // Message.AddListener<RunnerDie>(OnRunnerDie);
         }
 
@@ -32,6 +33,7 @@ namespace Ryzm.EndlessRunner.UI
         void OnDestroy()
         {
             Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
+            Message.RemoveListener<MenuSetRequest>(OnMenuSetRequest);
             // Message.RemoveListener<RunnerDie>(OnRunnerDie);
         }
 
@@ -79,6 +81,11 @@ namespace Ryzm.EndlessRunner.UI
             Message.Send(new ActivateMenu(activatedTypes: menus));
             Message.Send(new DeactivateMenu(activatedTypes: menus));
         }
+
+        void OnMenuSetRequest(MenuSetRequest request)
+        {
+            Message.Send(new MenuSetResponse(menuSets.GetMenuTypes(request.set), request.set));
+        }
     }
 
     public enum MenuSet
@@ -87,21 +94,8 @@ namespace Ryzm.EndlessRunner.UI
         ActiveMenu,
         PauseMenu,
         EndMenu,
-        RestartMenu
-    }
-
-    public enum MenuType
-    {
-        Main,
-        None,
-        Score,
-        Distance,
-        SwipeZone,
-        Pause,
-        EndGame,
-        Login,
-        Header,
-        Entry,
-        Loading
+        RestartMenu,
+        LoginMenu,
+        BreedingMenu
     }
 }

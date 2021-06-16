@@ -7,7 +7,7 @@ using Ryzm.EndlessRunner.Messages;
 
 namespace Ryzm.EndlessRunner.UI
 {
-    public class EndGameMenu : EndlessMenu
+    public class EndGameMenu : BaseMenu
     {
         public TextMeshProUGUI distance;
         public TextMeshProUGUI score;
@@ -20,17 +20,20 @@ namespace Ryzm.EndlessRunner.UI
             }
             set
             {
-                if(value)
+                if(!disable)
                 {
-                    Message.AddListener<RunnerDistanceResponse>(OnRunnerDistanceResponse);
-                    Message.AddListener<TotalCoinsResponse>(OnTotalCoinsResponse);
-                    Message.Send(new RunnerDistanceRequest());
-                    Message.Send(new TotalCoinsRequest());
-                }
-                else
-                {
-                    Message.RemoveListener<RunnerDistanceResponse>(OnRunnerDistanceResponse);
-                    Message.RemoveListener<TotalCoinsResponse>(OnTotalCoinsResponse);
+                    if(value)
+                    {
+                        Message.AddListener<RunnerDistanceResponse>(OnRunnerDistanceResponse);
+                        Message.AddListener<TotalCoinsResponse>(OnTotalCoinsResponse);
+                        Message.Send(new RunnerDistanceRequest());
+                        Message.Send(new TotalCoinsRequest());
+                    }
+                    else
+                    {
+                        Message.RemoveListener<RunnerDistanceResponse>(OnRunnerDistanceResponse);
+                        Message.RemoveListener<TotalCoinsResponse>(OnTotalCoinsResponse);
+                    }
                 }
                 base.IsActive = value;
             }

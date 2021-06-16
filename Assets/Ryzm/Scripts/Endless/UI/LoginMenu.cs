@@ -9,7 +9,7 @@ using Ryzm.EndlessRunner.Messages;
 
 namespace Ryzm.EndlessRunner.UI
 {
-    public class LoginMenu : EndlessMenu
+    public class LoginMenu : BaseMenu
     {
         [Header("Loading")]
         public GameObject loadingPanel;
@@ -44,27 +44,30 @@ namespace Ryzm.EndlessRunner.UI
             }
             set 
             {
-                if(!value && _isActive)
+                if(!disable)
                 {
-                    gettingCredentials = false;
-                    loadingText.text = "Loading...";
-                    loadingPanel.SetActive(true);
-                    loggedInPanel.SetActive(false);
-                    loggedOutPanel.SetActive(false);
-                    tempCredentialsPanel.SetActive(false);
-                    rejectedText.gameObject.SetActive(false);
-                    nearUrlPanel.SetActive(false);
-                }
-                if(value)
-                {
-                    Message.AddListener<LoginResponse>(OnLoginResponse);
-                    Message.AddListener<CreateCredentialsResponse>(OnCreateCredentialsResponse);
-                    Message.Send(new LoginRequest());
-                }
-                else
-                {
-                    Message.RemoveListener<LoginResponse>(OnLoginResponse);
-                    Message.RemoveListener<CreateCredentialsResponse>(OnCreateCredentialsResponse);
+                    if(!value && _isActive)
+                    {
+                        gettingCredentials = false;
+                        loadingText.text = "Loading...";
+                        loadingPanel.SetActive(true);
+                        loggedInPanel.SetActive(false);
+                        loggedOutPanel.SetActive(false);
+                        tempCredentialsPanel.SetActive(false);
+                        rejectedText.gameObject.SetActive(false);
+                        nearUrlPanel.SetActive(false);
+                    }
+                    if(value)
+                    {
+                        Message.AddListener<LoginResponse>(OnLoginResponse);
+                        Message.AddListener<CreateCredentialsResponse>(OnCreateCredentialsResponse);
+                        Message.Send(new LoginRequest());
+                    }
+                    else
+                    {
+                        Message.RemoveListener<LoginResponse>(OnLoginResponse);
+                        Message.RemoveListener<CreateCredentialsResponse>(OnCreateCredentialsResponse);
+                    }
                 }
                 base.IsActive = value;
             }
