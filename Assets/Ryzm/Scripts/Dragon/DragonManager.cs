@@ -98,7 +98,6 @@ namespace Ryzm.Dragon
                 }
                 else
                 {
-                    // todo: handle when you cant sign the message
                     Message.Send(new BreedDragonsResponse(false));
                 }
             }
@@ -138,7 +137,7 @@ namespace Ryzm.Dragon
                     getDragonTexture = GetDragonTexture(materials, map);
                     StartCoroutine(getDragonTexture);
                 }
-                Message.Send(new DragonsResponse(dragons));
+                Message.Send(new DragonsResponse(dragons, "all"));
             }
             gettingDragons = false;
         }

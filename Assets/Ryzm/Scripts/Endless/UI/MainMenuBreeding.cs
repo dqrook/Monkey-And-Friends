@@ -6,6 +6,7 @@ using CodeControl;
 using Ryzm.Blockchain.Messages;
 using TMPro;
 using Ryzm.Blockchain;
+using Ryzm.Dragon.Messages;
 
 namespace Ryzm.EndlessRunner.UI
 {
@@ -30,6 +31,7 @@ namespace Ryzm.EndlessRunner.UI
                         Message.AddListener<LoginResponse>(OnLoginResponse);
                         Message.AddListener<MenuSetResponse>(OnMenuSetResponse);
                         Message.Send(new LoginRequest());
+                        Message.Send(new ResetDragons());
                         Message.Send(new MenuSetRequest(MenuSet.MainMenu));
                         Message.Send(new MenuSetRequest(MenuSet.LoginMenu));
                     }
