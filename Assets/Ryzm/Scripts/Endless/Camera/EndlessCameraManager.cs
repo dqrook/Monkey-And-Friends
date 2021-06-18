@@ -18,7 +18,6 @@ namespace Ryzm.EndlessRunner
         void Awake()
         {
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
-            Message.AddListener<MadeWorld>(OnMadeWorld);
             Message.AddListener<CameraRequest>(OnCameraRequest);
             cameraTrans = endlessCamera.gameObject.transform;
         }
@@ -26,37 +25,28 @@ namespace Ryzm.EndlessRunner
         void OnDestroy()
         {
             Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
-            Message.RemoveListener<MadeWorld>(OnMadeWorld);
             Message.RemoveListener<CameraRequest>(OnCameraRequest);
         }
 
         void OnGameStatusResponse(GameStatusResponse response)
         {
             gameStatus = response.status;
-            if(gameStatus == GameStatus.MainMenu)
-            {
-                cameraTrans.position = startTransform.position;
-                cameraTrans.rotation = startTransform.rotation;
-            }
-            else if(gameStatus == GameStatus.Starting)
-            {
-                rotateCamera = null;
-                rotateCamera = RotateCamera(endTransform);
-                StartCoroutine(rotateCamera);
-            }
-            else if(gameStatus == GameStatus.Restart)
-            {
-                cameraTrans.position = startTransform.position;
-                cameraTrans.rotation = startTransform.rotation;
-            }
-        }
-
-        void OnMadeWorld(MadeWorld madeWorld)
-        {
-            // rotateCamera = null;
-            // rotateCamera = RotateCamera(endTransform);
-            // StartCoroutine(rotateCamera);
-            // Message.Send(new StartingGame());
+            // if(gameStatus == GameStatus.MainMenu)
+            // {
+            //     cameraTrans.position = startTransform.position;
+            //     cameraTrans.rotation = startTransform.rotation;
+            // }
+            // else if(gameStatus == GameStatus.Starting)
+            // {
+            //     rotateCamera = null;
+            //     rotateCamera = RotateCamera(endTransform);
+            //     StartCoroutine(rotateCamera);
+            // }
+            // else if(gameStatus == GameStatus.Restart)
+            // {
+            //     cameraTrans.position = startTransform.position;
+            //     cameraTrans.rotation = startTransform.rotation;
+            // }
         }
 
         void OnCameraRequest(CameraRequest request)

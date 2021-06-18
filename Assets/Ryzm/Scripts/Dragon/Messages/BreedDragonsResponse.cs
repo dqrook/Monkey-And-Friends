@@ -1,17 +1,21 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using CodeControl;
+﻿using CodeControl;
 
 namespace Ryzm.Dragon.Messages
 {
     public class BreedDragonsResponse : Message
     {
-        public bool isSuccess;
+        public BreedingStatus status;
+        public int dragonId;
 
-        public BreedDragonsResponse(bool isSuccess)
+        public BreedDragonsResponse(BreedingStatus status)
         {
-            this.isSuccess = isSuccess;
+            this.status = status;
+        }
+
+        public BreedDragonsResponse(BreedingStatus status, int dragonId)
+        {
+            this.status = status;
+            this.dragonId = dragonId;
         }
     }
 }

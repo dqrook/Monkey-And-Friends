@@ -4,6 +4,7 @@ using UnityEngine;
 using CodeControl;
 using Ryzm.EndlessRunner.Messages;
 using Ryzm.Dragon;
+using Ryzm.Dragon.Messages;
 
 namespace Ryzm.EndlessRunner
 {
@@ -25,6 +26,19 @@ namespace Ryzm.EndlessRunner
         {
             base.Awake();
             monkeyOffset = monkeyPos.position - trans.position;
+        }
+
+        public void SetTexture(DragonMaterialType type, Texture texture)
+        {
+            if(materials != null)
+            {
+                materials.SetTexture(type, texture);
+                if(materials.Initialized)
+                {
+                    Debug.Log("dragon is initialized " + data.id);
+                    Message.Send(new DragonInitialized(data.id));
+                }
+            }
         }
 
         void Update()

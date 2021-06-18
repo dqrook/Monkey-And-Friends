@@ -38,11 +38,7 @@ namespace Ryzm.EndlessRunner.UI
             set
             {
                 PlaceResizer();
-                if(disable)
-                {
-                    value = false;
-                }
-                if(value != _isActive)
+                if(ShouldUpdate(value))
                 {
                     _isActive = value;
                     if(canvas != null)
@@ -66,6 +62,11 @@ namespace Ryzm.EndlessRunner.UI
             }
             Message.AddListener<ActivateMenu>(OnActivateMenu);
             Message.AddListener<DeactivateMenu>(OnDeactivateMenu);
+        }
+
+        protected bool ShouldUpdate(bool value)
+        {
+            return !disable && value != _isActive;
         }
 
         protected virtual void OnDestroy()
@@ -230,6 +231,7 @@ namespace Ryzm.EndlessRunner.UI
         Header,
         Entry,
         Loading,
-        Breeding
+        Breeding,
+        SingleDragon
     }
 }

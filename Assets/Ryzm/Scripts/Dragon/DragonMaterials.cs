@@ -8,13 +8,32 @@ namespace Ryzm.Dragon
     {
         public List<DragonMaterial> materials = new List<DragonMaterial>();
 
+        public bool Initialized
+        {
+            get
+            {
+                foreach(DragonMaterial material in materials)
+                {
+                    if(material.type == DragonMaterialType.Teeth)
+                    {
+                        continue;
+                    }
+                    if(!material.initialized)
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+
         public void SetTexture(DragonMaterialType type, Texture texture)
         {
             foreach(DragonMaterial material in materials)
             {
                 if(material.type == type)
                 {
-                    material.Material.SetTexture("_MainTex", texture);
+                    material.SetTexture(texture);
                 }
             }
         }
@@ -25,6 +44,7 @@ namespace Ryzm.Dragon
     {
         public GameObject go;
         public DragonMaterialType type;
+        public bool initialized;
         Renderer renderer;
 
         public Material Material
@@ -37,6 +57,12 @@ namespace Ryzm.Dragon
                 }
                 return renderer.material;
             }
+        }
+
+        public void SetTexture(Texture texture)
+        {
+            initialized = true;
+            Material.SetTexture("_MainTex", texture);
         }
     }
 

@@ -6,18 +6,29 @@ namespace Ryzm.Dragon.Messages
 {
     public class DragonsResponse : Message
     {
-        public List<EndlessDragon> dragons;
         public string sender;
+        public EndlessDragon[] dragons;
 
         public DragonsResponse(List<EndlessDragon> dragons)
         {
-            this.dragons = dragons;
+            CreateDragonsList(dragons);
         }
 
         public DragonsResponse(List<EndlessDragon> dragons, string sender)
         {
-            this.dragons = dragons;
             this.sender = sender;
+            CreateDragonsList(dragons);
+        }
+
+        void CreateDragonsList(List<EndlessDragon> dragons)
+        {
+            int dex = 0;
+            this.dragons = new EndlessDragon[dragons.Count];
+            foreach(EndlessDragon dragon in dragons)
+            {
+                this.dragons[dex] = dragon;
+                dex++;
+            }
         }
     }
 }

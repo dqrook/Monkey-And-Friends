@@ -36,6 +36,8 @@ namespace Ryzm.EndlessRunner.UI
         public Transform dragon1CameraXform;
         public Transform dragon2CameraPivot;
         public Transform dragon2CameraXform;
+        public Transform singleDragonCameraPivot;
+        public Transform singleDragonCameraXform;
 
         [Header("Dragon 1")]
         public Transform dragon1Spawn;
@@ -47,15 +49,22 @@ namespace Ryzm.EndlessRunner.UI
         public GameObject dragon2Panel;
         public GameObject dragon2ResetCameraButton;
 
-        List<EndlessDragon> dragons;
-        List<EndlessDragon> availableDragons;
-        List<MenuType> mainMenus;
+        [Header("Single Dragon")]
+        public Transform singleDragonSpawn;
+        public GameObject singleDragonPanel;
+        public GameObject singleDragonResetCameraButton;
+
+        EndlessDragon[] dragons;
+        List<MenuType> mainMenus  = new List<MenuType>();
         Transform camTrans;
         bool initialized;
         IEnumerator moveCamera;
         bool movingCamera;
         EndlessDragon dragon1;
         EndlessDragon dragon2;
+        int newDragonId;
+        int dragon1Index;
+        int dragon2Index;
 
         public override bool IsActive
         {
@@ -65,7 +74,7 @@ namespace Ryzm.EndlessRunner.UI
             }
             set
             {
-                if(value != _isActive && !disable)
+                if(ShouldUpdate(value))
                 {
                     if(value)
                     {
@@ -73,6 +82,8 @@ namespace Ryzm.EndlessRunner.UI
                         Message.AddListener<DragonsResponse>(OnDragonsResponse);
                         Message.AddListener<MenuSetResponse>(OnMenuSetResponse);
                         Message.AddListener<CameraResponse>(OnCameraResponse);
+                        Message.AddListener<BreedDragonsResponse>(OnBreedDragonsResponse);
+                        Message.AddListener<DragonInitialized>(OnDragonInitialized);
                         
                         Message.Send(new DragonsRequest("breedingMenu"));
                         if(mainMenus.Count == 0)
@@ -93,11 +104,14 @@ namespace Ryzm.EndlessRunner.UI
                         Reset();
                         Message.RemoveListener<DragonsResponse>(OnDragonsResponse);
                         Message.RemoveListener<MenuSetResponse>(OnMenuSetResponse);
+                        Message.RemoveListener<BreedDragonsResponse>(OnBreedDragonsResponse);
                         Message.RemoveListener<CameraResponse>(OnCameraResponse);
-                        dragons.Clear();
+                        Message.RemoveListener<DragonInitialized>(OnDragonInitialized);
+                        // dragons.Clear();
+                        dragons = new EndlessDragon[0];
                     }
+                    base.IsActive = value;
                 }
-                base.IsActive = value;
             }
         }
 
@@ -108,10 +122,14 @@ namespace Ryzm.EndlessRunner.UI
             dragon1Panel.SetActive(false);
             dragon2Panel.SetActive(false);
             breedingPanel.SetActive(false);
+            singleDragonPanel.SetActive(false);
             moveCamera = null;
             initialized = false;
             movingCamera = false;
             breedingPanelText.text = "Are you sure?";
+            newDragonId = -1;
+            dragon1Index = 0;
+            dragon2Index = 1;
         }
 
         void OnDragonsResponse(DragonsResponse response)
@@ -119,35 +137,84 @@ namespace Ryzm.EndlessRunner.UI
             if(response.sender == "breedingMenu")
             {
                 dragons = response.dragons;
-                if(dragons.Count > 1)
+                InitializeDragons();
+                // InitializeMenus();
+                // if(dragons.Count > 1)
+                // {
+                //     dragon1 = dragons[0];
+                //     dragon2 = dragons[1];
+                //     UpdateDragons();
+                // }
+            }
+            else if(response.sender == "newDragon")
+            {
+                dragons = response.dragons;
+            }
+        }
+
+        void InitializeMenus()
+        {
+            if(dragons.Length > 1)
+            {
+                noDragonsPanel.SetActive(false);
+                mainPanel.SetActive(true);
+                arrowsPanel.SetActive(true);
+                
+                if(dragons.Length > 2)
                 {
-                    noDragonsPanel.SetActive(false);
-                    mainPanel.SetActive(true);
-                    arrowsPanel.SetActive(true);
-                    dragon1 = dragons[0];
-                    dragon2 = dragons[1];
-                    UpdateDragons();
-                    if(dragons.Count == 2)
-                    {
-                        dragon1BackButton.SetActive(false);
-                        dragon1FwdButton.SetActive(false);
-                        dragon2BackButton.SetActive(false);
-                        dragon2FwdButton.SetActive(false);
-                    }
-                    else
-                    {
-                        dragon1BackButton.SetActive(true);
-                        dragon1FwdButton.SetActive(true);
-                        dragon2BackButton.SetActive(true);
-                        dragon2FwdButton.SetActive(true);
-                    }
+                    dragon1BackButton.SetActive(false);
+                    dragon1FwdButton.SetActive(false);
+                    dragon2BackButton.SetActive(false);
+                    dragon2FwdButton.SetActive(false);
                 }
                 else
                 {
-                    noDragonsPanel.SetActive(true);
-                    mainPanel.SetActive(false);
-                    arrowsPanel.SetActive(false);
+                    dragon1BackButton.SetActive(true);
+                    dragon1FwdButton.SetActive(true);
+                    dragon2BackButton.SetActive(true);
+                    dragon2FwdButton.SetActive(true);
                 }
+            }
+            else
+            {
+                noDragonsPanel.SetActive(true);
+                mainPanel.SetActive(false);
+                arrowsPanel.SetActive(false);
+            }
+        }
+
+        void InitializeDragons()
+        {
+            if(dragons.Length > 1)
+            {
+                noDragonsPanel.SetActive(false);
+                mainPanel.SetActive(true);
+                arrowsPanel.SetActive(true);
+                dragon1Index = 0;
+                dragon2Index = 1;
+                // dragon1 = dragons[0];
+                // dragon2 = dragons[1];
+                UpdateDragons();
+                if(dragons.Length == 2)
+                {
+                    dragon1BackButton.SetActive(false);
+                    dragon1FwdButton.SetActive(false);
+                    dragon2BackButton.SetActive(false);
+                    dragon2FwdButton.SetActive(false);
+                }
+                else
+                {
+                    dragon1BackButton.SetActive(true);
+                    dragon1FwdButton.SetActive(true);
+                    dragon2BackButton.SetActive(true);
+                    dragon2FwdButton.SetActive(true);
+                }
+            }
+            else
+            {
+                noDragonsPanel.SetActive(true);
+                mainPanel.SetActive(false);
+                arrowsPanel.SetActive(false);
             }
         }
 
@@ -161,6 +228,7 @@ namespace Ryzm.EndlessRunner.UI
 
         void OnCameraResponse(CameraResponse response)
         {
+            Debug.Log("camera response");
             InitializeCamera(response.camera.transform);
         }
 
@@ -173,19 +241,21 @@ namespace Ryzm.EndlessRunner.UI
             {
                 dragon1Panel.SetActive(true);
                 camTrans.parent = dragon1CameraPivot;
-                MoveCamera(dragon1CameraXform, 1);
+                MoveCamera(dragon1CameraXform);
             }
             else
             {
                 dragon2Panel.SetActive(true);
                 camTrans.parent = dragon2CameraPivot;
-                MoveCamera(dragon2CameraXform, 1);
+                MoveCamera(dragon2CameraXform);
             }
         }
 
         void UpdateDragons()
         {
-            availableDragons.Clear();
+            // availableDragons.Clear();
+            dragon1 = dragons[dragon1Index];
+            dragon2 = dragons[dragon2Index];
             foreach(EndlessDragon dragon in dragons)
             {
                 if(dragon == dragon1 || dragon == dragon2)
@@ -205,22 +275,38 @@ namespace Ryzm.EndlessRunner.UI
                 else
                 {
                     dragon.gameObject.SetActive(false);
-                    availableDragons.Add(dragon);
+                    // availableDragons.Add(dragon);
                 }
             }
         }
 
         public void NextDragon(int dragon)
         {
-            if(availableDragons.Count > 0)
+            if(dragons.Length > 2)
             {
                 if(dragon == 1)
                 {
-                    dragon1 = availableDragons[0];
+                    dragon1Index++;
+                    if(dragon1Index == dragon2Index)
+                    {
+                        dragon1Index++;
+                    }
+                    if(dragon1Index > dragons.Length - 1)
+                    {
+                        dragon1Index = dragon2Index == 0 ? 1 : 0;
+                    }
                 }
                 else
                 {
-                    dragon2 = availableDragons[0];
+                    dragon2Index++;
+                    if(dragon2Index == dragon1Index)
+                    {
+                        dragon2Index++;
+                    }
+                    if(dragon2Index > dragons.Length - 1)
+                    {
+                        dragon2Index = dragon1Index == 0 ? 1 : 0;
+                    }
                 }
                 UpdateDragons();
             }
@@ -228,15 +314,31 @@ namespace Ryzm.EndlessRunner.UI
 
         public void PreviousDragon(int dragon)
         {
-            if(availableDragons.Count > 0)
+            if(dragons.Length > 2)
             {
                 if(dragon == 1)
                 {
-                    dragon1 = availableDragons[availableDragons.Count - 1];
+                    dragon1Index--;
+                    if(dragon1Index == dragon2Index)
+                    {
+                        dragon1Index--;
+                    }
+                    if(dragon1Index < 0)
+                    {
+                        dragon1Index = dragon2Index == dragons.Length - 1 ? dragons.Length - 2 : dragons.Length - 1;
+                    }
                 }
                 else
                 {
-                    dragon2 = availableDragons[availableDragons.Count - 1];
+                    dragon2Index--;
+                    if(dragon2Index == dragon1Index)
+                    {
+                        dragon2Index--;
+                    }
+                    if(dragon2Index < 0)
+                    {
+                        dragon2Index = dragon1Index == dragons.Length - 1 ? dragons.Length - 2 : dragons.Length - 1;
+                    }
                 }
                 UpdateDragons();
             }
@@ -250,7 +352,7 @@ namespace Ryzm.EndlessRunner.UI
             dragon1Panel.SetActive(false);
             dragon2Panel.SetActive(false);
             backButton.SetActive(true);
-            MoveCamera(breedingCameraXform, 1);
+            MoveCamera(breedingCameraXform);
         }
 
         void InitializeCamera(Transform cam)
@@ -259,41 +361,39 @@ namespace Ryzm.EndlessRunner.UI
             if(!initialized)
             {
                 initialized = true;
-                MoveCamera(breedingCameraXform, 2);
+                MoveCamera(breedingCameraXform);
             }
         }
 
-        void MoveCamera(Transform target, float timeToMove)
+        void MoveCamera(Transform target)
         {
             if(moveCamera != null)
             {
                 StopCoroutine(moveCamera);
             }
             moveCamera = null;
-            moveCamera = _MoveCamera(target, timeToMove);
+            moveCamera = _MoveCamera(target);
+            StartCoroutine(moveCamera);
         }
 
-        IEnumerator _MoveCamera(Transform target, float timeToMove)
+        IEnumerator _MoveCamera(Transform target)
         {
+            Debug.Log("moving camera");
             movingCamera = true;
-            Vector3 startPos = camTrans.position;
-            Quaternion startRot = camTrans.rotation;
             Vector3 endPos = target.position;
             Quaternion endRot = target.rotation;
             float distance = Vector3.Distance(camTrans.position, endPos);
             float rotDiff = Mathf.Abs(Quaternion.Angle(camTrans.rotation, endRot));
-            float t = 0;
             while(distance > 0.1f || rotDiff > 1)
             {
-                t += Time.deltaTime;
-                camTrans.position = Vector3.Lerp(startPos, endPos, t / timeToMove);
-                camTrans.rotation = Quaternion.Lerp(startRot, endRot, t / timeToMove);
+                camTrans.position = Vector3.Lerp(camTrans.position, endPos, Time.deltaTime);
+                camTrans.rotation = Quaternion.Lerp(camTrans.rotation, endRot, Time.deltaTime);
                 distance = Vector3.Distance(camTrans.position, endPos);
                 rotDiff = Mathf.Abs(Quaternion.Angle(camTrans.rotation, endRot));
                 yield return null;
             }
-            camTrans.position = target.position;
-            camTrans.rotation = target.rotation;
+            // camTrans.position = target.position;
+            // camTrans.rotation = target.rotation;
             movingCamera = false;
             yield break;
         }
@@ -327,7 +427,48 @@ namespace Ryzm.EndlessRunner.UI
 
         void OnBreedDragonsResponse(BreedDragonsResponse response)
         {
-            closeBreedingPanelButton.SetActive(true);
+            if(response.status == BreedingStatus.Failed)
+            {
+                breedingPanelText.text = "Unable to breed, please try again later";
+                closeBreedingPanelButton.SetActive(true);
+            }
+            else if (response.status == BreedingStatus.Success)
+            {
+                newDragonId = response.dragonId;
+            }
+        }
+
+        void OnDragonInitialized(DragonInitialized initialized)
+        {
+            if(newDragonId == initialized.id)
+            {
+                breedingPanel.SetActive(false);
+                singleDragonPanel.SetActive(true);
+                foreach(EndlessDragon dragon in dragons)
+                {
+                    if(dragon.data.id == newDragonId)
+                    {
+                        dragon.transform.position = singleDragonSpawn.position;
+                        dragon.transform.rotation = singleDragonSpawn.rotation;
+                        dragon.gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        dragon.gameObject.SetActive(false);
+                    }
+                }
+                camTrans.parent = singleDragonCameraPivot;
+                MoveCamera(singleDragonCameraXform);
+            }
+        }
+
+        public void CloseSingleDragonPanel()
+        {
+            camTrans.parent = null;
+            singleDragonPanel.SetActive(false);
+            backButton.SetActive(true);
+            MoveCamera(breedingCameraXform);
+            InitializeDragons();
         }
 
         public void ExitMenu()

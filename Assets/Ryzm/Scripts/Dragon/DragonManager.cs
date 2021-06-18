@@ -16,7 +16,10 @@ namespace Ryzm.Dragon
         public Envs envs;
         public DragonPrefabs prefabs;
         public List<EndlessDragon> dragons;
-        List<DragonResponse> dragonResponses;
+        public List<DragonResponse> dragonResponses;
+
+        [Header("Spawns")]
+        public Transform newDragonSpawn;
 
         IEnumerator getDragons;
         bool gettingDragons;
@@ -26,6 +29,7 @@ namespace Ryzm.Dragon
         IEnumerator breedDragons;
         int dragon1Id;
         int dragon2Id;
+        bool initialized;
 
         void Awake()
         {
@@ -46,16 +50,21 @@ namespace Ryzm.Dragon
             Message.RemoveListener<SignMessageResponse>(OnSignMessageResponse);
             Message.RemoveListener<BreedDragonsRequest>(OnBreedDragonsRequest);
             Message.RemoveListener<DragonsRequest>(OnDragonsRequest);
+            initialized = false;
         }
         
         void OnLoginResponse(LoginResponse response)
         {
             if(response.status == LoginStatus.LoggedIn)
             {
-                // if logged in then let's get the dragon data
-                // first ya gotta sign a message
-                Message.Send(new SignMessageRequest("getDragons", "Hello World"));
                 accountName = response.accountName;
+                if(!initialized)
+                {
+                    initialized = true;
+                    // if logged in then let's get the dragon data
+                    // first ya gotta sign a message
+                    Message.Send(new SignMessageRequest("getDragons", "Hello World"));
+                }
             }
             else if(response.status == LoginStatus.LoggedOut)
             {
@@ -94,11 +103,12 @@ namespace Ryzm.Dragon
                         breedDragons = null;
                         breedDragons = BreedDragons(url, bodyJsonString);
                         StartCoroutine(breedDragons);
+                        Message.Send(new BreedDragonsResponse(BreedingStatus.Breeding));
                     }
                 }
                 else
                 {
-                    Message.Send(new BreedDragonsResponse(false));
+                    Message.Send(new BreedDragonsResponse(BreedingStatus.Failed));
                 }
             }
         }
@@ -132,9 +142,8 @@ namespace Ryzm.Dragon
                         new MaterialTypeToUrlMap(DragonMaterialType.Horn, dragon.data.hornTexture),
                         new MaterialTypeToUrlMap(DragonMaterialType.Back, dragon.data.backTexture)
                     };
-                    DragonMaterials materials = dragon.materials;
                     getDragonTexture = null;
-                    getDragonTexture = GetDragonTexture(materials, map);
+                    getDragonTexture = GetDragonTexture(dragon, map);
                     StartCoroutine(getDragonTexture);
                 }
                 Message.Send(new DragonsResponse(dragons, "all"));
@@ -142,7 +151,7 @@ namespace Ryzm.Dragon
             gettingDragons = false;
         }
 
-        IEnumerator GetDragonTexture(DragonMaterials materials, List<MaterialTypeToUrlMap> map)
+        IEnumerator GetDragonTexture(EndlessDragon dragon, List<MaterialTypeToUrlMap> map)
         {
             int numMaterials = map.Count;
             int index = 0;
@@ -159,11 +168,10 @@ namespace Ryzm.Dragon
                 }
                 else
                 {
-                    Debug.Log("GET SUCCESS");
-                    if(materials != null)
+                    if(dragon != null && dragon.materials != null)
                     {
                         Texture _texture = DownloadHandlerTexture.GetContent(request);
-                        materials.SetTexture(type, _texture);
+                        dragon.SetTexture(type, _texture);
                     }
 
                 }
@@ -190,12 +198,31 @@ namespace Ryzm.Dragon
             if(request.isNetworkError || request.isHttpError)
             {
                 Debug.LogError("ERROR");
+                Message.Send(new BreedDragonsResponse(BreedingStatus.Failed));
                 // todo: handle this case
             }
             else
             {
                 string res = request.downloadHandler.text;
                 Debug.Log("POST SUCCESS " + res);
+                BreedDragonsPostResponse response = BreedDragonsPostResponse.FromJson(res);
+                DragonResponse dragonRes = response.dragon;
+                GameObject go = GameObject.Instantiate(prefabs.GetPrefabByHornType(dragonRes.hornType).dragon);
+                EndlessDragon dragon = go.GetComponent<EndlessDragon>();
+                dragon.data = dragonRes;
+                dragons.Add(dragon);
+                Message.Send(new DragonsResponse(dragons, "newDragon"));
+                List<MaterialTypeToUrlMap> map = new List<MaterialTypeToUrlMap>
+                {
+                    new MaterialTypeToUrlMap(DragonMaterialType.Body, dragon.data.bodyTexture),
+                    new MaterialTypeToUrlMap(DragonMaterialType.Wing, dragon.data.wingTexture),
+                    new MaterialTypeToUrlMap(DragonMaterialType.Horn, dragon.data.hornTexture),
+                    new MaterialTypeToUrlMap(DragonMaterialType.Back, dragon.data.backTexture)
+                };
+                getDragonTexture = null;
+                getDragonTexture = GetDragonTexture(dragon, map);
+                Message.Send(new BreedDragonsResponse(BreedingStatus.Success, dragonRes.id));
+                StartCoroutine(getDragonTexture);
             }
             breedingDragons = false;
         }
@@ -282,6 +309,17 @@ namespace Ryzm.Dragon
         } 
     }
 
+    [System.Serializable]
+    public class BreedDragonsPostResponse
+    {
+        public DragonResponse dragon;
+
+        public static BreedDragonsPostResponse FromJson(string jsonString)
+        {
+            return JsonUtility.FromJson<BreedDragonsPostResponse>(jsonString);
+        }
+    }
+
     public class MaterialTypeToUrlMap
     {
         public DragonMaterialType type;
@@ -292,5 +330,12 @@ namespace Ryzm.Dragon
             this.type = type;
             this.url = url;
         }
+    }
+
+    public enum BreedingStatus 
+    {
+        Breeding,
+        Failed,
+        Success
     }
 }
