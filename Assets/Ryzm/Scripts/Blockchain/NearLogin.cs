@@ -15,6 +15,8 @@ namespace Ryzm.Blockchain
         AccessKeyResponse accessKeyResponse;
         IEnumerator getAccessKeys;
         bool fetchingKeys;
+        string secondaryPublicKey;
+        bool secondaryInitialized;
 
         public string AccountName
         {
@@ -87,7 +89,33 @@ namespace Ryzm.Blockchain
             Message.AddListener<CreateCredentialsRequest>(OnCreateCredentialsRequest);
             Message.AddListener<AttemptLogin>(OnAttemptLogin);
             Message.AddListener<SignMessageRequest>(OnSignMessageRequest);
+            Message.AddListener<LogoutRequest>(OnLogoutRequest);
+
+            if(RyzmPlayerPrefs.HasKey("undefined_wallet_auth_key"))
+            {
+                string s = RyzmPlayerPrefs.GetString("undefined_wallet_auth_key");
+                WalletAuthKey authKey = WalletAuthKey.FromJson(s);
+                foreach(string key in authKey.allKeys)
+                {
+                    secondaryPublicKey = key;
+                    secondaryInitialized = true;
+                }
+                if(AccountName.Length == 0)
+                {
+                    AccountName = authKey.accountId;
+                    if(PublicKey == "" || SecretKey == "")
+                    {
+                        PublicKey = TempPublicKey;
+                        SecretKey = TempSecretKey;
+                    }
+                }
+            }
+            else
+            {
+                Debug.Log("no auth key");
+            }
             TryLogin();
+            // Logout();
 
             // string[] p = new string[2];
             // p[0] = "access_key/ryzm.near";
@@ -102,6 +130,7 @@ namespace Ryzm.Blockchain
             Message.RemoveListener<CreateCredentialsRequest>(OnCreateCredentialsRequest);
             Message.RemoveListener<AttemptLogin>(OnAttemptLogin);
             Message.RemoveListener<SignMessageRequest>(OnSignMessageRequest);
+            Message.RemoveListener<LogoutRequest>(OnLogoutRequest);
         }
 
         void TryLogin()
@@ -152,6 +181,7 @@ namespace Ryzm.Blockchain
 
         void OnAttemptLogin(AttemptLogin attemptLogin)
         {
+            Debug.Log(attemptLogin.accountName);
             GetAccessKeys(attemptLogin.accountName);
         }
 
@@ -169,6 +199,11 @@ namespace Ryzm.Blockchain
             {
                 Message.Send(new SignMessageResponse());
             }
+        }
+
+        void OnLogoutRequest(LogoutRequest request)
+        {
+            Logout();
         }
 
         void GetAccessKeys(string accountName)
@@ -193,8 +228,8 @@ namespace Ryzm.Blockchain
             AccountName = _accountName;
             TempPublicKey = "";
             TempSecretKey = "";
-            Debug.Log("logged in!");
-            Message.Send(new LoginResponse(AccountName, envs.LoginUrl(PublicKey), LoginStatus.LoggedIn));
+            Debug.Log("logged in! " + SecretKey);
+            Message.Send(new LoginResponse(AccountName, envs.LoginUrl(PublicKey), LoginStatus.LoggedIn, SecretKey, secondaryPublicKey));
         }
 
         bool CanAccessContract(string _publicKey)
@@ -204,9 +239,13 @@ namespace Ryzm.Blockchain
                 string transformedKey = "ed25519:" + _publicKey;
                 foreach(FullKey fullKey in accessKeyResponse.result.keys)
                 {
-                    if(transformedKey == fullKey.public_key && fullKey.access_key.permission.FunctionCall.receiver_id == envs.contractId)
+                    if(transformedKey == fullKey.public_key)
                     {
-                        return true;
+                        if(fullKey.access_key.permission.FunctionCall.receiver_id == envs.contractId) 
+                        {
+                            return true;
+                        }
+                        // return true;
                     }
                 }
             }
@@ -232,12 +271,29 @@ namespace Ryzm.Blockchain
             }
             else
             {
-                Debug.Log("POST SUCCESS");
                 string res = request.downloadHandler.text;
+                Debug.Log("POST SUCCESS " + res);
                 accessKeyResponse = AccessKeyResponse.FromJson(res);
+                
                 string _publicKey = PublicKey != "" ? PublicKey : TempPublicKey;
                 if(CanAccessContract(_publicKey))
                 {
+                    if(!secondaryInitialized)
+                    {
+                        AccessKeyResponse2 response2 = AccessKeyResponse2.FromJson(res);
+                        int nonce = -1;
+                        foreach(FullKey2 key in response2.result.keys)
+                        {
+                            if(key.access_key.permission == "FullAccess")
+                            {
+                                if(key.access_key.nonce > nonce)
+                                {
+                                    nonce = key.access_key.nonce;
+                                    secondaryPublicKey = key.public_key;
+                                }
+                            }
+                        }
+                    }
                     Login(_accountName);
                 }
                 else
@@ -273,6 +329,7 @@ namespace Ryzm.Blockchain
             Reset();
             accessKeyResponse = null;
             Message.Send(new LoginResponse(null, null, LoginStatus.LoggedOut));
+            RyzmUtils.BrowserLogout();
         }
 
         void Reset()
@@ -282,6 +339,7 @@ namespace Ryzm.Blockchain
             SecretKey = "";
             TempSecretKey = "";
             TempPublicKey = "";
+            secondaryPublicKey = "";
         }
     }
 
@@ -365,4 +423,55 @@ namespace Ryzm.Blockchain
         public string receiver_id;
         public List<string> methodNames;
     }
+
+    [System.Serializable]
+    public class AccessKeyResponse2
+    {
+        public string jsonrpc;
+        public int id;
+        public ResponseResult2 result;
+
+        public static AccessKeyResponse2 FromJson(string jsonString)
+        {
+            return JsonUtility.FromJson<AccessKeyResponse2>(jsonString);
+        }
+    }
+
+    [System.Serializable]
+    public class ResponseResult2
+    {
+        public int block_height;
+        public string block_hash;
+        public List<FullKey2> keys;
+    }
+
+    [System.Serializable]
+    public class FullKey2
+    {
+        public string public_key;
+        public AccessKey2 access_key;
+    }
+
+    [System.Serializable]
+    public class AccessKey2
+    {
+        public int nonce;
+        public string permission;
+    }
+
+    [System.Serializable]
+    public class WalletAuthKey
+    {
+        public string accountId;
+        public List<string> allKeys;
+
+        public static WalletAuthKey FromJson(string jsonString)
+        {
+            return JsonUtility.FromJson<WalletAuthKey>(jsonString);
+        }
+    }
 }
+
+// near-api-js:keystore:pending_key ed25519:EpDiy6T8fqn6SsAytagkZ7jA2SUN6AStDqPNs4N5aYKq   :mainnet
+// ed25519:2Bpde4F2eMUiTeT3G6cjQA1fC3AhEHceEbNQrnPWnhuBV8yY7PgBdp9Wzddo8vVL4zRrnhsXnm8J7FoSHh7iKJZd
+// 4bceSkkMyvLp1ZNaFVcTjZhXCcauzvWpJjA28xak23Zz5Yh8qvbJLgiwfjEQLhix1nMkdaHZF5J7Kb6eFv9X5Az9

@@ -20,7 +20,7 @@ namespace Ryzm.EndlessRunner.UI
             }
             set
             {
-                if(!disable)
+                if(ShouldUpdate(value))
                 {
                     if(value)
                     {
@@ -34,8 +34,8 @@ namespace Ryzm.EndlessRunner.UI
                         Message.RemoveListener<RunnerDistanceResponse>(OnRunnerDistanceResponse);
                         Message.RemoveListener<TotalCoinsResponse>(OnTotalCoinsResponse);
                     }
+                    base.IsActive = value;
                 }
-                base.IsActive = value;
             }
         }
 

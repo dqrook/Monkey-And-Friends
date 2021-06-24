@@ -6,6 +6,7 @@ using CodeControl;
 using Ryzm.Blockchain;
 using TMPro;
 using Ryzm.EndlessRunner.Messages;
+using Ryzm.Utils;
 
 namespace Ryzm.EndlessRunner.UI
 {
@@ -44,7 +45,7 @@ namespace Ryzm.EndlessRunner.UI
             }
             set 
             {
-                if(!disable)
+                if(ShouldUpdate(value))
                 {
                     if(!value && _isActive)
                     {
@@ -68,8 +69,8 @@ namespace Ryzm.EndlessRunner.UI
                         Message.RemoveListener<LoginResponse>(OnLoginResponse);
                         Message.RemoveListener<CreateCredentialsResponse>(OnCreateCredentialsResponse);
                     }
+                    base.IsActive = value;
                 }
-                base.IsActive = value;
             }
         }
 
@@ -101,7 +102,10 @@ namespace Ryzm.EndlessRunner.UI
             gettingCredentials = true;
         }
 
-        public void Logout() {}
+        public void Logout()
+        {
+            Message.Send(new LogoutRequest());
+        }
 
         public void CopyUrlToClipboard()
         {
@@ -120,19 +124,31 @@ namespace Ryzm.EndlessRunner.UI
             {
                 rejectedText.gameObject.SetActive(false);
             }
+            loggedOutPanel.SetActive(false);
+            loggedInPanel.SetActive(false);
+            tempCredentialsPanel.SetActive(false);
             switch(response.status)
             {
                 case LoginStatus.LoggedOut:
+                    loggedInPanel.SetActive(false);
+                    tempCredentialsPanel.SetActive(false);
                     loggedOutPanel.SetActive(true);
                     break;
                 case LoginStatus.LoggedIn:
+                    loggedOutPanel.SetActive(false);
+                    tempCredentialsPanel.SetActive(false);
                     accountName.text = "Welcome " + response.accountName + "!";
                     loggedInPanel.SetActive(true);
                     break;
                 case LoginStatus.TempCredentials:
+                    loggedOutPanel.SetActive(false);
+                    loggedInPanel.SetActive(false);
                     tempCredentialsPanel.SetActive(true);
                     break;
                 case LoginStatus.FetchingKeys:
+                    loggedOutPanel.SetActive(false);
+                    loggedInPanel.SetActive(false);
+                    tempCredentialsPanel.SetActive(false);
                     loadingPanel.SetActive(true);
                     loadingText.text = "Checking Credentials...";
                     break;
@@ -159,6 +175,7 @@ namespace Ryzm.EndlessRunner.UI
             _nearUrl = response.nearUrl;
             Debug.Log(_nearUrl);
             Application.OpenURL(_nearUrl);
+            // RyzmUtils.OpenUrl(_nearUrl);
         }
 
     }

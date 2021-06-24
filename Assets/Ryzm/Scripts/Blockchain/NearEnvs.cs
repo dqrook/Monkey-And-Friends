@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Text;
+using Ryzm.Utils;
 
 namespace Ryzm.Blockchain
 {
@@ -15,30 +16,18 @@ namespace Ryzm.Blockchain
         public string appUrl;
         public string contractId;
         public string nodeUrl = "https://rpc.testnet.near.org";
-        public string walletUrl = "https://wallet.testnet.near.org/login/";
-
-        string reservedCharacters = "!*'();:@&=+$,/?%#[]";
-
-        public string UrlEncode(string value)
-        {
-            if (String.IsNullOrEmpty(value))
-                return String.Empty;
-
-            var sb = new StringBuilder();
-
-            foreach (char @char in value)
-            {
-                if (reservedCharacters.IndexOf(@char) == -1)
-                    sb.Append(@char);
-                else
-                    sb.AppendFormat("%{0:X2}", (int)@char);
-            }
-            return sb.ToString();
-        }
+        public string walletUrl = "https://wallet.testnet.near.org";
 
         public string LoginUrl(string publicKey)
         {
-            string url = walletUrl + "?app_url=" + UrlEncode(appUrl) + "&title=" + UrlEncode(title) + "&success_url=" + UrlEncode(successUrl) + "&failure_url=" + UrlEncode(failureUrl) + "&contract_id=" + UrlEncode(contractId) + "&public_key=" + UrlEncode("ed25519:" + publicKey);
+            string url = walletUrl + "/login?app_url=" + RyzmUtils.UrlEncode(appUrl) + "&title=" + RyzmUtils.UrlEncode(title) + "&success_url=" + RyzmUtils.UrlEncode(successUrl) + "&failure_url=" + RyzmUtils.UrlEncode(failureUrl) + "&public_key=" + RyzmUtils.UrlEncode("ed25519:" + publicKey);
+            url += "&contract_id=" + RyzmUtils.UrlEncode(contractId);
+            return url;
+        }
+
+        public string SignTransactionUrl(string transactionHash)
+        {
+            string url = walletUrl + "/sign?transactions=" + RyzmUtils.UrlEncode(transactionHash) + "&callbackUrl=" + RyzmUtils.UrlEncode(appUrl);
             return url;
         }
     }

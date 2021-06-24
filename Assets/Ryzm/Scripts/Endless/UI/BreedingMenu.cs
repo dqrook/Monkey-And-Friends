@@ -411,6 +411,9 @@ namespace Ryzm.EndlessRunner.UI
             breedingPanel.SetActive(false);
             arrowsPanel.SetActive(true);
             mainPanel.SetActive(true);
+            backButton.SetActive(true);
+            confirmBreedButton.SetActive(true);
+            breedingPanelText.text = "Are you sure?";
         }
 
         public void BreedDragons()
