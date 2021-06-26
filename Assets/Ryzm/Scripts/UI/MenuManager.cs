@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using Ryzm.EndlessRunner.Messages;
 using CodeControl;
+using Ryzm.EndlessRunner;
+using Ryzm.UI.Messages;
 
-namespace Ryzm.EndlessRunner.UI
+namespace Ryzm.UI
 {
     public class MenuManager : MonoBehaviour
     {
-        public EndlessMenuSets menuSets;
+        public MenuSets menuSets;
 
         List<MenuType> noMenus = new List<MenuType> {};
         bool initializedGame;
@@ -79,7 +81,6 @@ namespace Ryzm.EndlessRunner.UI
         void ActivateMenus(List<MenuType> menus)
         {
             Message.Send(new ActivateMenu(activatedTypes: menus));
-            Message.Send(new DeactivateMenu(activatedTypes: menus));
         }
 
         void OnMenuSetRequest(MenuSetRequest request)

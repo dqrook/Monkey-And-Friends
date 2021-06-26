@@ -1,13 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
-using Ryzm.EndlessRunner.Messages;
 using CodeControl;
+using System;
+using Ryzm.UI.Messages;
 
-namespace Ryzm.EndlessRunner.UI
+namespace Ryzm.UI
 {
-    public abstract class BaseMenu : MonoBehaviour
+    public abstract class RyzmMenu : MonoBehaviour
     {
         #region Public Variables
         public Canvas canvas;
@@ -61,7 +61,6 @@ namespace Ryzm.EndlessRunner.UI
                 canvas = GetComponent<Canvas>();
             }
             Message.AddListener<ActivateMenu>(OnActivateMenu);
-            Message.AddListener<DeactivateMenu>(OnDeactivateMenu);
         }
 
         protected bool ShouldUpdate(bool value)
@@ -72,7 +71,6 @@ namespace Ryzm.EndlessRunner.UI
         protected virtual void OnDestroy()
         {
             Message.RemoveListener<ActivateMenu>(OnActivateMenu);
-            Message.RemoveListener<DeactivateMenu>(OnDeactivateMenu);
         }
 
         protected virtual void OnActivateMenu(ActivateMenu activate)
@@ -89,25 +87,19 @@ namespace Ryzm.EndlessRunner.UI
                     }
                 }
                 IsActive = _shouldActivate;
-                // if(activate.activatedTypes.Contains(type))
-                // {
-                //     IsActive = true;
-                // }
-                // else
-                // {
-                //     IsActive = false;
-                // }
             }
             else if(activate.useDeactivated)
             {
-                if(!activate.deactivatedTypes.Contains(type))
+                bool _shouldActivate = true;
+                foreach(MenuType menuType in activate.deactivatedTypes)
                 {
-                    IsActive = true;
+                    if(type == menuType)
+                    {
+                        _shouldActivate = false;
+                        break;
+                    }
                 }
-                else
-                {
-                    IsActive = false;
-                }
+                IsActive = _shouldActivate;
             }
             else if(activate.type == type)
             {
@@ -117,29 +109,6 @@ namespace Ryzm.EndlessRunner.UI
             {
                 IsActive = false;
             }
-        }
-
-        protected virtual void OnDeactivateMenu(DeactivateMenu deactivate)
-        {
-            // if(deactivate.useActivated)
-            // {
-            //     if(!deactivate.activatedTypes.Contains(type))
-            //     {
-            //         Debug.Log(type + " is deactivated " + deactivate.activatedTypes.Count);
-            //         IsActive = false; 
-            //     }
-            // } 
-            // else if(deactivate.useDeactivated)
-            // {
-            //     if(deactivate.deactivatedTypes.Contains(type))
-            //     {
-            //         IsActive = false;
-            //     }
-            // }
-            // else if(deactivate.type == type)
-            // {
-            //     IsActive = false;
-            // }
         }
 
         // todo: figure out how to use this (if necessary)
@@ -216,6 +185,7 @@ namespace Ryzm.EndlessRunner.UI
             // prevResolution = menuManager.rYZ.settingsManager.Resolution;
         }
     }
+
     public enum SimDevice { None, iPhoneX }
 
     public enum MenuType

@@ -17,6 +17,7 @@ namespace Ryzm.Blockchain
         bool fetchingKeys;
         string secondaryPublicKey;
         bool secondaryInitialized;
+        string nearLogo = "Ⓝ";
 
         public string AccountName
         {

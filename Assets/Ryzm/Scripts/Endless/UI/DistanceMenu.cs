@@ -5,9 +5,9 @@ using TMPro;
 using Ryzm.EndlessRunner.Messages;
 using CodeControl;
 
-namespace Ryzm.EndlessRunner.UI
+namespace Ryzm.UI
 {
-    public class DistanceMenu : BaseMenu
+    public class DistanceMenu : RyzmMenu
     {
         public TextMeshProUGUI distance;
         int currentDistance;

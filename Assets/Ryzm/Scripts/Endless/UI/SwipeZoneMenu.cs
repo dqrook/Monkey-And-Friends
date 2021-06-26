@@ -1,12 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ryzm.EndlessRunner.Messages;
+using Ryzm.EndlessRunner;
 using CodeControl;
+using Ryzm.EndlessRunner.Messages;
 
-namespace Ryzm.EndlessRunner.UI
+namespace Ryzm.UI
 {
-    public class SwipeZoneMenu : BaseMenu
+    public class SwipeZoneMenu : RyzmMenu
     {
         public float minimumSwipeLength = 0.2f;
         

@@ -51,6 +51,16 @@ namespace Ryzm.EndlessRunner
             StartCoroutine(getDragonTexture);
         }
 
+        public void DisableMaterials()
+        {
+            materials.Disable();
+        }
+
+        public void EnableMaterials()
+        {
+            materials.Enable();
+        }
+
         IEnumerator _GetTextures()
         {
             List<MaterialTypeToUrlMap> map = new List<MaterialTypeToUrlMap>

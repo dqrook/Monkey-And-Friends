@@ -5,9 +5,9 @@ using Ryzm.EndlessRunner.Messages;
 using CodeControl;
 using TMPro;
 
-namespace Ryzm.EndlessRunner.UI
+namespace Ryzm.UI
 {
-    public class ScoreMenu : BaseMenu
+    public class ScoreMenu : RyzmMenu
     {
         public TextMeshProUGUI score;
         int currentScore;

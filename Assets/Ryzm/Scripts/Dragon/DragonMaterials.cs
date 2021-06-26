@@ -7,6 +7,7 @@ namespace Ryzm.Dragon
     public class DragonMaterials : MonoBehaviour
     {
         public List<DragonMaterial> materials = new List<DragonMaterial>();
+        public Renderer face;
 
         public bool Initialized
         {
@@ -24,6 +25,24 @@ namespace Ryzm.Dragon
                     }
                 }
                 return true;
+            }
+        }
+
+        public void Enable()
+        {
+            face.enabled = true;
+            foreach(DragonMaterial material in materials)
+            {
+                material.Enable();
+            }
+        }
+
+        public void Disable()
+        {
+            face.enabled = false;
+            foreach(DragonMaterial material in materials)
+            {
+                material.Disable();
             }
         }
 
@@ -45,18 +64,36 @@ namespace Ryzm.Dragon
         public GameObject go;
         public DragonMaterialType type;
         public bool initialized;
-        Renderer renderer;
+        Renderer _renderer;
+
+        Renderer R
+        {
+            get
+            {
+                if(_renderer == null)
+                {
+                    _renderer = go.GetComponent<Renderer>();
+                }
+                return _renderer;
+            }
+        }
 
         public Material Material
         {
             get
             {
-                if(renderer == null)
-                {
-                    renderer = go.GetComponent<Renderer>();
-                }
-                return renderer.material;
+                return R.material;
             }
+        }
+
+        public void Disable()
+        {
+            R.enabled = false;
+        }
+
+        public void Enable()
+        {
+            R.enabled = true;
         }
 
         public void SetTexture(Texture texture)

@@ -157,6 +157,11 @@ namespace Ryzm.Dragon
             return data;
         }
 
+        void UpdateMarketDragonTextures()
+        {
+            
+        }
+
         IEnumerator GetMarketDragons(bool getNumberOfDragons)
         {
             gettingDragons = true;
@@ -190,7 +195,7 @@ namespace Ryzm.Dragon
                                 MarketDragonData marketDragon = new MarketDragonData(dragon, userDragonsForSale.ContainsKey(dragon.id));
                                 getTextures = GetTextures(marketDragon);
                                 StartCoroutine(getTextures);
-                                // allDragonsForSale.Add(dragon.id, marketDragon);
+                                allDragonsForSale.Add(dragon.id, marketDragon);
                             }
                         }
                         currentPage++;

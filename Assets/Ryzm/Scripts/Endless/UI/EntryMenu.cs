@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Ryzm.EndlessRunner.UI
+namespace Ryzm.UI
 {
-    public class EntryMenu : BaseMenu
+    public class EntryMenu : RyzmMenu
     {
         public void ContinueAsGuest()
         {

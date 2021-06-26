@@ -5,9 +5,9 @@ using TMPro;
 using CodeControl;
 using Ryzm.EndlessRunner.Messages;
 
-namespace Ryzm.EndlessRunner.UI
+namespace Ryzm.UI
 {
-    public class EndGameMenu : BaseMenu
+    public class EndGameMenu : RyzmMenu
     {
         public TextMeshProUGUI distance;
         public TextMeshProUGUI score;

@@ -4,8 +4,7 @@ using UnityEngine;
 
 namespace Ryzm.UI
 {
-    public class SingleDragonMenu : RyzmMenu
+    public class DragonMarketMenu : RyzmMenu
     {
-        
     }
 }

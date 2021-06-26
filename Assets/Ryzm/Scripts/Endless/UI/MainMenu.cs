@@ -1,15 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ryzm.EndlessRunner.Messages;
+using Ryzm.UI.Messages;
 using CodeControl;
 using Ryzm.Blockchain.Messages;
 using TMPro;
 using Ryzm.Blockchain;
+using Ryzm.EndlessRunner.Messages;
 
-namespace Ryzm.EndlessRunner.UI
+namespace Ryzm.UI
 {
-    public class MainMenu : BaseMenu
+    public class MainMenu : RyzmMenu
     {
         public TextMeshProUGUI loginText;
 
@@ -40,7 +41,7 @@ namespace Ryzm.EndlessRunner.UI
                         Message.AddListener<LoginResponse>(OnLoginResponse);
                         Message.AddListener<MenuSetResponse>(OnMenuSetResponse);
                         Message.Send(new LoginRequest());
-                        Message.Send(new DisableHeaderBackButton());
+                        // Message.Send(new DisableHeaderBackButton());
                         Message.Send(new MenuSetRequest(MenuSet.MainMenu));
                         Message.Send(new MenuSetRequest(MenuSet.LoginMenu));
                     }
@@ -75,7 +76,7 @@ namespace Ryzm.EndlessRunner.UI
             if(IsActive)
             {
                 Message.Send(new ActivateMenu(activatedTypes: loginMenus));
-                Message.Send(new DeactivateMenu(activatedTypes: loginMenus));
+                // Message.Send(new DeactivateMenu(activatedTypes: loginMenus));
                 Message.Send(new EnableHeaderBackButton(mainMenus));
             }
         }

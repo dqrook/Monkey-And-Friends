@@ -4,12 +4,13 @@ using UnityEngine;
 using CodeControl;
 using Ryzm.Dragon.Messages;
 using Ryzm.Dragon;
-using Ryzm.EndlessRunner.Messages;
+using Ryzm.UI.Messages;
 using TMPro;
+using Ryzm.EndlessRunner;
 
-namespace Ryzm.EndlessRunner.UI
+namespace Ryzm.UI
 {
-    public class BreedingMenu : BaseMenu
+    public class BreedingMenu : RyzmMenu
     {
         [Header("Main")]
         public GameObject backButton;
@@ -29,15 +30,6 @@ namespace Ryzm.EndlessRunner.UI
         public GameObject dragon1FwdButton;
         public GameObject dragon2BackButton;
         public GameObject dragon2FwdButton;
-
-        [Header("Camera")]
-        public Transform breedingCameraXform;
-        public Transform dragon1CameraPivot;
-        public Transform dragon1CameraXform;
-        public Transform dragon2CameraPivot;
-        public Transform dragon2CameraXform;
-        public Transform singleDragonCameraPivot;
-        public Transform singleDragonCameraXform;
 
         [Header("Dragon 1")]
         public Transform dragon1Spawn;
@@ -81,7 +73,6 @@ namespace Ryzm.EndlessRunner.UI
                         Reset();
                         Message.AddListener<DragonsResponse>(OnDragonsResponse);
                         Message.AddListener<MenuSetResponse>(OnMenuSetResponse);
-                        Message.AddListener<CameraResponse>(OnCameraResponse);
                         Message.AddListener<BreedDragonsResponse>(OnBreedDragonsResponse);
                         Message.AddListener<DragonInitialized>(OnDragonInitialized);
                         
@@ -90,14 +81,7 @@ namespace Ryzm.EndlessRunner.UI
                         {
                             Message.Send(new MenuSetRequest(MenuSet.MainMenu));
                         }
-                        if(camTrans == null)
-                        {
-                            Message.Send(new CameraRequest());
-                        }
-                        else 
-                        {
-                            InitializeCamera(camTrans);
-                        }
+                        InitializeCamera();
                     }
                     else
                     {
@@ -105,7 +89,6 @@ namespace Ryzm.EndlessRunner.UI
                         Message.RemoveListener<DragonsResponse>(OnDragonsResponse);
                         Message.RemoveListener<MenuSetResponse>(OnMenuSetResponse);
                         Message.RemoveListener<BreedDragonsResponse>(OnBreedDragonsResponse);
-                        Message.RemoveListener<CameraResponse>(OnCameraResponse);
                         Message.RemoveListener<DragonInitialized>(OnDragonInitialized);
                         // dragons.Clear();
                         dragons = new EndlessDragon[0];
@@ -226,12 +209,6 @@ namespace Ryzm.EndlessRunner.UI
             }
         }
 
-        void OnCameraResponse(CameraResponse response)
-        {
-            Debug.Log("camera response");
-            InitializeCamera(response.camera.transform);
-        }
-
         public void Zoom(int dragon)
         {
             backButton.SetActive(false);
@@ -240,14 +217,12 @@ namespace Ryzm.EndlessRunner.UI
             if(dragon == 1)
             {
                 dragon1Panel.SetActive(true);
-                camTrans.parent = dragon1CameraPivot;
-                MoveCamera(dragon1CameraXform);
+                Message.Send(new MoveCameraRequest(TransformType.Dragon1));
             }
             else
             {
                 dragon2Panel.SetActive(true);
-                camTrans.parent = dragon2CameraPivot;
-                MoveCamera(dragon2CameraXform);
+                Message.Send(new MoveCameraRequest(TransformType.Dragon2));
             }
         }
 
@@ -346,56 +321,21 @@ namespace Ryzm.EndlessRunner.UI
 
         public void ExitZoom()
         {
-            camTrans.parent = null;
             zoomPanel.SetActive(false);
             mainPanel.SetActive(true);
             dragon1Panel.SetActive(false);
             dragon2Panel.SetActive(false);
             backButton.SetActive(true);
-            MoveCamera(breedingCameraXform);
+            Message.Send(new MoveCameraRequest(TransformType.BreedingMenu));
         }
 
-        void InitializeCamera(Transform cam)
+        void InitializeCamera()
         {
-            camTrans = cam;
             if(!initialized)
             {
                 initialized = true;
-                MoveCamera(breedingCameraXform);
+                Message.Send(new MoveCameraRequest(TransformType.BreedingMenu));
             }
-        }
-
-        void MoveCamera(Transform target)
-        {
-            if(moveCamera != null)
-            {
-                StopCoroutine(moveCamera);
-            }
-            moveCamera = null;
-            moveCamera = _MoveCamera(target);
-            StartCoroutine(moveCamera);
-        }
-
-        IEnumerator _MoveCamera(Transform target)
-        {
-            Debug.Log("moving camera");
-            movingCamera = true;
-            Vector3 endPos = target.position;
-            Quaternion endRot = target.rotation;
-            float distance = Vector3.Distance(camTrans.position, endPos);
-            float rotDiff = Mathf.Abs(Quaternion.Angle(camTrans.rotation, endRot));
-            while(distance > 0.1f || rotDiff > 1)
-            {
-                camTrans.position = Vector3.Lerp(camTrans.position, endPos, Time.deltaTime);
-                camTrans.rotation = Quaternion.Lerp(camTrans.rotation, endRot, Time.deltaTime);
-                distance = Vector3.Distance(camTrans.position, endPos);
-                rotDiff = Mathf.Abs(Quaternion.Angle(camTrans.rotation, endRot));
-                yield return null;
-            }
-            // camTrans.position = target.position;
-            // camTrans.rotation = target.rotation;
-            movingCamera = false;
-            yield break;
         }
 
         public void OpenBreedingPanel()
@@ -460,24 +400,21 @@ namespace Ryzm.EndlessRunner.UI
                         dragon.gameObject.SetActive(false);
                     }
                 }
-                camTrans.parent = singleDragonCameraPivot;
-                MoveCamera(singleDragonCameraXform);
+                Message.Send(new MoveCameraRequest(TransformType.SingleDragon));
             }
         }
 
         public void CloseSingleDragonPanel()
         {
-            camTrans.parent = null;
             singleDragonPanel.SetActive(false);
             backButton.SetActive(true);
-            MoveCamera(breedingCameraXform);
+            Message.Send(new MoveCameraRequest(TransformType.BreedingMenu));
             InitializeDragons();
         }
 
         public void ExitMenu()
         {
             Message.Send(new ActivateMenu(activatedTypes: mainMenus));
-            Message.Send(new DeactivateMenu(activatedTypes: mainMenus));
         }
     }
 }

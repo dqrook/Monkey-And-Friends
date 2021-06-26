@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using CodeControl;
-using Ryzm.EndlessRunner.UI;
 
-namespace Ryzm.EndlessRunner.Messages
+namespace Ryzm.UI.Messages
 {
     public class EnableHeaderBackButton : Message
     {

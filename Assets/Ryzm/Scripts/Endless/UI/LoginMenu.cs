@@ -5,12 +5,10 @@ using Ryzm.Blockchain.Messages;
 using CodeControl;
 using Ryzm.Blockchain;
 using TMPro;
-using Ryzm.EndlessRunner.Messages;
-using Ryzm.Utils;
 
-namespace Ryzm.EndlessRunner.UI
+namespace Ryzm.UI
 {
-    public class LoginMenu : BaseMenu
+    public class LoginMenu : RyzmMenu
     {
         [Header("Loading")]
         public GameObject loadingPanel;

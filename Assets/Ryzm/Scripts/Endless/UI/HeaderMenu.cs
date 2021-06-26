@@ -1,12 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ryzm.EndlessRunner.Messages;
+using Ryzm.UI.Messages;
 using CodeControl;
 
-namespace Ryzm.EndlessRunner.UI
+namespace Ryzm.UI
 {
-    public class HeaderMenu : BaseMenu
+    public class HeaderMenu : RyzmMenu
     {
         public GameObject backButton;
         List<MenuType> previousMenus = new List<MenuType>();
@@ -48,11 +48,6 @@ namespace Ryzm.EndlessRunner.UI
                 i++;
             }
             Message.Send(new ActivateMenu(activatedTypes: previousMenus));
-            foreach(MenuType menu in menuTypes)
-            {
-                Debug.Log(menu + " OnClickBackButton");
-            }
-            Message.Send(new DeactivateMenu(activatedTypes: previousMenus));
         }
 
         void OnEnableHeaderBackButton(EnableHeaderBackButton enableButton)

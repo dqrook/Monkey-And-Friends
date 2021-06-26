@@ -1,27 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ryzm.EndlessRunner.Messages;
+using Ryzm.UI.Messages;
 using CodeControl;
 using Ryzm.Blockchain.Messages;
 using TMPro;
 using Ryzm.Blockchain;
 using Ryzm.Dragon.Messages;
+using Ryzm.Dragon;
 
-namespace Ryzm.EndlessRunner.UI
+namespace Ryzm.UI
 {
-    public class MainMenuBreeding : BaseMenu
+    public class MainMenuBreeding : RyzmMenu
     {
-        public Transform mainCameraXform;
         public TextMeshProUGUI loginText;
 
         bool initialized;
         List<MenuType> breedingMenus = new List<MenuType> {};
         List<MenuType> loginMenus = new List<MenuType> {};
         List<MenuType> mainMenus = new List<MenuType> {};
-        Transform camTrans;
-        IEnumerator moveCamera;
-        bool movingCamera;
         bool menuSetsInitialized;
 
         public override bool IsActive 
@@ -38,7 +35,6 @@ namespace Ryzm.EndlessRunner.UI
                     {
                         Message.AddListener<LoginResponse>(OnLoginResponse);
                         Message.AddListener<MenuSetResponse>(OnMenuSetResponse);
-                        Message.AddListener<CameraResponse>(OnCameraResponse);
                         Message.Send(new LoginRequest());
                         Message.Send(new ResetDragons());
                         if(!menuSetsInitialized)
@@ -48,15 +44,7 @@ namespace Ryzm.EndlessRunner.UI
                             Message.Send(new MenuSetRequest(MenuSet.MainMenu));
                             Message.Send(new MenuSetRequest(MenuSet.LoginMenu));
                         }
-                        Debug.Log("camTrans " + camTrans);
-                        if(camTrans == null)
-                        {
-                            Message.Send(new CameraRequest());
-                        }
-                        else 
-                        {
-                            InitializeCamera(camTrans);
-                        }
+                        InitializeCamera();
                     }
                     else
                     {
@@ -64,7 +52,6 @@ namespace Ryzm.EndlessRunner.UI
                         StopAllCoroutines();
                         Message.RemoveListener<LoginResponse>(OnLoginResponse);
                         Message.RemoveListener<MenuSetResponse>(OnMenuSetResponse);
-                        Message.RemoveListener<CameraResponse>(OnCameraResponse);
                     }
                     base.IsActive = value;
                 }
@@ -77,7 +64,6 @@ namespace Ryzm.EndlessRunner.UI
             if(IsActive)
             {
                 Message.Send(new ActivateMenu(activatedTypes: loginMenus));
-                Message.Send(new DeactivateMenu(activatedTypes: loginMenus));
                 Message.Send(new EnableHeaderBackButton(mainMenus));
             }
         }
@@ -92,7 +78,6 @@ namespace Ryzm.EndlessRunner.UI
             if(IsActive)
             {
                 Message.Send(new ActivateMenu(activatedTypes: breedingMenus));
-                Message.Send(new DeactivateMenu(activatedTypes: breedingMenus));
             }
         }
 
@@ -128,55 +113,14 @@ namespace Ryzm.EndlessRunner.UI
             }
         }
 
-        void OnCameraResponse(CameraResponse response)
-        {
-            Debug.Log("main menu camera response");
-            InitializeCamera(response.camera.transform);
-        }
-
-        void InitializeCamera(Transform cam)
+        void InitializeCamera()
         {
             Debug.Log("initializing z camera " + initialized);
-            camTrans = cam;
             if(!initialized)
             {
                 initialized = true;
-                MoveCamera(mainCameraXform);
+                Message.Send(new MoveCameraRequest(TransformType.MainMenu));
             }
-        }
-
-        void MoveCamera(Transform target)
-        {
-            Debug.Log("main menu MoveCamera");
-            if(moveCamera != null)
-            {
-                StopCoroutine(moveCamera);
-            }
-            moveCamera = null;
-            moveCamera = _MoveCamera(target);
-            StartCoroutine(moveCamera);
-        }
-
-        IEnumerator _MoveCamera(Transform target)
-        {
-            Debug.Log("moving camera");
-            movingCamera = true;
-            Vector3 endPos = target.position;
-            Quaternion endRot = target.rotation;
-            float distance = Vector3.Distance(camTrans.position, endPos);
-            float rotDiff = Mathf.Abs(Quaternion.Angle(camTrans.rotation, endRot));
-            while(distance > 0.1f || rotDiff > 1)
-            {
-                camTrans.position = Vector3.Lerp(camTrans.position, endPos, Time.deltaTime);
-                camTrans.rotation = Quaternion.Lerp(camTrans.rotation, endRot, Time.deltaTime);
-                distance = Vector3.Distance(camTrans.position, endPos);
-                rotDiff = Mathf.Abs(Quaternion.Angle(camTrans.rotation, endRot));
-                yield return null;
-            }
-            // camTrans.position = target.position;
-            // camTrans.rotation = target.rotation;
-            movingCamera = false;
-            yield break;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Ryzm.EndlessRunner.UI
+﻿namespace Ryzm.UI
 {
-    public class LoadingMenu : BaseMenu {}
+    public class LoadingMenu : RyzmMenu {}
 }

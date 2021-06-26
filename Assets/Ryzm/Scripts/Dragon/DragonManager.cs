@@ -25,24 +25,27 @@ namespace Ryzm.Dragon
 
         IEnumerator getDragons;
         bool gettingDragons;
-        IEnumerator getDragonTexture;
         string accountName;
         string privateKey;
         string secondaryPublicKey;
         bool breedingDragons;
-        IEnumerator breedDragons;
+        IEnumerator breedDragonsTxHash;
         int dragon1Id;
         int dragon2Id;
         bool initialized;
         int currentNumberOfDragons;
         IEnumerator getDragonIds;
         IEnumerator getDragonById;
+        List<int> initializingDragonIds = new List<int>();
+        List<int> initializedDragonIds = new List<int>();
+        bool initializingDragons;
 
         void Awake()
         {
             Message.AddListener<LoginResponse>(OnLoginResponse);
             Message.AddListener<SignMessageResponse>(OnSignMessageResponse);
             Message.AddListener<BreedDragonsRequest>(OnBreedDragonsRequest);
+            Message.AddListener<DragonInitialized>(OnDragonInitialized);
             Message.AddListener<DragonsRequest>(OnDragonsRequest);
         }
 
@@ -56,8 +59,8 @@ namespace Ryzm.Dragon
             Message.RemoveListener<LoginResponse>(OnLoginResponse);
             Message.RemoveListener<SignMessageResponse>(OnSignMessageResponse);
             Message.RemoveListener<BreedDragonsRequest>(OnBreedDragonsRequest);
+            Message.RemoveListener<DragonInitialized>(OnDragonInitialized);
             Message.RemoveListener<DragonsRequest>(OnDragonsRequest);
-            initialized = false;
         }
         
         void OnLoginResponse(LoginResponse response)
@@ -111,25 +114,50 @@ namespace Ryzm.Dragon
                     // todo: handle when signing the message fails
                 }
             }
-            else if (response.action == "breedDragons")
+        }
+
+        void OnBreedDragonsRequest(BreedDragonsRequest request)
+        {
+            currentNumberOfDragons = dragons.Count;
+            if(accountName.Length > 0)
             {
-                if(response.isSuccess)
+                dragon1Id = request.dragon1Id;
+                dragon2Id = request.dragon2Id;
+                // Message.Send(new SignMessageRequest("breedDragons", "Hello World"));
+
+                string url = envs.BreedDragonsTxHashApiUrl;
+                string bodyJsonString = new BreedDragonsTxHashRequest(accountName, dragon1Id, dragon2Id, privateKey, secondaryPublicKey).ToJson();
+                breedDragonsTxHash = null;
+                breedDragonsTxHash = BreedDragonsTxHash(url, bodyJsonString);
+                StartCoroutine(breedDragonsTxHash);
+                Message.Send(new BreedDragonsResponse(BreedingStatus.Breeding));
+            }
+        }
+
+        void OnDragonInitialized(DragonInitialized initialized)
+        {
+            if(initializingDragons)
+            {
+                if(initializingDragonIds.Contains(initialized.id))
                 {
-                    if(!breedingDragons)
-                    {
-                        string url = envs.BreedDragonsApiUrl;
-                        string bodyJsonString = new BreedDragonsPostRequest(response.message, response.signedMessageBytes, response.publicKey, response.accountId, dragon1Id, dragon2Id, privateKey).ToJson();
-                        breedDragons = null;
-                        breedDragons = BreedDragons(url, bodyJsonString);
-                        StartCoroutine(breedDragons);
-                        Message.Send(new BreedDragonsResponse(BreedingStatus.Breeding));
-                    }
+                    initializingDragonIds.Remove(initialized.id);
+                    initializedDragonIds.Add(initialized.id);
                 }
-                else
+                if(initializingDragonIds.Count == 0)
                 {
-                    Message.Send(new BreedDragonsResponse(BreedingStatus.Failed));
+                    initializingDragons = false;
+                    foreach(int dragonId in initializedDragonIds)
+                    {
+                        dragons[dragonId].EnableMaterials();
+                    }
+                    initializingDragonIds.Clear();
                 }
             }
+        }
+
+        void OnDragonsRequest(DragonsRequest request)
+        {
+            Message.Send(new DragonsResponse(dragons.Values.ToList(), request.sender));
         }
 
         IEnumerator GetDragons(string url, string bodyJsonString)
@@ -148,71 +176,20 @@ namespace Ryzm.Dragon
                 Debug.Log("POST SUCCESS " + res);
                 GetDragonsPostResponse response = GetDragonsPostResponse.FromJson(res);
                 dragonResponses = response.dragons;
+                initializingDragons = true;
                 foreach(DragonResponse dragonRes in dragonResponses)
                 {
                     GameObject go = GameObject.Instantiate(prefabs.GetPrefabByHornType(dragonRes.hornType).dragon);
                     EndlessDragon dragon = go.GetComponent<EndlessDragon>();
+                    dragon.DisableMaterials();
                     dragon.data = dragonRes;
                     dragons.Add(dragon.data.id, dragon);
+                    initializingDragonIds.Add(dragon.data.id);
                     dragon.GetTextures();
                 }
                 Message.Send(new DragonsResponse(dragons.Values.ToList(), "all"));
             }
             gettingDragons = false;
-        }
-
-        IEnumerator GetDragonTexture(EndlessDragon dragon)
-        {
-            List<MaterialTypeToUrlMap> map = new List<MaterialTypeToUrlMap>
-            {
-                new MaterialTypeToUrlMap(DragonMaterialType.Body, dragon.data.bodyTexture),
-                new MaterialTypeToUrlMap(DragonMaterialType.Wing, dragon.data.wingTexture),
-                new MaterialTypeToUrlMap(DragonMaterialType.Horn, dragon.data.hornTexture),
-                new MaterialTypeToUrlMap(DragonMaterialType.Back, dragon.data.backTexture)
-            };
-            int numMaterials = map.Count;
-            int index = 0;
-            while(index < numMaterials)
-            {
-                string url = map[index].url;
-                DragonMaterialType type = map[index].type;
-                UnityWebRequest request = RyzmUtils.TextureRequest(url);
-                yield return request.SendWebRequest();
-                if(request.isNetworkError || request.isHttpError)
-                {
-                    Debug.LogError("ERROR");
-                    // todo: handle this case
-                }
-                else
-                {
-                    if(dragon != null && dragon.materials != null)
-                    {
-                        Texture _texture = DownloadHandlerTexture.GetContent(request);
-                        dragon.SetTexture(type, _texture);
-                    }
-
-                }
-                index++;
-                yield return null;
-            }
-        }
-
-        void OnBreedDragonsRequest(BreedDragonsRequest request)
-        {
-            currentNumberOfDragons = dragons.Count;
-            if(accountName.Length > 0)
-            {
-                dragon1Id = request.dragon1Id;
-                dragon2Id = request.dragon2Id;
-                // Message.Send(new SignMessageRequest("breedDragons", "Hello World"));
-
-                string url = envs.BreedDragonsTxHashApiUrl;
-                string bodyJsonString = new BreedDragonsTxHashRequest(accountName, dragon1Id, dragon2Id, privateKey, secondaryPublicKey).ToJson();
-                breedDragons = null;
-                breedDragons = BreedDragonsTxHash(url, bodyJsonString);
-                StartCoroutine(breedDragons);
-                Message.Send(new BreedDragonsResponse(BreedingStatus.Breeding));
-            }
         }
 
         IEnumerator BreedDragonsTxHash(string url, string bodyJsonString)
@@ -238,7 +215,6 @@ namespace Ryzm.Dragon
                 // Application.OpenURL(signedUrl);
                 RyzmUtils.OpenUrl(signedUrl);
             }
-            breedingDragons = false;
         }
 
         IEnumerator GetDragonIds(string url)
@@ -314,51 +290,7 @@ namespace Ryzm.Dragon
                 dragon.GetTextures();
                 Message.Send(new BreedDragonsResponse(BreedingStatus.Success, dragonRes.id));
             }
-        }
-
-        IEnumerator BreedDragons(string url, string bodyJsonString)
-        {
-            breedingDragons = true;
-            UnityWebRequest request = RyzmUtils.PostRequest(url, bodyJsonString);
-            yield return request.SendWebRequest();
-            if(request.isNetworkError || request.isHttpError)
-            {
-                Debug.LogError("ERROR");
-                Message.Send(new BreedDragonsResponse(BreedingStatus.Failed));
-                // todo: handle this case
-            }
-            else
-            {
-                string res = request.downloadHandler.text;
-                Debug.Log("POST SUCCESS " + res);
-                BreedDragonsPostResponse response = BreedDragonsPostResponse.FromJson(res);
-                DragonResponse dragonRes = response.dragon;
-                GameObject go = GameObject.Instantiate(prefabs.GetPrefabByHornType(dragonRes.hornType).dragon);
-                EndlessDragon dragon = go.GetComponent<EndlessDragon>();
-                dragon.data = dragonRes;
-                // dragons.Add(dragon);
-                dragons.Add(dragon.data.id, dragon);
-                Message.Send(new DragonsResponse(dragons.Values.ToList(), "newDragon"));
-                dragon.GetTextures();
-                Message.Send(new BreedDragonsResponse(BreedingStatus.Success, dragonRes.id));
-
-                // List<MaterialTypeToUrlMap> map = new List<MaterialTypeToUrlMap>
-                // {
-                //     new MaterialTypeToUrlMap(DragonMaterialType.Body, dragon.data.bodyTexture),
-                //     new MaterialTypeToUrlMap(DragonMaterialType.Wing, dragon.data.wingTexture),
-                //     new MaterialTypeToUrlMap(DragonMaterialType.Horn, dragon.data.hornTexture),
-                //     new MaterialTypeToUrlMap(DragonMaterialType.Back, dragon.data.backTexture)
-                // };
-                // getDragonTexture = null;
-                // getDragonTexture = GetDragonTexture(dragon);
-                // StartCoroutine(getDragonTexture);
-            }
             breedingDragons = false;
-        }
-
-        void OnDragonsRequest(DragonsRequest request)
-        {
-            Message.Send(new DragonsResponse(dragons.Values.ToList(), request.sender));
         }
     }
 

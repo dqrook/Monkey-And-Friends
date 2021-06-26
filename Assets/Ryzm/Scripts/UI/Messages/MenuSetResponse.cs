@@ -1,8 +1,7 @@
-﻿using Ryzm.EndlessRunner.UI;
-using CodeControl;
+﻿using CodeControl;
 using System.Collections.Generic;
 
-namespace Ryzm.EndlessRunner.Messages
+namespace Ryzm.UI.Messages
 {
     public class MenuSetResponse : Message
     {
