@@ -13,10 +13,10 @@ namespace Ryzm.Dragon.Messages
             this.status = status;
         }
 
-        public DragonMarketRequest(int startIndex, int numberOfDragons = 5)
+        public DragonMarketRequest(int currentPage, int numberOfDragons = 5)
         {
             this.status = MarketStatus.Update;
-            this.startIndex = startIndex;
+            this.startIndex = currentPage * numberOfDragons;
             this.numberOfDragons = numberOfDragons;
         }
     }

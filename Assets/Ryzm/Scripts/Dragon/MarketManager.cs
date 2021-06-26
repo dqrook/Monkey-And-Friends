@@ -15,10 +15,6 @@ namespace Ryzm.Dragon
         public Envs envs;
         public Dictionary<int, MarketDragonData> allDragonsForSale = new Dictionary<int, MarketDragonData>();
         public Dictionary<int, EndlessDragon> userDragonsForSale = new Dictionary<int, EndlessDragon>();
-        
-        [Header("Camera")]
-        public Transform mainMenuSpawn;
-        public Transform marketSpawn;
 
         // current queried page
         int currentPage;
@@ -39,6 +35,7 @@ namespace Ryzm.Dragon
         {
             Message.AddListener<DragonsResponse>(OnDragonsResponse);
             Message.AddListener<DragonMarketRequest>(OnDragonMarketRequest);
+            Message.AddListener<NumberOfMarketDragonsRequest>(OnNumberOfMarketDragonsRequest);
         }
 
         void Start()
@@ -52,6 +49,7 @@ namespace Ryzm.Dragon
         {
             Message.RemoveListener<DragonsResponse>(OnDragonsResponse);
             Message.RemoveListener<DragonMarketRequest>(OnDragonMarketRequest);
+            Message.RemoveListener<NumberOfMarketDragonsRequest>(OnNumberOfMarketDragonsRequest);
         }
 
         void OnDragonsResponse(DragonsResponse response)
@@ -119,6 +117,10 @@ namespace Ryzm.Dragon
                     UpdateMarketDragonData(numberOfDragons, startDex, finDex);
                 }
             }
+            else if(request.status == MarketStatus.CancelLoading)
+            {
+                isLoading = false;
+            }
             else if(request.status == MarketStatus.Exit)
             {
                 foreach(MarketDragon dragon in marketDragons)
@@ -131,6 +133,11 @@ namespace Ryzm.Dragon
                 loadingFinDex = 0;
                 loadingNumberOfDragons = 0;
             }
+        }
+
+        void OnNumberOfMarketDragonsRequest(NumberOfMarketDragonsRequest request)
+        {
+            Message.Send(new NumberOfMarketDragonsResponse(numberOfDragonsOnMarket));
         }
 
         void UpdateMarketDragonData(int numberOfDragons, int startDex, int finDex)
@@ -159,7 +166,7 @@ namespace Ryzm.Dragon
 
         void UpdateMarketDragonTextures()
         {
-            
+
         }
 
         IEnumerator GetMarketDragons(bool getNumberOfDragons)
@@ -181,6 +188,7 @@ namespace Ryzm.Dragon
                 {
                     NumberOfDragonsGetResponse response = NumberOfDragonsGetResponse.FromJson(res);
                     numberOfDragonsOnMarket = response.numberOfDragons;
+                    Message.Send(new NumberOfMarketDragonsResponse(numberOfDragonsOnMarket));
                     initialized = true;
                 }
                 else
@@ -346,6 +354,7 @@ namespace Ryzm.Dragon
         Start,
         Loading,
         Update,
-        Exit
+        Exit,
+        CancelLoading
     }
 }

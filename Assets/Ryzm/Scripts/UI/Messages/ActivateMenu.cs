@@ -29,7 +29,6 @@ namespace Ryzm.UI.Messages
 
         public ActivateMenu(List<MenuType> activatedTypes, bool useActivated = true)
         {
-            // this.type = MenuType.None;
             if(useActivated)
             {
                 this.activatedTypes = new MenuType[activatedTypes.Count];
