@@ -4,9 +4,9 @@ namespace Ryzm.Dragon.Messages
 {
     public class BreedingStatusUpdate : Message
     {
-        public BreedingStatus status;
+        public TransactionStatus status;
 
-        public BreedingStatusUpdate(BreedingStatus status)
+        public BreedingStatusUpdate(TransactionStatus status)
         {
             this.status = status;
         }

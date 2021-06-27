@@ -25,20 +25,32 @@ namespace Ryzm.UI
 
         [Header("Buy Panel")]
         public GameObject buyPanel;
+        public TextMeshProUGUI buyDragonText;
+        public GameObject confirmBreedButton;
+        public GameObject closeBreedingPanelButton;
 
         [Header("Single Dragon")]
         public GameObject singleDragonPanel;
         public GameObject singleDragonResetCameraButton;
+
+        [Header("My Dragons")]
+        public GameObject myDragonsButton;
+
+        [Header("Misc")]
+        public GameObject backButton;
 
         int currentPage = 0;
         bool cameraInitialized;
         List<MenuType> mainMenus = new List<MenuType> {};
         bool menuSetsInitialized;
         int numberOfDragonsOnMarket;
+        bool numberOfDragonsInitialized;
         int maxPages;
         MarketDragonData[] data;
         int previousPage;
         bool dataInitialized;
+        bool cameraZoomed;
+        int dragon2BuyIndex;
 
         public override bool IsActive 
         { 
@@ -57,14 +69,24 @@ namespace Ryzm.UI
                             panel.Deactivate();
                         }
                         buyPanel.SetActive(false);
+                        singleDragonPanel.SetActive(false);
                         loadingPanel.SetActive(true);
+                        myDragonsButton.SetActive(true);
+                        pagePanel.SetActive(true);
 
                         Message.AddListener<DragonMarketResponse>(OnDragonMarketResponse);
                         Message.AddListener<MenuSetResponse>(OnMenuSetResponse);
                         Message.AddListener<NumberOfMarketDragonsResponse>(OnNumberOfMarketDragonsResponse);
                         
                         Message.Send(new DragonMarketRequest(MarketStatus.Start));
-                        Message.Send(new NumberOfMarketDragonsRequest());
+                        if(!numberOfDragonsInitialized)
+                        {
+                            Message.Send(new NumberOfMarketDragonsRequest());
+                        }
+                        else
+                        {
+                            UpdatePagePanel();
+                        }
                         Message.Send(new DragonMarketRequest(currentPage));
 
                         if(!menuSetsInitialized)
@@ -75,7 +97,7 @@ namespace Ryzm.UI
                         if(!cameraInitialized)
                         {
                             cameraInitialized = true;
-                            Message.Send(new MoveCameraRequest(TransformType.Market));
+                            Message.Send(new MoveCameraRequest(CameraTransformType.Market));
                         }
                     }
                     else
@@ -104,7 +126,7 @@ namespace Ryzm.UI
             else if(response.status == MarketStatus.Update)
             {
                 loadingPanel.SetActive(false);
-                data = new MarketDragonData[0];
+                data = new MarketDragonData[response.data.Length];
                 response.data.CopyTo(data, 0);
                 dataInitialized = true;
                 int numPanels = dragonPanels.Count;
@@ -134,6 +156,7 @@ namespace Ryzm.UI
         void OnNumberOfMarketDragonsResponse(NumberOfMarketDragonsResponse response)
         {
             numberOfDragonsOnMarket = response.numberOfDragonsOnMarket;
+            numberOfDragonsInitialized = true;
             UpdatePagePanel();
         }
 
@@ -178,8 +201,88 @@ namespace Ryzm.UI
 
         public void Exit()
         {
-            Message.Send(new DragonMarketRequest(MarketStatus.Exit));
-            Message.Send(new ActivateMenu(activatedTypes: mainMenus));
+            if(cameraZoomed)
+            {
+                Message.Send(new UpdateVisibleMarketDragons());
+                cameraZoomed = false;
+                singleDragonPanel.SetActive(false);
+                pagePanel.SetActive(true);
+                myDragonsButton.SetActive(true);
+                int numDragons = data.Length;
+                for(int i = 0; i < numDragons; i++)
+                {
+                    dragonPanels[i].Activate(data[i]);
+                }
+                Message.Send(new MoveCameraRequest(CameraTransformType.Market));
+            }
+            else
+            {
+                Message.Send(new DragonMarketRequest(MarketStatus.Exit));
+                Message.Send(new ActivateTimedLoadingMenu());
+                Message.Send(new ActivateMenu(activatedTypes: mainMenus));
+            }
+        }
+
+        public void Zoom(int index)
+        {
+            CameraTransformType type = CameraTransformType.MarketDragon1;
+            switch(index)
+            {
+                case 0:
+                    type = CameraTransformType.MarketDragon1;
+                    break;
+                case 1:
+                    type = CameraTransformType.MarketDragon2;
+                    break;
+                case 2:
+                    type = CameraTransformType.MarketDragon3;
+                    break;
+                case 3:
+                    type = CameraTransformType.MarketDragon4;
+                    break;
+                case 4:
+                    type = CameraTransformType.MarketDragon5;
+                    break;
+            }
+            Message.Send(new MoveCameraRequest(type));
+            Message.Send(new UpdateVisibleMarketDragons(index));
+            singleDragonPanel.SetActive(true);
+            pagePanel.SetActive(false);
+            myDragonsButton.SetActive(false);
+            cameraZoomed = true;
+            int numDragons = data.Length;
+            for(int i = 0; i < numDragons; i++)
+            {
+                dragonPanels[i].Deactivate();
+            }
+        }
+
+        public void OpenBuyPanel(int index)
+        {
+            buyPanel.SetActive(true);
+            dragon2BuyIndex = index;
+        }
+
+        public void ConfirmBuy()
+        {
+            // todo: logic dis beeeeotch
+            int dragonId = data[dragon2BuyIndex].data.id;
+            float price = data[dragon2BuyIndex].data.price;
+            Message.Send(new BuyDragonRequest(dragonId, price));
+            buyDragonText.text = "Breeding...";
+            backButton.SetActive(false);
+            confirmBreedButton.SetActive(false);
+            closeBreedingPanelButton.SetActive(false);
+        }
+
+        public void CloseBuyPanel()
+        {
+            buyPanel.SetActive(false);
+        }
+
+        public void OpenMyDragons()
+        {
+
         }
     }
 

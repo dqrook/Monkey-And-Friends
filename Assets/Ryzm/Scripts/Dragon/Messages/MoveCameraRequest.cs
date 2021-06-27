@@ -4,9 +4,9 @@ namespace Ryzm.Dragon.Messages
 {
     public class MoveCameraRequest : Message
     {
-        public TransformType type;
+        public CameraTransformType type;
 
-        public MoveCameraRequest(TransformType type)
+        public MoveCameraRequest(CameraTransformType type)
         {
             this.type = type;
         }

@@ -12,6 +12,7 @@ namespace Ryzm
         public string breedDragonsTxHashPath;
         public string dragonIdsPath;
         public string dragonByIdPath;
+        public string buyDragonTxHashPath;
 
         public string GetDragonsApiUrl
         {
@@ -42,6 +43,14 @@ namespace Ryzm
             get
             {
                 return apiUrl + breedDragonsTxHashPath;
+            }
+        }
+
+        public string BuyDragonTxHashApiUrl
+        {
+            get
+            {
+                return apiUrl + buyDragonTxHashPath;
             }
         }
 

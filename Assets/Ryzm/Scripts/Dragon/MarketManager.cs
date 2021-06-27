@@ -36,6 +36,7 @@ namespace Ryzm.Dragon
             Message.AddListener<DragonsResponse>(OnDragonsResponse);
             Message.AddListener<DragonMarketRequest>(OnDragonMarketRequest);
             Message.AddListener<NumberOfMarketDragonsRequest>(OnNumberOfMarketDragonsRequest);
+            Message.AddListener<UpdateVisibleMarketDragons>(OnUpdateVisibleMarketDragons);
         }
 
         void Start()
@@ -43,6 +44,13 @@ namespace Ryzm.Dragon
             getMarketDragons = null;
             getMarketDragons = GetMarketDragons(true);
             StartCoroutine(getMarketDragons);
+            foreach(MarketDragon dragon in marketDragons)
+            {
+                if(dragon.gameObject.activeSelf)
+                {
+                    dragon.gameObject.SetActive(false);
+                }
+            }
         }
 
         void OnDestroy()
@@ -50,6 +58,7 @@ namespace Ryzm.Dragon
             Message.RemoveListener<DragonsResponse>(OnDragonsResponse);
             Message.RemoveListener<DragonMarketRequest>(OnDragonMarketRequest);
             Message.RemoveListener<NumberOfMarketDragonsRequest>(OnNumberOfMarketDragonsRequest);
+            Message.RemoveListener<UpdateVisibleMarketDragons>(OnUpdateVisibleMarketDragons);
         }
 
         void OnDragonsResponse(DragonsResponse response)
@@ -100,7 +109,7 @@ namespace Ryzm.Dragon
                             isLoading = true;
                             loadingStartDex = startDex;
                             loadingFinDex = finDex;
-                            loadingNumberOfDragons = numberOfDragons;
+                            loadingNumberOfDragons = finDex - startDex + 1 < numberOfDragons ? finDex - startDex + 1 : numberOfDragons;
                         }
                     }
                     else
@@ -109,7 +118,7 @@ namespace Ryzm.Dragon
                         isLoading = true;
                         loadingStartDex = startDex;
                         loadingFinDex = finDex;
-                        loadingNumberOfDragons = numberOfDragons;
+                        loadingNumberOfDragons = finDex - startDex + 1 < numberOfDragons ? finDex - startDex + 1 : numberOfDragons;
                     }
                 }
                 else
@@ -125,6 +134,7 @@ namespace Ryzm.Dragon
             {
                 foreach(MarketDragon dragon in marketDragons)
                 {
+                    dragon.EnableMaterials();
                     dragon.gameObject.SetActive(false);
                 }
                 continueQuery = false;
@@ -140,26 +150,46 @@ namespace Ryzm.Dragon
             Message.Send(new NumberOfMarketDragonsResponse(numberOfDragonsOnMarket));
         }
 
+        void OnUpdateVisibleMarketDragons(UpdateVisibleMarketDragons update)
+        {
+            int numDragons = marketDragons.Count;
+            for(int i = 0; i < numDragons; i++)
+            {
+                if(update.allVisible || update.visibleIndex == i)
+                {
+                    marketDragons[i].EnableMaterials();
+                }
+                else
+                {
+                    marketDragons[i].DisableMaterials();
+                }
+            }
+        }
+
         void UpdateMarketDragonData(int numberOfDragons, int startDex, int finDex)
         {
             MarketDragonData[] allData = GetMarketDragonData();
             MarketDragonData[] data = new MarketDragonData[numberOfDragons];
-            for(int i = startDex; i < finDex; i++)
+            Debug.Log(numberOfDragons + " " + startDex + " " + finDex);
+            for(int i = startDex; i < finDex + 1; i++)
             {
                 data[i - startDex] = allData[i];
             }
             Message.Send(new DragonMarketResponse(MarketStatus.Update, data));
             isLoading = false;
             int max = numberOfDragons < marketDragons.Count ? numberOfDragons : marketDragons.Count;
+            
             for(int i = 0; i < max; i++)
             {
                 marketDragons[i].gameObject.SetActive(true);
+                marketDragons[i].UpdateData(data[i]);
+                marketDragons[i].EnableMaterials();
             }
         }
 
         MarketDragonData[] GetMarketDragonData()
         {
-            MarketDragonData[] data = new MarketDragonData[0];
+            MarketDragonData[] data = new MarketDragonData[allDragonsForSale.Values.Count];
             allDragonsForSale.Values.CopyTo(data, 0);
             return data;
         }
@@ -263,7 +293,7 @@ namespace Ryzm.Dragon
                 index++;
                 yield return null;
             }
-            allDragonsForSale.Add(dragon.data.id, dragon);
+            // allDragonsForSale.Add(dragon.data.id, dragon);
         }
     }
 

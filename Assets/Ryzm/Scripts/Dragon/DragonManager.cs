@@ -30,7 +30,7 @@ namespace Ryzm.Dragon
         string secondaryPublicKey;
         bool breedingDragons;
         IEnumerator breedDragonsTxHash;
-        int dragon1Id;
+        int dragonId;
         int dragon2Id;
         bool initialized;
         int currentNumberOfDragons;
@@ -39,12 +39,14 @@ namespace Ryzm.Dragon
         List<int> initializingDragonIds = new List<int>();
         List<int> initializedDragonIds = new List<int>();
         bool initializingDragons;
+        IEnumerator buyDragonTxHash;
 
         void Awake()
         {
             Message.AddListener<LoginResponse>(OnLoginResponse);
             Message.AddListener<SignMessageResponse>(OnSignMessageResponse);
             Message.AddListener<BreedDragonsRequest>(OnBreedDragonsRequest);
+            Message.AddListener<BuyDragonRequest>(OnBuyDragonRequest);
             Message.AddListener<DragonInitialized>(OnDragonInitialized);
             Message.AddListener<DragonsRequest>(OnDragonsRequest);
         }
@@ -59,6 +61,7 @@ namespace Ryzm.Dragon
             Message.RemoveListener<LoginResponse>(OnLoginResponse);
             Message.RemoveListener<SignMessageResponse>(OnSignMessageResponse);
             Message.RemoveListener<BreedDragonsRequest>(OnBreedDragonsRequest);
+            Message.RemoveListener<BuyDragonRequest>(OnBuyDragonRequest);
             Message.RemoveListener<DragonInitialized>(OnDragonInitialized);
             Message.RemoveListener<DragonsRequest>(OnDragonsRequest);
         }
@@ -121,16 +124,34 @@ namespace Ryzm.Dragon
             currentNumberOfDragons = dragons.Count;
             if(accountName.Length > 0)
             {
-                dragon1Id = request.dragon1Id;
+                dragonId = request.dragon1Id;
                 dragon2Id = request.dragon2Id;
                 // Message.Send(new SignMessageRequest("breedDragons", "Hello World"));
 
                 string url = envs.BreedDragonsTxHashApiUrl;
-                string bodyJsonString = new BreedDragonsTxHashRequest(accountName, dragon1Id, dragon2Id, privateKey, secondaryPublicKey).ToJson();
+                string bodyJsonString = new BreedDragonsTxHashRequest(accountName, dragonId, dragon2Id, privateKey, secondaryPublicKey).ToJson();
                 breedDragonsTxHash = null;
                 breedDragonsTxHash = BreedDragonsTxHash(url, bodyJsonString);
                 StartCoroutine(breedDragonsTxHash);
-                Message.Send(new BreedDragonsResponse(BreedingStatus.Breeding));
+                Message.Send(new BreedDragonsResponse(TransactionStatus.Processing));
+            }
+            else
+            {
+                Message.Send(new BreedDragonsResponse(TransactionStatus.Failed));
+            }
+        }
+
+        void OnBuyDragonRequest(BuyDragonRequest request)
+        {
+            currentNumberOfDragons = dragons.Count;
+            if(accountName.Length > 0)
+            {
+                string url = envs.BuyDragonTxHashApiUrl;
+                string bodyJsonString = new BuyDragonTxHashRequest(accountName, request.dragonId, privateKey, secondaryPublicKey).ToJson();
+                buyDragonTxHash = null;
+                buyDragonTxHash = BuyDragonTxHash(url, bodyJsonString);
+                StartCoroutine(buyDragonTxHash);
+                Message.Send(new BuyDragonResponse(TransactionStatus.Processing));
             }
         }
 
@@ -158,6 +179,17 @@ namespace Ryzm.Dragon
         void OnDragonsRequest(DragonsRequest request)
         {
             Message.Send(new DragonsResponse(dragons.Values.ToList(), request.sender));
+        }
+
+        void SignUrlAndOpen(string res, bool isBreeding)
+        {
+            TxHashResponse response = TxHashResponse.FromJson(res);
+            string signedUrl = nearEnvs.SignTransactionUrl(response.hash);
+            getDragonIds = null;
+            getDragonIds = GetDragonIds(envs.DragonIdsApiUrl(accountName), isBreeding);
+            StartCoroutine(getDragonIds);
+            // Application.OpenURL(signedUrl);
+            RyzmUtils.OpenUrl(signedUrl);
         }
 
         IEnumerator GetDragons(string url, string bodyJsonString)
@@ -200,32 +232,50 @@ namespace Ryzm.Dragon
             if(request.isNetworkError || request.isHttpError)
             {
                 Debug.LogError("ERROR");
-                Message.Send(new BreedDragonsResponse(BreedingStatus.Failed));
+                Message.Send(new BreedDragonsResponse(TransactionStatus.Failed));
                 // todo: handle this case
             }
             else
             {
                 string res = request.downloadHandler.text;
                 Debug.Log("POST SUCCESS " + res);
-                BreedDragonsTxHashResponse response = BreedDragonsTxHashResponse.FromJson(res);
-                string signedUrl = nearEnvs.SignTransactionUrl(response.hash);
-                getDragonIds = null;
-                getDragonIds = GetDragonIds(envs.DragonIdsApiUrl(accountName));
-                StartCoroutine(getDragonIds);
-                // Application.OpenURL(signedUrl);
-                RyzmUtils.OpenUrl(signedUrl);
+                SignUrlAndOpen(request.downloadHandler.text, true);
             }
         }
 
-        IEnumerator GetDragonIds(string url)
+        IEnumerator BuyDragonTxHash(string url, string bodyJsonString)
+        {
+            UnityWebRequest request = RyzmUtils.PostRequest(url, bodyJsonString);
+            yield return request.SendWebRequest();
+            if(request.isNetworkError || request.isHttpError)
+            {
+                Debug.LogError("ERROR");
+                Message.Send(new BuyDragonResponse(TransactionStatus.Failed));
+                // todo: handle this case
+            }
+            else
+            {
+                string res = request.downloadHandler.text;
+                Debug.Log("POST SUCCESS " + res);
+                SignUrlAndOpen(request.downloadHandler.text, false);
+            }
+        }
+
+        IEnumerator GetDragonIds(string url, bool isBreeding)
         {
             UnityWebRequest request = RyzmUtils.GetRequest(url);
             yield return request.SendWebRequest();
             if(request.isNetworkError || request.isHttpError)
             {
                 Debug.LogError("ERROR");
-                Message.Send(new BreedDragonsResponse(BreedingStatus.Failed));
-                // todo: handle this case
+                if(isBreeding)
+                {
+                    Message.Send(new BreedDragonsResponse(TransactionStatus.Failed));
+                }
+                else
+                {
+                    Message.Send(new BuyDragonResponse(TransactionStatus.Failed));
+                }
             }
             else
             {
@@ -253,27 +303,33 @@ namespace Ryzm.Dragon
                         yield return null;
                     }
                     getDragonIds = null;
-                    getDragonIds = GetDragonIds(url);
+                    getDragonIds = GetDragonIds(url, isBreeding);
                     StartCoroutine(getDragonIds);
                 }
                 else
                 {
                     getDragonById = null;
-                    getDragonById = GetDragonById(envs.DragonByIdApiUrl(newId));
+                    getDragonById = GetDragonById(envs.DragonByIdApiUrl(newId), isBreeding);
                     StartCoroutine(getDragonById);
                 }
             }
         }
 
-        IEnumerator GetDragonById(string url)
+        IEnumerator GetDragonById(string url, bool isBreeding)
         {
             UnityWebRequest request = RyzmUtils.GetRequest(url);
             yield return request.SendWebRequest();
             if(request.isNetworkError || request.isHttpError)
             {
                 Debug.LogError("ERROR");
-                Message.Send(new BreedDragonsResponse(BreedingStatus.Failed));
-                // todo: handle this case
+                if(isBreeding)
+                {
+                    Message.Send(new BreedDragonsResponse(TransactionStatus.Failed));
+                }
+                else
+                {
+                    Message.Send(new BuyDragonResponse(TransactionStatus.Failed));
+                }
             }
             else
             {
@@ -288,7 +344,14 @@ namespace Ryzm.Dragon
                 dragons.Add(dragon.data.id, dragon);
                 Message.Send(new DragonsResponse(dragons.Values.ToList(), "newDragon"));
                 dragon.GetTextures();
-                Message.Send(new BreedDragonsResponse(BreedingStatus.Success, dragonRes.id));
+                if(isBreeding)
+                {
+                    Message.Send(new BreedDragonsResponse(TransactionStatus.Success, dragonRes.id));
+                }
+                else
+                {
+
+                }
             }
             breedingDragons = false;
         }
@@ -370,6 +433,28 @@ namespace Ryzm.Dragon
     }
 
     [System.Serializable]
+    public class BuyDragonTxHashRequest
+    {
+        public string accountId;
+        public int id;
+        public string privateKey;
+        public string publicKey;
+
+        public BuyDragonTxHashRequest(string accountId, int id, string privateKey, string publicKey)
+        {
+            this.accountId = accountId;
+            this.id = id;
+            this.privateKey = privateKey;
+            this.publicKey = publicKey;
+        }
+
+        public string ToJson()
+        {
+            return JsonUtility.ToJson(this);
+        } 
+    }
+
+    [System.Serializable]
     public class BreedDragonsPostRequest
     {
         public string message;
@@ -420,13 +505,13 @@ namespace Ryzm.Dragon
     }
 
     [System.Serializable]
-    public class BreedDragonsTxHashResponse
+    public class TxHashResponse
     {
         public string hash;
 
-        public static BreedDragonsTxHashResponse FromJson(string jsonString)
+        public static TxHashResponse FromJson(string jsonString)
         {
-            return JsonUtility.FromJson<BreedDragonsTxHashResponse>(jsonString);
+            return JsonUtility.FromJson<TxHashResponse>(jsonString);
         }
     }
 
@@ -453,9 +538,9 @@ namespace Ryzm.Dragon
         }
     }
 
-    public enum BreedingStatus 
+    public enum TransactionStatus 
     {
-        Breeding,
+        Processing,
         Failed,
         Success
     }

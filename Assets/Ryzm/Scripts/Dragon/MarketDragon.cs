@@ -17,5 +17,15 @@ namespace Ryzm.Dragon
             materials.SetTexture(DragonMaterialType.Horn, data.hornTexture);
             materials.SetTexture(DragonMaterialType.Back, data.backTexture);
         }
+
+        public void EnableMaterials()
+        {
+            materials.Enable();
+        }
+
+        public void DisableMaterials()
+        {
+            materials.Disable();
+        }
     }
 }

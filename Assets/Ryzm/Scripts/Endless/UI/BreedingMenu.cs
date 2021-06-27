@@ -48,9 +48,7 @@ namespace Ryzm.UI
 
         EndlessDragon[] dragons;
         List<MenuType> mainMenus  = new List<MenuType>();
-        Transform camTrans;
         bool initialized;
-        IEnumerator moveCamera;
         bool movingCamera;
         EndlessDragon dragon1;
         EndlessDragon dragon2;
@@ -100,13 +98,11 @@ namespace Ryzm.UI
 
         void Reset()
         {
-            StopAllCoroutines();
             zoomPanel.SetActive(false);
             dragon1Panel.SetActive(false);
             dragon2Panel.SetActive(false);
             breedingPanel.SetActive(false);
             singleDragonPanel.SetActive(false);
-            moveCamera = null;
             initialized = false;
             movingCamera = false;
             breedingPanelText.text = "Are you sure?";
@@ -217,12 +213,12 @@ namespace Ryzm.UI
             if(dragon == 1)
             {
                 dragon1Panel.SetActive(true);
-                Message.Send(new MoveCameraRequest(TransformType.Dragon1));
+                Message.Send(new MoveCameraRequest(CameraTransformType.Dragon1));
             }
             else
             {
                 dragon2Panel.SetActive(true);
-                Message.Send(new MoveCameraRequest(TransformType.Dragon2));
+                Message.Send(new MoveCameraRequest(CameraTransformType.Dragon2));
             }
         }
 
@@ -326,7 +322,7 @@ namespace Ryzm.UI
             dragon1Panel.SetActive(false);
             dragon2Panel.SetActive(false);
             backButton.SetActive(true);
-            Message.Send(new MoveCameraRequest(TransformType.BreedingMenu));
+            Message.Send(new MoveCameraRequest(CameraTransformType.BreedingMenu));
         }
 
         void InitializeCamera()
@@ -334,7 +330,7 @@ namespace Ryzm.UI
             if(!initialized)
             {
                 initialized = true;
-                Message.Send(new MoveCameraRequest(TransformType.BreedingMenu));
+                Message.Send(new MoveCameraRequest(CameraTransformType.BreedingMenu));
             }
         }
 
@@ -370,12 +366,12 @@ namespace Ryzm.UI
 
         void OnBreedDragonsResponse(BreedDragonsResponse response)
         {
-            if(response.status == BreedingStatus.Failed)
+            if(response.status == TransactionStatus.Failed)
             {
                 breedingPanelText.text = "Unable to breed, please try again later";
                 closeBreedingPanelButton.SetActive(true);
             }
-            else if (response.status == BreedingStatus.Success)
+            else if (response.status == TransactionStatus.Success)
             {
                 newDragonId = response.dragonId;
             }
@@ -400,7 +396,7 @@ namespace Ryzm.UI
                         dragon.gameObject.SetActive(false);
                     }
                 }
-                Message.Send(new MoveCameraRequest(TransformType.SingleDragon));
+                Message.Send(new MoveCameraRequest(CameraTransformType.SingleDragon));
             }
         }
 
@@ -408,7 +404,7 @@ namespace Ryzm.UI
         {
             singleDragonPanel.SetActive(false);
             backButton.SetActive(true);
-            Message.Send(new MoveCameraRequest(TransformType.BreedingMenu));
+            Message.Send(new MoveCameraRequest(CameraTransformType.BreedingMenu));
             InitializeDragons();
         }
 

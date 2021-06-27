@@ -63,14 +63,14 @@ namespace Ryzm.UI
             Message.AddListener<ActivateMenu>(OnActivateMenu);
         }
 
-        protected bool ShouldUpdate(bool value)
-        {
-            return !disable && value != _isActive;
-        }
-
         protected virtual void OnDestroy()
         {
             Message.RemoveListener<ActivateMenu>(OnActivateMenu);
+        }
+
+        protected bool ShouldUpdate(bool value)
+        {
+            return !disable && value != _isActive;
         }
 
         protected virtual void OnActivateMenu(ActivateMenu activate)
@@ -202,6 +202,6 @@ namespace Ryzm.UI
         Entry,
         Loading,
         Breeding,
-        SingleDragon
+        DragonMarket
     }
 }

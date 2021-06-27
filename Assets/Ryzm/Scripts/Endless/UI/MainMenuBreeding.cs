@@ -19,6 +19,7 @@ namespace Ryzm.UI
         List<MenuType> breedingMenus = new List<MenuType> {};
         List<MenuType> loginMenus = new List<MenuType> {};
         List<MenuType> mainMenus = new List<MenuType> {};
+        List<MenuType> marketMenus = new List<MenuType> {};
         bool menuSetsInitialized;
 
         public override bool IsActive 
@@ -43,6 +44,7 @@ namespace Ryzm.UI
                             Message.Send(new MenuSetRequest(MenuSet.BreedingMenu));
                             Message.Send(new MenuSetRequest(MenuSet.MainMenu));
                             Message.Send(new MenuSetRequest(MenuSet.LoginMenu));
+                            Message.Send(new MenuSetRequest(MenuSet.MarketMenu));
                         }
                         InitializeCamera();
                     }
@@ -70,7 +72,11 @@ namespace Ryzm.UI
 
         public void OnClickMarket()
         {
-
+            if(IsActive)
+            {
+                Message.Send(new ActivateTimedLoadingMenu(2.5f));
+                Message.Send(new ActivateMenu(activatedTypes: marketMenus));
+            }
         }
 
         public void OnClickBreed()
@@ -111,6 +117,10 @@ namespace Ryzm.UI
             {
                 loginMenus = response.menus;
             }
+            else if(response.set== MenuSet.MarketMenu)
+            {
+                marketMenus = response.menus;
+            }
         }
 
         void InitializeCamera()
@@ -119,7 +129,7 @@ namespace Ryzm.UI
             if(!initialized)
             {
                 initialized = true;
-                Message.Send(new MoveCameraRequest(TransformType.MainMenu));
+                Message.Send(new MoveCameraRequest(CameraTransformType.MainMenu));
             }
         }
     }

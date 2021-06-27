@@ -4,15 +4,15 @@ namespace Ryzm.Dragon.Messages
 {
     public class BreedDragonsResponse : Message
     {
-        public BreedingStatus status;
+        public TransactionStatus status;
         public int dragonId;
 
-        public BreedDragonsResponse(BreedingStatus status)
+        public BreedDragonsResponse(TransactionStatus status)
         {
             this.status = status;
         }
 
-        public BreedDragonsResponse(BreedingStatus status, int dragonId)
+        public BreedDragonsResponse(TransactionStatus status, int dragonId)
         {
             this.status = status;
             this.dragonId = dragonId;

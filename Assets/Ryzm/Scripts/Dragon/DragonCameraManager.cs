@@ -34,6 +34,7 @@ namespace Ryzm.Dragon
 
         void OnMoveCameraRequest(MoveCameraRequest request)
         {
+            Debug.Log(request.type);
             foreach(CameraTransform xform in cameraTransforms)
             {
                 if(xform.type == request.type)
@@ -63,10 +64,10 @@ namespace Ryzm.Dragon
             Quaternion endRot = target.rotation;
             float distance = Vector3.Distance(camTrans.position, endPos);
             float rotDiff = Mathf.Abs(Quaternion.Angle(camTrans.rotation, endRot));
-            while(distance > 0.1f || rotDiff > 1)
+            while(distance > 0.1f || rotDiff > 0.1f)
             {
-                camTrans.position = Vector3.Lerp(camTrans.position, endPos, Time.deltaTime);
-                camTrans.rotation = Quaternion.Lerp(camTrans.rotation, endRot, Time.deltaTime);
+                camTrans.position = Vector3.Lerp(camTrans.position, endPos, Time.deltaTime * 2);
+                camTrans.rotation = Quaternion.Lerp(camTrans.rotation, endRot, Time.deltaTime * 2);
                 distance = Vector3.Distance(camTrans.position, endPos);
                 rotDiff = Mathf.Abs(Quaternion.Angle(camTrans.rotation, endRot));
                 yield return null;
@@ -77,20 +78,25 @@ namespace Ryzm.Dragon
         }
     }
 
-    public enum TransformType
+    public enum CameraTransformType
     {
         MainMenu,
         BreedingMenu,
         Dragon1,
         Dragon2,
         SingleDragon,
-        Market
+        Market,
+        MarketDragon1,
+        MarketDragon2,
+        MarketDragon3,
+        MarketDragon4,
+        MarketDragon5
     }
 
     [System.Serializable]
     public struct CameraTransform
     {
-        public TransformType type;
+        public CameraTransformType type;
         public Transform camTrans;
         public Transform pivot;
     }
