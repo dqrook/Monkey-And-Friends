@@ -71,6 +71,10 @@ namespace Ryzm.Dragon
                 {
                     userDragonsForSale.Add(dragon.data.id, dragon);
                 }
+                if(allDragonsForSale.ContainsKey(dragon.data.id))
+                {
+                    allDragonsForSale[dragon.data.id].isUser = true;
+                }
             }
         }
 
@@ -101,7 +105,8 @@ namespace Ryzm.Dragon
                     {
                         if(finDex < allDragonsForSale.Count)
                         {
-                            UpdateMarketDragonData(numberOfDragons, startDex, finDex);
+                            int _numberOfDragons = finDex - startDex + 1 < numberOfDragons ? finDex - startDex + 1 : numberOfDragons;
+                            UpdateMarketDragonData(_numberOfDragons, startDex, finDex);
                         }
                         else
                         {
@@ -123,7 +128,8 @@ namespace Ryzm.Dragon
                 }
                 else
                 {
-                    UpdateMarketDragonData(numberOfDragons, startDex, finDex);
+                    int _numberOfDragons = finDex - startDex + 1 < numberOfDragons ? finDex - startDex + 1 : numberOfDragons;
+                    UpdateMarketDragonData(_numberOfDragons, startDex, finDex);
                 }
             }
             else if(request.status == MarketStatus.CancelLoading)
@@ -192,11 +198,6 @@ namespace Ryzm.Dragon
             MarketDragonData[] data = new MarketDragonData[allDragonsForSale.Values.Count];
             allDragonsForSale.Values.CopyTo(data, 0);
             return data;
-        }
-
-        void UpdateMarketDragonTextures()
-        {
-
         }
 
         IEnumerator GetMarketDragons(bool getNumberOfDragons)

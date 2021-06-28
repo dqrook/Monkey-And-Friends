@@ -229,7 +229,8 @@ namespace Ryzm.Blockchain
             AccountName = _accountName;
             TempPublicKey = "";
             TempSecretKey = "";
-            Debug.Log("logged in! " + SecretKey);
+            Debug.Log("logged in! SecretKey: " + SecretKey);
+            Debug.Log("logged in! SecondaryPublicKey: " + secondaryPublicKey);
             Message.Send(new LoginResponse(AccountName, envs.LoginUrl(PublicKey), LoginStatus.LoggedIn, SecretKey, secondaryPublicKey));
         }
 

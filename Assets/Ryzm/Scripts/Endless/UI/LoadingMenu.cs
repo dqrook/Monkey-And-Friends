@@ -14,12 +14,14 @@ namespace Ryzm.UI
         {
             base.Awake();
             Message.AddListener<ActivateTimedLoadingMenu>(OnActivateTimedLoadingMenu);
+            Message.AddListener<DeactivateLoadingMenu>(OnDeactivateLoadingMenu);
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
             Message.RemoveListener<ActivateTimedLoadingMenu>(OnActivateTimedLoadingMenu);
+            Message.RemoveListener<DeactivateLoadingMenu>(OnDeactivateLoadingMenu);
         }
 
         protected override void OnActivateMenu(ActivateMenu activate)
@@ -34,10 +36,21 @@ namespace Ryzm.UI
         {
             Debug.Log("u kno i b active lol");
             IsActive = true;
-            timedDeactivate = null;
-            timedDeactivate = TimedDeactivate(activate.timeoutTime);
-            StartCoroutine(timedDeactivate);
             timedLoading = true;
+            if(!activate.infiniteTime)
+            {
+                timedDeactivate = null;
+                timedDeactivate = TimedDeactivate(activate.timeoutTime);
+                StartCoroutine(timedDeactivate);
+            }
+        }
+
+        void OnDeactivateLoadingMenu(DeactivateLoadingMenu deactivate)
+        {
+            if(IsActive)
+            {
+                IsActive = false;
+            }
         }
 
         IEnumerator TimedDeactivate(float timeoutTime)

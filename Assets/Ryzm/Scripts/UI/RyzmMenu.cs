@@ -202,6 +202,7 @@ namespace Ryzm.UI
         Entry,
         Loading,
         Breeding,
-        DragonMarket
+        DragonMarket,
+        SingleDragon
     }
 }

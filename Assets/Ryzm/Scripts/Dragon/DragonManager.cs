@@ -21,7 +21,7 @@ namespace Ryzm.Dragon
         public Dictionary<int, EndlessDragon> dragons = new Dictionary<int, EndlessDragon>();
 
         [Header("Spawns")]
-        public Transform newDragonSpawn;
+        public List<DragonSpawn> dragonSpawns = new List<DragonSpawn>();
 
         IEnumerator getDragons;
         bool gettingDragons;
@@ -40,6 +40,7 @@ namespace Ryzm.Dragon
         List<int> initializedDragonIds = new List<int>();
         bool initializingDragons;
         IEnumerator buyDragonTxHash;
+        int newDragonId;
 
         void Awake()
         {
@@ -49,6 +50,8 @@ namespace Ryzm.Dragon
             Message.AddListener<BuyDragonRequest>(OnBuyDragonRequest);
             Message.AddListener<DragonInitialized>(OnDragonInitialized);
             Message.AddListener<DragonsRequest>(OnDragonsRequest);
+            Message.AddListener<CancelTransaction>(OnCancelTransaction);
+            newDragonId = -1;
         }
 
         void Start()
@@ -64,6 +67,7 @@ namespace Ryzm.Dragon
             Message.RemoveListener<BuyDragonRequest>(OnBuyDragonRequest);
             Message.RemoveListener<DragonInitialized>(OnDragonInitialized);
             Message.RemoveListener<DragonsRequest>(OnDragonsRequest);
+            Message.RemoveListener<CancelTransaction>(OnCancelTransaction);
         }
         
         void OnLoginResponse(LoginResponse response)
@@ -147,7 +151,7 @@ namespace Ryzm.Dragon
             if(accountName.Length > 0)
             {
                 string url = envs.BuyDragonTxHashApiUrl;
-                string bodyJsonString = new BuyDragonTxHashRequest(accountName, request.dragonId, privateKey, secondaryPublicKey).ToJson();
+                string bodyJsonString = new BuyDragonTxHashRequest(accountName, request.dragonId, privateKey, secondaryPublicKey, request.price).ToJson();
                 buyDragonTxHash = null;
                 buyDragonTxHash = BuyDragonTxHash(url, bodyJsonString);
                 StartCoroutine(buyDragonTxHash);
@@ -157,6 +161,7 @@ namespace Ryzm.Dragon
 
         void OnDragonInitialized(DragonInitialized initialized)
         {
+            Debug.Log("new dragon id " + newDragonId);
             if(initializingDragons)
             {
                 if(initializingDragonIds.Contains(initialized.id))
@@ -174,11 +179,39 @@ namespace Ryzm.Dragon
                     initializingDragonIds.Clear();
                 }
             }
+            else if(initialized.id == newDragonId)
+            {
+                EndlessDragon newDragon = dragons[newDragonId];
+                if(newDragon != null)
+                {
+                    foreach(DragonSpawn spawn in dragonSpawns)
+                    {
+                        if(spawn.type == DragonSpawnType.SingleDragon)
+                        {
+                            newDragon.transform.position = spawn.spawn.position;
+                            newDragon.transform.rotation = spawn.spawn.rotation;
+                            break;
+                        }
+                    }
+                    foreach(EndlessDragon dragon in dragons.Values)
+                    {
+                        dragon.gameObject.SetActive(dragon.data.id == newDragonId);
+                    }
+                    Debug.Log("doing it ya know");
+                    Message.Send(new SingleDragonUpdate(newDragon));
+                }
+                newDragonId = -1;
+            }
         }
 
         void OnDragonsRequest(DragonsRequest request)
         {
             Message.Send(new DragonsResponse(dragons.Values.ToList(), request.sender));
+        }
+
+        void OnCancelTransaction(CancelTransaction cancel)
+        {
+            StopAllCoroutines();
         }
 
         void SignUrlAndOpen(string res, bool isBreeding)
@@ -246,6 +279,7 @@ namespace Ryzm.Dragon
         IEnumerator BuyDragonTxHash(string url, string bodyJsonString)
         {
             UnityWebRequest request = RyzmUtils.PostRequest(url, bodyJsonString);
+            Debug.Log(url + " " + bodyJsonString);
             yield return request.SendWebRequest();
             if(request.isNetworkError || request.isHttpError)
             {
@@ -350,7 +384,9 @@ namespace Ryzm.Dragon
                 }
                 else
                 {
-
+                    Debug.Log("got new dragon lol");
+                    newDragonId = dragonRes.id;
+                    Message.Send(new BuyDragonResponse(TransactionStatus.Success, dragonRes.id));
                 }
             }
             breedingDragons = false;
@@ -439,13 +475,15 @@ namespace Ryzm.Dragon
         public int id;
         public string privateKey;
         public string publicKey;
+        public float price;
 
-        public BuyDragonTxHashRequest(string accountId, int id, string privateKey, string publicKey)
+        public BuyDragonTxHashRequest(string accountId, int id, string privateKey, string publicKey, float price)
         {
             this.accountId = accountId;
             this.id = id;
             this.privateKey = privateKey;
             this.publicKey = publicKey;
+            this.price = price;
         }
 
         public string ToJson()
@@ -536,6 +574,18 @@ namespace Ryzm.Dragon
             this.type = type;
             this.url = url;
         }
+    }
+
+    [System.Serializable]
+    public struct DragonSpawn
+    {
+        public DragonSpawnType type;
+        public Transform spawn;
+    }
+
+    public enum DragonSpawnType
+    {
+        SingleDragon
     }
 
     public enum TransactionStatus 

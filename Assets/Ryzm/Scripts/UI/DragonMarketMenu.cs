@@ -20,14 +20,16 @@ namespace Ryzm.UI
         [Header("Page Panel")]
         public GameObject pagePanel;
         public TextMeshProUGUI pageText;
+        public TextMeshProUGUI noDragonsText;
         public GameObject nextPageButton;
         public GameObject previousPageButton;
 
         [Header("Buy Panel")]
         public GameObject buyPanel;
         public TextMeshProUGUI buyDragonText;
-        public GameObject confirmBreedButton;
-        public GameObject closeBreedingPanelButton;
+        public GameObject confirmBuyButton;
+        public GameObject closeBuyPanelButton;
+        public GameObject cancelBuyButton;
 
         [Header("Single Dragon")]
         public GameObject singleDragonPanel;
@@ -42,6 +44,7 @@ namespace Ryzm.UI
         int currentPage = 0;
         bool cameraInitialized;
         List<MenuType> mainMenus = new List<MenuType> {};
+        List<MenuType> singleDragonMenus = new List<MenuType> {};
         bool menuSetsInitialized;
         int numberOfDragonsOnMarket;
         bool numberOfDragonsInitialized;
@@ -77,6 +80,7 @@ namespace Ryzm.UI
                         Message.AddListener<DragonMarketResponse>(OnDragonMarketResponse);
                         Message.AddListener<MenuSetResponse>(OnMenuSetResponse);
                         Message.AddListener<NumberOfMarketDragonsResponse>(OnNumberOfMarketDragonsResponse);
+                        Message.AddListener<BuyDragonResponse>(OnBuyDragonResponse);
                         
                         Message.Send(new DragonMarketRequest(MarketStatus.Start));
                         if(!numberOfDragonsInitialized)
@@ -93,6 +97,7 @@ namespace Ryzm.UI
                         {
                             menuSetsInitialized = true;
                             Message.Send(new MenuSetRequest(MenuSet.MainMenu));
+                            Message.Send(new MenuSetRequest(MenuSet.SingleDragonMenu));
                         }
                         if(!cameraInitialized)
                         {
@@ -111,6 +116,7 @@ namespace Ryzm.UI
                         Message.RemoveListener<DragonMarketResponse>(OnDragonMarketResponse);
                         Message.RemoveListener<MenuSetResponse>(OnMenuSetResponse);
                         Message.RemoveListener<NumberOfMarketDragonsResponse>(OnNumberOfMarketDragonsResponse);
+                        Message.RemoveListener<BuyDragonResponse>(OnBuyDragonResponse);
                     }
                     base.IsActive = value;
                 }
@@ -121,7 +127,14 @@ namespace Ryzm.UI
         {
             if(response.status == MarketStatus.Loading)
             {
-                loadingPanel.SetActive(true);
+                if(!numberOfDragonsInitialized || numberOfDragonsOnMarket > 0)
+                {
+                    loadingPanel.SetActive(true);
+                }
+                else
+                {
+                    loadingPanel.SetActive(false);
+                }
             }
             else if(response.status == MarketStatus.Update)
             {
@@ -151,6 +164,10 @@ namespace Ryzm.UI
             {
                 mainMenus = response.menus;
             }
+            else if(response.set == MenuSet.SingleDragonMenu)
+            {
+                singleDragonMenus = response.menus;
+            }
         }
 
         void OnNumberOfMarketDragonsResponse(NumberOfMarketDragonsResponse response)
@@ -160,13 +177,41 @@ namespace Ryzm.UI
             UpdatePagePanel();
         }
 
+        void OnBuyDragonResponse(BuyDragonResponse response)
+        {
+            if(response.status == TransactionStatus.Failed)
+            {
+                buyDragonText.text = "Unable to breed, please try again later";
+                closeBuyPanelButton.SetActive(true);
+            }
+            else if(response.status == TransactionStatus.Success)
+            {
+                dragon2BuyIndex = response.dragonId;
+                Message.Send(new DragonMarketRequest(MarketStatus.Exit));
+                Message.Send(new ActivateTimedLoadingMenu(true));
+                Message.Send(new ActivateMenu(activatedTypes: singleDragonMenus));
+            }
+        }
+
         void UpdatePagePanel()
         {
-            maxPages = Mathf.CeilToInt(numberOfDragonsOnMarket / 5);
-            maxPages = maxPages > 0 ? maxPages : 1;
-            pageText.text = (currentPage + 1).ToString() + "/" + maxPages.ToString();
-            previousPageButton.SetActive(currentPage > 0);
-            nextPageButton.SetActive(currentPage < maxPages - 1);
+            if(numberOfDragonsOnMarket == 0)
+            {
+                noDragonsText.gameObject.SetActive(true);
+                pageText.gameObject.SetActive(false);
+                previousPageButton.SetActive(false);
+                nextPageButton.SetActive(false);
+            }
+            else
+            {
+                noDragonsText.gameObject.SetActive(false);
+                pageText.gameObject.SetActive(true);
+                maxPages = Mathf.CeilToInt(numberOfDragonsOnMarket / 5);
+                maxPages = maxPages > 0 ? maxPages : 1;
+                pageText.text = (currentPage + 1).ToString() + "/" + maxPages.ToString();
+                previousPageButton.SetActive(currentPage > 0);
+                nextPageButton.SetActive(currentPage < maxPages - 1);
+            }
         }
 
         public void CancelLoading()
@@ -218,7 +263,7 @@ namespace Ryzm.UI
             else
             {
                 Message.Send(new DragonMarketRequest(MarketStatus.Exit));
-                Message.Send(new ActivateTimedLoadingMenu());
+                Message.Send(new ActivateTimedLoadingMenu(2.5f));
                 Message.Send(new ActivateMenu(activatedTypes: mainMenus));
             }
         }
@@ -259,20 +304,29 @@ namespace Ryzm.UI
 
         public void OpenBuyPanel(int index)
         {
+            confirmBuyButton.SetActive(true);
+            closeBuyPanelButton.SetActive(true);
+            cancelBuyButton.SetActive(false);
             buyPanel.SetActive(true);
             dragon2BuyIndex = index;
         }
 
         public void ConfirmBuy()
         {
-            // todo: logic dis beeeeotch
             int dragonId = data[dragon2BuyIndex].data.id;
             float price = data[dragon2BuyIndex].data.price;
             Message.Send(new BuyDragonRequest(dragonId, price));
-            buyDragonText.text = "Breeding...";
+            buyDragonText.text = "Authorizing Transaction...";
             backButton.SetActive(false);
-            confirmBreedButton.SetActive(false);
-            closeBreedingPanelButton.SetActive(false);
+            confirmBuyButton.SetActive(false);
+            closeBuyPanelButton.SetActive(false);
+            cancelBuyButton.SetActive(true);
+        }
+
+        public void CancelBuy()
+        {
+            Message.Send(new CancelTransaction());
+            CloseBuyPanel();
         }
 
         public void CloseBuyPanel()
@@ -296,10 +350,17 @@ namespace Ryzm.UI
 
         public void Activate(MarketDragonData data)
         {
-            panel.SetActive(true);
-            zoomButton.SetActive(true);
-            priceText.text = data.isUser ? "Your Dragon" : data.data.price + " Near";
-            buyButton.SetActive(!data.isUser);
+            if(data != null)
+            {
+                panel.SetActive(true);
+                zoomButton.SetActive(true);
+                priceText.text = data.isUser ? "Your Dragon" : data.data.price + " Near";
+                buyButton.SetActive(!data.isUser);
+            }
+            else
+            {
+                Deactivate();
+            }
         }
 
         public void Deactivate()
