@@ -25,6 +25,30 @@ namespace Ryzm.EndlessRunner
         IEnumerator getDragonTexture;
         bool isAttacking;
 
+        public bool ForSale
+        {
+            get
+            {
+                if(data == null)
+                {
+                    return false;
+                }
+                return data.price > 0;
+            }
+        }
+
+        public float Price
+        {
+            get
+            {
+                if(data == null)
+                {
+                    return 0;
+                }
+                return data.price;
+            }
+        }
+
         protected override void Awake()
         {
             base.Awake();

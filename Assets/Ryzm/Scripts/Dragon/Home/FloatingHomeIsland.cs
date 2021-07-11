@@ -10,7 +10,7 @@ namespace Ryzm.Dragon
     public class FloatingHomeIsland : MonoBehaviour
     {
         public List<DragonHomeSpawn> homeSpawns;
-        // List<EndlessDragon> dragons = new List<EndlessDragon>();
+        
         EndlessDragon[] dragons = new EndlessDragon[0];
 
         void Awake()
@@ -30,25 +30,11 @@ namespace Ryzm.Dragon
             if(response.sender == "all")
             {
                 dragons = response.dragons;
-                // int dex = 0;
-                // dragons = new EndlessDragon[response.dragons.Count];
-                // foreach(EndlessDragon dragon in response.dragons)
-                // {
-                //     dragons[dex] = dragon;
-                //     dex++;
-                // }
                 MoveDragons();
             }
-            else if(response.sender == "newDragon")
+            else if(response.sender == "newDragon" || response.sender == "marketUpdate")
             {
                 dragons = response.dragons;
-                // int dex = 0;
-                // dragons = new EndlessDragon[response.dragons.Count];
-                // foreach(EndlessDragon dragon in response.dragons)
-                // {
-                //     dragons[dex] = dragon;
-                //     dex++;
-                // }
             }
         }
 

@@ -73,7 +73,14 @@ namespace Ryzm.Dragon
                 }
                 if(allDragonsForSale.ContainsKey(dragon.data.id))
                 {
-                    allDragonsForSale[dragon.data.id].isUser = true;
+                    if(dragon.data.price > 0)
+                    {
+                        allDragonsForSale[dragon.data.id].isUser = true;
+                    }
+                    else
+                    {
+                        allDragonsForSale.Remove(dragon.data.id);
+                    }
                 }
             }
         }

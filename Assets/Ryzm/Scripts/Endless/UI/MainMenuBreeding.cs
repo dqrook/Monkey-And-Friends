@@ -20,6 +20,7 @@ namespace Ryzm.UI
         List<MenuType> loginMenus = new List<MenuType> {};
         List<MenuType> mainMenus = new List<MenuType> {};
         List<MenuType> marketMenus = new List<MenuType> {};
+        List<MenuType> myDragonsMenu = new List<MenuType> {};
         bool menuSetsInitialized;
 
         public override bool IsActive 
@@ -45,6 +46,7 @@ namespace Ryzm.UI
                             Message.Send(new MenuSetRequest(MenuSet.MainMenu));
                             Message.Send(new MenuSetRequest(MenuSet.LoginMenu));
                             Message.Send(new MenuSetRequest(MenuSet.MarketMenu));
+                            Message.Send(new MenuSetRequest(MenuSet.MyDragonsMenu));
                         }
                         InitializeCamera();
                     }
@@ -76,6 +78,7 @@ namespace Ryzm.UI
             {
                 Message.Send(new ActivateTimedLoadingMenu(2.5f));
                 Message.Send(new ActivateMenu(activatedTypes: marketMenus));
+                Message.Send(new PreviousMenusUpdate(MenuSet.MainMenu));
             }
         }
 
@@ -83,7 +86,18 @@ namespace Ryzm.UI
         {
             if(IsActive)
             {
+                Message.Send(new ActivateTimedLoadingMenu(1.5f));
                 Message.Send(new ActivateMenu(activatedTypes: breedingMenus));
+            }
+        }
+
+        public void OnClickMyDragons()
+        {
+            Debug.Log("on click my dragons");
+            if(IsActive)
+            {
+                Message.Send(new ActivateTimedLoadingMenu(1.5f));
+                Message.Send(new ActivateMenu(activatedTypes: myDragonsMenu));
             }
         }
 
@@ -120,6 +134,10 @@ namespace Ryzm.UI
             else if(response.set== MenuSet.MarketMenu)
             {
                 marketMenus = response.menus;
+            }
+            else if(response.set == MenuSet.MyDragonsMenu)
+            {
+                myDragonsMenu = response.menus;
             }
         }
 

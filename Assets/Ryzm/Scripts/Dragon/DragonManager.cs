@@ -17,7 +17,6 @@ namespace Ryzm.Dragon
         public NearEnvs nearEnvs;
         public Envs envs;
         public DragonPrefabs prefabs;
-        public List<DragonResponse> dragonResponses = new List<DragonResponse>();
         public Dictionary<int, EndlessDragon> dragons = new Dictionary<int, EndlessDragon>();
 
         [Header("Spawns")]
@@ -41,6 +40,8 @@ namespace Ryzm.Dragon
         bool initializingDragons;
         IEnumerator buyDragonTxHash;
         int newDragonId;
+        IEnumerator addDragonToMarket;
+        IEnumerator removeDragonFromMarket;
 
         void Awake()
         {
@@ -51,6 +52,9 @@ namespace Ryzm.Dragon
             Message.AddListener<DragonInitialized>(OnDragonInitialized);
             Message.AddListener<DragonsRequest>(OnDragonsRequest);
             Message.AddListener<CancelTransaction>(OnCancelTransaction);
+            Message.AddListener<DragonTransformUpdate>(OnDragonTransformUpdate);
+            Message.AddListener<AddDragonToMarketRequest>(OnAddDragonToMarketRequest);
+            Message.AddListener<RemoveDragonFromMarketRequest>(OnRemoveDragonFromMarketRequest);
             newDragonId = -1;
         }
 
@@ -68,6 +72,9 @@ namespace Ryzm.Dragon
             Message.RemoveListener<DragonInitialized>(OnDragonInitialized);
             Message.RemoveListener<DragonsRequest>(OnDragonsRequest);
             Message.RemoveListener<CancelTransaction>(OnCancelTransaction);
+            Message.RemoveListener<DragonTransformUpdate>(OnDragonTransformUpdate);
+            Message.RemoveListener<AddDragonToMarketRequest>(OnAddDragonToMarketRequest);
+            Message.RemoveListener<RemoveDragonFromMarketRequest>(OnRemoveDragonFromMarketRequest);
         }
         
         void OnLoginResponse(LoginResponse response)
@@ -96,7 +103,6 @@ namespace Ryzm.Dragon
                     Destroy(dragon.gameObject);
                 }
                 dragons.Clear();
-                dragonResponses.Clear();
                 Message.Send(new DragonsResponse(dragons.Values.ToList(), "all"));
             }
         }
@@ -214,6 +220,58 @@ namespace Ryzm.Dragon
             StopAllCoroutines();
         }
 
+        void OnDragonTransformUpdate(DragonTransformUpdate update)
+        {
+            if(dragons.ContainsKey(update.dragonId))
+            {
+                EndlessDragon newDragon = dragons[update.dragonId];
+                foreach(DragonSpawn spawn in dragonSpawns)
+                {
+                    if(spawn.type == update.spawnType)
+                    {
+                        newDragon.transform.position = spawn.spawn.position;
+                        newDragon.transform.rotation = spawn.spawn.rotation;
+                        break;
+                    }
+                }
+            }
+        }
+
+        void OnAddDragonToMarketRequest(AddDragonToMarketRequest request)
+        {
+            if(dragons.ContainsKey(request.dragonId))
+            {
+                string bodyJsonString = new AddDragonToMarketPostRequest(accountName, request.dragonId, privateKey, request.price).ToJson();
+                string url = envs.AddDragonToMarketApiUrl;
+                addDragonToMarket = null;
+                Debug.Log(url + " " + bodyJsonString);
+                addDragonToMarket = AddDragonToMarket(url, bodyJsonString, request.dragonId, request.price);
+                StartCoroutine(addDragonToMarket);
+                Message.Send(new AddDragonToMarketResponse(TransactionStatus.Processing));
+            }
+            else
+            {
+                Message.Send(new AddDragonToMarketResponse(TransactionStatus.Failed));
+            }
+        }
+
+        void OnRemoveDragonFromMarketRequest(RemoveDragonFromMarketRequest request)
+        {
+            if(dragons.ContainsKey(request.dragonId))
+            {
+                string bodyJsonString = new RemoveDragonFromMarketPostRequest(accountName, request.dragonId, privateKey).ToJson();
+                string url = envs.RemoveDragonFromMarketApiUrl;
+                removeDragonFromMarket = null;
+                removeDragonFromMarket = RemoveDragonFromMarket(url, bodyJsonString, request.dragonId);
+                StartCoroutine(removeDragonFromMarket);
+                Message.Send(new RemoveDragonFromMarketResponse(TransactionStatus.Processing));
+            }
+            else
+            {
+                Message.Send(new RemoveDragonFromMarketResponse(TransactionStatus.Failed));
+            }
+        }
+
         void SignUrlAndOpen(string res, bool isBreeding)
         {
             TxHashResponse response = TxHashResponse.FromJson(res);
@@ -240,17 +298,16 @@ namespace Ryzm.Dragon
                 string res = request.downloadHandler.text;
                 Debug.Log("POST SUCCESS " + res);
                 GetDragonsPostResponse response = GetDragonsPostResponse.FromJson(res);
-                dragonResponses = response.dragons;
                 initializingDragons = true;
-                foreach(DragonResponse dragonRes in dragonResponses)
+                foreach(DragonResponse dragonRes in response.dragons)
                 {
                     GameObject go = GameObject.Instantiate(prefabs.GetPrefabByHornType(dragonRes.hornType).dragon);
                     EndlessDragon dragon = go.GetComponent<EndlessDragon>();
-                    dragon.DisableMaterials();
+                    // dragon.DisableMaterials();
                     dragon.data = dragonRes;
                     dragons.Add(dragon.data.id, dragon);
                     initializingDragonIds.Add(dragon.data.id);
-                    dragon.GetTextures();
+                    // dragon.GetTextures();
                 }
                 Message.Send(new DragonsResponse(dragons.Values.ToList(), "all"));
             }
@@ -390,6 +447,60 @@ namespace Ryzm.Dragon
                 }
             }
             breedingDragons = false;
+        }
+
+        IEnumerator AddDragonToMarket(string url, string bodyJsonString, int dragonId, float price)
+        {
+            UnityWebRequest request = RyzmUtils.PostRequest(url, bodyJsonString);
+            yield return request.SendWebRequest();
+            if(request.isNetworkError || request.isHttpError)
+            {
+                Debug.LogError("ERROR");
+                Message.Send(new AddDragonToMarketResponse(TransactionStatus.Failed));
+            }
+            else
+            {
+                string res = request.downloadHandler.text;
+                Debug.Log("POST SUCCESS " + res);
+                AddDragonToMarketPostResponse response = AddDragonToMarketPostResponse.FromJson(res);
+                if(response.isSuccess)
+                {
+                    dragons[dragonId].data.price = price;
+                    Message.Send(new DragonsResponse(dragons.Values.ToList(), "marketUpdate"));
+                    Message.Send(new AddDragonToMarketResponse(TransactionStatus.Success, dragonId, price));
+                }
+                else
+                {
+                    Message.Send(new AddDragonToMarketResponse(TransactionStatus.Failed));
+                }
+            }
+        }
+
+        IEnumerator RemoveDragonFromMarket(string url, string bodyJsonString, int dragonId)
+        {
+            UnityWebRequest request = RyzmUtils.PostRequest(url, bodyJsonString);
+            yield return request.SendWebRequest();
+            if(request.isNetworkError || request.isHttpError)
+            {
+                Debug.LogError("ERROR");
+                Message.Send(new RemoveDragonFromMarketResponse(TransactionStatus.Failed));
+            }
+            else
+            {
+                string res = request.downloadHandler.text;
+                Debug.Log("POST SUCCESS " + res);
+                RemoveDragonFromMarketPostResponse response = RemoveDragonFromMarketPostResponse.FromJson(res);
+                if(response.isSuccess)
+                {
+                    dragons[dragonId].data.price = 0;
+                    Message.Send(new DragonsResponse(dragons.Values.ToList(), "marketUpdate"));
+                    Message.Send(new RemoveDragonFromMarketResponse(TransactionStatus.Success, dragonId));
+                }
+                else
+                {
+                    Message.Send(new RemoveDragonFromMarketResponse(TransactionStatus.Failed));
+                }
+            }
         }
     }
 
@@ -561,6 +672,70 @@ namespace Ryzm.Dragon
         public static BreedDragonsPostResponse FromJson(string jsonString)
         {
             return JsonUtility.FromJson<BreedDragonsPostResponse>(jsonString);
+        }
+    }
+
+    [System.Serializable]
+    public class AddDragonToMarketPostRequest
+    {
+        public string accountId;
+        public int id;
+        public string privateKey;
+        public float price;
+
+        public AddDragonToMarketPostRequest(string accountId, int id, string privateKey, float price)
+        {
+            this.accountId = accountId;
+            this.id = id;
+            this.privateKey = privateKey;
+            this.price = price;
+        }
+
+        public string ToJson()
+        {
+            return JsonUtility.ToJson(this);
+        } 
+    }
+
+    [System.Serializable]
+    public class RemoveDragonFromMarketPostRequest
+    {
+        public string accountId;
+        public int id;
+        public string privateKey;
+
+        public RemoveDragonFromMarketPostRequest(string accountId, int id, string privateKey)
+        {
+            this.accountId = accountId;
+            this.id = id;
+            this.privateKey = privateKey;
+        }
+
+        public string ToJson()
+        {
+            return JsonUtility.ToJson(this);
+        } 
+    }
+
+    [System.Serializable]
+    public class AddDragonToMarketPostResponse
+    {
+        public bool isSuccess;
+
+        public static AddDragonToMarketPostResponse FromJson(string jsonString)
+        {
+            return JsonUtility.FromJson<AddDragonToMarketPostResponse>(jsonString);
+        }
+    } 
+
+    [System.Serializable]
+    public class RemoveDragonFromMarketPostResponse
+    {
+        public bool isSuccess;
+
+        public static RemoveDragonFromMarketPostResponse FromJson(string jsonString)
+        {
+            return JsonUtility.FromJson<RemoveDragonFromMarketPostResponse>(jsonString);
         }
     }
 

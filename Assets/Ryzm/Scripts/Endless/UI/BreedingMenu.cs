@@ -117,13 +117,6 @@ namespace Ryzm.UI
             {
                 dragons = response.dragons;
                 InitializeDragons();
-                // InitializeMenus();
-                // if(dragons.Count > 1)
-                // {
-                //     dragon1 = dragons[0];
-                //     dragon2 = dragons[1];
-                //     UpdateDragons();
-                // }
             }
             else if(response.sender == "newDragon")
             {
@@ -410,6 +403,7 @@ namespace Ryzm.UI
 
         public void ExitMenu()
         {
+            Message.Send(new ActivateTimedLoadingMenu(1.5f));
             Message.Send(new ActivateMenu(activatedTypes: mainMenus));
         }
     }

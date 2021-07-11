@@ -263,6 +263,7 @@ namespace Ryzm.Blockchain
 
         IEnumerator _GetAccessKeys(string url, string bodyJsonString, string _accountName)
         {
+            Debug.Log(url + " " + bodyJsonString + " " + _accountName);
             fetchingKeys = true;
             UnityWebRequest request = RyzmUtils.PostRequest(url, bodyJsonString);
             yield return request.SendWebRequest();

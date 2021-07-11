@@ -99,6 +99,7 @@ namespace Ryzm.UI
         LoginMenu,
         BreedingMenu,
         MarketMenu,
-        SingleDragonMenu
+        SingleDragonMenu,
+        MyDragonsMenu
     }
 }
