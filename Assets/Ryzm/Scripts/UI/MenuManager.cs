@@ -47,6 +47,7 @@ namespace Ryzm.UI
             }
             status = response.status;
             initializedGame = true;
+            Debug.Log("game status response " + status);
             if(response.status == GameStatus.MainMenu)
             {
                 ActivateMenus(menuSets.GetMenuTypes(MenuSet.MainMenu));

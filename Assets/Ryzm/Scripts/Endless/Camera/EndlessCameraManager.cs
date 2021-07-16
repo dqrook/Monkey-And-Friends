@@ -31,22 +31,22 @@ namespace Ryzm.EndlessRunner
         void OnGameStatusResponse(GameStatusResponse response)
         {
             gameStatus = response.status;
-            // if(gameStatus == GameStatus.MainMenu)
-            // {
-            //     cameraTrans.position = startTransform.position;
-            //     cameraTrans.rotation = startTransform.rotation;
-            // }
-            // else if(gameStatus == GameStatus.Starting)
-            // {
-            //     rotateCamera = null;
-            //     rotateCamera = RotateCamera(endTransform);
-            //     StartCoroutine(rotateCamera);
-            // }
-            // else if(gameStatus == GameStatus.Restart)
-            // {
-            //     cameraTrans.position = startTransform.position;
-            //     cameraTrans.rotation = startTransform.rotation;
-            // }
+            if(gameStatus == GameStatus.MainMenu)
+            {
+                cameraTrans.position = startTransform.position;
+                cameraTrans.rotation = startTransform.rotation;
+            }
+            else if(gameStatus == GameStatus.Starting)
+            {
+                rotateCamera = null;
+                rotateCamera = RotateCamera(endTransform);
+                StartCoroutine(rotateCamera);
+            }
+            else if(gameStatus == GameStatus.Restart)
+            {
+                cameraTrans.position = startTransform.position;
+                cameraTrans.rotation = startTransform.rotation;
+            }
         }
 
         void OnCameraRequest(CameraRequest request)

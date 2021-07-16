@@ -25,8 +25,8 @@ namespace Ryzm.EndlessRunner
         public Transform position1;
         public Transform position2;
         
-        [HideInInspector]
-        public bool isLastSection;
+        // [HideInInspector]
+        public int rowId;
 
         
         List<BarrierType> _possibleBarrierTypes = new List<BarrierType>();
@@ -63,24 +63,23 @@ namespace Ryzm.EndlessRunner
             }
         }
 
-        protected override void OnDisable()
-        {
-            isLastSection = false;
-            // Debug.Log(gameObject.name + " deactivated");
-        }
+        protected override void OnDisable() {}
 
         public virtual void EnterSection()
         {
-            Message.Send(new CurrentSectionChange(gameObject));
+            Message.Send(new CurrentSectionChange(gameObject, rowId));
         }
 
         public virtual void ExitSection()
         {
-            if(isLastSection)
-            {
-                Message.Send(new CreateSectionRow());
-            }
+            Debug.Log("exiting section " + rowId);
+            // rowId = 0;
             deactivate.Deactivate();
+        }
+
+        public void CancelDeactivation()
+        {
+            deactivate.CancelDeactivation();
         }
 
         public virtual Transform NextSectionSpawn()
@@ -231,6 +230,7 @@ namespace Ryzm.EndlessRunner
         TSectionGrass1,
         LeftTurnGrass1,
         RightTurnGrass1,
-        LeftTurnBeach1
+        LeftTurnBeach1,
+        FloatingTree
     }
 }

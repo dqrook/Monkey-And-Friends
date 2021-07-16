@@ -34,7 +34,7 @@ namespace Ryzm.EndlessRunner
         void OnUpdateControllerMode(UpdateControllerMode update)
         {
             ShoutMode(update.mode);
-            if(update.mode == ControllerMode.Dragon)
+            if(update.mode == ControllerMode.MonkeyDragon)
             {
                 monkey.RideDragon();
             }
@@ -55,7 +55,8 @@ namespace Ryzm.EndlessRunner
 	public enum ControllerMode
 	{
 		Monkey,
-		Dragon,
+		MonkeyDragon,
+        Dragon,
         None
 	}
 }

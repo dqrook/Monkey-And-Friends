@@ -80,7 +80,7 @@ namespace Ryzm.EndlessRunner
 
             difference = Vector3.Distance(monkeyTrans.position, finalPos);
             monkeyTrans.parent = monkeyPos;
-            Message.Send(new UpdateControllerMode(ControllerMode.Dragon));
+            Message.Send(new UpdateControllerMode(ControllerMode.MonkeyDragon));
             while(difference > 0.01f)
             {
                 monkeyTrans.rotation = Quaternion.Lerp(monkeyTrans.rotation, monkeyPos.rotation, 5 * Time.deltaTime);

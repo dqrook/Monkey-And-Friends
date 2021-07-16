@@ -11,9 +11,29 @@ namespace Ryzm.EndlessRunner
         // also have a single EndlessTurnSection (which will inherit from EndlessSection)
         public EndlessSection turnSection;
         public List<GameObject> environments = new List<GameObject>();
+        public int rowId;
+
+        protected virtual void CreateRowId()
+        {
+            rowId = Random.Range(1, 10000);
+        }
+
+        protected virtual void UpdateSectionsRowId()
+        {
+            Debug.Log("rowId " + rowId);
+            foreach(EndlessSection section in sections)
+            {
+                section.rowId = rowId;
+            }
+            if(turnSection != null)
+            {
+                turnSection.rowId = rowId;
+            }
+        }
 
         public virtual void Initialize(int numberOfSections)
         {
+            CreateRowId();
             Transform trans = gameObject.transform;
 
             // only create sections if none provided
@@ -57,12 +77,8 @@ namespace Ryzm.EndlessRunner
                 CreateSection(trans, true, turnSection.gameObject);
             }
 
-            if(turnSection == null)
-            {
-                sections[sections.Count - 1].isLastSection = true;
-            }
-
             ChooseEnvironment();
+            UpdateSectionsRowId();
         }
 
         protected void PlaceBarriers()
@@ -73,6 +89,14 @@ namespace Ryzm.EndlessRunner
                 {
                     CreateBarrier(section);
                 }
+            }
+        }
+
+        protected void PlaceSingleBarrier(EndlessSection section)
+        {
+            if(CanPlaceBarrier(section.barrierLikelihood))
+            {
+                CreateBarrier(section);
             }
         }
 

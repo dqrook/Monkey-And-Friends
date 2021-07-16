@@ -12,6 +12,10 @@ namespace Ryzm.EndlessRunner
         public RuntimeAnimatorController animatorController;
         public float forwardSpeed = 10;
 		public Animator animator;
+        public Collider playerCollider;
+        public Transform rootTransform;
+        public float distanceToGround = 0.5f;
+		public LayerMask groundLayer;
 
         #region Events
         public delegate void StartTouch(Vector2 position, float time);
@@ -20,6 +24,7 @@ namespace Ryzm.EndlessRunner
         public event EndTouch OnEndTouch;
         #endregion
 
+        protected Rigidbody rb;
 		protected Player playerInput;
 		protected Vector3 move;
 		protected Transform trans;
@@ -39,6 +44,8 @@ namespace Ryzm.EndlessRunner
 		protected ControllerMode mode;
         protected Camera mainCamera;
         protected bool inSlide;
+        protected RaycastHit hit;
+        Ray checkGround;
 
         public int CurrentPosition
         {
@@ -69,7 +76,11 @@ namespace Ryzm.EndlessRunner
 		protected virtual void Awake()
 		{
             trans = GetComponent<Transform> ();
-			playerInput = new Player();
+            rb = GetComponent<Rigidbody>();
+            if(playerCollider == null)
+            {
+                playerCollider = gameObject.GetComponent<Collider>();
+            }
 
 			if (animator == null)
             {
@@ -80,8 +91,10 @@ namespace Ryzm.EndlessRunner
             {
 				Debug.LogError ("Missing : animatorController.");
 			}
-
-			animator.runtimeAnimatorController = animatorController;
+            animator.runtimeAnimatorController = animatorController;
+			
+            playerInput = new Player();
+            
             Message.AddListener<CurrentSectionChange>(OnCurrentSectionChange);
             Message.AddListener<RunnerDie>(OnRunnerDie);
             Message.AddListener<CurrentPositionRequest>(OnCurrentPositionRequest);
@@ -182,6 +195,13 @@ namespace Ryzm.EndlessRunner
                 return playerInput.Endless.ShiftRight.WasPressedThisFrame();
             }
             return false;
+        }
+
+        protected bool IsGrounded()
+        {
+            checkGround = new Ray(rootTransform.position, Vector3.down);
+            bool grounded = Physics.Raycast(checkGround, out hit, distanceToGround, groundLayer);
+            return grounded;
         }
 
         public virtual void Shift(Direction direction)

@@ -63,7 +63,7 @@ namespace Ryzm.EndlessRunner
             if(gameStatus == GameStatus.Active && !initialized)
             {
                 initialized = true;
-                _parentTransform = monkeyTrans;
+                _parentTransform = mode == ControllerMode.Monkey ? monkeyTrans : dragonTrans;
                 pos = _parentTransform.InverseTransformPoint(_transform.position);
                 fw = _parentTransform.InverseTransformDirection(_transform.forward);
                 up = _parentTransform.InverseTransformDirection(_transform.up);
@@ -79,7 +79,7 @@ namespace Ryzm.EndlessRunner
             {
                 return;
             }
-            _parentTransform = mode == ControllerMode.Dragon ? dragonTrans : monkeyTrans;
+            _parentTransform = mode == ControllerMode.Monkey ? monkeyTrans : dragonTrans;
             var newpos = _parentTransform.TransformPoint(pos);
             var newfw = _parentTransform.TransformDirection(fw);
             if(currentSection != null)

@@ -12,6 +12,7 @@ namespace Ryzm.EndlessRunner
         public static InputManager Instance { get { return _instance; } }
         EndlessController monkey;
         EndlessController dragon;
+        ControllerMode mode;
 
         void Awake()
         {
@@ -24,16 +25,19 @@ namespace Ryzm.EndlessRunner
                 _instance = this;
             }
             Message.AddListener<ControllersResponse>(OnControllersResponse);
+            Message.AddListener<ControllerModeResponse>(OnControllerModeResponse);
         }
 
         void OnDestroy()
         {
             Message.RemoveListener<ControllersResponse>(OnControllersResponse);
+            Message.RemoveListener<ControllerModeResponse>(OnControllerModeResponse);
         }
 
         void Start()
         {
             Message.Send(new ControllersRequest());
+            Message.Send(new ControllerModeRequest());
         }
 
         void OnControllersResponse(ControllersResponse response)
@@ -42,9 +46,21 @@ namespace Ryzm.EndlessRunner
             dragon = response.dragon;
         }
 
+        void OnControllerModeResponse(ControllerModeResponse response)
+        {
+            mode = response.mode;
+        }
+
         public void Shift(Direction direction)
         {
-            monkey.Shift(direction);
+            if(mode == ControllerMode.Monkey)
+            {
+                monkey.Shift(direction);
+            }
+            else if(mode == ControllerMode.MonkeyDragon || mode == ControllerMode.Dragon)
+            {
+                dragon.Shift(direction);
+            }
         }
 
         public void Jump()

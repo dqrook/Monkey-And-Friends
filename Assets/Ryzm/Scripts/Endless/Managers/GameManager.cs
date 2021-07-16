@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Ryzm.EndlessRunner.Messages;
 using CodeControl;
+using Ryzm.Messages;
 
 namespace Ryzm.EndlessRunner
 {
@@ -26,6 +27,11 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<ResumeGame>(OnResumeGame);
             Message.AddListener<RestartGame>(OnRestartGame);
             UpdateGameStatus(GameStatus.MainMenu);
+        }
+
+        void Start()
+        {
+            Message.Send(new GameTypeRequest());
         }
 
         void OnDestroy()
@@ -152,6 +158,11 @@ namespace Ryzm.EndlessRunner
         void OnGameSpeedRequest(GameSpeedRequest request)
         {
             UpdateSpeed(this.speed);
+        }
+
+        void OnGameTypeResponse(GameTypeResponse response)
+        {
+            
         }
     }
 

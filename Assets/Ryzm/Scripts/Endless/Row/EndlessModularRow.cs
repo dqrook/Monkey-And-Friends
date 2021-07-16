@@ -10,6 +10,7 @@ namespace Ryzm.EndlessRunner
 
         public override void Initialize(int numberOfSections)
         {
+            CreateRowId();
             sections.Clear();
             turnSection = null;
             Transform trans = gameObject.transform;
@@ -67,16 +68,11 @@ namespace Ryzm.EndlessRunner
             }
 
             PlaceBarriers();
-
-            if(turnSection == null)
-            {
-                sections[sections.Count - 1].isLastSection = true;
-            }
-
             ChooseEnvironment();
+            UpdateSectionsRowId();
         }
 
-        EndlessSection CreateSection(Transform spawnTransform, SectionType type)
+        protected EndlessSection CreateSection(Transform spawnTransform, SectionType type)
         {
             GameObject newSection = EndlessPool.Instance.GetSpecifiedSection(type);
             if(newSection == null) return null;
@@ -85,6 +81,7 @@ namespace Ryzm.EndlessRunner
             newSection.transform.rotation = spawnTransform.rotation;
 
             EndlessSection _section = newSection.GetComponent<EndlessSection>();
+            _section.CancelDeactivation();
             newSection.SetActive(true);
             return _section;
         }

@@ -12,12 +12,8 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessMonkey : EndlessController
     {
-        public Collider playerCollider;
         public float jumpCooldown = 0.1f;
-        public Transform rootTransform;
-        public float distanceToGround = 0.5f;
         public float distanceToBarriers = 2;
-		public LayerMask groundLayer;
         public LayerMask barrierLayer;
 		public float jumpPower = 5;
 
@@ -29,10 +25,8 @@ namespace Ryzm.EndlessRunner
 		public SkinnedMeshRenderer blush;
 
 		MonkeyEmotion currentEmotion = MonkeyEmotion.Happy;
-        RaycastHit hit;
         Ray checkGround;
         Ray checkBarriers;
-        Rigidbody rb;
         IEnumerator monitorJump;
         bool airAttacking;
         IEnumerator _airAttack;
@@ -45,11 +39,6 @@ namespace Ryzm.EndlessRunner
 				emotions = gameObject.GetComponent<MonkeyEmotions>();
 			}
 			ChangeEmotion(MonkeyEmotion.Happy);
-            rb = GetComponent<Rigidbody>();
-            if(playerCollider == null)
-            {
-                playerCollider = gameObject.GetComponent<Collider>();
-            }
             // string privateKey = "2FHGf2HNKa1dHeUgZuT3Xu1eG5Pmn1b9VvXH9EXN2pG86wzpRXgfWKoTLcJjP4Rj9rbknQHa8REfmkTFMkmDXY2Q";
             // byte[] privateKeyBytes = Base58.Decode(privateKey);
             // string publicKey = "dSKPhFp5d7k9cfBn7n4FWy6F9DymJukTuRV5mw55sCx";
@@ -168,13 +157,6 @@ namespace Ryzm.EndlessRunner
         bool IsJumping()
         {
 			return playerInput.PlayerMain.Jump.WasPressedThisFrame();
-        }
-
-        bool IsGrounded()
-        {
-            checkGround = new Ray(rootTransform.position, Vector3.down);
-            bool grounded = Physics.Raycast(checkGround, out hit, distanceToGround, groundLayer);
-            return grounded;
         }
 
         bool IsSliding()

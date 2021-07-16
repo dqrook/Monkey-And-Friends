@@ -11,6 +11,7 @@ namespace Ryzm.EndlessRunner.Messages
         public EndlessSection endlessSection;
         public EndlessTurnSection endlessTurnSection;
         public EndlessTSection endlessTSection;
+        public int rowId;
 
         public CurrentSectionChange() {}
 
@@ -20,6 +21,15 @@ namespace Ryzm.EndlessRunner.Messages
             endlessSection = this.section.GetComponent<EndlessSection>();
             endlessTurnSection = this.section.GetComponent<EndlessTurnSection>();
             endlessTSection = this.section.GetComponent<EndlessTSection>();
+        }
+
+        public CurrentSectionChange(GameObject section, int rowId)
+        {
+            this.section = section;
+            endlessSection = this.section.GetComponent<EndlessSection>();
+            endlessTurnSection = this.section.GetComponent<EndlessTurnSection>();
+            endlessTSection = this.section.GetComponent<EndlessTSection>();
+            this.rowId = rowId;
         }
     }
 }

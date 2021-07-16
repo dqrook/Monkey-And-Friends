@@ -69,6 +69,8 @@ namespace Ryzm.EndlessRunner
         PathDragon,
         CoinRow1,
         CoinRow2,
-        CoinRow3
+        CoinRow3,
+        Tree1,
+        Tree2
     }
 }
