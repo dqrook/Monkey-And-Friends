@@ -6,8 +6,6 @@ namespace Ryzm.EndlessRunner.Messages
     {
         public float distance;
 
-        public RunnerDistanceResponse() {}
-
         public RunnerDistanceResponse(float distance)
         {
             this.distance = distance;

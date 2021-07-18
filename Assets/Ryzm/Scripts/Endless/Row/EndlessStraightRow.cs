@@ -9,18 +9,20 @@ namespace Ryzm.EndlessRunner
     public class EndlessStraightRow : EndlessModularRow
     {
         [Tooltip("Set to 0 or less for an infinite straight")]
-        public int maximumNumberOfSections;
+        public int numberOfSections;
         int numberSectionsEntered;
         int modularSectionIndex;
         bool initialSectionEntered;
 
-        void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             Message.AddListener<CurrentSectionChange>(OnCurrentSectionChange);
         }
 
-        void OnDestroy()
+        protected override void OnDestroy()
         {
+            base.OnDestroy();
             Message.RemoveListener<CurrentSectionChange>(OnCurrentSectionChange);
         }
 
@@ -31,12 +33,11 @@ namespace Ryzm.EndlessRunner
 
         void OnCurrentSectionChange(CurrentSectionChange sectionChange)
         {
-            Debug.Log("sectionChange.rowId" + sectionChange.rowId);
             if(sectionChange.rowId == rowId)
             {
                 if(initialSectionEntered)
                 {
-                    if(maximumNumberOfSections <= 0 || numberSectionsEntered < maximumNumberOfSections)
+                    if(numberOfSections <= 0 || numberSectionsEntered < numberOfSections)
                     {
                         ModularSection modularSection = modularSections[modularSectionIndex];
                         SectionType st = modularSection.types[Random.Range(0, modularSection.types.Length)];

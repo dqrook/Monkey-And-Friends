@@ -10,12 +10,17 @@ namespace Ryzm.UI
 {
     public class MenuManager : MonoBehaviour
     {
+        #region Public Variables
         public MenuSets menuSets;
+        #endregion
 
+        #region Private Variables
         List<MenuType> noMenus = new List<MenuType> {};
         bool initializedGame;
         GameStatus status;
+        #endregion
 
+        #region Event Functions
         void Awake()
         {
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
@@ -27,18 +32,16 @@ namespace Ryzm.UI
         {
             StartCoroutine(GetGameStatus());
         }
-        IEnumerator GetGameStatus()
-        {
-            yield return new WaitForSeconds(Time.deltaTime * 5);
-            Message.Send(new GameStatusRequest());
-        }
+        
         void OnDestroy()
         {
             Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
             Message.RemoveListener<MenuSetRequest>(OnMenuSetRequest);
             // Message.RemoveListener<RunnerDie>(OnRunnerDie);
         }
+        #endregion
 
+        #region Listener Functions
         void OnGameStatusResponse(GameStatusResponse response)
         {
             if(initializedGame && response.status == status)
@@ -47,7 +50,7 @@ namespace Ryzm.UI
             }
             status = response.status;
             initializedGame = true;
-            Debug.Log("game status response " + status);
+            
             if(response.status == GameStatus.MainMenu)
             {
                 ActivateMenus(menuSets.GetMenuTypes(MenuSet.MainMenu));
@@ -72,12 +75,11 @@ namespace Ryzm.UI
             {
                 ActivateMenus(menuSets.GetMenuTypes(MenuSet.RestartMenu));
             }
+            else if(response.status == GameStatus.Exit)
+            {
+                ActivateMenus(menuSets.GetMenuTypes(MenuSet.ExitMenu));
+            }
         }
-
-        // void OnRunnerDie(RunnerDie runnerDie)
-        // {
-        //     ActivateMenus(menuSets.GetMenuTypes(MenuSet.EndMenu));
-        // }
 
         void ActivateMenus(List<MenuType> menus)
         {
@@ -88,6 +90,15 @@ namespace Ryzm.UI
         {
             Message.Send(new MenuSetResponse(menuSets.GetMenuTypes(request.set), request.set));
         }
+        #endregion
+
+        #region Coroutines
+        IEnumerator GetGameStatus()
+        {
+            yield return new WaitForSeconds(Time.deltaTime * 5);
+            Message.Send(new GameStatusRequest());
+        }
+        #endregion
     }
 
     public enum MenuSet
@@ -101,6 +112,8 @@ namespace Ryzm.UI
         BreedingMenu,
         MarketMenu,
         SingleDragonMenu,
-        MyDragonsMenu
+        MyDragonsMenu,
+        LoadingMenu,
+        ExitMenu
     }
 }

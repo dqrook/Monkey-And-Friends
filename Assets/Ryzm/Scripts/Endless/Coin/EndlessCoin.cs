@@ -9,22 +9,36 @@ namespace Ryzm.EndlessRunner
     public class EndlessCoin : EndlessScroller
     {
         Animator animator;
+        bool coinCollected;
+
         protected override void Awake()
         {
             base.Awake();
             animator = GetComponent<Animator>();
         }
 
+        protected override void Start() {}
+
         protected override void OnEnable()
         {
             base.OnEnable();
+            coinCollected = false;
+            animator.SetBool("shrink", false);
+        }
+
+        protected override void OnDisable()
+        {
             animator.SetBool("shrink", false);
         }
 
         void OnTriggerEnter(Collider other)
         {
             animator.SetBool("shrink", true);
-            Message.Send(new CollectCoin());
+            if(!coinCollected)
+            {
+                coinCollected = true;
+                Message.Send(new CollectCoin());
+            }
         }
 
         protected override void OnGameStatusResponse(GameStatusResponse gameStatusResponse)

@@ -14,9 +14,11 @@ namespace Ryzm.EndlessRunner
         EndlessRowPrefab currentRow;
         int prefabIndex;
         EndlessRowPrefab defaultPrefab;
+        Transform trans;
 
         void Awake()
         {
+            trans = this.transform;
             if(startingSpawn == null)
             {
                 startingSpawn = gameObject.transform;
@@ -35,12 +37,14 @@ namespace Ryzm.EndlessRunner
             }
             Message.AddListener<CreateSectionRow>(OnCreateSectionRow);
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
+            Message.AddListener<EndlessItemSpawn>(OnEndlessItemSpawn);
         }
 
         void OnDestroy()
         {
             Message.RemoveListener<CreateSectionRow>(OnCreateSectionRow);
             Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
+            Message.RemoveListener<EndlessItemSpawn>(OnEndlessItemSpawn);
         }
 
         void OnCreateSectionRow(CreateSectionRow createSectionRow)
@@ -90,9 +94,22 @@ namespace Ryzm.EndlessRunner
         {
             if(response.status == GameStatus.Restart)
             {
+                foreach(EndlessRowPrefab prefab in endlessRowPrefabs)
+                {
+                    if(prefab.row != null)
+                    {
+                        Destroy(prefab.row.gameObject);
+                        prefab.row = null;
+                    }
+                }
                 currentRow = null;
                 prefabIndex = 0;
             }
+        }
+
+        void OnEndlessItemSpawn(EndlessItemSpawn spawn)
+        {
+            spawn.item.transform.parent = trans;
         }
     }
 

@@ -24,6 +24,7 @@ namespace Ryzm.UI
                 {
                     if(value)
                     {
+                        Debug.Log("activating end game menu");
                         Message.AddListener<RunnerDistanceResponse>(OnRunnerDistanceResponse);
                         Message.AddListener<TotalCoinsResponse>(OnTotalCoinsResponse);
                         Message.Send(new RunnerDistanceRequest());
@@ -57,7 +58,7 @@ namespace Ryzm.UI
 
         public void OnClickReturnToMain()
         {
-
+            Message.Send(new ExitGame());
         }
     }
 }

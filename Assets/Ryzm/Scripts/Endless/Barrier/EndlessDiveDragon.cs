@@ -1,11 +1,43 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Ryzm.EndlessRunner.Messages;
 
 namespace Ryzm.EndlessRunner
 {
     public class EndlessDiveDragon : EndlessAIDragon
     {
+        #region Protected Variables
+        protected float dropSpeed = 10;
+        #endregion
+
+        #region Private Variables
+        WaitForSeconds wait2Seconds = new WaitForSeconds(2);
+        IEnumerator waitThenDisable;
+        #endregion
+
+        #region Listener Functions
+        protected override void OnCurrentSectionChange(CurrentSectionChange sectionChange)
+        {
+            _currentSection = sectionChange.endlessSection;
+            if(startedCoroutine)
+            {
+                if(parentSection != _currentSection)
+                {
+                    // just left the dragon's parent section therefore need to disable the child object
+                    waitThenDisable = null;
+                    waitThenDisable = WaitThenDisable();
+                    StartCoroutine(waitThenDisable);
+                }
+            }
+            else
+            {
+                childGO.SetActive(parentSection == _currentSection);
+            }
+        }
+        #endregion
+
+        #region Protected Functions
         protected override IEnumerator FlyToPosition()
         {
             animator.SetBool("fly", true);
@@ -22,7 +54,7 @@ namespace Ryzm.EndlessRunner
                     {
                         openedMouth = true;
                         animator.SetBool("fireBreath", true);
-                        animator.SetBool("fly", false);
+                        // animator.SetBool("fly", false);
                     }
                     fireTime += Time.deltaTime;
                     if(fireTime > 0.2f && !startedFire)
@@ -31,8 +63,8 @@ namespace Ryzm.EndlessRunner
                         fire.Play();
                     }
                 }
-                childTransform.localPosition = Vector3.Lerp(childTransform.localPosition, Vector3.zero, Time.deltaTime * 10);
-                childTransform.localEulerAngles = Vector3.Lerp(childTransform.localEulerAngles, Vector3.zero, Time.deltaTime * 10);
+                childTransform.localPosition = Vector3.Lerp(childTransform.localPosition, Vector3.zero, Time.deltaTime * dropSpeed);
+                childTransform.localEulerAngles = Vector3.Lerp(childTransform.localEulerAngles, Vector3.zero, Time.deltaTime * dropSpeed);
                 diff = childTransform.localPosition.sqrMagnitude;
                 yield return null;
             }
@@ -42,7 +74,7 @@ namespace Ryzm.EndlessRunner
             if(!openedMouth)
             {
                 animator.SetBool("fireBreath", true);
-                animator.SetBool("fly", false);
+                // animator.SetBool("fly", false);
             }
             if(!startedFire)
             {
@@ -55,5 +87,14 @@ namespace Ryzm.EndlessRunner
             }
             yield break;
         }
+        #endregion
+
+        #region Coroutines
+        IEnumerator WaitThenDisable()
+        {
+            yield return wait2Seconds;
+            childGO.SetActive(parentSection == _currentSection);
+        }
+        #endregion
     }
 }

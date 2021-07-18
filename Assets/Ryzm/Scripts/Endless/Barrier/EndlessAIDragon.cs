@@ -1,20 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Ryzm.EndlessRunner.Messages;
 using UnityEngine;
 
 namespace Ryzm.EndlessRunner
 {
     public class EndlessAIDragon : EndlessBarrier
     {
+        #region Public Variables
         public Animator animator;
         public Transform childTransform;
         public DragonFire fire;
+        #endregion
+        
+        #region Protected Variables
         protected bool startedCoroutine;
         protected IEnumerator _flyToPosition;
         protected Vector3 initialPosition;
         protected Vector3 initialEulerAngles;
         protected GameObject childGO;
+        #endregion
 
+        #region Event Functions
         protected override void Awake()
         {
             base.Awake();
@@ -29,29 +36,18 @@ namespace Ryzm.EndlessRunner
             {
                 animator = GetComponent<Animator>();
             }
+            childGO.SetActive(false);
         }
 
-        protected override void FixedUpdate()
+        protected virtual void FixedUpdate()
         {
-            if(!CanMove())
-            {
-                return;
-            }
-            MoveInY();
-
             if(!startedCoroutine)
             {
-                childGO.SetActive(parentSection == _currentSection);
-                if(parentSection != _currentSection)
+                if(CanMove() && parentSection == _currentSection)
                 {
-                    return;
-                }
-                else
-                {
-                    Transform location = parentSection.GetSpawnTransformForBarrierByPosition(type, runnerPosition);
+                    Transform location = parentSection.GetSpawnTransformForBarrier(type, runnerPosition);
                     if(location != null)
                     {
-                        Vector3 init = gameObject.transform.position;
                         gameObject.transform.position = location.position;
                         gameObject.transform.rotation = location.rotation;
                     }
@@ -61,11 +57,6 @@ namespace Ryzm.EndlessRunner
             }
         }
 
-        protected virtual IEnumerator FlyToPosition()
-        {
-            yield break;
-        }
-
         protected override void OnDisable()
         {
             animator.SetBool("fireBreath", false);
@@ -73,11 +64,27 @@ namespace Ryzm.EndlessRunner
             StopAllCoroutines();
             childTransform.localPosition = initialPosition;
             childTransform.localEulerAngles = initialEulerAngles;
+            childGO.SetActive(false);
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
         }
+        #endregion
+
+        protected override void OnCurrentSectionChange(CurrentSectionChange sectionChange)
+        {
+            base.OnCurrentSectionChange(sectionChange);
+            childGO.SetActive(parentSection == _currentSection);
+        }
+
+
+        #region Coroutines
+        protected virtual IEnumerator FlyToPosition()
+        {
+            yield break;
+        }
+        #endregion
     }
 }

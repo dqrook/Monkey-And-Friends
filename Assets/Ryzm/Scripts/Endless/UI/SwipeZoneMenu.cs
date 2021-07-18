@@ -1,28 +1,32 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Ryzm.EndlessRunner;
-using CodeControl;
 using Ryzm.EndlessRunner.Messages;
+using CodeControl;
 
 namespace Ryzm.UI
 {
-    public class SwipeZoneMenu : RyzmMenu
+    public class SwipeZoneMenu: RyzmMenu, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler, IPointerEnterHandler
     {
-        public float minimumSwipeLength = 0.2f;
-        
-        EndlessController monkey;
-        EndlessController dragon;
-        Vector2 startPosition;
-        float startTime;
-        Vector2 endPosition;
-        float endTime;
+		#region Public Variables
+		/// the minimal length of a swipe
+		public float MinimalSwipeLength = 50f;
+		#endregion
+
+		#region Private Variables
+        Vector2 _firstTouchPosition;
 		float _angle;
 		float _length;
+		Vector2 _destination;
 		Vector2 _deltaSwipe;
 		Direction _swipeDirection;
+		GameStatus gameStatus;
+		#endregion
 
-        public override bool IsActive 
+		#region Properties
+		public override bool IsActive 
         { 
             get
             { 
@@ -30,110 +34,104 @@ namespace Ryzm.UI
             }
             set 
             {
-                // if(value)
-                // {
-                //     if(monkey == null || dragon == null)
-                //     {
-                //         Message.Send(new ControllersRequest());
-                //     }
-                //     else
-                //     {
-                //         monkey.OnStartTouch += SwipeStart;
-                //         monkey.OnEndTouch += SwipeEnd;
-                //         dragon.OnStartTouch += SwipeStart;
-                //         dragon.OnEndTouch += SwipeEnd;
-                //     }
-                // }
-                // else
-                // {
-                //     if(monkey != null && dragon != null)
-                //     {
-                //         monkey.OnStartTouch -= SwipeStart;
-                //         monkey.OnEndTouch -= SwipeEnd;
-                //         dragon.OnStartTouch -= SwipeStart;
-                //         dragon.OnEndTouch -= SwipeEnd;
-                //     }
-                // }
-                base.IsActive = value;
+				if(ShouldUpdate(value))
+				{
+					if(value)
+					{
+						Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
+					}
+					else
+					{
+						Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
+					}
+                	base.IsActive = value;
+				}
             }
         }
+		#endregion
 
-        protected override void Awake()
-        {
-            base.Awake();
-            Message.AddListener<ControllersResponse>(OnControllersResponse);
-        }
-
-        void Start()
-        {
-            Message.Send(new ControllersRequest());
-        }
-
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-            Message.RemoveListener<ControllersResponse>(OnControllersResponse);
-        }
-
-        void OnControllersResponse(ControllersResponse response)
-        {
-            if(monkey == null || dragon == null)
-            {
-                monkey = response.monkey;
-                dragon = response.dragon;
-                monkey.OnStartTouch += SwipeStart;
-                monkey.OnEndTouch += SwipeEnd;
-                dragon.OnStartTouch += SwipeStart;
-                dragon.OnEndTouch += SwipeEnd;
-                if(IsActive)
-                {
-                }
-            }
-        }
-
-        void SwipeStart(Vector2 position, float time)
-        {
-            Debug.Log("go");
-            startPosition = position;
-            startTime = time;
-        }
-
-        void SwipeEnd(Vector2 positon, float time)
-        {
-            endPosition = positon;
-            endTime = time;
-            Debug.Log("ended");
-            DetectSwipe();
-        }
-
-        void DetectSwipe()
-        {
-            _deltaSwipe = endPosition - startPosition;
-			_length = _deltaSwipe.magnitude;
-
-			// if the swipe has been long enough
-			if (_length > minimumSwipeLength)
-			{
-				_angle = EndlessUtils.AngleBetweenVectors(_deltaSwipe, Vector2.right);
-				_swipeDirection = EndlessUtils.AngleToSwipeDirection(_angle);
-				Swipe();
-			}
-        }
-
-        void Swipe()
+		#region Listener Functions
+		void OnGameStatusResponse(GameStatusResponse response)
 		{
-			if(_swipeDirection == Direction.Up)
+			gameStatus = response.status;
+		}
+		#endregion
+
+		#region Event Functions
+        /// <summary>
+		/// Triggers the bound pointer down action
+		/// </summary>
+		public void OnPointerDown(PointerEventData data)
+		{
+			if(GameActive())
 			{
-				InputManager.Instance.Jump();
-			}
-			else if(_swipeDirection == Direction.Down)
-			{
-				InputManager.Instance.Slide();
-			}
-			else
-			{
-				InputManager.Instance.Shift(_swipeDirection);
+				_firstTouchPosition = Input.mousePosition;
+				Debug.Log("onpointerdown");
 			}
 		}
+
+		/// <summary>
+		/// Triggers the bound pointer up action
+		/// </summary>
+		public void OnPointerUp(PointerEventData data)
+		{
+			if(GameActive())
+			{
+				_destination = Input.mousePosition;
+				_deltaSwipe = _destination - _firstTouchPosition;
+				_length = _deltaSwipe.magnitude;
+
+				// if the swipe has been long enough
+				if (_length > MinimalSwipeLength)
+				{
+					_angle = EndlessUtils.AngleBetweenVectors(_deltaSwipe, Vector2.right);
+					_swipeDirection = EndlessUtils.AngleToSwipeDirection(_angle);
+					Swipe();
+				}
+			}
+		}
+
+		/// <summary>
+		/// Triggers the bound pointer enter action when touch enters zone
+		/// </summary>
+		public void OnPointerEnter(PointerEventData data)
+		{
+			OnPointerDown(data);
+		}
+
+		/// <summary>
+		/// Triggers the bound pointer exit action when touch is out of zone
+		/// </summary>
+		public void OnPointerExit(PointerEventData data)
+		{
+			OnPointerUp(data);	
+		}
+		#endregion
+
+		#region Private Functions
+        void Swipe()
+		{
+			if(GameActive())
+			{
+				if(_swipeDirection == Direction.Up)
+				{
+					InputManager.Instance.Jump();
+				}
+				else if(_swipeDirection == Direction.Down)
+				{
+					InputManager.Instance.Slide();
+				}
+				else
+				{
+					InputManager.Instance.Shift(_swipeDirection);
+				}
+			}
+		}
+
+		bool GameActive()
+		{
+			return gameStatus == GameStatus.Active;
+		}
+		#endregion
     }
 }

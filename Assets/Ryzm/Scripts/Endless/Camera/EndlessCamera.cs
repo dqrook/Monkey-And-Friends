@@ -8,6 +8,8 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessCamera : MonoBehaviour
     {
+        [HideInInspector]
+        public Camera cam;
         Vector3 pos, fw, up;
         Vector3 prevPos;
         Quaternion prevRot;
@@ -31,6 +33,7 @@ namespace Ryzm.EndlessRunner
             Message.Send(new ControllersRequest());
             // Message.Send(new GameStatusRequest());
             _transform = transform;
+            cam = GetComponent<Camera>();
         }
 
         void OnDestroy()
@@ -60,6 +63,7 @@ namespace Ryzm.EndlessRunner
         void OnGameStatusResponse(GameStatusResponse response)
         {
             gameStatus = response.status;
+            Debug.Log("gamestatus" + gameStatus);
             if(gameStatus == GameStatus.Active && !initialized)
             {
                 initialized = true;
@@ -79,6 +83,7 @@ namespace Ryzm.EndlessRunner
             {
                 return;
             }
+            Debug.Log("lateupdate");
             _parentTransform = mode == ControllerMode.Monkey ? monkeyTrans : dragonTrans;
             var newpos = _parentTransform.TransformPoint(pos);
             var newfw = _parentTransform.TransformDirection(fw);

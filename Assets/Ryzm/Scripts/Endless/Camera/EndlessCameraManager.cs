@@ -8,13 +8,21 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessCameraManager : MonoBehaviour
     {
+        #region Public Variables
         public EndlessCamera endlessCamera;
         public Transform startTransform;
+        public int startClipPlane = 1000;
         public Transform endTransform;
+        public int gameClipPlane = 50;
+        #endregion
+
+        #region Private Variables
         GameStatus gameStatus;
         IEnumerator rotateCamera;
         Transform cameraTrans;
+        #endregion
 
+        #region Event Functions
         void Awake()
         {
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
@@ -27,20 +35,24 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
             Message.RemoveListener<CameraRequest>(OnCameraRequest);
         }
+        #endregion
 
+        #region Listener Functions
         void OnGameStatusResponse(GameStatusResponse response)
         {
             gameStatus = response.status;
-            if(gameStatus == GameStatus.MainMenu)
+            if(gameStatus == GameStatus.MainMenu || gameStatus == GameStatus.Exit)
             {
                 cameraTrans.position = startTransform.position;
                 cameraTrans.rotation = startTransform.rotation;
+                endlessCamera.cam.farClipPlane = startClipPlane;
             }
             else if(gameStatus == GameStatus.Starting)
             {
                 rotateCamera = null;
                 rotateCamera = RotateCamera(endTransform);
                 StartCoroutine(rotateCamera);
+                endlessCamera.cam.farClipPlane = gameClipPlane;
             }
             else if(gameStatus == GameStatus.Restart)
             {
@@ -53,14 +65,19 @@ namespace Ryzm.EndlessRunner
         {
             Message.Send(new CameraResponse(endlessCamera.gameObject));
         }
+        #endregion
 
+
+        #region Private Functions
         float GetTotalDifference(Transform target)
         {
             float posDiff = Vector3.Distance(cameraTrans.position, target.position);
             float rotDiff = Vector3.Distance(cameraTrans.eulerAngles, target.eulerAngles);
             return posDiff + rotDiff;
         }
+        #endregion
 
+        #region Coroutines
         IEnumerator RotateCamera(Transform target)
         {
             float diff = GetTotalDifference(target);
@@ -76,6 +93,6 @@ namespace Ryzm.EndlessRunner
             Message.Send(new StartGame());
             yield break;
         }
-
+        #endregion
     }
 }

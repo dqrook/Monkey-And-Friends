@@ -44,6 +44,7 @@ namespace Ryzm.EndlessRunner
 		protected ControllerMode mode;
         protected Camera mainCamera;
         protected bool inSlide;
+        protected float maxShiftCooldown = 0.25f;
         protected RaycastHit hit;
         Ray checkGround;
 
@@ -100,7 +101,6 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<CurrentPositionRequest>(OnCurrentPositionRequest);
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
             Message.AddListener<ControllerModeResponse>(OnControllerModeResponse);
-            Message.AddListener<RunnerDistanceRequest>(OnRunnerDistanceRequest);
             mainCamera = Camera.main;
             // playerInput.Touch.PrimaryContact.started += (ctx) => StartTouchPrimary(ctx);
             // playerInput.Touch.PrimaryContact.canceled += (ctx) => EndTouchPrimary(ctx);
@@ -132,11 +132,13 @@ namespace Ryzm.EndlessRunner
             playerInput.Enable();
             // Message.Send(new GameStatusRequest());
 			Message.Send(new ControllerModeRequest());
+            Message.AddListener<RunnerDistanceRequest>(OnRunnerDistanceRequest);
         }
 
         protected virtual void OnDisable()
 		{
 			playerInput.Disable();
+            Message.RemoveListener<RunnerDistanceRequest>(OnRunnerDistanceRequest);
 		}
 
 		protected virtual void OnDestroy()
@@ -146,7 +148,6 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<CurrentPositionRequest>(OnCurrentPositionRequest);
             Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
             Message.RemoveListener<ControllerModeResponse>(OnControllerModeResponse);
-            Message.RemoveListener<RunnerDistanceRequest>(OnRunnerDistanceRequest);
         }
 
         protected virtual void OnCurrentSectionChange(CurrentSectionChange change)
@@ -256,8 +257,9 @@ namespace Ryzm.EndlessRunner
             shiftSpeed = 0;
             
             float cooldownTime = 0;
-            float maxCooldown = 0.25f;
-            while(inShift && cooldownTime < maxCooldown) {
+            
+            while(inShift && cooldownTime < maxShiftCooldown) 
+            {
                 cooldownTime += Time.deltaTime;
                 yield return null;
             }
@@ -269,7 +271,6 @@ namespace Ryzm.EndlessRunner
         public void FinishShift()
         {
             inShift = false;
-            // Debug.Log("finished shift " + cooldownTime);
             // float diff = Time.time - shiftTime;
             // Debug.Log("shift finished " + diff);
         }
@@ -289,12 +290,15 @@ namespace Ryzm.EndlessRunner
 
         protected virtual void Reset()
         {
+            Debug.Log("reset this beeeotch");
             turned = false;
             state = 0;
             InJump = false;
             inShift = false;
             inSlide = false;
             distanceTraveled = 0;
+            CurrentPosition = 1;
+            shiftSpeed = 0;
         }
     }
 }

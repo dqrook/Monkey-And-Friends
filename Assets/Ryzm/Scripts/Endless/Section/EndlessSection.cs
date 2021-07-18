@@ -8,6 +8,7 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessSection : EndlessScroller
     {
+        #region Public Variables
         public SectionType type;
         public bool isTurn;
         public DeactivateSection deactivate;
@@ -25,12 +26,15 @@ namespace Ryzm.EndlessRunner
         public Transform position1;
         public Transform position2;
         
-        // [HideInInspector]
+        [HideInInspector]
         public int rowId;
+        #endregion
 
-        
+        #region Private Variables
         List<BarrierType> _possibleBarrierTypes = new List<BarrierType>();
+        #endregion
 
+        #region Properties
         public List<BarrierType> PossibleBarrierTypes
         {
             get
@@ -46,7 +50,9 @@ namespace Ryzm.EndlessRunner
                 return _possibleBarrierTypes;
             }
         }
+        #endregion
 
+        #region Event Functions
         protected override void OnEnable()
         {
             base.OnEnable();
@@ -64,7 +70,24 @@ namespace Ryzm.EndlessRunner
         }
 
         protected override void OnDisable() {}
+        #endregion
 
+        #region Listener Functions
+        protected override void OnGameStatusResponse(GameStatusResponse gameStatusResponse)
+        {
+            base.OnGameStatusResponse(gameStatusResponse);
+            if(gameStatusResponse.status == GameStatus.Restart)
+            {
+                gameObject.SetActive(false);
+            }
+            else if(gameStatusResponse.status == GameStatus.Ended)
+            {
+                CancelDeactivation();
+            }
+        }
+        #endregion
+
+        #region Public Functions
         public virtual void EnterSection()
         {
             Message.Send(new CurrentSectionChange(gameObject, rowId));
@@ -72,7 +95,6 @@ namespace Ryzm.EndlessRunner
 
         public virtual void ExitSection()
         {
-            Debug.Log("exiting section " + rowId);
             // rowId = 0;
             deactivate.Deactivate();
         }
@@ -102,23 +124,37 @@ namespace Ryzm.EndlessRunner
             }
         }
 
-        public Transform GetBarrierSpawnTransform(BarrierType type)
+        public Transform GetSpawnTransformForBarrier(BarrierType type)
         {
-            foreach(SpawnLocation location in barrierSpawnLocations)
+            SpawnLocation location = GetSpawnLocationForBarrier(type);
+            if(location == null)
             {
-                if(location.type == type)
+                return null;
+            }
+            SpawnTransform spawn = location.RandomSpawnTransform();
+            return spawn.Location;
+        }
+
+        public Transform GetSpawnTransformForBarrier(BarrierType type, int position)
+        {
+            SpawnLocation location = GetSpawnLocationForBarrier(type);
+            if(location == null)
+            {
+                return null;
+            }
+            
+            foreach(SpawnTransform spawnTransform in location.spawnTransforms)
+            {
+                if(spawnTransform.position == position)
                 {
-                    if(location.spawnTransforms.Length > 0)
-                    {
-                        EndlessUtils.Shuffle(location.spawnTransforms);
-                        return location.spawnTransforms[0].Location;
-                    }
+                    return spawnTransform.Location;
                 }
             }
+
             return null;
         }
 
-        protected SpawnLocation GetSpawnLocationForBarrier(BarrierType type)
+        public SpawnLocation GetSpawnLocationForBarrier(BarrierType type)
         {
             foreach(SpawnLocation location in barrierSpawnLocations)
             {
@@ -127,25 +163,6 @@ namespace Ryzm.EndlessRunner
                     return location;
                 }
             }
-            return new SpawnLocation();
-        }
-
-        public Transform GetSpawnTransformForBarrierByPosition(BarrierType type, int position)
-        {
-            SpawnLocation loc = GetSpawnLocationForBarrier(type);
-            if(loc.spawnTransforms.Length == 0)
-            {
-                return null;
-            }
-            
-            foreach(SpawnTransform spawnTransform in loc.spawnTransforms)
-            {
-                if(spawnTransform.position == position)
-                {
-                    return spawnTransform.Location;
-                }
-            }
-
             return null;
         }
 
@@ -172,15 +189,7 @@ namespace Ryzm.EndlessRunner
                 }
             }
         }
-
-        protected override void OnGameStatusResponse(GameStatusResponse gameStatusResponse)
-        {
-            base.OnGameStatusResponse(gameStatusResponse);
-            if(gameStatusResponse.status == GameStatus.Restart)
-            {
-                gameObject.SetActive(false);
-            }
-        }
+        #endregion
     }
     [System.Serializable]
     public class SpawnLocation
@@ -189,6 +198,12 @@ namespace Ryzm.EndlessRunner
         public SpawnTransform[] spawnTransforms;
         [Range(0, 10)]
         public int weight = 1;
+
+        public SpawnTransform RandomSpawnTransform()
+        {
+            EndlessUtils.Shuffle(spawnTransforms);
+            return spawnTransforms[0];
+        }
     }
 
     [System.Serializable]
@@ -231,6 +246,11 @@ namespace Ryzm.EndlessRunner
         LeftTurnGrass1,
         RightTurnGrass1,
         LeftTurnBeach1,
-        FloatingTree
+        FloatingTree,
+        FloatingRabby,
+        FloatingRabbyCoinRow,
+        FloatingSpikes,
+        FloatingDiveDragon,
+        FloatingSideDragon
     }
 }

@@ -37,7 +37,6 @@ namespace Ryzm.EndlessRunner
 
         void OnParticleCollision(GameObject other)
         {
-            // Debug.Log(other.tag);
             collisionTime += Time.deltaTime;
             if(collisionTime > Time.deltaTime * 3)
             {

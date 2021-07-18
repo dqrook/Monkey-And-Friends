@@ -8,8 +8,12 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessPool : MonoBehaviour
     {
+        #region Public Variables
         public EndlessPoolPrefabsScriptableObject prefabsScriptableObject;
+        public static EndlessPool Instance { get { return _instance; } }
+        #endregion
         
+        #region Private Variables
         List<PooledSection> pooledSections = new List<PooledSection>();
         List<PooledBarrier> pooledBarriers = new List<PooledBarrier>();
 
@@ -18,9 +22,10 @@ namespace Ryzm.EndlessRunner
         List<PooledBarrier> possiblePooledBarriers = new List<PooledBarrier>();
 
         private static EndlessPool _instance;
-        public static EndlessPool Instance { get { return _instance; } }
         bool madeWorld;
+        #endregion
 
+        #region Properties
         List<SectionPrefab> SectionPrefabs 
         {
             get
@@ -36,7 +41,9 @@ namespace Ryzm.EndlessRunner
                 return prefabsScriptableObject.barrierPrefabs;
             }
         }
+        #endregion
 
+        #region Event Functions
         void Awake()
         {
             if(_instance != null && _instance != this)
@@ -48,13 +55,17 @@ namespace Ryzm.EndlessRunner
                 _instance = this;
             }
             Message.AddListener<MakeWorld>(OnMakeWorld);
+            Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
         }
 
         void OnDestroy()
         {
             Message.RemoveListener<MakeWorld>(OnMakeWorld);
+            Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
         }
+        #endregion
 
+        #region Listener Functions
         void OnMakeWorld(MakeWorld makeWorld)
         {
             if(!madeWorld)
@@ -83,6 +94,19 @@ namespace Ryzm.EndlessRunner
             }
         }
 
+        void OnGameStatusResponse(GameStatusResponse response)
+        {
+            if(response.status == GameStatus.Exit)
+            {
+                madeWorld = false;
+                pooledBarriers.Clear();
+                pooledSections.Clear();
+            }
+        }
+
+        #endregion
+
+        #region Public Functions
         public GameObject GetRandomBarrier(List<BarrierType> types)
         {
             return GetRandom(pooledBarriers, BarrierPrefabs, types);
@@ -97,7 +121,9 @@ namespace Ryzm.EndlessRunner
         {
             return GetRandom(pooledSections, SectionPrefabs, isTurn);
         }
+        #endregion
 
+        #region Private Functions
         GameObject GetRandom(List<PooledSection> pooledSections, List<SectionPrefab> _prefabs, bool isTurn)
         {
             possiblePooledSections.Clear();
@@ -196,6 +222,7 @@ namespace Ryzm.EndlessRunner
             }
             return null;
         }
+        #endregion
     }
 
     [System.Serializable]

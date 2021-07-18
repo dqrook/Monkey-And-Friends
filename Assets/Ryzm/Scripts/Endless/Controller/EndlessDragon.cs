@@ -29,6 +29,10 @@ namespace Ryzm.EndlessRunner
         bool isAttacking;
         bool _isFlying;
         bool flyingInitialized;
+        float elevation = 2.25f;
+        IEnumerator flyUp;
+        float baselineY;
+        bool isFlyingUp;
 
         #region Properties
         public bool ForSale
@@ -78,10 +82,12 @@ namespace Ryzm.EndlessRunner
         {
             base.Awake();
             monkeyOffset = monkeyPos.position - trans.position;
+            maxShiftCooldown = 1f;
         }
 
         void Update()
         {
+            animator.SetInteger("state", state);
             if((mode == ControllerMode.MonkeyDragon || mode == ControllerMode.Dragon) && gameStatus == GameStatus.Active)
             {
                 EndlessRun();
@@ -98,40 +104,30 @@ namespace Ryzm.EndlessRunner
         }
         #endregion
 
-        #region Functions
-        void EndlessRun()
+        #region Listener Functions
+        protected override void OnRunnerDistanceRequest(RunnerDistanceRequest request)
         {
-            IsFlying = true;
-            if(!InJump)
+            if(mode == ControllerMode.Dragon || mode == ControllerMode.MonkeyDragon)
             {
-                Move(0);
-            }
-
-            if(IsShifting(Direction.Left))
-            {
-                Shift(Direction.Left);
-            }
-            else if(IsShifting(Direction.Right))
-            {
-                Shift(Direction.Right);
-            }
-            if(IsAttacking())
-            {
-                Attack();
+                Message.Send(new RunnerDistanceResponse(distanceTraveled));
             }
         }
 
-        void Move(float yMove)
+        protected override void OnGameStatusResponse(GameStatusResponse response)
         {
-            float zMove = Time.deltaTime * forwardSpeed;
-            move.z = zMove;
-            move.y = yMove;
-            move.x = shiftSpeed * zMove * 0.75f;
-            trans.Translate(move);
-            distanceTraveled += zMove;
-            Message.Send(new RunnerDistanceResponse(distanceTraveled));
+            base.OnGameStatusResponse(response);
+            if(response.status == GameStatus.Restart || response.status == GameStatus.Exit)
+            {
+                Reset();
+                if(response.status == GameStatus.Exit)
+                {
+                    IsFlying = false;
+                }
+            }
         }
+        #endregion
 
+        #region Public Functions
         public void SetTexture(DragonMaterialType type, Texture texture)
         {
             if(materials != null)
@@ -162,6 +158,23 @@ namespace Ryzm.EndlessRunner
             materials.Enable();
         }
 
+        public override void Shift(Direction direction)
+        {
+            if(!inShift)
+            {
+                if(_endlessTurnSection != null)
+                {
+                    _endlessTurnSection.Shift(direction, this, ref turned);
+                    // turned = true;
+                    // Debug.Log(turned);
+                }
+                else if(_endlessSection != null)
+                {
+                    _endlessSection.Shift(direction, this);
+                }
+            }
+        }
+
         public override void Attack()
         {
             if(fire != null && !isAttacking)
@@ -173,65 +186,36 @@ namespace Ryzm.EndlessRunner
 
         public override void Jump()
         {
-            if(!InJump && !inShift)
+            if(!inShift)
             {
                 if(IsFlying)
                 {
-                    flyUp = FlyUp();
-                    StartCoroutine(flyUp);
+                    if(!InJump)
+                    {
+                        flyUp = FlyUp(trans.position.y);
+                        StartCoroutine(flyUp);
+                    }
+                    else if(!isFlyingUp)
+                    {
+                        Debug.Log("double jump");
+                        animator.SetTrigger("finishFly");
+                        StopCoroutine(flyUp);
+                        flyUp = FlyUp(baselineY);
+                        StartCoroutine(flyUp);
+                    }
                 }
                 else if(IsGrounded())
                 {
-                    // todo: handle jumping when grounded
+                    // todo: handle jumping up from ground
                 }
             }
         }
 
-        float elevation = 2;
-        IEnumerator flyUp;
-
-        IEnumerator FlyUp()
+        public override void Die()
         {
-            animator.SetTrigger("flyUp");
-            InJump = true;
-            float initY = trans.position.y;
-            float currentY = trans.position.y;
-            float absDiff = Mathf.Abs(currentY - initY);
-            float multiplier = 2 * (elevation - absDiff);
-            while(multiplier > 0.1f)
-            {
-                currentY = trans.position.y;
-                absDiff = Mathf.Abs(currentY - initY);
-                multiplier = 2 * (elevation - absDiff);
-                multiplier = multiplier > 1 ? 1 : multiplier;
-                Move(flyUpSpeed * multiplier * Time.deltaTime);
-                yield return null;
-            }
-            animator.SetTrigger("flyDown");
-            float timeMultiplier = 0.1f;
-            while(absDiff > 0.25f)
-            {
-                timeMultiplier += Time.deltaTime;
-                timeMultiplier = timeMultiplier < 1 ? timeMultiplier : 1;
-                currentY = trans.position.y;
-                absDiff = Mathf.Abs(currentY - initY);
-                float downMultiplier = absDiff > 1 ? 1 : absDiff > 0.5f ? absDiff : 0.5f;
-                Move(-flyDownSpeed * timeMultiplier * downMultiplier * Time.deltaTime);
-                yield return null;
-            }
-
-            while(absDiff > 0.01f)
-            {
-                currentY = trans.position.y;
-                absDiff = Mathf.Abs(currentY - initY);
-                float downMultiplier = absDiff > 0.05f ? absDiff : 0.05f;
-                Move(-flyDownSpeed * downMultiplier * Time.deltaTime);
-                yield return null;
-            }
-            animator.SetTrigger("finishFly");
-            trans.position = new Vector3(trans.position.x, initY, trans.position.z);
-            InJump = false;
-            yield break;
+            StopAllCoroutines();
+            state = 2;
+            isFlyingUp = false;
         }
 
         public void FlyToPosition(Transform t)
@@ -246,6 +230,60 @@ namespace Ryzm.EndlessRunner
             animator.SetBool("fly", true);
             flyToPosition = _FlyToPosition(t, speed);
             StartCoroutine(flyToPosition);
+        }
+        #endregion
+
+        #region Protected Functions
+        protected override void Reset()
+        {
+            Debug.Log("running reset funk");
+            base.Reset();
+            isFlyingUp = false;
+            animator.SetTrigger("resetFly");
+        }
+        #endregion
+
+        #region Private Functions
+        void EndlessRun()
+        {
+            IsFlying = true;
+            if(!InJump)
+            {
+                Move(0);
+            }
+
+            // if(IsShifting(Direction.Left))
+            // {
+            //     Shift(Direction.Left);
+            // }
+            // else if(IsShifting(Direction.Right))
+            // {
+            //     Shift(Direction.Right);
+            // }
+            // if(IsAttacking())
+            // {
+            //     Attack();
+            // }
+            // if(IsJumping())
+            // {
+            //     Jump();
+            // }
+        }
+
+        bool IsJumping()
+        {
+			return playerInput.PlayerMain.Jump.WasPressedThisFrame();
+        }
+
+        void Move(float yMove)
+        {
+            float zMove = Time.deltaTime * forwardSpeed;
+            move.z = zMove;
+            move.y = yMove;
+            move.x = shiftSpeed * zMove * 0.75f;
+            trans.Translate(move);
+            distanceTraveled += zMove;
+            Message.Send(new RunnerDistanceResponse(distanceTraveled));
         }
         #endregion
 
@@ -318,6 +356,52 @@ namespace Ryzm.EndlessRunner
             }
             trans.position = target.position;
             trans.rotation = target.rotation;
+            yield break;
+        }
+
+        IEnumerator FlyUp(float initY)
+        {
+            animator.SetTrigger("flyUp");
+            InJump = true;
+            baselineY = initY;
+            float currentY = trans.position.y;
+            float absDiff = Mathf.Abs(currentY - baselineY);
+            float multiplier = 2 * (elevation - absDiff);
+            isFlyingUp = true;
+            while(multiplier > 0.1f)
+            {
+                currentY = trans.position.y;
+                absDiff = Mathf.Abs(currentY - baselineY);
+                multiplier = 2 * (elevation - absDiff);
+                multiplier = multiplier > 1 ? 1 : multiplier;
+                Move(flyUpSpeed * multiplier * Time.deltaTime);
+                yield return null;
+            }
+            isFlyingUp = false;
+            animator.SetTrigger("flyDown");
+            float timeMultiplier = 0.1f;
+            while(absDiff > 0.25f)
+            {
+                timeMultiplier += Time.deltaTime;
+                timeMultiplier = timeMultiplier < 1 ? timeMultiplier : 1;
+                currentY = trans.position.y;
+                absDiff = Mathf.Abs(currentY - baselineY);
+                float downMultiplier = absDiff > 1 ? 1 : absDiff > 0.5f ? absDiff : 0.5f;
+                Move(-flyDownSpeed * timeMultiplier * downMultiplier * Time.deltaTime);
+                yield return null;
+            }
+
+            while(absDiff > 0.01f && currentY > baselineY)
+            {
+                currentY = trans.position.y;
+                absDiff = Mathf.Abs(currentY - baselineY);
+                float downMultiplier = absDiff > 0.05f ? absDiff : 0.05f;
+                Move(-flyDownSpeed * downMultiplier * Time.deltaTime);
+                yield return null;
+            }
+            animator.SetTrigger("finishFly");
+            trans.position = new Vector3(trans.position.x, baselineY, trans.position.z);
+            InJump = false;
             yield break;
         }
         #endregion

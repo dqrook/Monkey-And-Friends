@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Ryzm.EndlessRunner
 {
-    public class EndlessRow : MonoBehaviour
+    public class EndlessRow : EndlessItem
     {
         public string id;
         public List<EndlessSection> sections = new List<EndlessSection>();
@@ -151,21 +151,24 @@ namespace Ryzm.EndlessRunner
                 return;
             }
 
-            Transform spawnLocation = _section.GetBarrierSpawnTransform(_barrier.type);
+            SpawnLocation spawnLocation = _section.GetSpawnLocationForBarrier(_barrier.type);
             if(spawnLocation == null) 
             {
                 return;
             }
+            SpawnTransform spawnTransform = spawnLocation.RandomSpawnTransform();
+            Transform spawn = spawnTransform.locations[0];
             
             _barrier.parentSection = _section;
-            _barrier.transform.position = spawnLocation.position;
-            _barrier.transform.rotation = spawnLocation.rotation;
+            _barrier.transform.position = spawn.position;
+            _barrier.transform.rotation = spawn.rotation;
+            _barrier.Initialize(spawn, spawnTransform.position);
             _barrier.gameObject.SetActive(true);
         }
 
         protected bool CanPlaceBarrier(float barrierLikelihood)
         {
-            return Random.Range(0, 1f) < barrierLikelihood;
+            return Random.Range(0, 1f) <= barrierLikelihood;
         }
 
         public Transform FinalSpawn()

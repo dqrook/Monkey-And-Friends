@@ -9,12 +9,21 @@ namespace Ryzm.EndlessRunner
 {
     public class GameManager : MonoBehaviour
     {
+        #region Public Variables
         public GameStatus status = GameStatus.MainMenu;
         public float speed = 0.15f;
+        #endregion
+
+        #region Private Variables
         IEnumerator lerpGameSpeed;
         IEnumerator deactivateHomeIsland;
         IEnumerator restart2Starting;
+        IEnumerator exit2Main;
+        WaitForSeconds wait2Seconds;
+        WaitForSeconds wait4Seconds;
+        #endregion
 
+        #region Event Functions
         void Awake()
         {
             Message.AddListener<GameStatusRequest>(OnGameStatusRequest);
@@ -26,11 +35,14 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<PauseGame>(OnPauseGame);
             Message.AddListener<ResumeGame>(OnResumeGame);
             Message.AddListener<RestartGame>(OnRestartGame);
-            UpdateGameStatus(GameStatus.MainMenu);
+            Message.AddListener<ExitGame>(OnExitGame);
+            wait2Seconds = new WaitForSeconds(2);
+            wait4Seconds = new WaitForSeconds(4);
         }
 
         void Start()
         {
+            UpdateGameStatus(GameStatus.MainMenu);
             Message.Send(new GameTypeRequest());
         }
 
@@ -45,6 +57,7 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<PauseGame>(OnPauseGame);
             Message.RemoveListener<ResumeGame>(OnResumeGame);
             Message.RemoveListener<RestartGame>(OnRestartGame);
+            Message.RemoveListener<ExitGame>(OnExitGame);
         }
 
         void Update()
@@ -54,7 +67,9 @@ namespace Ryzm.EndlessRunner
                 Time.timeScale = Time.timeScale > 0 ? 0 : 1;
             }
         }
+        #endregion
 
+        #region Listener Functions
         void OnMadeWorld(MadeWorld madeWorld)
         {
             OnStartingGame();
@@ -70,6 +85,7 @@ namespace Ryzm.EndlessRunner
 
         void OnStartGame(StartGame start)
         {
+            Debug.Log("start game");
             UpdateGameStatus(GameStatus.Active);
             deactivateHomeIsland = null;
             deactivateHomeIsland = DeactivateHomeIsland();
@@ -100,29 +116,29 @@ namespace Ryzm.EndlessRunner
             StartCoroutine(restart2Starting);
         }
 
+        void OnExitGame(ExitGame exitGame)
+        {
+            UpdateGameStatus(GameStatus.Exit);
+            exit2Main = null;
+            exit2Main = ExitToMainMenu();
+            StartCoroutine(exit2Main);
+        }
+
         void OnGameStatusRequest(GameStatusRequest statusRequest)
         {
             UpdateGameStatus(status);
         }
 
-        void UpdateGameStatus(GameStatus status)
+        void OnGameSpeedRequest(GameSpeedRequest request)
         {
-            this.status = status;
-            Message.Send(new GameStatusResponse(status));
+            UpdateSpeed(this.speed);
         }
 
-        IEnumerator DeactivateHomeIsland()
+        void OnGameTypeResponse(GameTypeResponse response)
         {
-            Debug.Log("deactivating home");
-            yield return new WaitForSeconds(4);
-            Message.Send(new DeactivateHome());
-        }
 
-        IEnumerator Restart2Starting()
-        {
-            yield return new WaitForSeconds(2);
-            OnStartingGame();
         }
+        #endregion
 
         void OnRequestGameSpeedChange(RequestGameSpeedChange requestChangeSpeed)
         {
@@ -137,6 +153,40 @@ namespace Ryzm.EndlessRunner
             }
         }
 
+        #region Private Functions
+        void UpdateGameStatus(GameStatus status)
+        {
+            this.status = status;
+            Message.Send(new GameStatusResponse(status));
+        }
+
+        void UpdateSpeed(float newSpeed)
+        {
+            this.speed = newSpeed;
+            Message.Send(new GameSpeedResponse(newSpeed));
+        }
+        #endregion
+
+        #region Coroutines
+        IEnumerator DeactivateHomeIsland()
+        {
+            Debug.Log("deactivating home");
+            yield return wait4Seconds;
+            Message.Send(new DeactivateHome());
+        }
+
+        IEnumerator Restart2Starting()
+        {
+            yield return wait2Seconds;
+            OnStartingGame();
+        }
+
+        IEnumerator ExitToMainMenu()
+        {
+            yield return wait2Seconds;
+            UpdateGameStatus(GameStatus.MainMenu);
+        }
+
         IEnumerator LerpGameSpeed(float targetSpeed, float lerpTime)
         {
             float _time = 0;
@@ -148,22 +198,7 @@ namespace Ryzm.EndlessRunner
             UpdateSpeed(targetSpeed);
             yield break;
         }
-
-        void UpdateSpeed(float newSpeed)
-        {
-            this.speed = newSpeed;
-            Message.Send(new GameSpeedResponse(newSpeed));
-        }
-
-        void OnGameSpeedRequest(GameSpeedRequest request)
-        {
-            UpdateSpeed(this.speed);
-        }
-
-        void OnGameTypeResponse(GameTypeResponse response)
-        {
-            
-        }
+        #endregion
     }
 
     public enum GameStatus
@@ -174,6 +209,7 @@ namespace Ryzm.EndlessRunner
         Paused,
         Ended,
         Restart,
-        Transition
+        Transition,
+        Exit
     }
 }

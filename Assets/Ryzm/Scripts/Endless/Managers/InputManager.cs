@@ -8,6 +8,11 @@ namespace Ryzm.EndlessRunner
 {
     public class InputManager : MonoBehaviour
     {
+        public KeyCode leftPress = KeyCode.A;
+        public KeyCode rightPress = KeyCode.D;
+        public KeyCode upPress = KeyCode.Space;
+        public KeyCode downPress = KeyCode.S;
+
         private static InputManager _instance;
         public static InputManager Instance { get { return _instance; } }
         EndlessController monkey;
@@ -40,6 +45,26 @@ namespace Ryzm.EndlessRunner
             Message.Send(new ControllerModeRequest());
         }
 
+        void Update()
+        {
+            if(Input.GetKeyDown(leftPress))
+            {
+                Shift(Direction.Left);
+            }
+            else if(Input.GetKeyDown(rightPress))
+            {
+                Shift(Direction.Right);
+            }
+            else if(Input.GetKeyDown(upPress))
+            {
+                Jump();
+            }
+            else if(Input.GetKeyDown(downPress))
+            {
+                Slide();
+            }
+        }
+
         void OnControllersResponse(ControllersResponse response)
         {
             monkey = response.monkey;
@@ -53,24 +78,38 @@ namespace Ryzm.EndlessRunner
 
         public void Shift(Direction direction)
         {
-            if(mode == ControllerMode.Monkey)
-            {
-                monkey.Shift(direction);
-            }
-            else if(mode == ControllerMode.MonkeyDragon || mode == ControllerMode.Dragon)
+            if(mode == ControllerMode.Dragon || mode == ControllerMode.MonkeyDragon)
             {
                 dragon.Shift(direction);
+            }
+            else if(mode == ControllerMode.Monkey)
+            {
+                monkey.Shift(direction);
             }
         }
 
         public void Jump()
         {
-            monkey.Jump();
+            if(mode == ControllerMode.Dragon || mode == ControllerMode.MonkeyDragon)
+            {
+                dragon.Jump();
+            }
+            else if(mode == ControllerMode.Monkey)
+            {
+                monkey.Jump();
+            }
         }
 
         public void Slide()
         {
-            monkey.Slide();
+            if(mode == ControllerMode.Dragon || mode == ControllerMode.MonkeyDragon)
+            {
+                dragon.Attack();
+            }
+            else if(mode == ControllerMode.Monkey)
+            {
+                monkey.Slide();
+            }
         }
     }
 }
