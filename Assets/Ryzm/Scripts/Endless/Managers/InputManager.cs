@@ -18,6 +18,7 @@ namespace Ryzm.EndlessRunner
         EndlessController monkey;
         EndlessController dragon;
         ControllerMode mode;
+        GameStatus status;
 
         void Awake()
         {
@@ -31,12 +32,14 @@ namespace Ryzm.EndlessRunner
             }
             Message.AddListener<ControllersResponse>(OnControllersResponse);
             Message.AddListener<ControllerModeResponse>(OnControllerModeResponse);
+            Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
         }
 
         void OnDestroy()
         {
             Message.RemoveListener<ControllersResponse>(OnControllersResponse);
             Message.RemoveListener<ControllerModeResponse>(OnControllerModeResponse);
+            Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
         }
 
         void Start()
@@ -65,6 +68,11 @@ namespace Ryzm.EndlessRunner
             }
         }
 
+        void OnGameStatusResponse(GameStatusResponse response)
+        {
+            status = response.status;
+        }
+
         void OnControllersResponse(ControllersResponse response)
         {
             monkey = response.monkey;
@@ -78,6 +86,10 @@ namespace Ryzm.EndlessRunner
 
         public void Shift(Direction direction)
         {
+            if(!GameIsActive())
+            {
+                return;
+            }
             if(mode == ControllerMode.Dragon || mode == ControllerMode.MonkeyDragon)
             {
                 dragon.Shift(direction);
@@ -90,6 +102,10 @@ namespace Ryzm.EndlessRunner
 
         public void Jump()
         {
+            if(!GameIsActive())
+            {
+                return;
+            }
             if(mode == ControllerMode.Dragon || mode == ControllerMode.MonkeyDragon)
             {
                 dragon.Jump();
@@ -102,6 +118,10 @@ namespace Ryzm.EndlessRunner
 
         public void Slide()
         {
+            if(!GameIsActive())
+            {
+                return;
+            }
             if(mode == ControllerMode.Dragon || mode == ControllerMode.MonkeyDragon)
             {
                 dragon.Attack();
@@ -110,6 +130,11 @@ namespace Ryzm.EndlessRunner
             {
                 monkey.Slide();
             }
+        }
+
+        bool GameIsActive()
+        {
+            return status == GameStatus.Active;
         }
     }
 }

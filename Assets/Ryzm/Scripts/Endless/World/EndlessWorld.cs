@@ -8,14 +8,20 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessWorld : MonoBehaviour
     {
+        #region Public Variables
         public List<EndlessRowPrefab> endlessRowPrefabs = new List<EndlessRowPrefab>();
         public List<string> prefabOrder = new List<string>();
         public Transform startingSpawn;
+        #endregion
+
+        #region Private Variables
         EndlessRowPrefab currentRow;
         int prefabIndex;
         EndlessRowPrefab defaultPrefab;
         Transform trans;
+        #endregion
 
+        #region Event Functions
         void Awake()
         {
             trans = this.transform;
@@ -46,7 +52,9 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
             Message.RemoveListener<EndlessItemSpawn>(OnEndlessItemSpawn);
         }
+        #endregion
 
+        #region Listener Functions
         void OnCreateSectionRow(CreateSectionRow createSectionRow)
         {
             Transform spawnTransform = startingSpawn;
@@ -74,25 +82,9 @@ namespace Ryzm.EndlessRunner
             prefabIndex = prefabIndex < prefabOrder.Count - 1 ? prefabIndex + 1 : 0;
         }
 
-        EndlessRowPrefab GetPrefab(string type)
-        {
-            if(type == "default")
-            {
-                return defaultPrefab;
-            }
-            foreach(EndlessRowPrefab fab in endlessRowPrefabs)
-            {
-                if(fab.Id == type)
-                {
-                    return fab;
-                }
-            }
-            return defaultPrefab;
-        }
-
         void OnGameStatusResponse(GameStatusResponse response)
         {
-            if(response.status == GameStatus.Restart)
+            if(response.status == GameStatus.Restart || response.status == GameStatus.Exit)
             {
                 foreach(EndlessRowPrefab prefab in endlessRowPrefabs)
                 {
@@ -111,6 +103,25 @@ namespace Ryzm.EndlessRunner
         {
             spawn.item.transform.parent = trans;
         }
+        #endregion
+
+        #region Private Functions
+        EndlessRowPrefab GetPrefab(string type)
+        {
+            if(type == "default")
+            {
+                return defaultPrefab;
+            }
+            foreach(EndlessRowPrefab fab in endlessRowPrefabs)
+            {
+                if(fab.Id == type)
+                {
+                    return fab;
+                }
+            }
+            return defaultPrefab;
+        }
+        #endregion
     }
 
     [System.Serializable]
@@ -129,28 +140,3 @@ namespace Ryzm.EndlessRunner
         }
     }
 }
-
-// void RunDummy()
-// {
-//     GameObject newSection = EndlessPool.Instance.GetRandomSection();
-//     if(newSection == null) return;
-    
-//     if(lastSpawnedSection != null)
-//     {
-//         int move = newSection.GetComponent<EndlessSection>().spawnDistance;
-//         dummyTransform.position = lastSpawnedSection.transform.position + runnerTrans.forward * move;
-//         if(lastSpawnedSection.tag == "stairsUp")
-//         {
-//             dummyTransform.Translate(0, 5, 0);
-//         }
-//         else if (lastSpawnedSection.tag == "stairsDown")
-//         {
-//             dummyTransform.Translate(0, -5, 0);
-//         }
-//     }
-
-//     lastSpawnedSection = newSection;
-//     newSection.transform.position = dummyTransform.position;
-//     newSection.transform.rotation = dummyTransform.rotation;
-//     newSection.SetActive(true);
-// }

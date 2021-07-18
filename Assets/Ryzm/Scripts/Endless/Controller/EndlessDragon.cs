@@ -236,10 +236,20 @@ namespace Ryzm.EndlessRunner
         #region Protected Functions
         protected override void Reset()
         {
-            Debug.Log("running reset funk");
+            if(InJump)
+            {
+                if(isFlyingUp)
+                {
+                    animator.SetTrigger("resetFly");
+                }
+                else
+                {
+                    animator.SetTrigger("finishFly");
+                }
+                trans.position = new Vector3(trans.position.x, baselineY, trans.position.z);
+            }
             base.Reset();
             isFlyingUp = false;
-            animator.SetTrigger("resetFly");
         }
         #endregion
 

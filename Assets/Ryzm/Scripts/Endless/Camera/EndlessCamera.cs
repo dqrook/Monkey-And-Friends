@@ -63,7 +63,7 @@ namespace Ryzm.EndlessRunner
         void OnGameStatusResponse(GameStatusResponse response)
         {
             gameStatus = response.status;
-            Debug.Log("gamestatus" + gameStatus);
+            // Debug.Log("gamestatus" + gameStatus);
             if(gameStatus == GameStatus.Active && !initialized)
             {
                 initialized = true;
@@ -83,7 +83,7 @@ namespace Ryzm.EndlessRunner
             {
                 return;
             }
-            Debug.Log("lateupdate");
+            // Debug.Log("lateupdate");
             _parentTransform = mode == ControllerMode.Monkey ? monkeyTrans : dragonTrans;
             var newpos = _parentTransform.TransformPoint(pos);
             var newfw = _parentTransform.TransformDirection(fw);

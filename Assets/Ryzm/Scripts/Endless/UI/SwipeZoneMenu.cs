@@ -36,25 +36,10 @@ namespace Ryzm.UI
             {
 				if(ShouldUpdate(value))
 				{
-					if(value)
-					{
-						Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
-					}
-					else
-					{
-						Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
-					}
                 	base.IsActive = value;
 				}
             }
         }
-		#endregion
-
-		#region Listener Functions
-		void OnGameStatusResponse(GameStatusResponse response)
-		{
-			gameStatus = response.status;
-		}
 		#endregion
 
 		#region Event Functions
@@ -63,11 +48,8 @@ namespace Ryzm.UI
 		/// </summary>
 		public void OnPointerDown(PointerEventData data)
 		{
-			if(GameActive())
-			{
-				_firstTouchPosition = Input.mousePosition;
-				Debug.Log("onpointerdown");
-			}
+			_firstTouchPosition = Input.mousePosition;
+			Debug.Log("onpointerdown");
 		}
 
 		/// <summary>
@@ -75,19 +57,16 @@ namespace Ryzm.UI
 		/// </summary>
 		public void OnPointerUp(PointerEventData data)
 		{
-			if(GameActive())
-			{
-				_destination = Input.mousePosition;
-				_deltaSwipe = _destination - _firstTouchPosition;
-				_length = _deltaSwipe.magnitude;
+			_destination = Input.mousePosition;
+			_deltaSwipe = _destination - _firstTouchPosition;
+			_length = _deltaSwipe.magnitude;
 
-				// if the swipe has been long enough
-				if (_length > MinimalSwipeLength)
-				{
-					_angle = EndlessUtils.AngleBetweenVectors(_deltaSwipe, Vector2.right);
-					_swipeDirection = EndlessUtils.AngleToSwipeDirection(_angle);
-					Swipe();
-				}
+			// if the swipe has been long enough
+			if (_length > MinimalSwipeLength)
+			{
+				_angle = EndlessUtils.AngleBetweenVectors(_deltaSwipe, Vector2.right);
+				_swipeDirection = EndlessUtils.AngleToSwipeDirection(_angle);
+				Swipe();
 			}
 		}
 
@@ -111,26 +90,18 @@ namespace Ryzm.UI
 		#region Private Functions
         void Swipe()
 		{
-			if(GameActive())
+			if(_swipeDirection == Direction.Up)
 			{
-				if(_swipeDirection == Direction.Up)
-				{
-					InputManager.Instance.Jump();
-				}
-				else if(_swipeDirection == Direction.Down)
-				{
-					InputManager.Instance.Slide();
-				}
-				else
-				{
-					InputManager.Instance.Shift(_swipeDirection);
-				}
+				InputManager.Instance.Jump();
 			}
-		}
-
-		bool GameActive()
-		{
-			return gameStatus == GameStatus.Active;
+			else if(_swipeDirection == Direction.Down)
+			{
+				InputManager.Instance.Slide();
+			}
+			else
+			{
+				InputManager.Instance.Shift(_swipeDirection);
+			}
 		}
 		#endregion
     }

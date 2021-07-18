@@ -47,6 +47,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 7
   parentSection: {fileID: 0}
+  spawns: []
+  rowLikelihood: 0.5
   trees:
   - {fileID: 8485788214816375549}
   - {fileID: 6580540775872326496}
@@ -202,6 +204,11 @@ PrefabInstance:
     - target: {fileID: 4366775767115785056, guid: 94efcfe8fa8ae45f699cc70507f1c213,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8894682232888211930, guid: 94efcfe8fa8ae45f699cc70507f1c213,
+        type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
