@@ -13,6 +13,7 @@ namespace Ryzm.EndlessRunner
 
         void Awake()
         {
+            Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
             Message.AddListener<CollectCoin>(OnCollectCoin);
             Message.AddListener<RunnerDistanceResponse>(OnRunnerDistanceResponse);
             Message.AddListener<TotalCoinsRequest>(OnTotalCoinsRequest);
@@ -20,9 +21,19 @@ namespace Ryzm.EndlessRunner
 
         void OnDestroy()
         {
+            Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
             Message.RemoveListener<CollectCoin>(OnCollectCoin);
             Message.RemoveListener<RunnerDistanceResponse>(OnRunnerDistanceResponse);
             Message.RemoveListener<TotalCoinsRequest>(OnTotalCoinsRequest);
+        }
+
+        void OnGameStatusResponse(GameStatusResponse response)
+        {
+            if(response.status == GameStatus.Restart)
+            {
+                coinsCollected = 0;
+                distanceTraveled = 0;
+            }
         }
 
         void OnRunnerDistanceResponse(RunnerDistanceResponse response)

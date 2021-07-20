@@ -13,6 +13,10 @@ namespace Ryzm
         void Awake()
         {
             Message.AddListener<GameTypeRequest>(OnGameTypeRequest);
+            if(type == GameType.EndlessRunner)
+            {
+                Application.targetFrameRate = 60;
+            }
         }
 
         void OnDestroy()
