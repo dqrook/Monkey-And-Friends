@@ -237,6 +237,7 @@ namespace Ryzm.EndlessRunner
             if(fire != null)
             {
                 fire.Stop();
+                animator.SetBool("fireBreath", false);
             }
         }
 
