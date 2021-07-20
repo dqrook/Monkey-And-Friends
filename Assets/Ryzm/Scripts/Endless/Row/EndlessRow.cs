@@ -157,7 +157,7 @@ namespace Ryzm.EndlessRunner
                 return;
             }
             SpawnTransform spawnTransform = spawnLocation.RandomSpawnTransform();
-            Transform spawn = spawnTransform.locations[0];
+            Transform spawn = spawnTransform.Location;
             
             _barrier.parentSection = _section;
             _barrier.transform.position = spawn.position;

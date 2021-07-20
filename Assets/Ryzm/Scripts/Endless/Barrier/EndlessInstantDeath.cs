@@ -10,7 +10,10 @@ namespace Ryzm.EndlessRunner
     {
         protected void OnCollisionEnter(Collision other)
         {
-            Message.Send(new RunnerDie());
+            if(other.gameObject.GetComponent<EndlessController>())
+            {
+                Message.Send(new RunnerDie());
+            }
         }
     }
 }

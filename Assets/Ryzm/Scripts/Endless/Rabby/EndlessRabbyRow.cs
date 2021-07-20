@@ -7,9 +7,19 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessRabbyRow : EndlessBarrier
     {
+        #region Public Variables
         public List<EndlessRabby> rabbies = new List<EndlessRabby>();
         public List<Material> rabbyMaterials = new List<Material>();
+        #endregion
 
+        #region Event Functions
+        protected override void Awake()
+        {
+            base.Awake();
+        }
+        #endregion
+
+        #region Public Functions
         public override void Initialize(Transform parentTransform, int position)
         {
             base.Initialize(parentTransform, position);
@@ -27,10 +37,11 @@ namespace Ryzm.EndlessRunner
                 }
             }
         }
+        #endregion
 
+        #region Listener Functions
         protected override void OnSectionDeactivated(SectionDeactivated sectionDeactivated)
         {
-            base.OnSectionDeactivated(sectionDeactivated);
             if(sectionDeactivated.section == parentSection)
             {
                 foreach(EndlessRabby rabby in rabbies)
@@ -38,6 +49,8 @@ namespace Ryzm.EndlessRunner
                     rabby.Reset();
                 }
             }
+            base.OnSectionDeactivated(sectionDeactivated);
         }
+        #endregion
     }
 }

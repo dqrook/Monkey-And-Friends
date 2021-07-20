@@ -49,6 +49,7 @@ namespace Ryzm.Dragon
             if(response.sender == "all")
             {
                 dragons = response.dragons;
+                Debug.Log("moving dragons");
                 MoveDragons();
             }
             else if(response.sender == "newDragon" || response.sender == "marketUpdate")
@@ -59,7 +60,7 @@ namespace Ryzm.Dragon
 
         void OnGameStatusResponse(GameStatusResponse response)
         {
-            if(response.status == GameStatus.Restart || response.status == GameStatus.Exit)
+            if(response.status == GameStatus.Restart || response.status == GameStatus.Exit || response.status == GameStatus.PreStarting)
             {
                 endlessDragon.transform.position = endlessDragonSpawn.position;
                 endlessDragon.transform.rotation = endlessDragonSpawn.rotation;

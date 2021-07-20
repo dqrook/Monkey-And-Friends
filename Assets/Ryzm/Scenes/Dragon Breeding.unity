@@ -9053,26 +9053,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   materials: {fileID: 457837508}
-  data:
-    data:
-      id: 0
-      owner: 
-      genes: 
-      baseSpeed: 0
-      baseAttack: 0
-      baseDefense: 0
-      baseHealth: 0
-      bodyTexture: 
-      wingTexture: 
-      backTexture: 
-      hornTexture: 
-      hornType: 0
-      price: 0
-    bodyTexture: {fileID: 0}
-    wingTexture: {fileID: 0}
-    backTexture: {fileID: 0}
-    hornTexture: {fileID: 0}
-    isUser: 0
 --- !u!114 &457837508
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9089,18 +9069,23 @@ MonoBehaviour:
   - go: {fileID: 304206160}
     type: 0
     initialized: 0
+    texture: {fileID: 0}
   - go: {fileID: 1067879450}
     type: 1
     initialized: 0
+    texture: {fileID: 0}
   - go: {fileID: 606314654}
     type: 2
     initialized: 0
+    texture: {fileID: 0}
   - go: {fileID: 1504662819}
     type: 3
     initialized: 0
+    texture: {fileID: 0}
   - go: {fileID: 1727982877}
     type: 4
     initialized: 0
+    texture: {fileID: 0}
   face: {fileID: 660869645}
 --- !u!4 &457837509
 Transform:
@@ -12153,6 +12138,50 @@ Transform:
   m_Father: {fileID: 1322458121}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!1 &601158436
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 601158437}
+  - component: {fileID: 601158438}
+  m_Layer: 0
+  m_Name: Main Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &601158437
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 601158436}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6196693594043648884}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &601158438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 601158436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d98e96ba8759b4004a6fa35f6c6daf13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 0
 --- !u!1001 &601454624
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -40808,18 +40837,23 @@ MonoBehaviour:
   - go: {fileID: 1087354905}
     type: 0
     initialized: 0
+    texture: {fileID: 0}
   - go: {fileID: 153585057}
     type: 1
     initialized: 0
+    texture: {fileID: 0}
   - go: {fileID: 181026656}
     type: 2
     initialized: 0
+    texture: {fileID: 0}
   - go: {fileID: 1024636683}
     type: 3
     initialized: 0
+    texture: {fileID: 0}
   - go: {fileID: 1414350393}
     type: 4
     initialized: 0
+    texture: {fileID: 0}
   face: {fileID: 1761972657}
 --- !u!95 &916088741
 Animator:
@@ -40853,26 +40887,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   materials: {fileID: 916088740}
-  data:
-    data:
-      id: 0
-      owner: 
-      genes: 
-      baseSpeed: 0
-      baseAttack: 0
-      baseDefense: 0
-      baseHealth: 0
-      bodyTexture: 
-      wingTexture: 
-      backTexture: 
-      hornTexture: 
-      hornType: 0
-      price: 0
-    bodyTexture: {fileID: 0}
-    wingTexture: {fileID: 0}
-    backTexture: {fileID: 0}
-    hornTexture: {fileID: 0}
-    isUser: 0
 --- !u!1 &921965050
 GameObject:
   m_ObjectHideFlags: 0
@@ -58811,6 +58825,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b143ae6dc0127478aac7931b3d05527a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  endlessDragonSpawn: {fileID: 0}
   homeSpawns:
   - order: 0
     spawn: {fileID: 215953720}
@@ -65939,18 +65954,23 @@ MonoBehaviour:
   - go: {fileID: 1467100037}
     type: 0
     initialized: 0
+    texture: {fileID: 0}
   - go: {fileID: 1943629789}
     type: 1
     initialized: 0
+    texture: {fileID: 0}
   - go: {fileID: 1103419260}
     type: 2
     initialized: 0
+    texture: {fileID: 0}
   - go: {fileID: 1380536760}
     type: 3
     initialized: 0
+    texture: {fileID: 0}
   - go: {fileID: 303744392}
     type: 4
     initialized: 0
+    texture: {fileID: 0}
   face: {fileID: 105691539}
 --- !u!95 &1996933623
 Animator:
@@ -65984,26 +66004,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   materials: {fileID: 1996933622}
-  data:
-    data:
-      id: 0
-      owner: 
-      genes: 
-      baseSpeed: 0
-      baseAttack: 0
-      baseDefense: 0
-      baseHealth: 0
-      bodyTexture: 
-      wingTexture: 
-      backTexture: 
-      hornTexture: 
-      hornType: 0
-      price: 0
-    bodyTexture: {fileID: 0}
-    wingTexture: {fileID: 0}
-    backTexture: {fileID: 0}
-    hornTexture: {fileID: 0}
-    isUser: 0
 --- !u!1 &2005176136
 GameObject:
   m_ObjectHideFlags: 0
@@ -66497,18 +66497,23 @@ MonoBehaviour:
   - go: {fileID: 1771942753}
     type: 0
     initialized: 0
+    texture: {fileID: 0}
   - go: {fileID: 490935729}
     type: 1
     initialized: 0
+    texture: {fileID: 0}
   - go: {fileID: 653641870}
     type: 2
     initialized: 0
+    texture: {fileID: 0}
   - go: {fileID: 958376747}
     type: 3
     initialized: 0
+    texture: {fileID: 0}
   - go: {fileID: 582940643}
     type: 4
     initialized: 0
+    texture: {fileID: 0}
   face: {fileID: 465062780}
 --- !u!95 &2035197753
 Animator:
@@ -66542,26 +66547,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   materials: {fileID: 2035197752}
-  data:
-    data:
-      id: 0
-      owner: 
-      genes: 
-      baseSpeed: 0
-      baseAttack: 0
-      baseDefense: 0
-      baseHealth: 0
-      bodyTexture: 
-      wingTexture: 
-      backTexture: 
-      hornTexture: 
-      hornType: 0
-      price: 0
-    bodyTexture: {fileID: 0}
-    wingTexture: {fileID: 0}
-    backTexture: {fileID: 0}
-    hornTexture: {fileID: 0}
-    isUser: 0
 --- !u!1 &2042873795
 GameObject:
   m_ObjectHideFlags: 0
@@ -76264,6 +76249,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1024853862f64ad7b303043054677e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cam: {fileID: 0}
 --- !u!4 &4967941709575565929
 Transform:
   m_ObjectHideFlags: 0
@@ -76361,8 +76347,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   endlessCamera: {fileID: 4967941709575565928}
-  startTransform: {fileID: 4967941709425256479}
+  startTransform: {fileID: 440832547}
+  startClipPlane: 1000
   endTransform: {fileID: 493905684596500324}
+  gameClipPlane: 50
 --- !u!4 &4967941709576113382
 Transform:
   m_ObjectHideFlags: 0
@@ -77235,26 +77223,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   materials: {fileID: 6081081685581062820}
-  data:
-    data:
-      id: 0
-      owner: 
-      genes: 
-      baseSpeed: 0
-      baseAttack: 0
-      baseDefense: 0
-      baseHealth: 0
-      bodyTexture: 
-      wingTexture: 
-      backTexture: 
-      hornTexture: 
-      hornType: 0
-      price: 0
-    bodyTexture: {fileID: 0}
-    wingTexture: {fileID: 0}
-    backTexture: {fileID: 0}
-    hornTexture: {fileID: 0}
-    isUser: 0
 --- !u!1 &5387298721642803090
 GameObject:
   m_ObjectHideFlags: 0
@@ -78291,18 +78259,23 @@ MonoBehaviour:
   - go: {fileID: 5387298721642803090}
     type: 0
     initialized: 0
+    texture: {fileID: 0}
   - go: {fileID: 5387298721642803136}
     type: 1
     initialized: 0
+    texture: {fileID: 0}
   - go: {fileID: 5387298721642803096}
     type: 2
     initialized: 0
+    texture: {fileID: 0}
   - go: {fileID: 5387298721642803086}
     type: 3
     initialized: 0
+    texture: {fileID: 0}
   - go: {fileID: 5387298721642803138}
     type: 4
     initialized: 0
+    texture: {fileID: 0}
   face: {fileID: 5387298721648075398}
 --- !u!4 &6151437659455990567
 Transform:
@@ -78334,6 +78307,7 @@ Transform:
   - {fileID: 1097334239}
   - {fileID: 946463341}
   - {fileID: 4967941709576113382}
+  - {fileID: 601158437}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -78365,6 +78339,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d76229326de6f4336a55e282646b34dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  leftPress: 97
+  rightPress: 100
+  upPress: 32
+  downPress: 115
 --- !u!4 &6196693594667345801
 Transform:
   m_ObjectHideFlags: 0

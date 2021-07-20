@@ -11,6 +11,7 @@ namespace Ryzm.EndlessRunner
         public EndlessMonkey monkey;
         public EndlessDragon dragon;
         public ControllerMode mode = ControllerMode.Monkey;
+        public List<DragonByHorn> dragons = new List<DragonByHorn>();
 
         void Awake()
         {
@@ -59,4 +60,10 @@ namespace Ryzm.EndlessRunner
         Dragon,
         None
 	}
+
+    public struct DragonByHorn
+    {
+        public int hornType;
+        public EndlessDragon dragon;
+    }
 }

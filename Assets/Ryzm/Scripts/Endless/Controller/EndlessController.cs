@@ -95,12 +95,7 @@ namespace Ryzm.EndlessRunner
             animator.runtimeAnimatorController = animatorController;
 			
             playerInput = new Player();
-            
-            Message.AddListener<CurrentSectionChange>(OnCurrentSectionChange);
-            Message.AddListener<RunnerDie>(OnRunnerDie);
-            Message.AddListener<CurrentPositionRequest>(OnCurrentPositionRequest);
-            Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
-            Message.AddListener<ControllerModeResponse>(OnControllerModeResponse);
+
             mainCamera = Camera.main;
             // playerInput.Touch.PrimaryContact.started += (ctx) => StartTouchPrimary(ctx);
             // playerInput.Touch.PrimaryContact.canceled += (ctx) => EndTouchPrimary(ctx);
@@ -130,24 +125,33 @@ namespace Ryzm.EndlessRunner
         protected virtual void OnEnable()
         {
             playerInput.Enable();
-            // Message.Send(new GameStatusRequest());
 			Message.Send(new ControllerModeRequest());
             Message.AddListener<RunnerDistanceRequest>(OnRunnerDistanceRequest);
+            Message.AddListener<CurrentSectionChange>(OnCurrentSectionChange);
+            Message.AddListener<RunnerDie>(OnRunnerDie);
+            Message.AddListener<CurrentPositionRequest>(OnCurrentPositionRequest);
+            Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
+            Message.AddListener<ControllerModeResponse>(OnControllerModeResponse);
         }
 
         protected virtual void OnDisable()
 		{
 			playerInput.Disable();
             Message.RemoveListener<RunnerDistanceRequest>(OnRunnerDistanceRequest);
-		}
-
-		protected virtual void OnDestroy()
-        {
             Message.RemoveListener<CurrentSectionChange>(OnCurrentSectionChange);
             Message.RemoveListener<RunnerDie>(OnRunnerDie);
             Message.RemoveListener<CurrentPositionRequest>(OnCurrentPositionRequest);
             Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
             Message.RemoveListener<ControllerModeResponse>(OnControllerModeResponse);
+		}
+
+		protected virtual void OnDestroy()
+        {
+            // Message.RemoveListener<CurrentSectionChange>(OnCurrentSectionChange);
+            // Message.RemoveListener<RunnerDie>(OnRunnerDie);
+            // Message.RemoveListener<CurrentPositionRequest>(OnCurrentPositionRequest);
+            // Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
+            // Message.RemoveListener<ControllerModeResponse>(OnControllerModeResponse);
         }
 
         protected virtual void OnCurrentSectionChange(CurrentSectionChange change)

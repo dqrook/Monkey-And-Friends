@@ -428,7 +428,6 @@ GameObject:
   - component: {fileID: 1997747314223144823}
   - component: {fileID: 1997747314232668295}
   - component: {fileID: 1997747314223301467}
-  - component: {fileID: 1997747314223301460}
   - component: {fileID: 1997747314223301462}
   m_Layer: 10
   m_Name: Endless Rabby
@@ -466,7 +465,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 575b53c6b572b4877a9f50ab47667ead, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -485,19 +484,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rabbyBody: {fileID: 1997747314228579911}
---- !u!135 &1997747314223301460
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1997747314223301463}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Radius: 0.25
-  m_Center: {x: 0, y: 0.16, z: -0.04}
+  rabbyCollider: {fileID: 2077846236722657984}
 --- !u!54 &1997747314223301462
 Rigidbody:
   m_ObjectHideFlags: 0

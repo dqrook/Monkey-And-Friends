@@ -77,7 +77,7 @@ namespace Ryzm.EndlessRunner
 
         void OnStartingGame()
         {
-            UpdateGameStatus(GameStatus.Transition);
+            UpdateGameStatus(GameStatus.PreStarting);
             Message.Send(new CreateSectionRow());
             Debug.Log("CreateSectionRow");
             UpdateGameStatus(GameStatus.Starting);
@@ -209,7 +209,7 @@ namespace Ryzm.EndlessRunner
         Paused,
         Ended,
         Restart,
-        Transition,
+        PreStarting,
         Exit
     }
 }

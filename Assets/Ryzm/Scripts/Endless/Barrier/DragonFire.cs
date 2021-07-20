@@ -9,6 +9,7 @@ namespace Ryzm.EndlessRunner
     public class DragonFire : MonoBehaviour
     {
         public ParticleSystem part;
+        public FireType type = FireType.Enemy;
         float collisionTime;
 
         void Awake()
@@ -37,11 +38,29 @@ namespace Ryzm.EndlessRunner
 
         void OnParticleCollision(GameObject other)
         {
-            collisionTime += Time.deltaTime;
-            if(collisionTime > Time.deltaTime * 3)
+            if(type == FireType.Enemy)
             {
-                Message.Send(new RunnerDie());
+                collisionTime += Time.deltaTime;
+                if(collisionTime > Time.deltaTime * 3)
+                {
+                    Message.Send(new RunnerDie());
+                    collisionTime = 0;
+                }
+            }
+            else
+            {
+                EndlessRabby rabby = other.GetComponent<EndlessRabby>();
+                if(rabby != null)
+                {
+                    rabby.Die();
+                }
             }
         }
+    }
+
+    public enum FireType
+    {
+        Enemy,
+        User
     }
 }

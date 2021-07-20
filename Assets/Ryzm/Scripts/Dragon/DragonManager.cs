@@ -9,11 +9,13 @@ using UnityEngine.Networking;
 using Ryzm.Dragon.Messages;
 using Ryzm.EndlessRunner;
 using System.Linq;
+using Ryzm.Messages;
 
 namespace Ryzm.Dragon
 {
     public class DragonManager : MonoBehaviour
     {
+        #region Public Variables
         public NearEnvs nearEnvs;
         public Envs envs;
         public DragonPrefabs prefabs;
@@ -21,7 +23,9 @@ namespace Ryzm.Dragon
 
         [Header("Spawns")]
         public List<DragonSpawn> dragonSpawns = new List<DragonSpawn>();
+        #endregion
 
+        #region Private Variables
         IEnumerator getDragons;
         bool gettingDragons;
         string accountName;
@@ -42,7 +46,10 @@ namespace Ryzm.Dragon
         int newDragonId;
         IEnumerator addDragonToMarket;
         IEnumerator removeDragonFromMarket;
+        GameType gameType;
+        #endregion
 
+        #region Event Functions
         void Awake()
         {
             Message.AddListener<LoginResponse>(OnLoginResponse);
@@ -55,12 +62,14 @@ namespace Ryzm.Dragon
             Message.AddListener<DragonTransformUpdate>(OnDragonTransformUpdate);
             Message.AddListener<AddDragonToMarketRequest>(OnAddDragonToMarketRequest);
             Message.AddListener<RemoveDragonFromMarketRequest>(OnRemoveDragonFromMarketRequest);
+            Message.AddListener<GameTypeResponse>(OnGameTypeResponse);
             newDragonId = -1;
         }
 
         void Start()
         {
             Message.Send(new LoginRequest());
+            Message.Send(new GameTypeRequest());
         }
 
         void OnDestroy()
@@ -75,8 +84,11 @@ namespace Ryzm.Dragon
             Message.RemoveListener<DragonTransformUpdate>(OnDragonTransformUpdate);
             Message.RemoveListener<AddDragonToMarketRequest>(OnAddDragonToMarketRequest);
             Message.RemoveListener<RemoveDragonFromMarketRequest>(OnRemoveDragonFromMarketRequest);
+            Message.RemoveListener<GameTypeResponse>(OnGameTypeResponse);
         }
+        #endregion
         
+        #region Listener Functions
         void OnLoginResponse(LoginResponse response)
         {
             if(response.status == LoginStatus.LoggedIn)
@@ -167,7 +179,6 @@ namespace Ryzm.Dragon
 
         void OnDragonInitialized(DragonInitialized initialized)
         {
-            Debug.Log("new dragon id " + newDragonId);
             if(initializingDragons)
             {
                 if(initializingDragonIds.Contains(initialized.id))
@@ -180,7 +191,11 @@ namespace Ryzm.Dragon
                     initializingDragons = false;
                     foreach(int dragonId in initializedDragonIds)
                     {
-                        dragons[dragonId].EnableMaterials();
+                        Debug.Log("initializing " + dragonId.ToString());
+                        if(gameType == GameType.Breeding)
+                        {
+                            dragons[dragonId].EnableMaterials();
+                        }
                     }
                     initializingDragonIds.Clear();
                 }
@@ -272,6 +287,13 @@ namespace Ryzm.Dragon
             }
         }
 
+        void OnGameTypeResponse(GameTypeResponse response)
+        {
+            gameType = response.type;
+        }
+        #endregion
+
+        #region Private Functions
         void SignUrlAndOpen(string res, bool isBreeding)
         {
             TxHashResponse response = TxHashResponse.FromJson(res);
@@ -282,7 +304,9 @@ namespace Ryzm.Dragon
             // Application.OpenURL(signedUrl);
             RyzmUtils.OpenUrl(signedUrl);
         }
+        #endregion
 
+        #region Coroutines
         IEnumerator GetDragons(string url, string bodyJsonString)
         {
             gettingDragons = true;
@@ -303,11 +327,17 @@ namespace Ryzm.Dragon
                 {
                     GameObject go = GameObject.Instantiate(prefabs.GetPrefabByHornType(dragonRes.hornType).dragon);
                     EndlessDragon dragon = go.GetComponent<EndlessDragon>();
-                    // dragon.DisableMaterials();
+                    dragon.DisableMaterials();
                     dragon.data = dragonRes;
                     dragons.Add(dragon.data.id, dragon);
                     initializingDragonIds.Add(dragon.data.id);
                     // dragon.GetTextures();
+                    // dragon.RemoveFromEndlessRunner();
+                }
+                foreach(EndlessDragon dragon in dragons.Values)
+                {
+                    dragon.GetTextures();
+                    dragon.RemoveFromEndlessRunner();
                 }
                 Message.Send(new DragonsResponse(dragons.Values.ToList(), "all"));
             }
@@ -502,6 +532,7 @@ namespace Ryzm.Dragon
                 }
             }
         }
+        #endregion
     }
 
     [System.Serializable]

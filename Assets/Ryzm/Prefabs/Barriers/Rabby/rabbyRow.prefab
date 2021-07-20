@@ -127,8 +127,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 11
   parentSection: {fileID: 0}
+  spawns: []
+  rowLikelihood: 0.5
   rabbies:
   - {fileID: 2677147464210424566}
+  - {fileID: 2263085570685560959}
   rabbyMaterials:
   - {fileID: 2100000, guid: f31ff426fcf76264e8b0833cb7a17d79, type: 2}
   - {fileID: 2100000, guid: 0a151553bbc202c44b9da5e4ce8e0219, type: 2}
@@ -213,6 +216,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 347187079064791844}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2263085570685560959 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1997747314223301467, guid: 87140db51bf3a4b2c8a39f3276e8d0bc,
+    type: 3}
+  m_PrefabInstance: {fileID: 347187079064791844}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7518853f4e9047d5a7975dcf4423cac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &4512131795606364589
 PrefabInstance:
   m_ObjectHideFlags: 0

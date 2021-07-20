@@ -124,17 +124,6 @@ namespace Ryzm.EndlessRunner
             }
         }
 
-        public Transform GetSpawnTransformForBarrier(BarrierType type)
-        {
-            SpawnLocation location = GetSpawnLocationForBarrier(type);
-            if(location == null)
-            {
-                return null;
-            }
-            SpawnTransform spawn = location.RandomSpawnTransform();
-            return spawn.Location;
-        }
-
         public Transform GetSpawnTransformForBarrier(BarrierType type, int position)
         {
             SpawnLocation location = GetSpawnLocationForBarrier(type);
@@ -220,7 +209,8 @@ namespace Ryzm.EndlessRunner
                 {
                     return null;
                 }
-                return locations[Random.Range(0, locations.Length)];
+                int idx = Random.Range(0, locations.Length);
+                return locations[idx];
             }
         }
     }
