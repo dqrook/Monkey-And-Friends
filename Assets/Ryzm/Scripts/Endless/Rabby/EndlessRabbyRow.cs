@@ -51,6 +51,18 @@ namespace Ryzm.EndlessRunner
             }
             base.OnSectionDeactivated(sectionDeactivated);
         }
+
+        protected override void OnGameStatusResponse(GameStatusResponse gameStatusResponse)
+        {
+            if(gameStatusResponse.status == GameStatus.Restart)
+            {
+                foreach(EndlessRabby rabby in rabbies)
+                {
+                    rabby.Reset();
+                }
+            }
+            base.OnGameStatusResponse(gameStatusResponse);
+        }
         #endregion
     }
 }

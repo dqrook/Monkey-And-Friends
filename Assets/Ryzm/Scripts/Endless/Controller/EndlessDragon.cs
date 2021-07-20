@@ -259,16 +259,18 @@ namespace Ryzm.EndlessRunner
         #region Protected Functions
         protected override void Reset()
         {
+            animator.SetBool("flyDown", false);
+            animator.SetBool("flyUp", false);
             if(InJump)
             {
-                if(isFlyingUp)
-                {
-                    animator.SetTrigger("resetFly");
-                }
-                else
-                {
-                    animator.SetTrigger("finishFly");
-                }
+                // if(isFlyingUp)
+                // {
+                //     animator.SetTrigger("resetFly");
+                // }
+                // else
+                // {
+                //     animator.SetTrigger("finishFly");
+                // }
                 trans.position = new Vector3(trans.position.x, baselineY, trans.position.z);
             }
             base.Reset();
@@ -394,7 +396,9 @@ namespace Ryzm.EndlessRunner
 
         IEnumerator FlyUp(float initY)
         {
-            animator.SetTrigger("flyUp");
+            // animator.SetTrigger("flyUp");
+            animator.SetBool("flyDown", false);
+            animator.SetBool("flyUp", true);
             InJump = true;
             baselineY = initY;
             float currentY = trans.position.y;
@@ -411,7 +415,9 @@ namespace Ryzm.EndlessRunner
                 yield return null;
             }
             isFlyingUp = false;
-            animator.SetTrigger("flyDown");
+            // animator.SetTrigger("flyDown");
+            animator.SetBool("flyDown", true);
+            animator.SetBool("flyUp", false);
             float timeMultiplier = 0.1f;
             while(absDiff > 0.25f)
             {
@@ -432,7 +438,8 @@ namespace Ryzm.EndlessRunner
                 Move(-flyDownSpeed * downMultiplier * Time.deltaTime);
                 yield return null;
             }
-            animator.SetTrigger("finishFly");
+            // animator.SetTrigger("finishFly");
+            animator.SetBool("flyDown", false);
             trans.position = new Vector3(trans.position.x, baselineY, trans.position.z);
             InJump = false;
             yield break;
