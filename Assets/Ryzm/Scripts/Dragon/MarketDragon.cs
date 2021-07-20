@@ -6,24 +6,59 @@ namespace Ryzm.Dragon
 {
     public class MarketDragon : MonoBehaviour
     {
-        public DragonMaterials materials;
+        public DragonPrefabs prefabs;
+        public Dictionary<int, BaseDragon> hornToDragons = new Dictionary<int, BaseDragon>();
+        BaseDragon activeDragon;
+        Transform trans;
+
+        void Awake()
+        {
+            trans = transform;
+        }
 
         public void UpdateData(MarketDragonData data)
         {
-            materials.SetTexture(DragonMaterialType.Body, data.bodyTexture);
-            materials.SetTexture(DragonMaterialType.Wing, data.wingTexture);
-            materials.SetTexture(DragonMaterialType.Horn, data.hornTexture);
-            materials.SetTexture(DragonMaterialType.Back, data.backTexture);
+            if(!hornToDragons.ContainsKey(data.data.hornType))
+            {
+                BaseDragon newDragon = Instantiate(prefabs.GetPrefabByHornType(data.data.hornType).dragon).GetComponent<BaseDragon>();
+                newDragon.transform.parent = this.trans;
+                newDragon.transform.localPosition = Vector3.zero;
+                newDragon.transform.localEulerAngles = Vector3.zero;
+                hornToDragons.Add(data.data.hornType, newDragon);
+            }
+            activeDragon = hornToDragons[data.data.hornType];
+            activeDragon.data = data.data;
+            SetTexture(DragonMaterialType.Body, data.bodyTexture);
+            SetTexture(DragonMaterialType.Wing, data.wingTexture);
+            SetTexture(DragonMaterialType.Horn, data.hornTexture);
+            SetTexture(DragonMaterialType.Back, data.backTexture);
         }
 
-        public void EnableMaterials()
+        public void SetTexture(DragonMaterialType type, Texture texture)
         {
-            materials.Enable();
+            if(activeDragon != null)
+            {
+                foreach(DragonMaterial material in activeDragon.materials)
+                {
+                    if(material.type == type)
+                    {
+                        material.SetTexture(texture);
+                    }
+                }
+            }
         }
 
         public void DisableMaterials()
         {
-            materials.Disable();
+            foreach(BaseDragon dragon in hornToDragons.Values)
+            {
+                dragon.DisableMaterials();
+            }
+        }
+
+        public void EnableMaterials()
+        {
+            activeDragon.EnableMaterials();
         }
     }
 }

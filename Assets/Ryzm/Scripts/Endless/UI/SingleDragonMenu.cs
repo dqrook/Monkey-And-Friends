@@ -11,8 +11,8 @@ namespace Ryzm.UI
 {
     public class SingleDragonMenu : RyzmMenu
     {
-        EndlessDragon singleDragon;
-        EndlessDragon[] dragons;
+        BaseDragon singleDragon;
+        BaseDragon[] dragons;
         List<MenuType> mainMenus  = new List<MenuType>();
 
         public override bool IsActive

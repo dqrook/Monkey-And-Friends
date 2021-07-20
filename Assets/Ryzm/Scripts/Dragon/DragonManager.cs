@@ -19,7 +19,7 @@ namespace Ryzm.Dragon
         public NearEnvs nearEnvs;
         public Envs envs;
         public DragonPrefabs prefabs;
-        public Dictionary<int, EndlessDragon> dragons = new Dictionary<int, EndlessDragon>();
+        public Dictionary<int, BaseDragon> dragons = new Dictionary<int, BaseDragon>();
 
         [Header("Spawns")]
         public List<DragonSpawn> dragonSpawns = new List<DragonSpawn>();
@@ -110,7 +110,7 @@ namespace Ryzm.Dragon
                 accountName = "";
                 privateKey = "";
                 secondaryPublicKey = "";
-                foreach(EndlessDragon dragon in dragons.Values)
+                foreach(BaseDragon dragon in dragons.Values)
                 {
                     Destroy(dragon.gameObject);
                 }
@@ -202,7 +202,7 @@ namespace Ryzm.Dragon
             }
             else if(initialized.id == newDragonId)
             {
-                EndlessDragon newDragon = dragons[newDragonId];
+                BaseDragon newDragon = dragons[newDragonId];
                 if(newDragon != null)
                 {
                     foreach(DragonSpawn spawn in dragonSpawns)
@@ -214,7 +214,7 @@ namespace Ryzm.Dragon
                             break;
                         }
                     }
-                    foreach(EndlessDragon dragon in dragons.Values)
+                    foreach(BaseDragon dragon in dragons.Values)
                     {
                         dragon.gameObject.SetActive(dragon.data.id == newDragonId);
                     }
@@ -239,7 +239,7 @@ namespace Ryzm.Dragon
         {
             if(dragons.ContainsKey(update.dragonId))
             {
-                EndlessDragon newDragon = dragons[update.dragonId];
+                BaseDragon newDragon = dragons[update.dragonId];
                 foreach(DragonSpawn spawn in dragonSpawns)
                 {
                     if(spawn.type == update.spawnType)
@@ -326,18 +326,15 @@ namespace Ryzm.Dragon
                 foreach(DragonResponse dragonRes in response.dragons)
                 {
                     GameObject go = GameObject.Instantiate(prefabs.GetPrefabByHornType(dragonRes.hornType).dragon);
-                    EndlessDragon dragon = go.GetComponent<EndlessDragon>();
+                    BaseDragon dragon = go.GetComponent<BaseDragon>();
                     dragon.DisableMaterials();
                     dragon.data = dragonRes;
                     dragons.Add(dragon.data.id, dragon);
                     initializingDragonIds.Add(dragon.data.id);
-                    // dragon.GetTextures();
-                    // dragon.RemoveFromEndlessRunner();
                 }
-                foreach(EndlessDragon dragon in dragons.Values)
+                foreach(BaseDragon dragon in dragons.Values)
                 {
                     dragon.GetTextures();
-                    dragon.RemoveFromEndlessRunner();
                 }
                 Message.Send(new DragonsResponse(dragons.Values.ToList(), "all"));
             }
@@ -460,7 +457,7 @@ namespace Ryzm.Dragon
 
                 DragonResponse dragonRes = response.dragon;
                 GameObject go = GameObject.Instantiate(prefabs.GetPrefabByHornType(dragonRes.hornType).dragon);
-                EndlessDragon dragon = go.GetComponent<EndlessDragon>();
+                BaseDragon dragon = go.GetComponent<BaseDragon>();
                 dragon.data = dragonRes;
                 dragons.Add(dragon.data.id, dragon);
                 Message.Send(new DragonsResponse(dragons.Values.ToList(), "newDragon"));

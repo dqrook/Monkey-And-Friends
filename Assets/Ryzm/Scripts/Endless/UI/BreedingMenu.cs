@@ -46,12 +46,12 @@ namespace Ryzm.UI
         public GameObject singleDragonPanel;
         public GameObject singleDragonResetCameraButton;
 
-        EndlessDragon[] dragons;
+        BaseDragon[] dragons;
         List<MenuType> mainMenus  = new List<MenuType>();
         bool initialized;
         bool movingCamera;
-        EndlessDragon dragon1;
-        EndlessDragon dragon2;
+        BaseDragon dragon1;
+        BaseDragon dragon2;
         int newDragonId;
         int dragon1Index;
         int dragon2Index;
@@ -89,7 +89,7 @@ namespace Ryzm.UI
                         Message.RemoveListener<BreedDragonsResponse>(OnBreedDragonsResponse);
                         Message.RemoveListener<DragonInitialized>(OnDragonInitialized);
                         // dragons.Clear();
-                        dragons = new EndlessDragon[0];
+                        dragons = new BaseDragon[0];
                     }
                     base.IsActive = value;
                 }
@@ -220,7 +220,7 @@ namespace Ryzm.UI
             // availableDragons.Clear();
             dragon1 = dragons[dragon1Index];
             dragon2 = dragons[dragon2Index];
-            foreach(EndlessDragon dragon in dragons)
+            foreach(BaseDragon dragon in dragons)
             {
                 if(dragon == dragon1 || dragon == dragon2)
                 {
@@ -376,7 +376,7 @@ namespace Ryzm.UI
             {
                 breedingPanel.SetActive(false);
                 singleDragonPanel.SetActive(true);
-                foreach(EndlessDragon dragon in dragons)
+                foreach(BaseDragon dragon in dragons)
                 {
                     if(dragon.data.id == newDragonId)
                     {

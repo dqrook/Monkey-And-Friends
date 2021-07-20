@@ -16,7 +16,7 @@ namespace Ryzm.Dragon
         #endregion
         
         #region Private Variables
-        EndlessDragon[] dragons = new EndlessDragon[0];
+        BaseDragon[] dragons = new BaseDragon[0];
         EndlessDragon endlessDragon;
         #endregion
 
@@ -82,7 +82,7 @@ namespace Ryzm.Dragon
         void MoveDragons()
         {
             int index = 0;
-            foreach(EndlessDragon dragon in dragons)
+            foreach(BaseDragon dragon in dragons)
             {
                 DragonHomeSpawn spawn = GetSpawn(index);
                 if(spawn != null)

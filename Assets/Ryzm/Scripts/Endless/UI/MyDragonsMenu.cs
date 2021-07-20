@@ -41,7 +41,7 @@ namespace Ryzm.UI
         public Canvas errorPanel;
         public TextMeshProUGUI errorText;
 
-        EndlessDragon[] dragons;
+        BaseDragon[] dragons;
         bool menuSetsInitialized;
         MenuSet previousMenuSet;
         List<MenuType> mainMenus  = new List<MenuType>();
@@ -183,7 +183,7 @@ namespace Ryzm.UI
         {
             noDragonsPanel.enabled = dragons.Length == 0;
             arrowsPanel.enabled = dragons.Length > 1;
-            EndlessDragon _dragon = CurrentDragon();
+            BaseDragon _dragon = CurrentDragon();
             if(_dragon != null)
             {
                 int dragonId = _dragon.data.id;
@@ -195,20 +195,20 @@ namespace Ryzm.UI
                 {
                     dragonPrice.text = _dragon.Price.ToString() + " Near";
                 }
-                foreach(EndlessDragon dragon in dragons)
+                foreach(BaseDragon dragon in dragons)
                 {
                     dragon.gameObject.SetActive(dragon.data.id == dragonId);
                 }
             }
         }
 
-        EndlessDragon CurrentDragon()
+        BaseDragon CurrentDragon()
         {
             if(dragons.Length == 0)
             {
                 return null;
             }
-            EndlessDragon _dragon = dragons[dragonIndex];
+            BaseDragon _dragon = dragons[dragonIndex];
             return _dragon;
         }
 

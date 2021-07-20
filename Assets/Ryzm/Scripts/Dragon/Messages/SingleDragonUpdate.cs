@@ -5,9 +5,9 @@ namespace Ryzm.Dragon.Messages
 {
     public class SingleDragonUpdate : Message
     {
-        public EndlessDragon dragon;
+        public BaseDragon dragon;
 
-        public SingleDragonUpdate(EndlessDragon dragon)
+        public SingleDragonUpdate(BaseDragon dragon)
         {
             this.dragon = dragon;
         }

@@ -22,6 +22,29 @@ namespace Ryzm.Dragon
         #endregion
 
         #region Properties
+        public bool ForSale
+        {
+            get
+            {
+                if(data == null)
+                {
+                    return false;
+                }
+                return data.price > 0;
+            }
+        }
+
+        public float Price
+        {
+            get
+            {
+                if(data == null)
+                {
+                    return 0;
+                }
+                return data.price;
+            }
+        }
         bool MaterialsInitialized
         {
             get
@@ -84,9 +107,11 @@ namespace Ryzm.Dragon
 
         public void GetTextures()
         {
-            getDragonTexture = null;
-            getDragonTexture = _GetTextures();
-            StartCoroutine(getDragonTexture);
+            Debug.Log("dragon is initialized " + data.id);
+            Message.Send(new DragonInitialized(data.id));
+            // getDragonTexture = null;
+            // getDragonTexture = _GetTextures();
+            // StartCoroutine(getDragonTexture);
         }
 
         public void DisableMaterials()

@@ -14,11 +14,11 @@ namespace Ryzm.Dragon
         public List<MarketDragon> marketDragons = new List<MarketDragon>();
         public Envs envs;
         public Dictionary<int, MarketDragonData> allDragonsForSale = new Dictionary<int, MarketDragonData>();
-        public Dictionary<int, EndlessDragon> userDragonsForSale = new Dictionary<int, EndlessDragon>();
+        public Dictionary<int, BaseDragon> userDragonsForSale = new Dictionary<int, BaseDragon>();
 
         // current queried page
         int currentPage;
-        EndlessDragon[] dragons;
+        BaseDragon[] dragons;
         IEnumerator getMarketDragons;
         int numberOfDragonsOnMarket;
         bool gotAllDragons;
@@ -65,7 +65,7 @@ namespace Ryzm.Dragon
         {
             dragons = response.dragons;
             userDragonsForSale.Clear();
-            foreach(EndlessDragon dragon in dragons)
+            foreach(BaseDragon dragon in dragons)
             {
                 if(dragon.data.price > 0) 
                 {
