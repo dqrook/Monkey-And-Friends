@@ -192,6 +192,7 @@ namespace Ryzm.Dragon
                     foreach(int dragonId in initializedDragonIds)
                     {
                         Debug.Log("initializing " + dragonId.ToString());
+                        // dragons[dragonId].EnableMaterials();
                         if(gameType == GameType.Breeding)
                         {
                             dragons[dragonId].EnableMaterials();
@@ -570,11 +571,24 @@ namespace Ryzm.Dragon
     {
         public int id;
         public string owner;
-        public List<int> genes;
+        public int parent1;
+        public int parent2;
         public int baseSpeed;
         public int baseAttack;
         public int baseDefense;
         public int baseHealth;
+        public int bodyColor;
+        public int wingColor;
+        public int backColor;
+        public int hornColor;
+        public int eyeColor;
+        public int toothColor;
+        public List<int> bodyGenes;
+        public List<int> wingGenes;
+        public List<int> backGenes;
+        public List<int> hornGenes;
+        public List<int> hornTypeGenes;
+        public List<int> extraGenes;
         public string bodyTexture;
         public string wingTexture;
         public string backTexture;

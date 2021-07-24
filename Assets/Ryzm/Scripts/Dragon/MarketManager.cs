@@ -285,19 +285,23 @@ namespace Ryzm.Dragon
             {
                 string url = map[index].url;
                 DragonMaterialType type = map[index].type;
-                UnityWebRequest request = RyzmUtils.TextureRequest(url);
-                yield return request.SendWebRequest();
-                if(request.isNetworkError || request.isHttpError)
-                {
-                    Debug.LogError("ERROR");
-                    // todo: handle this case
-                }
-                else
-                {
-                    Texture _texture = DownloadHandlerTexture.GetContent(request);
-                    dragon.SetTexture(type, _texture);
+                Texture _texture = Resources.Load<Texture>("Dragon/" + url);
+                dragon.SetTexture(type, _texture);
 
-                }
+                // UnityWebRequest request = RyzmUtils.TextureRequest(url);
+                // yield return request.SendWebRequest();
+                // if(request.isNetworkError || request.isHttpError)
+                // {
+                //     Debug.LogError("ERROR");
+                //     // todo: handle this case
+                // }
+                // else
+                // {
+                //     Texture _texture = DownloadHandlerTexture.GetContent(request);
+                //     dragon.SetTexture(type, _texture);
+
+                // }
+                
                 index++;
                 yield return null;
             }

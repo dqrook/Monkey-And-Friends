@@ -141,7 +141,7 @@ namespace Ryzm.Blockchain
             {
                 if(accessKeyResponse == null)
                 {
-                    GetAccessKeys(AccountName);
+                    GetAccessKeys(AccountName, LoginStatus.LoggedOut);
                 }
                 else if(CanAccessContract(PublicKey))
                 {
@@ -183,7 +183,7 @@ namespace Ryzm.Blockchain
         void OnAttemptLogin(AttemptLogin attemptLogin)
         {
             Debug.Log(attemptLogin.accountName);
-            GetAccessKeys(attemptLogin.accountName);
+            GetAccessKeys(attemptLogin.accountName, LoginStatus.Rejected);
         }
 
         void OnSignMessageRequest(SignMessageRequest request)
@@ -207,13 +207,13 @@ namespace Ryzm.Blockchain
             Logout();
         }
 
-        void GetAccessKeys(string accountName)
+        void GetAccessKeys(string accountName, LoginStatus status)
         {
             if(!fetchingKeys)
             {
                 getAccessKeys = null;
                 string[] p = { "access_key/" + accountName, "" };
-                getAccessKeys = _GetAccessKeys(envs.nodeUrl, new NearJson("query", p).ToJson(), accountName);
+                getAccessKeys = _GetAccessKeys(envs.nodeUrl, new NearJson("query", p).ToJson(), accountName, status);
                 StartCoroutine(getAccessKeys);
             }
             Message.Send(new LoginResponse(accountName, envs.LoginUrl(TempPublicKey), LoginStatus.FetchingKeys));
@@ -261,7 +261,7 @@ namespace Ryzm.Blockchain
             Message.Send(new LoginResponse(_accountName, envs.LoginUrl(_publicKey), LoginStatus.Rejected));
         }
 
-        IEnumerator _GetAccessKeys(string url, string bodyJsonString, string _accountName)
+        IEnumerator _GetAccessKeys(string url, string bodyJsonString, string _accountName, LoginStatus status)
         {
             Debug.Log(url + " " + bodyJsonString + " " + _accountName);
             fetchingKeys = true;
@@ -270,7 +270,14 @@ namespace Ryzm.Blockchain
             if(request.isNetworkError || request.isHttpError)
             {
                 Debug.LogError("ERROR");
-                RejectLogin(_accountName);
+                if(status == LoginStatus.Rejected)
+                {
+                    RejectLogin(_accountName);
+                }
+                else if(status == LoginStatus.LoggedOut)
+                {
+                    Logout();
+                }
             }
             else
             {
@@ -301,7 +308,15 @@ namespace Ryzm.Blockchain
                 }
                 else
                 {
-                    RejectLogin(_accountName);
+                    Debug.Log("got keys but cant access contract");
+                    if(status == LoginStatus.Rejected)
+                    {
+                        RejectLogin(_accountName);
+                    }
+                    else if(status == LoginStatus.LoggedOut)
+                    {
+                        Logout();
+                    }
                 }
             }
             fetchingKeys = false;

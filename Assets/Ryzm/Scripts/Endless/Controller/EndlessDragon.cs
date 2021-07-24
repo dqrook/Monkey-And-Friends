@@ -12,6 +12,7 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessDragon : EndlessController
     {
+        public BaseDragon baseDragon;
         public DragonMaterials materials;
         public Transform monkeyPos;
         public DragonFire fire;
@@ -144,36 +145,21 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<RunnerDistanceRequest>(OnRunnerDistanceRequest);
         }
 
-        public void SetTexture(DragonMaterialType type, Texture texture)
-        {
-            if(materials != null)
-            {
-                materials.SetTexture(type, texture);
-                if(materials.Initialized)
-                {
-                    Debug.Log("dragon is initialized " + data.id);
-                    Message.Send(new DragonInitialized(data.id));
-                }
-            }
-        }
-
         public void GetTextures()
         {
-            Debug.Log("dragon is initialized " + data.id);
-            Message.Send(new DragonInitialized(data.id));
-            // getDragonTexture = null;
-            // getDragonTexture = _GetTextures();
-            // StartCoroutine(getDragonTexture);
+            baseDragon.GetTextures();
+            // Debug.Log("dragon is initialized " + data.id);
+            // Message.Send(new DragonInitialized(data.id));
         }
 
         public void DisableMaterials()
         {
-            materials.Disable();
+            baseDragon.DisableMaterials();
         }
 
         public void EnableMaterials()
         {
-            materials.Enable();
+            baseDragon.EnableMaterials();
         }
 
         public override void Shift(Direction direction)
@@ -323,42 +309,6 @@ namespace Ryzm.EndlessRunner
         #endregion
 
         #region Coroutines
-        IEnumerator _GetTextures()
-        {
-            List<MaterialTypeToUrlMap> map = new List<MaterialTypeToUrlMap>
-            {
-                new MaterialTypeToUrlMap(DragonMaterialType.Body, data.bodyTexture),
-                new MaterialTypeToUrlMap(DragonMaterialType.Wing, data.wingTexture),
-                new MaterialTypeToUrlMap(DragonMaterialType.Horn, data.hornTexture),
-                new MaterialTypeToUrlMap(DragonMaterialType.Back, data.backTexture)
-            };
-            
-            int numMaterials = map.Count;
-            int index = 0;
-            while(index < numMaterials)
-            {
-                string url = map[index].url;
-                DragonMaterialType type = map[index].type;
-                UnityWebRequest request = RyzmUtils.TextureRequest(url);
-                yield return request.SendWebRequest();
-                if(request.isNetworkError || request.isHttpError)
-                {
-                    Debug.LogError("ERROR");
-                    // todo: handle this case
-                }
-                else
-                {
-                    if(materials != null)
-                    {
-                        Texture _texture = DownloadHandlerTexture.GetContent(request);
-                        SetTexture(type, _texture);
-                    }
-
-                }
-                index++;
-                yield return null;
-            }
-        }
         IEnumerator FireBreath()
         {
             isAttacking = true;
