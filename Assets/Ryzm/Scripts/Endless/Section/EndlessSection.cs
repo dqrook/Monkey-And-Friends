@@ -88,6 +88,11 @@ namespace Ryzm.EndlessRunner
         #endregion
 
         #region Public Functions
+        public virtual void Initialize(int rowId)
+        {
+            this.rowId = rowId;
+        }
+
         public virtual void EnterSection()
         {
             Message.Send(new CurrentSectionChange(gameObject, rowId));
@@ -241,6 +246,13 @@ namespace Ryzm.EndlessRunner
         FloatingRabbyCoinRow,
         FloatingSpikes,
         FloatingDiveDragon,
-        FloatingSideDragon
+        FloatingSideDragon,
+        RockRightTurn1,
+        RockLeftTurn1,
+        RockTSection1,
+        RockTree,
+        RockRabby,
+        RockSpikes,
+        RockTWallSection1
     }
 }

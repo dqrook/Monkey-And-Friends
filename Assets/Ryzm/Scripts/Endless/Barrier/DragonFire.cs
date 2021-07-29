@@ -17,6 +17,14 @@ namespace Ryzm.EndlessRunner
             part = GetComponent<ParticleSystem>();
         }
 
+        void OnEnable()
+        {
+            if(part == null)
+            {
+                part = GetComponent<ParticleSystem>();
+            }
+        }
+
         public void Play()
         {
             part.Play();

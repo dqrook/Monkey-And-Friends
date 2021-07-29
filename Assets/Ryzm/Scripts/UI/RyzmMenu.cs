@@ -204,6 +204,7 @@ namespace Ryzm.UI
         Breeding,
         DragonMarket,
         SingleDragon,
-        MyDragons
+        MyDragons,
+        LoadingFade
     }
 }

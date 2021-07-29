@@ -8,13 +8,15 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessScroller : EndlessItem
     {
+        #region Protected Variables
         protected EndlessSection _currentSection;
+        #endregion
 
+        #region Event Functions
         protected override void Awake()
         {
             base.Awake();
             Message.AddListener<CurrentSectionChange>(OnCurrentSectionChange);
-            Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
         }
 
         protected virtual void OnEnable()
@@ -29,13 +31,22 @@ namespace Ryzm.EndlessRunner
         {
             base.OnDestroy();
             Message.RemoveListener<CurrentSectionChange>(OnCurrentSectionChange);
-            Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
         }
+        #endregion
 
+        #region Listener Functions
+        protected virtual void OnCurrentSectionChange(CurrentSectionChange sectionChange)
+        {
+            _currentSection = sectionChange.endlessSection;
+        }
+        #endregion
+
+        #region Protected Functions
         protected virtual bool CanMove()
         {
             return gameStatus == GameStatus.Active;
         }
+        #endregion
 
         // protected void MoveInY()
         // {
@@ -52,10 +63,5 @@ namespace Ryzm.EndlessRunner
         //         }
         //     }
         // }
-
-        protected virtual void OnCurrentSectionChange(CurrentSectionChange sectionChange)
-        {
-            _currentSection = sectionChange.endlessSection;
-        }
     }
 }

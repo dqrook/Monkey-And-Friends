@@ -312,8 +312,24 @@ namespace Ryzm.Dragon
         {
             gettingDragons = true;
             UnityWebRequest request = RyzmUtils.PostRequest(url, bodyJsonString);
-            yield return request.SendWebRequest();
-            if(request.isNetworkError || request.isHttpError)
+            int numFails = 0;
+            bool failed = true;
+            while(numFails < 3)
+            {
+                yield return request.SendWebRequest();
+                if(request.isNetworkError || request.isHttpError)
+                {
+                    request = RyzmUtils.PostRequest(url, bodyJsonString);
+                    numFails++;
+                    Debug.LogError("Failed getting dragons " + numFails + " times");
+                }
+                else
+                {
+                    failed = false;
+                    break;
+                }
+            }
+            if(failed)
             {
                 Debug.LogError("ERROR");
                 // todo: handle this case
@@ -346,8 +362,24 @@ namespace Ryzm.Dragon
         {
             breedingDragons = true;
             UnityWebRequest request = RyzmUtils.PostRequest(url, bodyJsonString);
-            yield return request.SendWebRequest();
-            if(request.isNetworkError || request.isHttpError)
+            int numFails = 0;
+            bool failed = true;
+            while(numFails < 3)
+            {
+                yield return request.SendWebRequest();
+                if(request.isNetworkError || request.isHttpError)
+                {
+                    request = RyzmUtils.PostRequest(url, bodyJsonString);
+                    numFails++;
+                    Debug.LogError("Failed getting breed dragons tx hash " + numFails + " times");
+                }
+                else
+                {
+                    failed = false;
+                    break;
+                }
+            }
+            if(failed)
             {
                 Debug.LogError("ERROR");
                 Message.Send(new BreedDragonsResponse(TransactionStatus.Failed));
@@ -364,9 +396,24 @@ namespace Ryzm.Dragon
         IEnumerator BuyDragonTxHash(string url, string bodyJsonString)
         {
             UnityWebRequest request = RyzmUtils.PostRequest(url, bodyJsonString);
-            Debug.Log(url + " " + bodyJsonString);
-            yield return request.SendWebRequest();
-            if(request.isNetworkError || request.isHttpError)
+            int numFails = 0;
+            bool failed = true;
+            while(numFails < 3)
+            {
+                yield return request.SendWebRequest();
+                if(request.isNetworkError || request.isHttpError)
+                {
+                    request = RyzmUtils.PostRequest(url, bodyJsonString);
+                    numFails++;
+                    Debug.LogError("Failed getting buy dragon tx hash " + numFails + " times");
+                }
+                else
+                {
+                    failed = false;
+                    break;
+                }
+            }
+            if(failed)
             {
                 Debug.LogError("ERROR");
                 Message.Send(new BuyDragonResponse(TransactionStatus.Failed));
@@ -384,7 +431,24 @@ namespace Ryzm.Dragon
         {
             UnityWebRequest request = RyzmUtils.GetRequest(url);
             yield return request.SendWebRequest();
-            if(request.isNetworkError || request.isHttpError)
+            int numFails = 0;
+            bool failed = true;
+            while(numFails < 3)
+            {
+                yield return request.SendWebRequest();
+                if(request.isNetworkError || request.isHttpError)
+                {
+                    request = RyzmUtils.GetRequest(url);
+                    numFails++;
+                    Debug.LogError("Failed getting dragon ids " + numFails + " times");
+                }
+                else
+                {
+                    failed = false;
+                    break;
+                }
+            }
+            if(failed)
             {
                 Debug.LogError("ERROR");
                 if(isBreeding)
@@ -438,7 +502,24 @@ namespace Ryzm.Dragon
         {
             UnityWebRequest request = RyzmUtils.GetRequest(url);
             yield return request.SendWebRequest();
-            if(request.isNetworkError || request.isHttpError)
+            int numFails = 0;
+            bool failed = true;
+            while(numFails < 3)
+            {
+                yield return request.SendWebRequest();
+                if(request.isNetworkError || request.isHttpError)
+                {
+                    request = RyzmUtils.GetRequest(url);
+                    numFails++;
+                    Debug.LogError("Failed getting dragon ids " + numFails + " times");
+                }
+                else
+                {
+                    failed = false;
+                    break;
+                }
+            }
+            if(failed)
             {
                 Debug.LogError("ERROR");
                 if(isBreeding)
@@ -480,8 +561,24 @@ namespace Ryzm.Dragon
         IEnumerator AddDragonToMarket(string url, string bodyJsonString, int dragonId, float price)
         {
             UnityWebRequest request = RyzmUtils.PostRequest(url, bodyJsonString);
-            yield return request.SendWebRequest();
-            if(request.isNetworkError || request.isHttpError)
+            int numFails = 0;
+            bool failed = true;
+            while(numFails < 3)
+            {
+                yield return request.SendWebRequest();
+                if(request.isNetworkError || request.isHttpError)
+                {
+                    request = RyzmUtils.PostRequest(url, bodyJsonString);
+                    numFails++;
+                    Debug.LogError("Failed getting buy dragon tx hash " + numFails + " times");
+                }
+                else
+                {
+                    failed = false;
+                    break;
+                }
+            }
+            if(failed)
             {
                 Debug.LogError("ERROR");
                 Message.Send(new AddDragonToMarketResponse(TransactionStatus.Failed));
@@ -507,8 +604,24 @@ namespace Ryzm.Dragon
         IEnumerator RemoveDragonFromMarket(string url, string bodyJsonString, int dragonId)
         {
             UnityWebRequest request = RyzmUtils.PostRequest(url, bodyJsonString);
-            yield return request.SendWebRequest();
-            if(request.isNetworkError || request.isHttpError)
+            int numFails = 0;
+            bool failed = true;
+            while(numFails < 3)
+            {
+                yield return request.SendWebRequest();
+                if(request.isNetworkError || request.isHttpError)
+                {
+                    request = RyzmUtils.PostRequest(url, bodyJsonString);
+                    numFails++;
+                    Debug.LogError("Failed getting buy dragon tx hash " + numFails + " times");
+                }
+                else
+                {
+                    failed = false;
+                    break;
+                }
+            }
+            if(failed)
             {
                 Debug.LogError("ERROR");
                 Message.Send(new RemoveDragonFromMarketResponse(TransactionStatus.Failed));

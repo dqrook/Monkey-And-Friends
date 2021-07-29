@@ -9,5 +9,7 @@ namespace Ryzm.EndlessRunner
     {
         public List<SectionPrefab> sectionPrefabs = new List<SectionPrefab>();
         public List<BarrierPrefab> barrierPrefabs = new List<BarrierPrefab>();
+        public List<EnvironmentPrefab> environmentPrefabs = new List<EnvironmentPrefab>();
+        public List<WallPrefab> wallPrefabs = new List<WallPrefab>();
     }
 }

@@ -6,7 +6,7 @@ using Ryzm.EndlessRunner.Messages;
 
 namespace Ryzm.EndlessRunner
 {
-    public class EndlessCoin : EndlessScroller
+    public class EndlessCoin : EndlessItem
     {
         Animator animator;
         bool coinCollected;
@@ -19,14 +19,13 @@ namespace Ryzm.EndlessRunner
 
         protected override void Start() {}
 
-        protected override void OnEnable()
+        protected void OnEnable()
         {
-            base.OnEnable();
             coinCollected = false;
             animator.SetBool("shrink", false);
         }
 
-        protected override void OnDisable()
+        protected void OnDisable()
         {
             animator.SetBool("shrink", false);
         }

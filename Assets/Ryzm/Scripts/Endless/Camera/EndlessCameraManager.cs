@@ -20,6 +20,7 @@ namespace Ryzm.EndlessRunner
         GameStatus gameStatus;
         IEnumerator rotateCamera;
         Transform cameraTrans;
+        bool initializedCamera;
         #endregion
 
         #region Event Functions
@@ -46,6 +47,7 @@ namespace Ryzm.EndlessRunner
                 cameraTrans.position = startTransform.position;
                 cameraTrans.rotation = startTransform.rotation;
                 endlessCamera.cam.farClipPlane = startClipPlane;
+                initializedCamera = false;
             }
             else if(gameStatus == GameStatus.Starting)
             {
@@ -53,17 +55,33 @@ namespace Ryzm.EndlessRunner
                 rotateCamera = RotateCamera(endTransform);
                 StartCoroutine(rotateCamera);
                 endlessCamera.cam.farClipPlane = gameClipPlane;
+                if(!initializedCamera)
+                {
+                    Message.Send(new MapSettingsRequest("initCamera"));
+                }
             }
             else if(gameStatus == GameStatus.Restart)
             {
                 cameraTrans.position = startTransform.position;
                 cameraTrans.rotation = startTransform.rotation;
+                initializedCamera = false;
             }
         }
 
         void OnCameraRequest(CameraRequest request)
         {
             Message.Send(new CameraResponse(endlessCamera.gameObject));
+        }
+
+        void OnMapSettingsResponse(MapSettingsResponse response)
+        {
+            if(response.requestId == "initCamera" && !initializedCamera)
+            {
+                // cameraTrans.position = response.settings.cameraSpawn.position;
+                // cameraTrans.rotation = response.settings.cameraSpawn.rotation;
+                endlessCamera.cam.farClipPlane = response.settings.farClipPlane;
+                initializedCamera = true;
+            }
         }
         #endregion
 

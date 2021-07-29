@@ -13,7 +13,6 @@ namespace Ryzm.EndlessRunner
     public class EndlessDragon : EndlessController
     {
         public BaseDragon baseDragon;
-        public DragonMaterials materials;
         public Transform monkeyPos;
         public DragonFire fire;
         public DragonResponse data;
@@ -34,7 +33,6 @@ namespace Ryzm.EndlessRunner
         IEnumerator flyUp;
         float baselineY;
         bool isFlyingUp;
-        bool nonEndlessRunner;
 
         #region Properties
         public bool ForSale
@@ -94,7 +92,7 @@ namespace Ryzm.EndlessRunner
         void Update()
         {
             animator.SetInteger("state", state);
-            if((mode == ControllerMode.MonkeyDragon || mode == ControllerMode.Dragon) && gameStatus == GameStatus.Active && !nonEndlessRunner)
+            if((mode == ControllerMode.MonkeyDragon || mode == ControllerMode.Dragon) && gameStatus == GameStatus.Active)
             {
                 EndlessRun();
             }
@@ -113,7 +111,7 @@ namespace Ryzm.EndlessRunner
         #region Listener Functions
         protected override void OnRunnerDistanceRequest(RunnerDistanceRequest request)
         {
-            if((mode == ControllerMode.Dragon || mode == ControllerMode.MonkeyDragon) && !nonEndlessRunner)
+            if(mode == ControllerMode.Dragon || mode == ControllerMode.MonkeyDragon)
             {
                 Message.Send(new RunnerDistanceResponse(distanceTraveled));
             }
@@ -134,16 +132,6 @@ namespace Ryzm.EndlessRunner
         #endregion
 
         #region Public Functions
-        public void RemoveFromEndlessRunner()
-        {
-            nonEndlessRunner = true;
-            Message.RemoveListener<CurrentSectionChange>(OnCurrentSectionChange);
-            Message.RemoveListener<RunnerDie>(OnRunnerDie);
-            Message.RemoveListener<CurrentPositionRequest>(OnCurrentPositionRequest);
-            Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
-            Message.RemoveListener<ControllerModeResponse>(OnControllerModeResponse);
-            Message.RemoveListener<RunnerDistanceRequest>(OnRunnerDistanceRequest);
-        }
 
         public void GetTextures()
         {
@@ -202,7 +190,7 @@ namespace Ryzm.EndlessRunner
                     else if(!isFlyingUp)
                     {
                         Debug.Log("double jump");
-                        animator.SetTrigger("finishFly");
+                        // animator.SetTrigger("finishFly");
                         StopCoroutine(flyUp);
                         flyUp = FlyUp(baselineY);
                         StartCoroutine(flyUp);
@@ -225,6 +213,12 @@ namespace Ryzm.EndlessRunner
                 fire.Stop();
                 animator.SetBool("fireBreath", false);
             }
+        }
+
+        public void MoveWithMultiplier(float multi)
+        {
+            animator.SetFloat("speedMultiplier", multi);
+            Move(0, multi);
         }
 
         public void FlyToPosition(Transform t)
@@ -296,9 +290,9 @@ namespace Ryzm.EndlessRunner
 			return playerInput.PlayerMain.Jump.WasPressedThisFrame();
         }
 
-        void Move(float yMove)
+        void Move(float yMove, float multiplier = 1)
         {
-            float zMove = Time.deltaTime * forwardSpeed;
+            float zMove = Time.deltaTime * forwardSpeed * multiplier;
             move.z = zMove;
             move.y = yMove;
             move.x = shiftSpeed * zMove * 0.75f;

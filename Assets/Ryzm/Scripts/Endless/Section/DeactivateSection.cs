@@ -9,6 +9,7 @@ namespace Ryzm.EndlessRunner
     public class DeactivateSection : MonoBehaviour
     {
         public EndlessSection section;
+        public float deactivationTime = 2.5f;
 
         bool dScheduled = false;
         bool stopDeactivation;
@@ -18,7 +19,7 @@ namespace Ryzm.EndlessRunner
             if(!dScheduled)
             {
                 stopDeactivation = false;
-                Invoke("SetInactive", 2.5f);
+                Invoke("SetInactive", deactivationTime);
                 dScheduled = true;
             }
         }

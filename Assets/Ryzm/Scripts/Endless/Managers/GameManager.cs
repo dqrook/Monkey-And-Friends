@@ -78,8 +78,7 @@ namespace Ryzm.EndlessRunner
         void OnStartingGame()
         {
             UpdateGameStatus(GameStatus.PreStarting);
-            Message.Send(new CreateSectionRow());
-            Debug.Log("CreateSectionRow");
+            Message.Send(new CreateMap());
             UpdateGameStatus(GameStatus.Starting);
         }
 

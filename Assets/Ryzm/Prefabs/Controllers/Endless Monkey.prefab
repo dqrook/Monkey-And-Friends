@@ -2084,7 +2084,7 @@ Transform:
   m_LocalRotation: {x: -0.00000007198779, y: -0.000000027762672, z: -0.027840355,
     w: 0.99961245}
   m_LocalPosition: {x: -0.027630271, y: -0.000000026077025, z: -0.0000000069849113}
-  m_LocalScale: {x: 0.33, y: 0.33, z: 0.33}
+  m_LocalScale: {x: 0.31, y: 0.31, z: 0.31}
   m_Children:
   - {fileID: 6868612089867561998}
   m_Father: {fileID: 7503204721227065097}
@@ -2318,13 +2318,13 @@ MonoBehaviour:
   forwardSpeed: 12
   animator: {fileID: 0}
   playerCollider: {fileID: 0}
-  jumpCooldown: 0.2
   rootTransform: {fileID: 1792645569783590588}
   distanceToGround: 0.5
-  distanceToBarriers: 2
   groundLayer:
     serializedVersion: 2
     m_Bits: 1
+  jumpCooldown: 0.2
+  distanceToBarriers: 2
   barrierLayer:
     serializedVersion: 2
     m_Bits: 1024

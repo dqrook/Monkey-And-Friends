@@ -266,8 +266,24 @@ namespace Ryzm.Blockchain
             Debug.Log(url + " " + bodyJsonString + " " + _accountName);
             fetchingKeys = true;
             UnityWebRequest request = RyzmUtils.PostRequest(url, bodyJsonString);
-            yield return request.SendWebRequest();
-            if(request.isNetworkError || request.isHttpError)
+            int numFails = 0;
+            bool failed = true;
+            while(numFails < 3)
+            {
+                yield return request.SendWebRequest();
+                if(request.isNetworkError || request.isHttpError)
+                {
+                    request = RyzmUtils.PostRequest(url, bodyJsonString);
+                    numFails++;
+                    Debug.LogError("Failed getting access keys " + numFails + " times");
+                }
+                else
+                {
+                    failed = false;
+                    break;
+                }
+            }
+            if(failed)
             {
                 Debug.LogError("ERROR");
                 if(status == LoginStatus.Rejected)

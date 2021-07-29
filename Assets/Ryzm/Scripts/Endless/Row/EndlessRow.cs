@@ -1,36 +1,23 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Ryzm.EndlessRunner.Messages;
+using CodeControl;
 
 namespace Ryzm.EndlessRunner
 {
     public class EndlessRow : EndlessItem
     {
+        #region Public Variables
         public string id;
         public List<EndlessSection> sections = new List<EndlessSection>();
         // also have a single EndlessTurnSection (which will inherit from EndlessSection)
         public EndlessSection turnSection;
         public List<GameObject> environments = new List<GameObject>();
         public int rowId;
+        #endregion
 
-        protected virtual void CreateRowId()
-        {
-            rowId = Random.Range(1, 10000);
-        }
-
-        protected virtual void UpdateSectionsRowId()
-        {
-            Debug.Log("rowId " + rowId);
-            foreach(EndlessSection section in sections)
-            {
-                section.rowId = rowId;
-            }
-            if(turnSection != null)
-            {
-                turnSection.rowId = rowId;
-            }
-        }
-
+        #region Public Functions
         public virtual void Initialize(int numberOfSections)
         {
             CreateRowId();
@@ -81,6 +68,35 @@ namespace Ryzm.EndlessRunner
             UpdateSectionsRowId();
         }
 
+        public Transform FinalSpawn()
+        {
+            if(turnSection != null)
+            {
+                return turnSection.NextSectionSpawn();
+            }
+            return sections[sections.Count - 1].NextSectionSpawn();
+        }
+        #endregion
+
+        #region Protected Functions
+        protected virtual void CreateRowId()
+        {
+            rowId = Random.Range(1, 100000);
+        }
+
+        protected virtual void UpdateSectionsRowId()
+        {
+            Debug.Log("rowId " + rowId);
+            foreach(EndlessSection section in sections)
+            {
+                section.rowId = rowId;
+            }
+            if(turnSection != null)
+            {
+                turnSection.rowId = rowId;
+            }
+        }
+
         protected void PlaceBarriers()
         {
             foreach(EndlessSection section in sections)
@@ -127,6 +143,8 @@ namespace Ryzm.EndlessRunner
             newSection.transform.rotation = spawnTransform.rotation;
 
             EndlessSection _section = newSection.GetComponent<EndlessSection>();
+            _section.Initialize(rowId);
+            _section.CancelDeactivation();
             newSection.SetActive(true);
             _section.gameObject.SetActive(true);
             
@@ -170,14 +188,6 @@ namespace Ryzm.EndlessRunner
         {
             return Random.Range(0, 1f) <= barrierLikelihood;
         }
-
-        public Transform FinalSpawn()
-        {
-            if(turnSection != null)
-            {
-                return turnSection.NextSectionSpawn();
-            }
-            return sections[sections.Count - 1].NextSectionSpawn();
-        }
+        #endregion
     }
 }

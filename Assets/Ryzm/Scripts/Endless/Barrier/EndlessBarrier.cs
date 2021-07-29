@@ -99,6 +99,7 @@ namespace Ryzm.EndlessRunner
                     if(spawn.position == position)
                     {
                         spawn.EnableRandomRow();
+                        break;
                     }
                 }
             }
@@ -112,8 +113,8 @@ namespace Ryzm.EndlessRunner
         }
         #endregion
 
-        #region Private Functions
-        bool CanPlaceRow(float rowLikelihood)
+        #region Protected Functions
+        protected bool CanPlaceRow(float rowLikelihood)
         {
             return Random.Range(0, 1f) <= rowLikelihood;
         }
@@ -136,7 +137,13 @@ namespace Ryzm.EndlessRunner
         Rabby1,
         RabbyCoinRow1,
         Spikes,
-        SideDragon
+        SideDragon,
+        RockTree1,
+        RockTree2,
+        RockTree3,
+        RockTree4,
+        RockRabby1,
+        RockSpikes
     }
 
     [System.Serializable]
@@ -145,10 +152,15 @@ namespace Ryzm.EndlessRunner
         public int position;
         public List<Transform> rows;
 
-        public void EnableRandomRow()
+        public GameObject EnableRandomRow()
         {
-            EndlessUtils.Shuffle(rows);
-            rows[0].gameObject.SetActive(true);
+            if(rows.Count > 0)
+            {
+                EndlessUtils.Shuffle(rows);
+                rows[0].gameObject.SetActive(true);
+                return rows[0].gameObject;
+            }
+            return null;
         }
 
         public void Disable()

@@ -14,6 +14,8 @@ namespace Ryzm.EndlessRunner
         #region Private Variables
         WaitForSeconds wait2Seconds = new WaitForSeconds(2);
         IEnumerator waitThenDisable;
+        Transform spawnTrans;
+        Vector3 spawnOrigPos;
         #endregion
 
         #region Listener Functions
@@ -38,6 +40,36 @@ namespace Ryzm.EndlessRunner
         #endregion
 
         #region Protected Functions
+        public override void Initialize(Transform parentTransform, int position)
+        {
+            if(CanPlaceRow(rowLikelihood))
+            {
+                foreach(RowSpawn spawn in spawns)
+                {
+                    if(spawn.position == position)
+                    {
+                        GameObject spawnGO = spawn.EnableRandomRow();
+                        if(spawnGO != null)
+                        {
+                            spawnTrans = spawnGO.transform;
+                            spawnOrigPos = spawnTrans.localPosition;
+                            spawnTrans.parent = null;
+                        }
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                foreach(RowSpawn spawn in spawns)
+                {
+                    spawn.Disable();
+                }
+            }
+        }
+        #endregion
+
+        #region Coroutines
         protected override IEnumerator FlyToPosition()
         {
             animator.SetBool("fly", true);
@@ -87,12 +119,19 @@ namespace Ryzm.EndlessRunner
             }
             yield break;
         }
-        #endregion
-
-        #region Coroutines
         IEnumerator WaitThenDisable()
         {
             yield return wait2Seconds;
+            if(spawnTrans != null)
+            {
+                spawnTrans.parent = this.transform;
+                spawnTrans.localPosition = spawnOrigPos;
+                spawnTrans = null;
+            }
+            foreach(RowSpawn spawn in spawns)
+            {
+                spawn.Disable();
+            }
             childGO.SetActive(parentSection == _currentSection);
         }
         #endregion

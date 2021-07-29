@@ -11,6 +11,7 @@ namespace Ryzm.EndlessRunner
         #region Public Variables
         public Renderer rabbyBody;
         public Collider rabbyCollider;
+        public List<Material> rabbyMaterials = new List<Material>();
         #endregion
 
         #region Private Variables
@@ -26,7 +27,27 @@ namespace Ryzm.EndlessRunner
             startPosition = transform.localPosition;
         }
 
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            if(rabbyBody != null)
+            {
+                int materialIndex = -1;
+                if(rabbyMaterials.Count > 0)
+                {
+                    materialIndex = Random.Range(0, rabbyMaterials.Count);
+                    rabbyBody.material = rabbyMaterials[materialIndex];
+                }
+            }
+        }
+
         protected override void Start() {}
+
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+            Reset();
+        }
 
         void OnCollisionEnter(Collision other)
         {

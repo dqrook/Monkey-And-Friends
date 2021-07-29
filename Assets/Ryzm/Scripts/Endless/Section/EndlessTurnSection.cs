@@ -8,11 +8,39 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessTurnSection : EndlessSection
     {
+        #region Public Variables
         public Direction turnDirection;
+        
+        [Header("Row Spawn")]
+        public RowSpawn spawn;
+        [Range(0f, 1f)]
+        public float rowLikelihood = 0.5f;
+        #endregion
 
+        #region Protected Variables
         // direction the user turned in
         protected Direction userTurnedDirection;
+        #endregion
 
+        #region Event Functions
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            spawn.Disable();
+            if(CanPlaceRow(rowLikelihood))
+            {
+                spawn.EnableRandomRow();
+            }
+        }
+
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+            spawn.Disable();
+        }
+        #endregion
+
+        #region Public Functions
         public override void EnterSection()
         {
             base.EnterSection();
@@ -56,7 +84,9 @@ namespace Ryzm.EndlessRunner
                 }
             }
         }
+        #endregion
 
+        #region Protected Functions
         protected void _Shift(Direction direction, EndlessController controller, bool turned)
         {
             if(!turned)
@@ -66,13 +96,13 @@ namespace Ryzm.EndlessRunner
                 if(direction == Direction.Left)
                 {
                     trans.Rotate(Vector3.up * -90);
-                    Message.Send(new CreateSectionRow());
+                    Message.Send(new RowComplete(rowId));
 
                 }
                 else if(direction == Direction.Right)
                 {
                     trans.Rotate(Vector3.up * 90);
-                    Message.Send(new CreateSectionRow());
+                    Message.Send(new RowComplete(rowId));
                 }
                 Transform pos = GetPosition(1);
                 float _shiftDistance = pos.InverseTransformPoint(trans.position).z;
@@ -84,5 +114,13 @@ namespace Ryzm.EndlessRunner
                 Shift(direction, controller);
             }
         }
+        #endregion
+
+        #region Private Functions
+        bool CanPlaceRow(float rowLikelihood)
+        {
+            return Random.Range(0, 1f) <= rowLikelihood;
+        }
+        #endregion
     }
 }

@@ -1,13 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Ryzm.EndlessRunner.Messages;
-using CodeControl;
+﻿using UnityEngine;
 
 namespace Ryzm.EndlessRunner
 {
     public class EndlessTSection : EndlessTurnSection
     {
+        #region Public Variables
         [Header("Right Lane Positions")]
         public Transform position3;
         public Transform position4;
@@ -15,7 +12,9 @@ namespace Ryzm.EndlessRunner
 
         [Header("Right Spawn")]
         public Transform rightNextSectionSpawn;
+        #endregion
 
+        #region Public Functions
         public override Transform NextSectionSpawn()
         {
             if(userTurnedDirection == Direction.Left)
@@ -59,5 +58,6 @@ namespace Ryzm.EndlessRunner
             _Shift(direction, controller, turned);
             turned = true;
         }
+        #endregion
     }
 }

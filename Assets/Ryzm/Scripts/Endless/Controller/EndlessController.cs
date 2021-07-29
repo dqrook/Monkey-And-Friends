@@ -16,6 +16,7 @@ namespace Ryzm.EndlessRunner
         public Transform rootTransform;
         public float distanceToGround = 0.5f;
 		public LayerMask groundLayer;
+        public Transform localCameraSpawn;
 
         #region Events
         public delegate void StartTouch(Vector2 position, float time);
@@ -216,8 +217,6 @@ namespace Ryzm.EndlessRunner
                 if(_endlessTurnSection != null)
                 {
                     _endlessTurnSection.Shift(direction, this, ref turned);
-                    // turned = true;
-                    // Debug.Log(turned);
                 }
                 else if(_endlessSection != null)
                 {
@@ -261,7 +260,7 @@ namespace Ryzm.EndlessRunner
             shiftSpeed = 0;
             
             float cooldownTime = 0;
-            
+            Debug.Log("inShift: " + inShift);
             while(inShift && cooldownTime < maxShiftCooldown) 
             {
                 cooldownTime += Time.deltaTime;
