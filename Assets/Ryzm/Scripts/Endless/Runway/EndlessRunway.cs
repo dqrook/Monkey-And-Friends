@@ -72,7 +72,7 @@ namespace Ryzm.EndlessRunner
         public void Run()
         {
             float initialX = Mathf.Abs(dragonTrans.position.x - nextSpawn.position.x);
-            float initialZ = Mathf.Abs(dragonTrans.position.z - dragonTrans.position.z);
+            float initialZ = Mathf.Abs(dragonTrans.position.z - nextSpawn.position.z);
             float initialDistance = initialX > initialZ ? initialX : initialZ;
             bool useX = initialX > initialZ;
             run = _Run(initialDistance, useX);
@@ -97,7 +97,7 @@ namespace Ryzm.EndlessRunner
             {
                 yield return null;
             }
-
+            dragon.Fly();
             camTrans.parent = dragon.transform;
             camTrans.position = initialCameraSpawn.position;
             camTrans.rotation = initialCameraSpawn.rotation;
@@ -108,21 +108,24 @@ namespace Ryzm.EndlessRunner
 
             mainCamera.farClipPlane = initialClipPlane;
             mainCamera.fieldOfView = initialFieldOfView;
-            float currentDistance = GetCurrentDistance(useX);
-            float fraction = currentDistance / initialDistance;
+            float fraction = GetCurrentDistance(useX) / initialDistance;
             float initialMultiplier = 0.5f;
             float maxLerpTime = 1;
             float lerpTime = 0;
+            float cutoff = 0.7f;
+            float denom = cutoff - 0.1f;
             while(fraction > 0.1f)
             {
                 fraction = GetCurrentDistance(useX) / initialDistance;
-                if(fraction < 0.5f)
+                if(fraction < cutoff)
                 {
-                    float multiplier = initialMultiplier + (1 - initialMultiplier) * (0.5f - fraction) / 0.4f;
+                    float multiplier = initialMultiplier + (1 - initialMultiplier) * (cutoff - fraction) / denom;
+                    multiplier *= 1.1f;
+                    multiplier = multiplier < 0 ? multiplier : multiplier > 1 ? 1 : multiplier;
                     dragon.MoveWithMultiplier(multiplier);
                     lerpTime += Time.deltaTime;
                     float lerpFraction = lerpTime / maxLerpTime;
-                    if(lerpFraction < 0.95)
+                    if(lerpFraction < 0.9)
                     {
                         mainCamera.farClipPlane = Mathf.Lerp(initialClipPlane, gameClipPlane, lerpFraction);
                         mainCamera.fieldOfView = Mathf.Lerp(initialFieldOfView, gameFieldOfView, lerpFraction);
@@ -131,10 +134,10 @@ namespace Ryzm.EndlessRunner
                     }
                     else
                     {
-                        mainCamera.farClipPlane = Mathf.Lerp(mainCamera.farClipPlane, gameClipPlane, Time.deltaTime);
-                        mainCamera.fieldOfView = Mathf.Lerp(mainCamera.fieldOfView, gameFieldOfView, Time.deltaTime);
-                        camTrans.localPosition = Vector3.Lerp(camTrans.localPosition, finalPos, Time.deltaTime);
-                        camTrans.localRotation = Quaternion.Lerp(camTrans.localRotation, finalRot, Time.deltaTime);
+                        mainCamera.farClipPlane = Mathf.Lerp(mainCamera.farClipPlane, gameClipPlane, Time.deltaTime * 5);
+                        mainCamera.fieldOfView = Mathf.Lerp(mainCamera.fieldOfView, gameFieldOfView, Time.deltaTime * 5);
+                        camTrans.localPosition = Vector3.Lerp(camTrans.localPosition, finalPos, Time.deltaTime * 5);
+                        camTrans.localRotation = Quaternion.Lerp(camTrans.localRotation, finalRot, Time.deltaTime * 5);
                     }
                 }
                 else
@@ -146,6 +149,7 @@ namespace Ryzm.EndlessRunner
             dragon.MoveWithMultiplier(1);
             mainCamera.farClipPlane = gameClipPlane;
             mainCamera.fieldOfView = gameFieldOfView;
+            Debug.Log("distance diff: " + Vector3.Distance(camTrans.localPosition, finalPos));
             camTrans.localPosition = finalPos;
             camTrans.localRotation = finalRot;
 

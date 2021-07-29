@@ -70,7 +70,7 @@ namespace Ryzm.UI
 
         protected bool ShouldUpdate(bool value)
         {
-            return !disable && value != _isActive;
+            return !disable && value != _isActive && canvas != null;
         }
 
         protected virtual void OnActivateMenu(ActivateMenu activate)

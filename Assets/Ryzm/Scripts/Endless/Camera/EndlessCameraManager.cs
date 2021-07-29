@@ -49,23 +49,23 @@ namespace Ryzm.EndlessRunner
                 endlessCamera.cam.farClipPlane = startClipPlane;
                 initializedCamera = false;
             }
-            else if(gameStatus == GameStatus.Starting)
-            {
-                rotateCamera = null;
-                rotateCamera = RotateCamera(endTransform);
-                StartCoroutine(rotateCamera);
-                endlessCamera.cam.farClipPlane = gameClipPlane;
-                if(!initializedCamera)
-                {
-                    Message.Send(new MapSettingsRequest("initCamera"));
-                }
-            }
-            else if(gameStatus == GameStatus.Restart)
-            {
-                cameraTrans.position = startTransform.position;
-                cameraTrans.rotation = startTransform.rotation;
-                initializedCamera = false;
-            }
+            // else if(gameStatus == GameStatus.Starting)
+            // {
+            //     rotateCamera = null;
+            //     rotateCamera = RotateCamera(endTransform);
+            //     StartCoroutine(rotateCamera);
+            //     endlessCamera.cam.farClipPlane = gameClipPlane;
+            //     if(!initializedCamera)
+            //     {
+            //         Message.Send(new MapSettingsRequest("initCamera"));
+            //     }
+            // }
+            // else if(gameStatus == GameStatus.Restart)
+            // {
+            //     cameraTrans.position = startTransform.position;
+            //     cameraTrans.rotation = startTransform.rotation;
+            //     initializedCamera = false;
+            // }
         }
 
         void OnCameraRequest(CameraRequest request)

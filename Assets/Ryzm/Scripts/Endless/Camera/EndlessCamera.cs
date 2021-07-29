@@ -8,7 +8,6 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessCamera : MonoBehaviour
     {
-        [HideInInspector]
         public Camera cam;
         Vector3 pos, fw, up;
         Vector3 prevPos;
@@ -33,7 +32,10 @@ namespace Ryzm.EndlessRunner
             Message.Send(new ControllersRequest());
             // Message.Send(new GameStatusRequest());
             _transform = transform;
-            cam = GetComponent<Camera>();
+            if(cam == null)
+            {
+                cam = GetComponent<Camera>();
+            }
         }
 
         void OnDestroy()

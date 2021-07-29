@@ -32,6 +32,7 @@ namespace Ryzm.EndlessRunner
         int numberOfRowLoopsCompleted;
         bool initialized;
         EndlessDragon dragon;
+        Transform dragonTrans;
         Camera mainCamera;
         int gameClipPlane;
         bool startedRunway;
@@ -118,14 +119,19 @@ namespace Ryzm.EndlessRunner
         void OnControllersResponse(ControllersResponse response)
         {
             dragon = response.dragon;
+            dragonTrans = dragon.transform;
         }
 
         void OnStartRunway(StartRunway start)
         {
+            Debug.Log("start runway");
             if(start.type == type && !startedRunway)
             {
-                dragon.transform.position = initialDragonSpawn.position;
-                dragon.transform.rotation = initialDragonSpawn.rotation;
+                dragonTrans.position = initialDragonSpawn.position;
+                dragonTrans.rotation = initialDragonSpawn.rotation;
+                mainCamera.transform.position = dragon.localCameraSpawn.position;
+                mainCamera.transform.rotation = dragon.localCameraSpawn.rotation;
+                // Message.Send(new StartGame());
 
                 if(runway != null)
                 {

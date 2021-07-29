@@ -44,6 +44,7 @@ namespace Ryzm.UI
                     if(value)
                     {
                         // Message.Send(new StartRunway())
+                        Debug.Log("open loading fade menu");
                         Message.AddListener<CurrentMapResponse>(OnCurrentMapResponse);
                         Message.Send(new CurrentMapRequest());
                         startMenu = StartMenu();
@@ -86,7 +87,7 @@ namespace Ryzm.UI
         #region Private Functions
         void SetColor(float fraction)
         {
-            fraction = fraction < 0 ? 0 : fraction > 1 ? 1 : 0;
+            fraction = fraction < 0 ? 0 : fraction > 1 ? 1 : fraction;
             Color clr = startColor * (1 - fraction) + endColor * fraction;
             background.color = clr;
         }
@@ -122,7 +123,7 @@ namespace Ryzm.UI
             {
                 Message.Send(new StartRunway(currentMap));
             }
-            
+
             timer = 0;
             while(timer < fadeOutTime)
             {

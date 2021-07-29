@@ -215,6 +215,11 @@ namespace Ryzm.EndlessRunner
             }
         }
 
+        public void Fly(bool shouldFly = true)
+        {
+            animator.SetBool("fly", shouldFly);
+        }
+
         public void MoveWithMultiplier(float multi)
         {
             animator.SetFloat("speedMultiplier", multi);

@@ -57,7 +57,7 @@ namespace Ryzm.UI
             }
             else if(response.status == GameStatus.Starting)
             {
-                ActivateMenus(noMenus);
+                ActivateMenus(menuSets.GetMenuTypes(MenuSet.StartingMenu));
             }
             else if(response.status == GameStatus.Active)
             {
@@ -114,6 +114,7 @@ namespace Ryzm.UI
         SingleDragonMenu,
         MyDragonsMenu,
         LoadingMenu,
-        ExitMenu
+        ExitMenu,
+        StartingMenu
     }
 }
