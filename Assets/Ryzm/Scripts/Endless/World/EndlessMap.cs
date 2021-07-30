@@ -131,16 +131,16 @@ namespace Ryzm.EndlessRunner
                 dragonTrans.rotation = initialDragonSpawn.rotation;
                 mainCamera.transform.position = dragon.localCameraSpawn.position;
                 mainCamera.transform.rotation = dragon.localCameraSpawn.rotation;
-                // Message.Send(new StartGame());
-
+                
                 if(runway != null)
                 {
                     runway.Run();
                 }
-                else
-                {
-                    Message.Send(new StartGame());
-                }
+                // else
+                // {
+                //     Message.Send(new StartGame());
+                // }
+                Message.Send(new StartRunwayResponse(runway != null, type));
                 startedRunway = true;
             }
         }

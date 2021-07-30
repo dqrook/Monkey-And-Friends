@@ -67,7 +67,8 @@ namespace Ryzm.UI
         
         public void OnClickStart()
         {
-            Message.Send(new MakeWorld());
+            // Message.Send(new MakeWorld());
+            Message.Send(new StartingGame());
         }
 
         public void OnClickLogin()

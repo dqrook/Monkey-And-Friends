@@ -141,6 +141,7 @@ namespace Ryzm.EndlessRunner
             currentMap.map.transform.rotation = currentMap.settings.mapSpawn.rotation;
             currentMap.map.Initialize(currentMap.settings.mapSpawn);
             prefabIndex = prefabIndex < mapOrder.Count - 1 ? prefabIndex + 1 : 0;
+            Message.Send(new CreateMapResponse(currentMap.Type));
         }
 
         EndlessMapPrefab GetMapPrefab(MapType type)

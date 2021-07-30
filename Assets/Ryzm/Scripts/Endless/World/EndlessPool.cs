@@ -130,9 +130,8 @@ namespace Ryzm.EndlessRunner
                         pooledWalls.Add(new PooledWall(obj, item.Type));
                     }
                 }
-
-                Message.Send(new MadeWorld());
             }
+            Message.Send(new MadeWorld());
         }
 
         void OnGameStatusResponse(GameStatusResponse response)
@@ -142,6 +141,12 @@ namespace Ryzm.EndlessRunner
                 madeWorld = false;
                 pooledBarriers.Clear();
                 pooledSections.Clear();
+                pooledEnvironments.Clear();
+                pooledWalls.Clear();
+            }
+            else if(response.status == GameStatus.Restart)
+            {
+                madeWorld = false;
             }
         }
 

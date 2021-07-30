@@ -61,11 +61,13 @@ namespace Ryzm.UI
                 canvas = GetComponent<Canvas>();
             }
             Message.AddListener<ActivateMenu>(OnActivateMenu);
+            Message.AddListener<UpdateLoadingFadeMenu>(OnUpdateLoadingFadeMenu);
         }
 
         protected virtual void OnDestroy()
         {
             Message.RemoveListener<ActivateMenu>(OnActivateMenu);
+            Message.RemoveListener<UpdateLoadingFadeMenu>(OnUpdateLoadingFadeMenu);
         }
 
         protected bool ShouldUpdate(bool value)
@@ -109,6 +111,11 @@ namespace Ryzm.UI
             {
                 IsActive = false;
             }
+        }
+
+        protected virtual void OnUpdateLoadingFadeMenu(UpdateLoadingFadeMenu update)
+        {
+            OnActivateMenu(new ActivateMenu(MenuType.LoadingFade));
         }
 
         // todo: figure out how to use this (if necessary)

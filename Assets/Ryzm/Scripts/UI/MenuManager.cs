@@ -55,10 +55,10 @@ namespace Ryzm.UI
             {
                 ActivateMenus(menuSets.GetMenuTypes(MenuSet.MainMenu));
             }
-            else if(response.status == GameStatus.Starting)
-            {
-                ActivateMenus(menuSets.GetMenuTypes(MenuSet.StartingMenu));
-            }
+            // else if(response.status == GameStatus.Starting)
+            // {
+            //     ActivateMenus(menuSets.GetMenuTypes(MenuSet.StartingMenu));
+            // }
             else if(response.status == GameStatus.Active)
             {
                 ActivateMenus(menuSets.GetMenuTypes(MenuSet.ActiveMenu));
@@ -71,10 +71,10 @@ namespace Ryzm.UI
             {
                 ActivateMenus(menuSets.GetMenuTypes(MenuSet.EndMenu));
             }
-            else if(response.status == GameStatus.Restart)
-            {
-                ActivateMenus(menuSets.GetMenuTypes(MenuSet.RestartMenu));
-            }
+            // else if(response.status == GameStatus.Restart)
+            // {
+            //     ActivateMenus(menuSets.GetMenuTypes(MenuSet.RestartMenu));
+            // }
             else if(response.status == GameStatus.Exit)
             {
                 ActivateMenus(menuSets.GetMenuTypes(MenuSet.ExitMenu));

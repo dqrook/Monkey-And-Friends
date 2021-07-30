@@ -16,35 +16,47 @@ namespace Ryzm.UI.Messages
 
         public ActivateMenu(MenuType type)
         {
-            this.type = type;
-            this.useActivated = false;
+            List<MenuType> activatedTypes = new List<MenuType>()
+            {
+                type
+            };
+            ActivateMenus(activatedTypes);
+        }
+
+        public ActivateMenu(List<MenuType> activatedTypes)
+        {
+            ActivateMenus(activatedTypes);
+
+            // this.activatedTypes = new MenuType[activatedTypes.Count];
+            // int i = 0;
+            // foreach(MenuType menuType in activatedTypes)
+            // {
+            //     this.activatedTypes[i] = menuType;
+            //     i++;
+            // }
+            // this.useActivated = true;
+            // this.useDeactivated = false;
+
+            // if(useActivated)
+            // {
+            // }
+            // else
+            // {
+            //     AddDeactivated(activatedTypes);
+            // }
+        }
+
+        void ActivateMenus(List<MenuType> activatedTypes)
+        {
+            this.activatedTypes = new MenuType[activatedTypes.Count];
+            int i = 0;
+            foreach(MenuType menuType in activatedTypes)
+            {
+                this.activatedTypes[i] = menuType;
+                i++;
+            }
+            this.useActivated = true;
             this.useDeactivated = false;
-        }
-
-        public ActivateMenu(List<MenuType> deactivatedTypes)
-        {
-            this.type = MenuType.None;
-            AddDeactivated(deactivatedTypes);
-        }
-
-        public ActivateMenu(List<MenuType> activatedTypes, bool useActivated = true)
-        {
-            if(useActivated)
-            {
-                this.activatedTypes = new MenuType[activatedTypes.Count];
-                int i = 0;
-                foreach(MenuType menuType in activatedTypes)
-                {
-                    this.activatedTypes[i] = menuType;
-                    i++;
-                }
-                this.useActivated = true;
-                this.useDeactivated = false;
-            }
-            else
-            {
-                AddDeactivated(activatedTypes);
-            }
         }
 
         void AddDeactivated(List<MenuType> deactivatedTypes)

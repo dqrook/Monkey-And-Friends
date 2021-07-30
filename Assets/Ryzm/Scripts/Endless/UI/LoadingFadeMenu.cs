@@ -45,15 +45,18 @@ namespace Ryzm.UI
                     {
                         // Message.Send(new StartRunway())
                         Debug.Log("open loading fade menu");
+                        Message.AddListener<MenuSetResponse>(OnMenuSetResponse);
                         Message.AddListener<CurrentMapResponse>(OnCurrentMapResponse);
+                        Message.Send(new MenuSetRequest(MenuSet.ActiveMenu));
                         Message.Send(new CurrentMapRequest());
-                        startMenu = StartMenu();
-                        StartCoroutine(startMenu);
+                        // startMenu = StartMenu();
+                        // StartCoroutine(startMenu);
                     }
                     else
                     {
-                        StopAllCoroutines();
-                        startMenu = null;
+                        // StopAllCoroutines();
+                        // startMenu = null;
+                        Message.RemoveListener<MenuSetResponse>(OnMenuSetResponse);
                         Message.RemoveListener<CurrentMapResponse>(OnCurrentMapResponse);
                     }
                     base.IsActive = value;
@@ -70,6 +73,12 @@ namespace Ryzm.UI
         #endregion
 
         #region Listener Functions
+        protected override void OnUpdateLoadingFadeMenu(UpdateLoadingFadeMenu update)
+        {
+            base.OnUpdateLoadingFadeMenu(update);
+            SetColor(update.fadeFraction);
+        }
+
         void OnMenuSetResponse(MenuSetResponse response)
         {
             if(response.set == MenuSet.ActiveMenu)
