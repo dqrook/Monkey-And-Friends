@@ -4,9 +4,6 @@ using UnityEngine;
 using CodeControl;
 using Ryzm.EndlessRunner.Messages;
 using Ryzm.Dragon;
-using Ryzm.Dragon.Messages;
-using Ryzm.Utils;
-using UnityEngine.Networking;
 
 namespace Ryzm.EndlessRunner
 {

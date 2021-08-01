@@ -12,7 +12,6 @@ namespace Ryzm.EndlessRunner
         public Transform startingSpawn;
         public Camera mainCamera;
         public Light mainLight;
-        public int gameClipPlane;
         public int gameFieldOfView;
 
         [Header("Map")]
@@ -88,7 +87,7 @@ namespace Ryzm.EndlessRunner
 
         void OnWorldItemsRequest(WorldItemsRequest request)
         {
-            Message.Send(new WorldItemsResponse(mainCamera, mainLight, gameClipPlane, gameFieldOfView));
+            Message.Send(new WorldItemsResponse(mainCamera, mainLight, gameFieldOfView));
         }
 
         void OnMapSettingsRequest(MapSettingsRequest request)
@@ -115,10 +114,7 @@ namespace Ryzm.EndlessRunner
 
         void OnCurrentMapRequest(CurrentMapRequest request)
         {
-            if(currentMap != null && currentMap.map != null)
-            {
-                Message.Send(new CurrentMapResponse(currentMap.Type));
-            }
+            Message.Send(new CurrentMapResponse(mapOrder[prefabIndex]));
         }
 
         #endregion

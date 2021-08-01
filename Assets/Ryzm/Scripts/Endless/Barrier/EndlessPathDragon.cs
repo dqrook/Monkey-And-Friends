@@ -6,10 +6,13 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessPathDragon : EndlessAIDragon
     {
+        #region Public Variables
         public Transform middlePosition;
         public Transform finalPosition;
         public GameObject instantDeath;
+        #endregion
 
+        #region Event Functions
         protected override void OnEnable()
         {
             base.OnEnable();
@@ -17,6 +20,14 @@ namespace Ryzm.EndlessRunner
             finalPosition.rotation = middlePosition.rotation;
         }
 
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+            ToggleInstantDeath(false);
+        }
+        #endregion
+
+        #region Private Functions
         void StartFire()
         {
             ToggleInstantDeath(true);
@@ -30,7 +41,9 @@ namespace Ryzm.EndlessRunner
                 instantDeath.SetActive(active);
             }
         }
+        #endregion
 
+        #region Coroutines
         protected override IEnumerator FlyToPosition()
         {
             animator.SetBool("fly", true);
@@ -89,11 +102,6 @@ namespace Ryzm.EndlessRunner
             childTransform.localEulerAngles = finalPosition.localEulerAngles;
             yield break;
         }
-
-        protected override void OnDisable()
-        {
-            base.OnDisable();
-            ToggleInstantDeath(false);
-        }
+        #endregion
     }
 }

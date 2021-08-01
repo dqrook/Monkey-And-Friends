@@ -253,6 +253,7 @@ namespace Ryzm.EndlessRunner
         RockTree,
         RockRabby,
         RockSpikes,
-        RockTWallSection1
+        RockTWallSection1,
+        WaterKrake
     }
 }

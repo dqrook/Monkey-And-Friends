@@ -96,21 +96,21 @@ namespace Ryzm.EndlessRunner
         #endregion
 
         #region Coroutines
-        IEnumerator RotateCamera(Transform target)
-        {
-            float diff = GetTotalDifference(target);
-            while(diff > 0.1f)
-            {
-                cameraTrans.position = Vector3.Lerp(cameraTrans.position, target.position, Time.deltaTime * 2f);
-                cameraTrans.rotation = Quaternion.Lerp(cameraTrans.rotation, target.rotation, Time.deltaTime * 2f);
-                diff = GetTotalDifference(target);
-                yield return null;
-            }
-            cameraTrans.position = target.position;
-            cameraTrans.rotation = target.rotation;
-            Message.Send(new StartGame());
-            yield break;
-        }
+        // IEnumerator RotateCamera(Transform target)
+        // {
+        //     float diff = GetTotalDifference(target);
+        //     while(diff > 0.1f)
+        //     {
+        //         cameraTrans.position = Vector3.Lerp(cameraTrans.position, target.position, Time.deltaTime * 2f);
+        //         cameraTrans.rotation = Quaternion.Lerp(cameraTrans.rotation, target.rotation, Time.deltaTime * 2f);
+        //         diff = GetTotalDifference(target);
+        //         yield return null;
+        //     }
+        //     cameraTrans.position = target.position;
+        //     cameraTrans.rotation = target.rotation;
+        //     Message.Send(new StartGame());
+        //     yield break;
+        // }
         #endregion
     }
 }

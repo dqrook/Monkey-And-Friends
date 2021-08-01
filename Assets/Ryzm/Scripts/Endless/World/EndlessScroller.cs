@@ -22,7 +22,6 @@ namespace Ryzm.EndlessRunner
         protected virtual void OnEnable()
         {
             Message.Send(new GameStatusRequest());
-            Message.Send(new GameSpeedRequest());
         }
 
         protected virtual void OnDisable() {}
@@ -38,13 +37,6 @@ namespace Ryzm.EndlessRunner
         protected virtual void OnCurrentSectionChange(CurrentSectionChange sectionChange)
         {
             _currentSection = sectionChange.endlessSection;
-        }
-        #endregion
-
-        #region Protected Functions
-        protected virtual bool CanMove()
-        {
-            return gameStatus == GameStatus.Active;
         }
         #endregion
 

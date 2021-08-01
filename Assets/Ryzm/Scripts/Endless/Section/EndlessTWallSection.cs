@@ -27,6 +27,7 @@ namespace Ryzm.EndlessRunner
                         wallGO.transform.position = spawn.spawn.position;
                         wallGO.transform.rotation = spawn.spawn.rotation;
                         spawn.wall = wall;
+                        wallGO.SetActive(true);
                     }
                 }
             }

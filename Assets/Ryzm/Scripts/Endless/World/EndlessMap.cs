@@ -14,6 +14,9 @@ namespace Ryzm.EndlessRunner
         public EndlessTransition transition;
         public HeightFogGlobal fog;
         public Transform initialDragonSpawn;
+
+        [Header("Settings")]
+        public int gameClipPlane = 50;
         
         [Header("Runway")]
         public EndlessRunway runway;
@@ -34,7 +37,6 @@ namespace Ryzm.EndlessRunner
         EndlessDragon dragon;
         Transform dragonTrans;
         Camera mainCamera;
-        int gameClipPlane;
         bool startedRunway;
         #endregion
 
@@ -82,7 +84,6 @@ namespace Ryzm.EndlessRunner
         void OnWorldItemsResponse(WorldItemsResponse response)
         {
             mainCamera = response.mainCamera;
-            gameClipPlane = response.gameClipPlane;
             if(fog != null)
             {
                 fog.mainCamera = response.mainCamera;
@@ -95,7 +96,7 @@ namespace Ryzm.EndlessRunner
         {
             if(currentRow != null && currentRow.row != null && currentRow.row.rowId == complete.rowId)
             {
-                if(numberOfRowLoopsCompleted < numberOfRowLoops)
+                if(numberOfRowLoopsCompleted < numberOfRowLoops || numberOfRowLoops == 0)
                 {
                     // place next row
                     AddRow(currentRow.row.FinalSpawn());
@@ -125,6 +126,7 @@ namespace Ryzm.EndlessRunner
         void OnStartRunway(StartRunway start)
         {
             Debug.Log("start runway");
+            runway.gameObject.SetActive(true);
             if(start.type == type && !startedRunway)
             {
                 dragonTrans.position = initialDragonSpawn.position;
@@ -134,7 +136,11 @@ namespace Ryzm.EndlessRunner
                 
                 if(runway != null)
                 {
-                    runway.Run();
+                    runway.Run(gameClipPlane);
+                }
+                else
+                {
+                    mainCamera.farClipPlane = gameClipPlane;
                 }
                 // else
                 // {
@@ -190,14 +196,11 @@ namespace Ryzm.EndlessRunner
             currentRow.row.transform.position = spawnTransform.position;
             currentRow.row.transform.rotation = spawnTransform.rotation;
             currentRow.row.Initialize(5);
+            prefabIndex++;
             if(prefabIndex > prefabOrder.Count - 1)
             {
                 prefabIndex = 0;
                 numberOfRowLoopsCompleted++;
-            }
-            else
-            {
-                prefabIndex = prefabIndex + 1;
             }
             
             Message.Send(new RowChange(currentRowId, currentRow.row.rowId));

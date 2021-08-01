@@ -116,9 +116,9 @@ namespace Ryzm.EndlessRunner
         {
             Debug.Log("start game");
             UpdateGameStatus(GameStatus.Active);
-            deactivateHomeIsland = null;
-            deactivateHomeIsland = DeactivateHomeIsland();
-            StartCoroutine(deactivateHomeIsland);
+            // deactivateHomeIsland = null;
+            // deactivateHomeIsland = DeactivateHomeIsland();
+            // StartCoroutine(deactivateHomeIsland);
         }
 
         void OnPauseGame(PauseGame pause)

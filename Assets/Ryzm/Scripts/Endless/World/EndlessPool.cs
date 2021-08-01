@@ -9,7 +9,7 @@ namespace Ryzm.EndlessRunner
     public class EndlessPool : MonoBehaviour
     {
         #region Public Variables
-        public EndlessPoolPrefabsScriptableObject prefabsScriptableObject;
+        public List<EndlessPoolPrefabsScriptableObject> prefabs = new List<EndlessPoolPrefabsScriptableObject>();
         public static EndlessPool Instance { get { return _instance; } }
         #endregion
         
@@ -27,6 +27,9 @@ namespace Ryzm.EndlessRunner
 
         private static EndlessPool _instance;
         bool madeWorld;
+        bool gotCurrentMap;
+        IEnumerator _makeWorld;
+        EndlessPoolPrefabsScriptableObject currentPrefab;
         #endregion
 
         #region Properties
@@ -34,7 +37,7 @@ namespace Ryzm.EndlessRunner
         {
             get
             {
-                return prefabsScriptableObject.sectionPrefabs;
+                return currentPrefab.sectionPrefabs;
             }
         }
 
@@ -42,7 +45,7 @@ namespace Ryzm.EndlessRunner
         {
             get
             {
-                return prefabsScriptableObject.barrierPrefabs;
+                return currentPrefab.barrierPrefabs;
             }
         }
 
@@ -50,7 +53,7 @@ namespace Ryzm.EndlessRunner
         {
             get
             {
-                return prefabsScriptableObject.environmentPrefabs;
+                return currentPrefab.environmentPrefabs;
             }
         }
 
@@ -58,7 +61,7 @@ namespace Ryzm.EndlessRunner
         {
             get
             {
-                return prefabsScriptableObject.wallPrefabs;
+                return currentPrefab.wallPrefabs;
             }
         }
         #endregion
@@ -76,12 +79,14 @@ namespace Ryzm.EndlessRunner
             }
             Message.AddListener<MakeWorld>(OnMakeWorld);
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
+            Message.AddListener<CurrentMapResponse>(OnCurrentMapResponse);
         }
 
         void OnDestroy()
         {
             Message.RemoveListener<MakeWorld>(OnMakeWorld);
             Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
+            Message.RemoveListener<CurrentMapResponse>(OnCurrentMapResponse);
         }
         #endregion
 
@@ -90,48 +95,13 @@ namespace Ryzm.EndlessRunner
         {
             if(!madeWorld)
             {
-                madeWorld = true;
-                foreach(SectionPrefab item in SectionPrefabs)
-                {
-                    for(int i = 0; i < item.amount; i++)
-                    {
-                        GameObject obj = Instantiate(item.prefab);
-                        obj.SetActive(false);
-                        pooledSections.Add(new PooledSection(obj, item.IsTurn, item.Type));
-                    }
-                }
-
-                foreach(BarrierPrefab item in BarrierPrefabs)
-                {
-                    for(int i = 0; i < item.amount; i++)
-                    {
-                        GameObject obj = Instantiate(item.prefab);
-                        obj.SetActive(false);
-                        pooledBarriers.Add(new PooledBarrier(obj, item.Type));
-                    }
-                }
-
-                foreach(EnvironmentPrefab item in EnvironmentPrefabs)
-                {
-                    for(int i = 0; i < item.amount; i++)
-                    {
-                        GameObject obj = Instantiate(item.prefab);
-                        obj.SetActive(false);
-                        pooledEnvironments.Add(new PooledEnvironment(obj, item.Type));
-                    }
-                }
-
-                foreach(WallPrefab item in WallPrefabs)
-                {
-                    for(int i = 0; i < item.amount; i++)
-                    {
-                        GameObject obj = Instantiate(item.prefab);
-                        obj.SetActive(false);
-                        pooledWalls.Add(new PooledWall(obj, item.Type));
-                    }
-                }
+                _makeWorld = _MakeWorld();
+                StartCoroutine(_makeWorld);
             }
-            Message.Send(new MadeWorld());
+            else
+            {
+                Message.Send(new MadeWorld());
+            }
         }
 
         void OnGameStatusResponse(GameStatusResponse response)
@@ -139,15 +109,25 @@ namespace Ryzm.EndlessRunner
             if(response.status == GameStatus.Exit)
             {
                 madeWorld = false;
+                gotCurrentMap = false;
                 pooledBarriers.Clear();
                 pooledSections.Clear();
                 pooledEnvironments.Clear();
                 pooledWalls.Clear();
             }
-            else if(response.status == GameStatus.Restart)
+        }
+
+        void OnCurrentMapResponse(CurrentMapResponse response)
+        {
+            foreach(EndlessPoolPrefabsScriptableObject prefab in prefabs)
             {
-                madeWorld = false;
+                if(prefab.type == response.type)
+                {
+                    currentPrefab = prefab;
+                    break;
+                }
             }
+            gotCurrentMap = true;
         }
 
         #endregion
@@ -185,6 +165,50 @@ namespace Ryzm.EndlessRunner
         #endregion
 
         #region Private Functions
+        void MakeWorld()
+        {
+            madeWorld = true;
+            foreach(SectionPrefab item in SectionPrefabs)
+            {
+                for(int i = 0; i < item.amount; i++)
+                {
+                    GameObject obj = Instantiate(item.prefab);
+                    obj.SetActive(false);
+                    pooledSections.Add(new PooledSection(obj, item.IsTurn, item.Type));
+                }
+            }
+
+            foreach(BarrierPrefab item in BarrierPrefabs)
+            {
+                for(int i = 0; i < item.amount; i++)
+                {
+                    GameObject obj = Instantiate(item.prefab);
+                    obj.SetActive(false);
+                    pooledBarriers.Add(new PooledBarrier(obj, item.Type));
+                }
+            }
+
+            foreach(EnvironmentPrefab item in EnvironmentPrefabs)
+            {
+                for(int i = 0; i < item.amount; i++)
+                {
+                    GameObject obj = Instantiate(item.prefab);
+                    obj.SetActive(false);
+                    pooledEnvironments.Add(new PooledEnvironment(obj, item.Type));
+                }
+            }
+
+            foreach(WallPrefab item in WallPrefabs)
+            {
+                for(int i = 0; i < item.amount; i++)
+                {
+                    GameObject obj = Instantiate(item.prefab);
+                    obj.SetActive(false);
+                    pooledWalls.Add(new PooledWall(obj, item.Type));
+                }
+            }
+            Message.Send(new MadeWorld());
+        }
         GameObject GetRandom(List<PooledSection> pooledSections, List<SectionPrefab> _prefabs, bool isTurn)
         {
             _possiblePooledSections.Clear();
@@ -342,6 +366,19 @@ namespace Ryzm.EndlessRunner
                 }
             }
             return null;
+        }
+        #endregion
+
+        #region Coroutines
+        IEnumerator _MakeWorld()
+        {
+            Message.Send(new CurrentMapRequest());
+            while(!gotCurrentMap)
+            {
+                yield return null;
+            }
+            MakeWorld();
+            yield break;
         }
         #endregion
     }

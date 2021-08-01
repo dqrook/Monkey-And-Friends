@@ -11,6 +11,7 @@ namespace Ryzm.EndlessRunner
         #region Public Variables
         public EndlessMap map;
         public Transform nextSpawn;
+        public float deactivationTime = 1;
 
         [Header("Camera")]
         public int initialClipPlane;
@@ -27,6 +28,8 @@ namespace Ryzm.EndlessRunner
         int gameFieldOfView;
         IEnumerator run;
         GameStatus status = GameStatus.MainMenu;
+        WaitForSeconds deactivationWaitForSeconds;
+        IEnumerator waitAndDeactivate;
         #endregion
 
         #region Event Functions
@@ -37,6 +40,7 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
             Message.Send(new WorldItemsRequest());
             Message.Send(new ControllersRequest());
+            deactivationWaitForSeconds = new WaitForSeconds(deactivationTime);
         }
 
         void OnDestroy()
@@ -52,7 +56,6 @@ namespace Ryzm.EndlessRunner
         {
             mainCamera = response.mainCamera;
             camTrans = mainCamera.transform;
-            gameClipPlane = response.gameClipPlane;
             gameFieldOfView = response.gameFieldOfView;
         }
 
@@ -69,8 +72,9 @@ namespace Ryzm.EndlessRunner
         #endregion
 
         #region Public Functions
-        public void Run()
+        public void Run(int gameClipPlane)
         {
+            this.gameClipPlane = gameClipPlane;
             float initialX = Mathf.Abs(dragonTrans.position.x - nextSpawn.position.x);
             float initialZ = Mathf.Abs(dragonTrans.position.z - nextSpawn.position.z);
             float initialDistance = initialX > initialZ ? initialX : initialZ;
@@ -79,7 +83,14 @@ namespace Ryzm.EndlessRunner
             StartCoroutine(run);
         }
 
-        public void CrossedLine(RunwayLineType type) {}
+        public void CrossedLine(RunwayLineType type)
+        {
+            if(type == RunwayLineType.End)
+            {
+                waitAndDeactivate = WaitAndDeactivate();
+                StartCoroutine(waitAndDeactivate);
+            }
+        }
         #endregion
 
         #region Private Functions
@@ -149,10 +160,15 @@ namespace Ryzm.EndlessRunner
             dragon.MoveWithMultiplier(1);
             mainCamera.farClipPlane = gameClipPlane;
             mainCamera.fieldOfView = gameFieldOfView;
-            Debug.Log("distance diff: " + Vector3.Distance(camTrans.localPosition, finalPos));
             camTrans.localPosition = finalPos;
             camTrans.localRotation = finalRot;
-
+            camTrans.parent = null;
+            float timer = 0;
+            while(timer < 2 * Time.deltaTime)
+            {
+                timer += Time.deltaTime;
+                yield return null;
+            }
             Message.Send(new StartGame());
             // while(status != GameStatus.Active)
             // {
@@ -160,7 +176,12 @@ namespace Ryzm.EndlessRunner
             //     camTrans.rotation = dragon.localCameraSpawn.rotation;
             //     yield return null;
             // }
-            camTrans.parent = null;
+        }
+
+        IEnumerator WaitAndDeactivate()
+        {
+            yield return deactivationWaitForSeconds;
+            gameObject.SetActive(false);
         }
         #endregion
     }

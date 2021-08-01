@@ -15,13 +15,15 @@ namespace Ryzm.EndlessRunner
         Vector3 currentPlatformPos;
         Transform _transform;
         Transform _parentTransform;
-        float initY;
         EndlessSection currentSection;
         Transform monkeyTrans;
         Transform dragonTrans;
+        EndlessDragon dragon;
         ControllerMode mode;
         GameStatus gameStatus = GameStatus.MainMenu;
         bool initialized;
+        bool isRestart;
+
 
         void Awake()
         {
@@ -53,6 +55,7 @@ namespace Ryzm.EndlessRunner
 
         void OnControllersResponse(ControllersResponse response)
         {
+            dragon = response.dragon;
             monkeyTrans = response.monkey.transform;
             dragonTrans = response.dragon.transform;
         }
@@ -65,17 +68,35 @@ namespace Ryzm.EndlessRunner
         void OnGameStatusResponse(GameStatusResponse response)
         {
             gameStatus = response.status;
-            // Debug.Log("gamestatus" + gameStatus);
-            if(gameStatus == GameStatus.Active && !initialized)
+            if(gameStatus == GameStatus.Active)
             {
-                initialized = true;
-                _parentTransform = mode == ControllerMode.Monkey ? monkeyTrans : dragonTrans;
-                pos = _parentTransform.InverseTransformPoint(_transform.position);
-                fw = _parentTransform.InverseTransformDirection(_transform.forward);
-                up = _parentTransform.InverseTransformDirection(_transform.up);
-                prevPos = _transform.position;
-                prevRot = _transform.rotation;
-                initY = pos.y;
+                if(!initialized)
+                {
+                    initialized = true;
+                    _parentTransform = mode == ControllerMode.Monkey ? monkeyTrans : dragonTrans;
+                    pos = _parentTransform.InverseTransformPoint(_transform.position);
+                    fw = _parentTransform.InverseTransformDirection(_transform.forward);
+                    up = _parentTransform.InverseTransformDirection(_transform.up);
+                    prevRot = _transform.rotation;
+                }
+                if(isRestart)
+                {
+                    isRestart = false;
+                    _transform.parent = dragonTrans;
+                    _transform.localPosition = dragon.localCameraSpawn.localPosition;
+                    _transform.localRotation = dragon.localCameraSpawn.localRotation;
+                    prevRot = _transform.rotation;
+                    _transform.parent = null;
+                }
+            }
+            else if(gameStatus == GameStatus.Restart)
+            {
+                currentSection = null;
+                isRestart = true;
+            }
+            else if(gameStatus == GameStatus.Exit)
+            {
+                currentSection = null;
             }
         }
 
@@ -85,7 +106,7 @@ namespace Ryzm.EndlessRunner
             {
                 return;
             }
-            // Debug.Log("lateupdate");
+            
             _parentTransform = mode == ControllerMode.Monkey ? monkeyTrans : dragonTrans;
             var newpos = _parentTransform.TransformPoint(pos);
             var newfw = _parentTransform.TransformDirection(fw);
@@ -118,7 +139,7 @@ namespace Ryzm.EndlessRunner
             _transform.position = newpos;
             // abs(fw.z) > abs(fw.x) keep x the same
             // Debug.Log($"{newpos.x - prevPos.x}" + " " + $"{newpos.z - prevPos.z}" + $"{newfw} \t newpos: {newpos} \t currentPlatformpos: {currentPlatformPos}" + "");
-            prevPos = newpos;
+            // prevPos = newpos;
             prevRot = newrot;
         }
     }

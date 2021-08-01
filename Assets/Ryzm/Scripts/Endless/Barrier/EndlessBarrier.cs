@@ -43,13 +43,10 @@ namespace Ryzm.EndlessRunner
         protected override void OnDisable()
         {
             base.OnDisable();
-            foreach(RowSpawn spawn in spawns)
-            {
-                spawn.Disable();
-            }
+            ResetSpawns();
         }
 
-        protected void OnCollisionEnter(Collision other)
+        protected virtual void OnCollisionEnter(Collision other)
         {
             if(other.gameObject.GetComponent<EndlessController>())
             {
@@ -105,10 +102,7 @@ namespace Ryzm.EndlessRunner
             }
             else
             {
-                foreach(RowSpawn spawn in spawns)
-                {
-                    spawn.Disable();
-                }
+                ResetSpawns();
             }
         }
         #endregion
@@ -117,6 +111,14 @@ namespace Ryzm.EndlessRunner
         protected bool CanPlaceRow(float rowLikelihood)
         {
             return Random.Range(0, 1f) <= rowLikelihood;
+        }
+
+        protected virtual void ResetSpawns()
+        {
+            foreach(RowSpawn spawn in spawns)
+            {
+                spawn.Disable();
+            }
         }
         #endregion
     }
@@ -143,7 +145,8 @@ namespace Ryzm.EndlessRunner
         RockTree3,
         RockTree4,
         RockRabby1,
-        RockSpikes
+        RockSpikes,
+        Krake
     }
 
     [System.Serializable]
@@ -167,7 +170,10 @@ namespace Ryzm.EndlessRunner
         {
             foreach(Transform row in rows)
             {
-                row.gameObject.SetActive(false);
+                if(row != null)
+                {
+                    row.gameObject.SetActive(false);
+                }
             }
         }
     }

@@ -41,7 +41,7 @@ namespace Ryzm.EndlessRunner
         protected EndlessTurnSection _endlessTurnSection;
         protected GameStatus gameStatus;
         protected float distanceTraveled;
-        protected float shiftSpeed;
+        public float shiftSpeed;
 		protected ControllerMode mode;
         protected Camera mainCamera;
         protected bool inSlide;
@@ -260,7 +260,6 @@ namespace Ryzm.EndlessRunner
             shiftSpeed = 0;
             
             float cooldownTime = 0;
-            Debug.Log("inShift: " + inShift);
             while(inShift && cooldownTime < maxShiftCooldown) 
             {
                 cooldownTime += Time.deltaTime;
@@ -294,6 +293,7 @@ namespace Ryzm.EndlessRunner
         protected virtual void Reset()
         {
             Debug.Log("reset this beeeotch");
+            StopAllCoroutines();
             turned = false;
             state = 0;
             InJump = false;

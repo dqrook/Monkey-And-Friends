@@ -43,6 +43,15 @@ namespace Ryzm.EndlessRunner
         #endregion
 
         #region Listener Functions
+        protected override void OnGameStatusResponse(GameStatusResponse gameStatusResponse)
+        {
+            base.OnGameStatusResponse(gameStatusResponse);
+            if(gameStatusResponse.status == GameStatus.Restart)
+            {
+                gameObject.SetActive(false);
+            }
+        }
+        
         void OnRowChange(RowChange change)
         {
             if(change.oldRowId == startRowId)

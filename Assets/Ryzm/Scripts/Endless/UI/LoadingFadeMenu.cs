@@ -16,19 +16,6 @@ namespace Ryzm.UI
         public Image background;
         public Color startColor;
         public Color endColor;
-
-        [Header("Times")]
-        public float fadeInTime = 1;
-        public float pauseTime = 1;
-        public float fadeOutTime = 1;
-        [Range(0, 1)]
-        public float startRunwayFractionTime = 0.5f;
-        #endregion
-
-        #region Private Variables
-        MapType currentMap;
-        IEnumerator startMenu;
-        List<MenuType> activeMenus = new List<MenuType>();
         #endregion
 
         public override bool IsActive 
@@ -45,19 +32,6 @@ namespace Ryzm.UI
                     {
                         // Message.Send(new StartRunway())
                         Debug.Log("open loading fade menu");
-                        Message.AddListener<MenuSetResponse>(OnMenuSetResponse);
-                        Message.AddListener<CurrentMapResponse>(OnCurrentMapResponse);
-                        Message.Send(new MenuSetRequest(MenuSet.ActiveMenu));
-                        Message.Send(new CurrentMapRequest());
-                        // startMenu = StartMenu();
-                        // StartCoroutine(startMenu);
-                    }
-                    else
-                    {
-                        // StopAllCoroutines();
-                        // startMenu = null;
-                        Message.RemoveListener<MenuSetResponse>(OnMenuSetResponse);
-                        Message.RemoveListener<CurrentMapResponse>(OnCurrentMapResponse);
                     }
                     base.IsActive = value;
                 }
@@ -78,19 +52,6 @@ namespace Ryzm.UI
             base.OnUpdateLoadingFadeMenu(update);
             SetColor(update.fadeFraction);
         }
-
-        void OnMenuSetResponse(MenuSetResponse response)
-        {
-            if(response.set == MenuSet.ActiveMenu)
-            {
-                activeMenus = response.menus;
-            }
-        }
-
-        void OnCurrentMapResponse(CurrentMapResponse response)
-        {
-            currentMap = response.type;
-        }
         #endregion
 
         #region Private Functions
@@ -99,50 +60,6 @@ namespace Ryzm.UI
             fraction = fraction < 0 ? 0 : fraction > 1 ? 1 : fraction;
             Color clr = startColor * (1 - fraction) + endColor * fraction;
             background.color = clr;
-        }
-        #endregion
-
-        #region Coroutines
-        IEnumerator StartMenu()
-        {
-            float timer = 0;
-            while(timer < fadeInTime)
-            {
-                timer += Time.deltaTime;
-                float fraction = timer / fadeInTime;
-                SetColor(fraction);
-                yield return null;
-            }
-            SetColor(1);
-
-            timer = 0;
-            float startRunwayTime = startRunwayFractionTime * pauseTime;
-            bool startedRunway = false;
-            while(timer < pauseTime)
-            {
-                timer += Time.deltaTime;
-                if(!startedRunway && timer > startRunwayTime)
-                {
-                    startedRunway = true;
-                    Message.Send(new StartRunway(currentMap));
-                }
-                yield return null;
-            }
-            if(!startedRunway)
-            {
-                Message.Send(new StartRunway(currentMap));
-            }
-
-            timer = 0;
-            while(timer < fadeOutTime)
-            {
-                timer += Time.deltaTime;
-                float fraction = 1 - timer / fadeOutTime;
-                SetColor(fraction);
-                yield return null;
-            }
-            SetColor(0);
-            Message.Send(new ActivateMenu(activatedTypes: activeMenus));
         }
         #endregion
     }
