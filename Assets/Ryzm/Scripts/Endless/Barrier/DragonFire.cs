@@ -57,10 +57,15 @@ namespace Ryzm.EndlessRunner
             }
             else
             {
-                EndlessRabby rabby = other.GetComponent<EndlessRabby>();
-                if(rabby != null)
+                // EndlessRabby rabby = other.GetComponent<EndlessRabby>();
+                // if(rabby != null)
+                // {
+                //     rabby.Die();
+                // }
+                EndlessMonster monster = other.GetComponent<EndlessMonster>();
+                if(monster != null)
                 {
-                    rabby.Die();
+                    monster.Die();
                 }
             }
         }

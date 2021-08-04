@@ -157,7 +157,7 @@ namespace Ryzm.EndlessRunner
         {
             if(!initialized && runway != null)
             {
-                AddRow(runway.nextSpawn);
+                AddRow(runway.nextRowSpawn);
                 // runway.Run();
                 // // has initial row
                 // currentRow = GetPrefab(initialRowType);

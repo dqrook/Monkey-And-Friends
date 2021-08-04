@@ -302,6 +302,8 @@ namespace Ryzm.EndlessRunner
             distanceTraveled = 0;
             CurrentPosition = 1;
             shiftSpeed = 0;
+            rb.isKinematic = true;
+            rb.isKinematic = false;
         }
     }
 }

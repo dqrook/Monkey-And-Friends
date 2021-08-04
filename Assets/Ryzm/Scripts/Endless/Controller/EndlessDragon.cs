@@ -12,7 +12,6 @@ namespace Ryzm.EndlessRunner
         public BaseDragon baseDragon;
         public Transform monkeyPos;
         public DragonFire fire;
-        public DragonResponse data;
         public float flyUpSpeed = 10;
         public float flyDownSpeed = 5;
         public bool forceJump;
@@ -26,35 +25,12 @@ namespace Ryzm.EndlessRunner
         bool isAttacking;
         bool _isFlying;
         bool flyingInitialized;
-        float elevation = 2.25f;
+        float elevation = 2f;
         IEnumerator flyUp;
         float baselineY;
         bool isFlyingUp;
 
         #region Properties
-        public bool ForSale
-        {
-            get
-            {
-                if(data == null)
-                {
-                    return false;
-                }
-                return data.price > 0;
-            }
-        }
-
-        public float Price
-        {
-            get
-            {
-                if(data == null)
-                {
-                    return 0;
-                }
-                return data.price;
-            }
-        }
 
         bool IsFlying
         {
@@ -93,15 +69,15 @@ namespace Ryzm.EndlessRunner
             {
                 EndlessRun();
             }
-            // if(!InJump && forceJump)
-            // {
-            //     IsFlying = true;
-            //     Jump();
-            // }
-            // else
-            // {
-            //     forceJump = false;
-            // }
+            if(!InJump && forceJump)
+            {
+                IsFlying = true;
+                Jump();
+            }
+            else
+            {
+                forceJump = false;
+            }
         }
         #endregion
 

@@ -86,7 +86,7 @@ namespace Ryzm.EndlessRunner
 
         public void Shift(Direction direction)
         {
-            if(!GameIsActive())
+            if(!CanMove())
             {
                 return;
             }
@@ -102,7 +102,7 @@ namespace Ryzm.EndlessRunner
 
         public void Jump()
         {
-            if(!GameIsActive())
+            if(!CanMove())
             {
                 return;
             }
@@ -118,7 +118,7 @@ namespace Ryzm.EndlessRunner
 
         public void Slide()
         {
-            if(!GameIsActive())
+            if(!CanMove())
             {
                 return;
             }
@@ -132,9 +132,9 @@ namespace Ryzm.EndlessRunner
             }
         }
 
-        bool GameIsActive()
+        bool CanMove()
         {
-            return status == GameStatus.Active;
+            return status == GameStatus.Active || status == GameStatus.Starting;
         }
     }
 }

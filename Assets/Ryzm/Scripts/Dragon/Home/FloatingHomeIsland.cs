@@ -18,6 +18,7 @@ namespace Ryzm.Dragon
         #region Private Variables
         BaseDragon[] dragons = new BaseDragon[0];
         EndlessDragon endlessDragon;
+        bool dragonInitialized;
         #endregion
 
         #region Event Functions
@@ -62,6 +63,12 @@ namespace Ryzm.Dragon
         {
             if(response.status == GameStatus.Exit)
             {
+                endlessDragon.transform.position = endlessDragonSpawn.position;
+                endlessDragon.transform.rotation = endlessDragonSpawn.rotation;
+            }
+            else if(response.status == GameStatus.MainMenu && !dragonInitialized)
+            {
+                dragonInitialized = true;
                 endlessDragon.transform.position = endlessDragonSpawn.position;
                 endlessDragon.transform.rotation = endlessDragonSpawn.rotation;
             }

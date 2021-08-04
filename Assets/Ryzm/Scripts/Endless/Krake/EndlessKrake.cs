@@ -8,7 +8,14 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessKrake : EndlessDiveDragon
     {
+        #region Public Variables
         public bool simulate;
+
+        [Header("Style")]
+        public Renderer krakeBody;
+        public List<Material> krakeMaterials = new List<Material>();
+        #endregion
+
         #region Private Variables
         float riseSpeed = 8;
         Vector3 move;
@@ -21,18 +28,18 @@ namespace Ryzm.EndlessRunner
             move = Vector3.zero;
         }
 
-        void Update()
-        {
-            if(simulate)
-            {
-                Debug.Log("simulate it");
-                simulate = false;
-                Reset();
-                childGO.SetActive(true);
-                _flyToPosition = FlyToPosition();
-                StartCoroutine(_flyToPosition);
-            }
-        }
+        // void Update()
+        // {
+        //     if(simulate)
+        //     {
+        //         Debug.Log("simulate it");
+        //         simulate = false;
+        //         Reset();
+        //         childGO.SetActive(true);
+        //         _flyToPosition = FlyToPosition();
+        //         StartCoroutine(_flyToPosition);
+        //     }
+        // }
 
         protected override void OnDisable()
         {
@@ -47,6 +54,20 @@ namespace Ryzm.EndlessRunner
             }
         }
         #endregion
+
+        public override void Initialize(Transform parentTransform, int position)
+        {
+            base.Initialize(parentTransform, position);
+            if(krakeBody != null)
+            {
+                int materialIndex = -1;
+                if(krakeMaterials.Count > 0)
+                {
+                    materialIndex = Random.Range(0, krakeMaterials.Count);
+                    krakeBody.material = krakeMaterials[materialIndex];
+                }
+            }
+        }
 
         #region Private Functions
         void Reset()

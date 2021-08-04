@@ -103,10 +103,6 @@ namespace Ryzm.UI
                 }
                 IsActive = _shouldActivate;
             }
-            else if(activate.type == type)
-            {
-                IsActive = true;
-            }
             else
             {
                 IsActive = false;

@@ -16,16 +16,6 @@ namespace Ryzm.EndlessRunner
         public float rowLikelihood = 0.5f;
         protected int runnerPosition;
 
-        #region Properties
-        public bool IsCoinRow
-        {
-            get
-            {
-                return type == BarrierType.CoinRow1 || type == BarrierType.CoinRow2 || type == BarrierType.CoinRow3;
-            }
-        }
-        #endregion
-
         #region Event Functions
         protected override void Awake()
         {
@@ -146,7 +136,13 @@ namespace Ryzm.EndlessRunner
         RockTree4,
         RockRabby1,
         RockSpikes,
-        Krake
+        Krake,
+        StoneMound,
+        StonePillar1,
+        StonePillar2,
+        StonePillar3,
+        StonePillar4,
+        KrabRow
     }
 
     [System.Serializable]

@@ -121,7 +121,7 @@ namespace Ryzm.EndlessRunner
                         {
                             spawnTrans = spawnGO.transform;
                             spawnOrigPos = spawnTrans.localPosition;
-                            spawnTrans.parent = null;
+                            spawnTrans.parent = this.transform.parent;
                         }
                         break;
                     }

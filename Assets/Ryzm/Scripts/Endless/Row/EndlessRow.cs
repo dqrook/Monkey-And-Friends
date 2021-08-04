@@ -169,7 +169,7 @@ namespace Ryzm.EndlessRunner
                 return;
             }
 
-            SpawnLocation spawnLocation = _section.GetSpawnLocationForBarrier(_barrier.type);
+            BarrierSpawnLocation spawnLocation = _section.GetSpawnLocationForBarrier(_barrier.type);
             if(spawnLocation == null) 
             {
                 return;

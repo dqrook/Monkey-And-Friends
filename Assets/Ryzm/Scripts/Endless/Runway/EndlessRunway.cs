@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Ryzm.EndlessRunner.Messages;
 using CodeControl;
+using Ryzm.UI;
+using Ryzm.UI.Messages;
 
 namespace Ryzm.EndlessRunner
 {
@@ -10,8 +12,10 @@ namespace Ryzm.EndlessRunner
     {
         #region Public Variables
         public EndlessMap map;
+        public Transform nextRowSpawn;
         public Transform nextSpawn;
         public float deactivationTime = 1;
+        public EndlessSection section;
 
         [Header("Camera")]
         public int initialClipPlane;
@@ -30,6 +34,8 @@ namespace Ryzm.EndlessRunner
         GameStatus status = GameStatus.MainMenu;
         WaitForSeconds deactivationWaitForSeconds;
         IEnumerator waitAndDeactivate;
+        List<MenuType> activeMenus = new List<MenuType>();
+        Vector3 currentSectionPos;
         #endregion
 
         #region Event Functions
@@ -38,8 +44,10 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<WorldItemsResponse>(OnWorldItemsResponse);
             Message.AddListener<ControllersResponse>(OnControllersResponse);
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
+            Message.AddListener<MenuSetResponse>(OnMenuSetResponse);
             Message.Send(new WorldItemsRequest());
             Message.Send(new ControllersRequest());
+            Message.Send(new MenuSetRequest(MenuSet.ActiveMenu));
             deactivationWaitForSeconds = new WaitForSeconds(deactivationTime);
         }
 
@@ -48,6 +56,7 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<WorldItemsResponse>(OnWorldItemsResponse);
             Message.RemoveListener<ControllersResponse>(OnControllersResponse);
             Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
+            Message.RemoveListener<MenuSetResponse>(OnMenuSetResponse);
         }
         #endregion
 
@@ -69,6 +78,11 @@ namespace Ryzm.EndlessRunner
         {
             status = response.status;
         }
+
+        void OnMenuSetResponse(MenuSetResponse response)
+        {
+            activeMenus = response.menus;
+        }
         #endregion
 
         #region Public Functions
@@ -81,6 +95,7 @@ namespace Ryzm.EndlessRunner
             bool useX = initialX > initialZ;
             run = _Run(initialDistance, useX);
             StartCoroutine(run);
+            currentSectionPos = section.GetPosition(1).position;
         }
 
         public void CrossedLine(RunwayLineType type)
@@ -121,13 +136,16 @@ namespace Ryzm.EndlessRunner
             mainCamera.fieldOfView = initialFieldOfView;
             float fraction = GetCurrentDistance(useX) / initialDistance;
             float initialMultiplier = 0.5f;
-            float maxLerpTime = 1;
+            float maxLerpTime = 0.75f;
             float lerpTime = 0;
             float cutoff = 0.7f;
             float denom = cutoff - 0.1f;
+            bool activatedMenus = false;
+            
             while(fraction > 0.1f)
             {
                 fraction = GetCurrentDistance(useX) / initialDistance;
+                // finalPos.x = dragonTrans.InverseTransformPoint(currentSectionPos).x;
                 if(fraction < cutoff)
                 {
                     float multiplier = initialMultiplier + (1 - initialMultiplier) * (cutoff - fraction) / denom;
@@ -158,6 +176,15 @@ namespace Ryzm.EndlessRunner
                 yield return null;
             }
             dragon.MoveWithMultiplier(1);
+            if(!activatedMenus)
+            {
+                activatedMenus = true;
+                Message.Send(new ActivateMenu(activeMenus));
+                if(section != null)
+                {
+                    Message.Send(new CurrentSectionChange(section.gameObject));
+                }
+            }
             mainCamera.farClipPlane = gameClipPlane;
             mainCamera.fieldOfView = gameFieldOfView;
             camTrans.localPosition = finalPos;
@@ -170,12 +197,6 @@ namespace Ryzm.EndlessRunner
                 yield return null;
             }
             Message.Send(new StartGame());
-            // while(status != GameStatus.Active)
-            // {
-            //     camTrans.position = dragon.localCameraSpawn.position;
-            //     camTrans.rotation = dragon.localCameraSpawn.rotation;
-            //     yield return null;
-            // }
         }
 
         IEnumerator WaitAndDeactivate()

@@ -12,14 +12,18 @@ namespace Ryzm.EndlessRunner
         public SectionType type;
         public bool isTurn;
         public DeactivateSection deactivate;
-        public List<SpawnLocation> barrierSpawnLocations = new List<SpawnLocation>();
+        public List<BarrierSpawnLocation> barrierSpawnLocations = new List<BarrierSpawnLocation>();
         /// <summary>
         /// Position where to spawn next section
         /// </summary>
         public Transform nextSectionSpawn; 
         [Range(0, 1)]
         public float barrierLikelihood = 0.5f;
+
+        [Header("Environment")]
         public List<GameObject> environments = new List<GameObject>();
+        [Range(0, 1)]
+        public float environmentLikelihood = 1f;
         
         [Header("Lane Positions")]
         public Transform position0;
@@ -40,7 +44,7 @@ namespace Ryzm.EndlessRunner
             get
             {
                 _possibleBarrierTypes.Clear();
-                foreach(SpawnLocation location in barrierSpawnLocations)
+                foreach(BarrierSpawnLocation location in barrierSpawnLocations)
                 {
                     if(location.weight > 0) 
                     {
@@ -57,7 +61,7 @@ namespace Ryzm.EndlessRunner
         {
             base.OnEnable();
             // Debug.Log(gameObject.name + " activated");
-            if(environments.Count > 1)
+            if(environments.Count > 1 && CanPlaceEnvironment(environmentLikelihood))
             {
                 EndlessUtils.Shuffle(environments);
                 int i = 0;
@@ -131,7 +135,7 @@ namespace Ryzm.EndlessRunner
 
         public Transform GetSpawnTransformForBarrier(BarrierType type, int position)
         {
-            SpawnLocation location = GetSpawnLocationForBarrier(type);
+            BarrierSpawnLocation location = GetSpawnLocationForBarrier(type);
             if(location == null)
             {
                 return null;
@@ -148,9 +152,9 @@ namespace Ryzm.EndlessRunner
             return null;
         }
 
-        public SpawnLocation GetSpawnLocationForBarrier(BarrierType type)
+        public BarrierSpawnLocation GetSpawnLocationForBarrier(BarrierType type)
         {
-            foreach(SpawnLocation location in barrierSpawnLocations)
+            foreach(BarrierSpawnLocation location in barrierSpawnLocations)
             {
                 if(location.type == type)
                 {
@@ -184,9 +188,16 @@ namespace Ryzm.EndlessRunner
             }
         }
         #endregion
+
+        #region Protected Functions
+        protected bool CanPlaceEnvironment(float likelihood)
+        {
+            return Random.Range(0, 1f) <= likelihood;
+        }
+        #endregion
     }
     [System.Serializable]
-    public class SpawnLocation
+    public class BarrierSpawnLocation
     {
         public BarrierType type;
         public SpawnTransform[] spawnTransforms;
@@ -218,6 +229,13 @@ namespace Ryzm.EndlessRunner
                 return locations[idx];
             }
         }
+    }
+
+    [System.Serializable]
+    public class SectionEnvironment
+    {
+        public GameObject mainEnvironment;
+        public GameObject[] subEnvironments;
     }
 
     public enum SectionType
@@ -254,6 +272,10 @@ namespace Ryzm.EndlessRunner
         RockRabby,
         RockSpikes,
         RockTWallSection1,
-        WaterKrake
+        WaterKrake1,
+        WaterBridgeKrab,
+        WaterKrake2,
+        WaterStone,
+        WaterBeachPillar
     }
 }

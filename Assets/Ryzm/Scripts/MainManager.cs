@@ -13,7 +13,9 @@ namespace Ryzm
         void Awake()
         {
             Message.AddListener<GameTypeRequest>(OnGameTypeRequest);
-            Application.targetFrameRate = 60;
+            // #if !UNITY_EDITOR
+            // Application.targetFrameRate = 60;
+            // #endif
         }
 
         void OnDestroy()
