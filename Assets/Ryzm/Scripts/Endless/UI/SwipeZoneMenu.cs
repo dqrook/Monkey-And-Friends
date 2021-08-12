@@ -49,7 +49,6 @@ namespace Ryzm.UI
 		public void OnPointerDown(PointerEventData data)
 		{
 			_firstTouchPosition = Input.mousePosition;
-			Debug.Log("onpointerdown");
 		}
 
 		/// <summary>

@@ -64,7 +64,7 @@ namespace Ryzm.EndlessRunner
 
         void Update()
         {
-            animator.SetInteger("state", state);
+            // animator.SetInteger("state", state);
             if((mode == ControllerMode.MonkeyDragon || mode == ControllerMode.Dragon) && gameStatus == GameStatus.Active)
             {
                 EndlessRun();
@@ -179,7 +179,8 @@ namespace Ryzm.EndlessRunner
         public override void Die()
         {
             StopAllCoroutines();
-            state = 2;
+            // state = 2;
+            State = 2;
             isFlyingUp = false;
             if(fire != null)
             {

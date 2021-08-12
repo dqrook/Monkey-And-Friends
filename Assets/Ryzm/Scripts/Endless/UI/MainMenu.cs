@@ -12,20 +12,16 @@ namespace Ryzm.UI
 {
     public class MainMenu : RyzmMenu
     {
+        #region Public Variables
         public TextMeshProUGUI loginText;
+        #endregion
 
-        List<MenuType> loginMenus = new List<MenuType>
-        {
-            MenuType.Login,
-            MenuType.Header
-        };
+        #region Private Variables
+        List<MenuType> loginMenus = new List<MenuType>();
+        List<MenuType> mainMenus = new List<MenuType>();
+        #endregion
 
-        List<MenuType> mainMenus = new List<MenuType>
-        {
-            MenuType.Main,
-            MenuType.Header
-        };
-
+        #region Properties
         public override bool IsActive 
         { 
             get
@@ -54,34 +50,9 @@ namespace Ryzm.UI
                 }
             }
         }
+        #endregion
 
-        protected override void Awake()
-        {
-            base.Awake();
-        }
-
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-        }
-        
-        public void OnClickStart()
-        {
-            // Message.Send(new MakeWorld());
-            Message.Send(new StartingGame());
-        }
-
-        public void OnClickLogin()
-        {
-            Debug.Log("on click login");
-            if(IsActive)
-            {
-                Message.Send(new ActivateMenu(activatedTypes: loginMenus));
-                // Message.Send(new DeactivateMenu(activatedTypes: loginMenus));
-                Message.Send(new EnableHeaderBackButton(mainMenus));
-            }
-        }
-
+        #region Listener Functions
         void OnLoginResponse(LoginResponse response)
         {
             switch(response.status)
@@ -109,5 +80,22 @@ namespace Ryzm.UI
                 loginMenus = response.menus;
             }
         }
+        #endregion
+        
+        #region Public Functions
+        public void OnClickStart()
+        {
+            Message.Send(new StartingGame());
+        }
+
+        public void OnClickLogin()
+        {
+            Debug.Log("on click login");
+            if(IsActive)
+            {
+                Message.Send(new ActivateMenu(activatedTypes: loginMenus));
+            }
+        }
+        #endregion
     }
 }

@@ -61,16 +61,19 @@ namespace Ryzm.Dragon
 
         void OnGameStatusResponse(GameStatusResponse response)
         {
-            if(response.status == GameStatus.Exit)
+            if(endlessDragon != null)
             {
-                endlessDragon.transform.position = endlessDragonSpawn.position;
-                endlessDragon.transform.rotation = endlessDragonSpawn.rotation;
-            }
-            else if(response.status == GameStatus.MainMenu && !dragonInitialized)
-            {
-                dragonInitialized = true;
-                endlessDragon.transform.position = endlessDragonSpawn.position;
-                endlessDragon.transform.rotation = endlessDragonSpawn.rotation;
+                if(response.status == GameStatus.Exit)
+                {
+                    endlessDragon.transform.position = endlessDragonSpawn.position;
+                    endlessDragon.transform.rotation = endlessDragonSpawn.rotation;
+                }
+                else if(response.status == GameStatus.MainMenu && !dragonInitialized)
+                {
+                    dragonInitialized = true;
+                    endlessDragon.transform.position = endlessDragonSpawn.position;
+                    endlessDragon.transform.rotation = endlessDragonSpawn.rotation;
+                }
             }
         }
 

@@ -133,15 +133,18 @@ namespace Ryzm.EndlessRunner
 
         void OnRunnerDie(RunnerDie runnerDie)
         {
-            StopAllCoroutines();
-            UpdateGameStatus(GameStatus.Ended);
+            if(status == GameStatus.Active)
+            {
+                StopAllCoroutines();
+                UpdateGameStatus(GameStatus.Ended);
+            }
         }
 
         void OnRestartGame(RestartGame restartGame)
         {
             Reset();
-            UpdateGameStatus(GameStatus.Restart);
-            FadeMenu();
+            // UpdateGameStatus(GameStatus.Restart);
+            FadeMenu(true);
         }
 
         void OnExitGame(ExitGame exitGame)
@@ -210,7 +213,7 @@ namespace Ryzm.EndlessRunner
             Message.Send(new GameSpeedResponse(newSpeed));
         }
 
-        void FadeMenu()
+        void FadeMenu(bool restarting = false)
         {
             if(!isStartingGame)
             {
@@ -220,7 +223,7 @@ namespace Ryzm.EndlessRunner
                     StopCoroutine(fadeMenu);
                     fadeMenu = null;
                 }
-                fadeMenu = _FadeMenu();
+                fadeMenu = _FadeMenu(restarting);
                 StartCoroutine(fadeMenu);
             }
         }
@@ -236,7 +239,7 @@ namespace Ryzm.EndlessRunner
         #endregion
 
         #region Coroutines
-        IEnumerator _FadeMenu()
+        IEnumerator _FadeMenu(bool restarting)
         {
             float timer = 0;
             float fadeTime = 1;
@@ -245,6 +248,17 @@ namespace Ryzm.EndlessRunner
                 timer += Time.deltaTime;
                 Message.Send(new UpdateLoadingFadeMenu(timer / fadeTime));
                 yield return null;
+            }
+            
+            if(restarting)
+            {
+                UpdateGameStatus(GameStatus.Restart);
+                timer = 0;
+                while(timer <= 0.5f)
+                {
+                    timer += Time.deltaTime;
+                    yield return null;
+                }
             }
 
             Message.Send(new MakeWorld());
@@ -319,6 +333,7 @@ namespace Ryzm.EndlessRunner
         Ended,
         Restart,
         CreatingMap,
-        Exit
+        Exit,
+        Temp
     }
 }

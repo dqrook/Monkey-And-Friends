@@ -14,7 +14,6 @@ namespace Ryzm.EndlessRunner
             EndlessController runner = other.GetComponent<EndlessController>();
             if(runner != null)
             {
-                Debug.Log("crossed da line ya nerd");
                 runway.CrossedLine(type);
             }
         }

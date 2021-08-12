@@ -16,8 +16,8 @@ namespace Ryzm.Dragon
     public class DragonManager : MonoBehaviour
     {
         #region Public Variables
-        public NearEnvs nearEnvs;
         public Envs envs;
+        public DragonGenes genes;
         public DragonPrefabs prefabs;
         public Dictionary<int, BaseDragon> dragons = new Dictionary<int, BaseDragon>();
 
@@ -63,6 +63,7 @@ namespace Ryzm.Dragon
             Message.AddListener<AddDragonToMarketRequest>(OnAddDragonToMarketRequest);
             Message.AddListener<RemoveDragonFromMarketRequest>(OnRemoveDragonFromMarketRequest);
             Message.AddListener<GameTypeResponse>(OnGameTypeResponse);
+            Message.AddListener<DragonGenesRequest>(OnDragonGenesRequest);
             newDragonId = -1;
         }
 
@@ -85,6 +86,7 @@ namespace Ryzm.Dragon
             Message.RemoveListener<AddDragonToMarketRequest>(OnAddDragonToMarketRequest);
             Message.RemoveListener<RemoveDragonFromMarketRequest>(OnRemoveDragonFromMarketRequest);
             Message.RemoveListener<GameTypeResponse>(OnGameTypeResponse);
+            Message.RemoveListener<DragonGenesRequest>(OnDragonGenesRequest);
         }
         #endregion
         
@@ -292,13 +294,18 @@ namespace Ryzm.Dragon
         {
             gameType = response.type;
         }
+
+        void OnDragonGenesRequest(DragonGenesRequest request)
+        {
+            Message.Send(new DragonGenesResponse(request.sender, genes));
+        }
         #endregion
 
         #region Private Functions
         void SignUrlAndOpen(string res, bool isBreeding)
         {
             TxHashResponse response = TxHashResponse.FromJson(res);
-            string signedUrl = nearEnvs.SignTransactionUrl(response.hash);
+            string signedUrl = envs.SignTransactionUrl(response.hash);
             getDragonIds = null;
             getDragonIds = GetDragonIds(envs.DragonIdsApiUrl(accountName), isBreeding);
             StartCoroutine(getDragonIds);
@@ -312,6 +319,7 @@ namespace Ryzm.Dragon
         {
             gettingDragons = true;
             UnityWebRequest request = RyzmUtils.PostRequest(url, bodyJsonString);
+            Debug.Log(url);
             int numFails = 0;
             bool failed = true;
             while(numFails < 3)
@@ -322,6 +330,7 @@ namespace Ryzm.Dragon
                     request = RyzmUtils.PostRequest(url, bodyJsonString);
                     numFails++;
                     Debug.LogError("Failed getting dragons " + numFails + " times");
+                    Debug.LogError(request.error);
                 }
                 else
                 {
@@ -388,8 +397,8 @@ namespace Ryzm.Dragon
             else
             {
                 string res = request.downloadHandler.text;
-                Debug.Log("POST SUCCESS " + res);
-                SignUrlAndOpen(request.downloadHandler.text, true);
+                Debug.Log("BreedDragonsTxHash POST SUCCESS " + res);
+                SignUrlAndOpen(res, true);
             }
         }
 
@@ -690,22 +699,21 @@ namespace Ryzm.Dragon
         public int baseAttack;
         public int baseDefense;
         public int baseHealth;
-        public int bodyColor;
-        public int wingColor;
-        public int backColor;
-        public int hornColor;
-        public int eyeColor;
-        public int toothColor;
+        public int primaryColor;
+        public int secondaryColor;
         public List<int> bodyGenes;
         public List<int> wingGenes;
-        public List<int> backGenes;
         public List<int> hornGenes;
         public List<int> hornTypeGenes;
-        public List<int> extraGenes;
+        public List<int> moveGenes;
         public string bodyTexture;
         public string wingTexture;
         public string backTexture;
         public string hornTexture;
+        public string bodyGenesSequence;
+        public string wingGenesSequence;
+        public string hornGenesSequence;
+        public string moveGenesSequence;
         public int hornType;
         public float price;
     }

@@ -12,11 +12,18 @@ namespace Ryzm.UI
 {
     public class BreedingMenu : RyzmMenu
     {
+        #region Public Variables
         [Header("Main")]
         public GameObject backButton;
         public GameObject noDragonsPanel;
         public GameObject mainPanel;
+
+        [Header("Zoom")]
         public GameObject zoomPanel;
+        public GameObject zoomedFwdButton;
+        public GameObject zoomedBackButton;
+        public GameObject resetCameraButton;
+
 
         [Header("Breeding")]
         public GameObject breedingPanel;
@@ -33,19 +40,17 @@ namespace Ryzm.UI
 
         [Header("Dragon 1")]
         public Transform dragon1Spawn;
-        public GameObject dragon1Panel;
-        public GameObject dragon1ResetCameraButton;
 
         [Header("Dragon 2")]
         public Transform dragon2Spawn;
-        public GameObject dragon2Panel;
-        public GameObject dragon2ResetCameraButton;
 
         [Header("Single Dragon")]
         public Transform singleDragonSpawn;
         public GameObject singleDragonPanel;
         public GameObject singleDragonResetCameraButton;
+        #endregion
 
+        #region Private Variables
         BaseDragon[] dragons;
         List<MenuType> mainMenus  = new List<MenuType>();
         bool initialized;
@@ -55,7 +60,10 @@ namespace Ryzm.UI
         int newDragonId;
         int dragon1Index;
         int dragon2Index;
+        int currentZoomedDragon;
+        #endregion
 
+        #region Properties
         public override bool IsActive
         {
             get
@@ -95,22 +103,9 @@ namespace Ryzm.UI
                 }
             }
         }
+        #endregion
 
-        void Reset()
-        {
-            zoomPanel.SetActive(false);
-            dragon1Panel.SetActive(false);
-            dragon2Panel.SetActive(false);
-            breedingPanel.SetActive(false);
-            singleDragonPanel.SetActive(false);
-            initialized = false;
-            movingCamera = false;
-            breedingPanelText.text = "Are you sure?";
-            newDragonId = -1;
-            dragon1Index = 0;
-            dragon2Index = 1;
-        }
-
+        #region Event Listeners
         void OnDragonsResponse(DragonsResponse response)
         {
             if(response.sender == "breedingMenu")
@@ -124,72 +119,6 @@ namespace Ryzm.UI
             }
         }
 
-        void InitializeMenus()
-        {
-            if(dragons.Length > 1)
-            {
-                noDragonsPanel.SetActive(false);
-                mainPanel.SetActive(true);
-                arrowsPanel.SetActive(true);
-                
-                if(dragons.Length > 2)
-                {
-                    dragon1BackButton.SetActive(false);
-                    dragon1FwdButton.SetActive(false);
-                    dragon2BackButton.SetActive(false);
-                    dragon2FwdButton.SetActive(false);
-                }
-                else
-                {
-                    dragon1BackButton.SetActive(true);
-                    dragon1FwdButton.SetActive(true);
-                    dragon2BackButton.SetActive(true);
-                    dragon2FwdButton.SetActive(true);
-                }
-            }
-            else
-            {
-                noDragonsPanel.SetActive(true);
-                mainPanel.SetActive(false);
-                arrowsPanel.SetActive(false);
-            }
-        }
-
-        void InitializeDragons()
-        {
-            if(dragons.Length > 1)
-            {
-                noDragonsPanel.SetActive(false);
-                mainPanel.SetActive(true);
-                arrowsPanel.SetActive(true);
-                dragon1Index = 0;
-                dragon2Index = 1;
-                // dragon1 = dragons[0];
-                // dragon2 = dragons[1];
-                UpdateDragons();
-                if(dragons.Length == 2)
-                {
-                    dragon1BackButton.SetActive(false);
-                    dragon1FwdButton.SetActive(false);
-                    dragon2BackButton.SetActive(false);
-                    dragon2FwdButton.SetActive(false);
-                }
-                else
-                {
-                    dragon1BackButton.SetActive(true);
-                    dragon1FwdButton.SetActive(true);
-                    dragon2BackButton.SetActive(true);
-                    dragon2FwdButton.SetActive(true);
-                }
-            }
-            else
-            {
-                noDragonsPanel.SetActive(true);
-                mainPanel.SetActive(false);
-                arrowsPanel.SetActive(false);
-            }
-        }
-
         void OnMenuSetResponse(MenuSetResponse response)
         {
             if(response.set == MenuSet.MainMenu)
@@ -198,49 +127,80 @@ namespace Ryzm.UI
             }
         }
 
+        void OnBreedDragonsResponse(BreedDragonsResponse response)
+        {
+            if(response.status == TransactionStatus.Failed)
+            {
+                breedingPanelText.text = "Unable to breed, please try again later";
+                closeBreedingPanelButton.SetActive(true);
+            }
+            else if (response.status == TransactionStatus.Success)
+            {
+                newDragonId = response.dragonId;
+            }
+        }
+
+        void OnDragonInitialized(DragonInitialized initialized)
+        {
+            if(newDragonId == initialized.id)
+            {
+                breedingPanel.SetActive(false);
+                singleDragonPanel.SetActive(true);
+                foreach(BaseDragon dragon in dragons)
+                {
+                    if(dragon.data.id == newDragonId)
+                    {
+                        dragon.transform.position = singleDragonSpawn.position;
+                        dragon.transform.rotation = singleDragonSpawn.rotation;
+                        dragon.gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        dragon.gameObject.SetActive(false);
+                    }
+                }
+                Message.Send(new MoveCameraRequest(CameraTransformType.SingleDragon));
+            }
+        }
+        #endregion
+
+        #region Public Functions
         public void Zoom(int dragon)
         {
             backButton.SetActive(false);
             zoomPanel.SetActive(true);
             mainPanel.SetActive(false);
+            arrowsPanel.SetActive(false);
+            currentZoomedDragon = dragon;
             if(dragon == 1)
             {
-                dragon1Panel.SetActive(true);
+                Message.Send(new EnableDragonInfoPanel(dragon1.data));
                 Message.Send(new MoveCameraRequest(CameraTransformType.Dragon1));
             }
             else
             {
-                dragon2Panel.SetActive(true);
+                Message.Send(new EnableDragonInfoPanel(dragon2.data));
                 Message.Send(new MoveCameraRequest(CameraTransformType.Dragon2));
             }
         }
 
-        void UpdateDragons()
+        public void ChangeZoomedDragon(bool isNext)
         {
-            // availableDragons.Clear();
-            dragon1 = dragons[dragon1Index];
-            dragon2 = dragons[dragon2Index];
-            foreach(BaseDragon dragon in dragons)
+            if(isNext)
             {
-                if(dragon == dragon1 || dragon == dragon2)
-                {
-                    if(dragon == dragon1)
-                    {
-                        dragon.transform.position = dragon1Spawn.position;
-                        dragon.transform.rotation = dragon1Spawn.rotation;
-                    }
-                    else
-                    {
-                        dragon.transform.position = dragon2Spawn.position;
-                        dragon.transform.rotation = dragon2Spawn.rotation;
-                    }
-                    dragon.gameObject.SetActive(true);
-                }
-                else
-                {
-                    dragon.gameObject.SetActive(false);
-                    // availableDragons.Add(dragon);
-                }
+                NextDragon(currentZoomedDragon);
+            }
+            else
+            {
+                PreviousDragon(currentZoomedDragon);
+            }
+            if(currentZoomedDragon == 1)
+            {
+                Message.Send(new EnableDragonInfoPanel(dragon1.data));
+            }
+            else
+            {
+                Message.Send(new EnableDragonInfoPanel(dragon2.data));
             }
         }
 
@@ -307,24 +267,15 @@ namespace Ryzm.UI
                 UpdateDragons();
             }
         }
-
+        
         public void ExitZoom()
         {
             zoomPanel.SetActive(false);
             mainPanel.SetActive(true);
-            dragon1Panel.SetActive(false);
-            dragon2Panel.SetActive(false);
             backButton.SetActive(true);
+            arrowsPanel.SetActive(true);
+            Message.Send(new DisableDragonInfoPanel());
             Message.Send(new MoveCameraRequest(CameraTransformType.BreedingMenu));
-        }
-
-        void InitializeCamera()
-        {
-            if(!initialized)
-            {
-                initialized = true;
-                Message.Send(new MoveCameraRequest(CameraTransformType.BreedingMenu));
-            }
         }
 
         public void OpenBreedingPanel()
@@ -357,42 +308,6 @@ namespace Ryzm.UI
             }
         }
 
-        void OnBreedDragonsResponse(BreedDragonsResponse response)
-        {
-            if(response.status == TransactionStatus.Failed)
-            {
-                breedingPanelText.text = "Unable to breed, please try again later";
-                closeBreedingPanelButton.SetActive(true);
-            }
-            else if (response.status == TransactionStatus.Success)
-            {
-                newDragonId = response.dragonId;
-            }
-        }
-
-        void OnDragonInitialized(DragonInitialized initialized)
-        {
-            if(newDragonId == initialized.id)
-            {
-                breedingPanel.SetActive(false);
-                singleDragonPanel.SetActive(true);
-                foreach(BaseDragon dragon in dragons)
-                {
-                    if(dragon.data.id == newDragonId)
-                    {
-                        dragon.transform.position = singleDragonSpawn.position;
-                        dragon.transform.rotation = singleDragonSpawn.rotation;
-                        dragon.gameObject.SetActive(true);
-                    }
-                    else
-                    {
-                        dragon.gameObject.SetActive(false);
-                    }
-                }
-                Message.Send(new MoveCameraRequest(CameraTransformType.SingleDragon));
-            }
-        }
-
         public void CloseSingleDragonPanel()
         {
             singleDragonPanel.SetActive(false);
@@ -406,5 +321,90 @@ namespace Ryzm.UI
             Message.Send(new ActivateTimedLoadingMenu(1.5f));
             Message.Send(new ActivateMenu(activatedTypes: mainMenus));
         }
+
+        public void ResetCamera()
+        {
+
+        }
+        #endregion
+
+        #region Private Functions
+        void Reset()
+        {
+            zoomPanel.SetActive(false);
+            breedingPanel.SetActive(false);
+            singleDragonPanel.SetActive(false);
+            initialized = false;
+            movingCamera = false;
+            breedingPanelText.text = "Are you sure?";
+            newDragonId = -1;
+            dragon1Index = 0;
+            dragon2Index = 1;
+            currentZoomedDragon = 0;
+        }
+
+        void InitializeDragons()
+        {
+            if(dragons.Length > 1)
+            {
+                noDragonsPanel.SetActive(false);
+                mainPanel.SetActive(true);
+                arrowsPanel.SetActive(true);
+                dragon1Index = 0;
+                dragon2Index = 1;
+                UpdateDragons();
+                dragon1BackButton.SetActive(dragons.Length > 2);
+                dragon1FwdButton.SetActive(dragons.Length > 2);
+                dragon2BackButton.SetActive(dragons.Length > 2);
+                dragon2FwdButton.SetActive(dragons.Length > 2);
+                zoomedBackButton.SetActive(dragons.Length > 2);
+                zoomedFwdButton.SetActive(dragons.Length > 2);
+            }
+            else
+            {
+                noDragonsPanel.SetActive(true);
+                mainPanel.SetActive(false);
+                arrowsPanel.SetActive(false);
+            }
+        }
+
+        void UpdateDragons()
+        {
+            // availableDragons.Clear();
+            dragon1 = dragons[dragon1Index];
+            dragon2 = dragons[dragon2Index];
+            foreach(BaseDragon dragon in dragons)
+            {
+                if(dragon == dragon1 || dragon == dragon2)
+                {
+                    if(dragon == dragon1)
+                    {
+                        dragon.transform.position = dragon1Spawn.position;
+                        dragon.transform.rotation = dragon1Spawn.rotation;
+                    }
+                    else
+                    {
+                        dragon.transform.position = dragon2Spawn.position;
+                        dragon.transform.rotation = dragon2Spawn.rotation;
+                    }
+                    dragon.gameObject.SetActive(true);
+                }
+                else
+                {
+                    dragon.gameObject.SetActive(false);
+                    // availableDragons.Add(dragon);
+                }
+            }
+        }
+
+        void InitializeCamera()
+        {
+            if(!initialized)
+            {
+                initialized = true;
+                Message.Send(new MoveCameraRequest(CameraTransformType.BreedingMenu));
+            }
+        }
+        #endregion
     }
 }

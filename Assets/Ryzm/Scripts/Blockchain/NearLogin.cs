@@ -11,7 +11,7 @@ namespace Ryzm.Blockchain
 {
     public class NearLogin : MonoBehaviour
     {
-        public NearEnvs envs;
+        public Envs envs;
         AccessKeyResponse accessKeyResponse;
         IEnumerator getAccessKeys;
         bool fetchingKeys;
@@ -236,7 +236,7 @@ namespace Ryzm.Blockchain
 
         bool CanAccessContract(string _publicKey)
         {
-            if(accessKeyResponse != null)
+            if(accessKeyResponse != null && accessKeyResponse.result != null && accessKeyResponse.result.keys != null)
             {
                 string transformedKey = "ed25519:" + _publicKey;
                 foreach(FullKey fullKey in accessKeyResponse.result.keys)
@@ -247,7 +247,6 @@ namespace Ryzm.Blockchain
                         {
                             return true;
                         }
-                        // return true;
                     }
                 }
             }

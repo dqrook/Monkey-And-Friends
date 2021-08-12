@@ -70,7 +70,7 @@ namespace Ryzm.EndlessRunner
 
         void Update()
         {
-            animator.SetInteger("state", state);
+            // animator.SetInteger("state", state);
             if(gameStatus != GameStatus.Active)
             {
                 return;
@@ -320,7 +320,8 @@ namespace Ryzm.EndlessRunner
 
         public override void Die()
         {
-            state = 2;
+            State = 2;
+            // state = 2;
             StopAllCoroutines();
             ChangeEmotion(MonkeyEmotion.Dead);
         }
@@ -329,7 +330,8 @@ namespace Ryzm.EndlessRunner
         {
             rb.isKinematic = true;
             playerCollider.enabled = false;
-            state = 4;
+            // state = 4;
+            State = 4;
             ChangeEmotion(MonkeyEmotion.Angry);
         }
 

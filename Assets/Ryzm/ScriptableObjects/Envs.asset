@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7f3f974117cc4941b0e783657a21419, type: 3}
+  m_Name: Envs
+  m_EditorClassIdentifier: 
+  title: Dragon
+  contractId: dev-1627145896878-80992661467411
+  nodeUrl: https://rpc.testnet.near.org
+  walletUrl: https://wallet.testnet.near.org
+  frontendUrl: http://localhost:3000
+  loginSuccessPath: /endless-runner/login-success
+  loginFailPath: /endless-runner/login-fail
+  transactionsPath: /transactions
+  apiUrl: http://localhost:8080
+  getDragonsPath: /api/dragons
+  breedDragonsPath: /api/dragons/breed
+  getMarketDragonsPath: /api/dragons/market
+  breedDragonsTxHashPath: /api/dragons/breed-tx-hash
+  dragonIdsPath: /api/dragons/ids
+  dragonByIdPath: /api/dragons
+  buyDragonTxHashPath: /api/dragons/buy-tx-hash
+  addDragonToMarketPath: /api/dragons/add-to-market
+  removeDragonFromMarketPath: /api/dragons/remove-from-market

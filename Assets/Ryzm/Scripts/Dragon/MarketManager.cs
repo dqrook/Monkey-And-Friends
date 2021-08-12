@@ -212,8 +212,25 @@ namespace Ryzm.Dragon
             gettingDragons = true;
             string url = getNumberOfDragons ? envs.GetMarketDragonsApiUrl : envs.GetMarketDragonsApiUrl + "?page=" + currentPage.ToString();
             UnityWebRequest request = RyzmUtils.GetRequest(url);
-            yield return request.SendWebRequest();
-            if(request.isNetworkError || request.isHttpError)
+            Debug.Log("get market dragons url: " + url);
+            int numFails = 0;
+            bool failed = true;
+            while(numFails < 3)
+            {
+                yield return request.SendWebRequest();
+                if(request.isNetworkError || request.isHttpError)
+                {
+                    request = RyzmUtils.GetRequest(url);
+                    numFails++;
+                    Debug.LogError("Failed getting market dragons " + numFails + " times");
+                }
+                else
+                {
+                    failed = false;
+                    break;
+                }
+            }
+            if(failed)
             {
                 Debug.LogError("ERROR");
                 // todo: handle this case

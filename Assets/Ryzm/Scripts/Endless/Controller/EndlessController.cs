@@ -74,6 +74,19 @@ namespace Ryzm.EndlessRunner
                 Message.Send(new JumpStatusResponse(value));
             }
         }
+
+        protected int State
+        {
+            get
+            {
+                return state;
+            }
+            set
+            {
+                state = value;
+                animator.SetInteger("state", state);
+            }
+        }
         
 		protected virtual void Awake()
 		{
@@ -98,6 +111,7 @@ namespace Ryzm.EndlessRunner
             playerInput = new Player();
 
             mainCamera = Camera.main;
+            State = 0;
             // playerInput.Touch.PrimaryContact.started += (ctx) => StartTouchPrimary(ctx);
             // playerInput.Touch.PrimaryContact.canceled += (ctx) => EndTouchPrimary(ctx);
 		}
@@ -295,7 +309,9 @@ namespace Ryzm.EndlessRunner
             Debug.Log("reset this beeeotch");
             StopAllCoroutines();
             turned = false;
-            state = 0;
+            // state = 0;
+            // animator.SetInteger("state", state);
+            State = 0;
             InJump = false;
             inShift = false;
             inSlide = false;
@@ -304,6 +320,9 @@ namespace Ryzm.EndlessRunner
             shiftSpeed = 0;
             rb.isKinematic = true;
             rb.isKinematic = false;
+            _endlessSection = null;
+            _endlessTSection = null;
+            _endlessTurnSection = null;
         }
     }
 }

@@ -5,11 +5,13 @@ using Ryzm.Blockchain.Messages;
 using CodeControl;
 using Ryzm.Blockchain;
 using TMPro;
+using Ryzm.UI.Messages;
 
 namespace Ryzm.UI
 {
     public class LoginMenu : RyzmMenu
     {
+        #region Public Variables
         [Header("Loading")]
         public GameObject loadingPanel;
         public TextMeshProUGUI loadingText;
@@ -30,10 +32,14 @@ namespace Ryzm.UI
         public GameObject nearUrlPanel;
         public TMP_InputField accountNameInput2;
         public TextMeshProUGUI urlCopied;
+        #endregion
         
+        #region Private Variables
         string _nearUrl;
-
+        List<MenuType> mainMenus = new List<MenuType>();
         bool gettingCredentials;
+        bool initializedMenus;
+        #endregion
 
         public override bool IsActive 
         { 
@@ -60,28 +66,97 @@ namespace Ryzm.UI
                     {
                         Message.AddListener<LoginResponse>(OnLoginResponse);
                         Message.AddListener<CreateCredentialsResponse>(OnCreateCredentialsResponse);
+                        Message.AddListener<MenuSetResponse>(OnMenuSetResponse);
                         Message.Send(new LoginRequest());
+                        if(!initializedMenus)
+                        {
+                            initializedMenus = true;
+                            Message.Send(new MenuSetRequest(MenuSet.MainMenu));
+                        }
                     }
                     else
                     {
                         Message.RemoveListener<LoginResponse>(OnLoginResponse);
                         Message.RemoveListener<CreateCredentialsResponse>(OnCreateCredentialsResponse);
+                        Message.RemoveListener<MenuSetResponse>(OnMenuSetResponse);
                     }
                     base.IsActive = value;
                 }
             }
         }
 
-        protected override void Awake()
+        #region Listener Functions
+        void OnLoginResponse(LoginResponse response)
         {
-            base.Awake();
+            nearUrlPanel.SetActive(false);
+            if(!gettingCredentials)
+            {
+                loadingPanel.SetActive(false);
+            }
+            if(response.status != LoginStatus.Rejected)
+            {
+                rejectedText.gameObject.SetActive(false);
+            }
+            Debug.Log("response.status: " + response.status);
+            switch(response.status)
+            {
+                case LoginStatus.LoggedOut:
+                    loggedInPanel.SetActive(false);
+                    tempCredentialsPanel.SetActive(false);
+                    loggedOutPanel.SetActive(true);
+                    break;
+                case LoginStatus.LoggedIn:
+                    loadingText.gameObject.SetActive(false);
+                    loggedOutPanel.SetActive(false);
+                    tempCredentialsPanel.SetActive(false);
+                    accountName.text = "Welcome " + response.accountName + "!";
+                    loggedInPanel.SetActive(true);
+                    break;
+                case LoginStatus.TempCredentials:
+                    loggedOutPanel.SetActive(false);
+                    loggedInPanel.SetActive(false);
+                    tempCredentialsPanel.SetActive(true);
+                    break;
+                case LoginStatus.FetchingKeys:
+                    loggedOutPanel.SetActive(false);
+                    loggedInPanel.SetActive(false);
+                    tempCredentialsPanel.SetActive(false);
+                    loadingPanel.SetActive(true);
+                    loadingText.text = "Checking Credentials...";
+                    break;
+                case LoginStatus.Rejected:
+                    tempCredentialsPanel.SetActive(true);
+                    rejectedText.gameObject.SetActive(true);
+                    rejectedText.text = "Error logging in for " + response.accountName;
+                    break;
+                default:
+                    break;
+            }
         }
 
-        protected override void OnDestroy()
+        void OnCreateCredentialsResponse(CreateCredentialsResponse response)
         {
-            base.OnDestroy();
+            urlCopied.gameObject.SetActive(false);
+            nearUrlPanel.SetActive(true);
+            loadingPanel.SetActive(false);
+            loggedOutPanel.SetActive(false);
+            gettingCredentials = false;
+            _nearUrl = response.nearUrl;
+            Debug.Log(_nearUrl);
+            Application.OpenURL(_nearUrl);
+            // RyzmUtils.OpenUrl(_nearUrl);
         }
 
+        void OnMenuSetResponse(MenuSetResponse response)
+        {
+            if(response.set == MenuSet.MainMenu)
+            {
+                mainMenus = response.menus;
+            }
+        }
+        #endregion
+
+        #region Public Functions
         public void SubmitAccountName()
         {
             Message.Send(new AttemptLogin(accountNameInput.text));
@@ -111,70 +186,10 @@ namespace Ryzm.UI
             urlCopied.gameObject.SetActive(true);
         }
 
-        void OnLoginResponse(LoginResponse response)
+        public void Exit()
         {
-            nearUrlPanel.SetActive(false);
-            if(!gettingCredentials)
-            {
-                loadingPanel.SetActive(false);
-            }
-            if(response.status != LoginStatus.Rejected)
-            {
-                rejectedText.gameObject.SetActive(false);
-            }
-            loggedOutPanel.SetActive(false);
-            loggedInPanel.SetActive(false);
-            tempCredentialsPanel.SetActive(false);
-            switch(response.status)
-            {
-                case LoginStatus.LoggedOut:
-                    loggedInPanel.SetActive(false);
-                    tempCredentialsPanel.SetActive(false);
-                    loggedOutPanel.SetActive(true);
-                    break;
-                case LoginStatus.LoggedIn:
-                    loggedOutPanel.SetActive(false);
-                    tempCredentialsPanel.SetActive(false);
-                    accountName.text = "Welcome " + response.accountName + "!";
-                    loggedInPanel.SetActive(true);
-                    break;
-                case LoginStatus.TempCredentials:
-                    loggedOutPanel.SetActive(false);
-                    loggedInPanel.SetActive(false);
-                    tempCredentialsPanel.SetActive(true);
-                    break;
-                case LoginStatus.FetchingKeys:
-                    loggedOutPanel.SetActive(false);
-                    loggedInPanel.SetActive(false);
-                    tempCredentialsPanel.SetActive(false);
-                    loadingPanel.SetActive(true);
-                    loadingText.text = "Checking Credentials...";
-                    break;
-                case LoginStatus.Rejected:
-                    rejectedText.gameObject.SetActive(true);
-                    rejectedText.text = "Error logging in for " + response.accountName;
-                    break;
-                default:
-                    break;
-            }
+            Message.Send(new ActivateMenu(mainMenus));
         }
-
-        void ActivatePanel(LoginStatus status)
-        {
-            
-        }
-
-        void OnCreateCredentialsResponse(CreateCredentialsResponse response)
-        {
-            urlCopied.gameObject.SetActive(false);
-            nearUrlPanel.SetActive(true);
-            loadingPanel.SetActive(false);
-            gettingCredentials = false;
-            _nearUrl = response.nearUrl;
-            Debug.Log(_nearUrl);
-            Application.OpenURL(_nearUrl);
-            // RyzmUtils.OpenUrl(_nearUrl);
-        }
-
+        #endregion
     }
 }

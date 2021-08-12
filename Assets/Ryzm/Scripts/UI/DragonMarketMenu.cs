@@ -294,7 +294,7 @@ namespace Ryzm.UI
         {
             if(response.status == TransactionStatus.Failed)
             {
-                buyDragonText.text = "Unable to breed, please try again later";
+                buyDragonText.text = "Unable to buy, please try again later";
                 closeBuyPanelButton.SetActive(true);
             }
             else if(response.status == TransactionStatus.Success)

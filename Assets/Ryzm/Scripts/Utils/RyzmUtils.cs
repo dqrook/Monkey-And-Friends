@@ -1,7 +1,6 @@
 ﻿using UnityEngine.Networking;
 using System.Text;
 using System;
-using System.Runtime.InteropServices;
 using UnityEngine;
 
 namespace Ryzm.Utils
@@ -20,6 +19,7 @@ namespace Ryzm.Utils
         public static UnityWebRequest PostRequest(string url, string bodyJsonString)
         {
             UnityWebRequest request = new UnityWebRequest(url, "POST");
+            request.certificateHandler = new BypassCertificate();
             byte[] bodyRaw = Encoding.UTF8.GetBytes(bodyJsonString);
             request.uploadHandler = (UploadHandler) new UploadHandlerRaw(bodyRaw);
             request.downloadHandler = (DownloadHandler) new DownloadHandlerBuffer();
@@ -30,12 +30,14 @@ namespace Ryzm.Utils
         public static UnityWebRequest TextureRequest(string url)
         {
             UnityWebRequest request = UnityWebRequestTexture.GetTexture(url);
+            request.certificateHandler = new BypassCertificate();
             return request;
         }
 
         public static UnityWebRequest GetRequest(string url)
         {
             UnityWebRequest request = UnityWebRequest.Get(url);
+            request.certificateHandler = new BypassCertificate();
             return request;
         }
 
@@ -72,4 +74,13 @@ namespace Ryzm.Utils
             #endif
         }
     }
+
+    public class BypassCertificate : CertificateHandler
+    {
+        protected override bool ValidateCertificate(byte[] certificateData)
+        {
+            //Simply return true no matter what
+            return true;
+        }
+    } 
 }

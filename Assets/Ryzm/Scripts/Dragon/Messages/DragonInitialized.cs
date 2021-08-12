@@ -1,6 +1,4 @@
 ﻿using CodeControl;
-using Ryzm.EndlessRunner;
-
 namespace Ryzm.Dragon.Messages
 {
     public class DragonInitialized : Message
