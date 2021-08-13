@@ -8,6 +8,7 @@ namespace Ryzm.UI
     public class ColumnResizer : MonoBehaviour
     {
         #region Public Variables
+        public Canvas canvas;
         public RectTransform rectTransform;
         public RectTransform parentTransform;
 
@@ -93,6 +94,10 @@ namespace Ryzm.UI
         #region Event Functions
         void Awake()
         {
+            if(canvas == null)
+            {
+                canvas = GetComponent<Canvas>();
+            }
             if(rectTransform == null)
             {
                 rectTransform = GetComponent<RectTransform>();
@@ -113,6 +118,11 @@ namespace Ryzm.UI
         #endregion
 
         #region Public Functions
+        public void Enable()
+        {
+            canvas.enabled = true;
+        }
+
         public void OnClickArrow(bool isForward)
         {
             if(isForward)
@@ -137,6 +147,7 @@ namespace Ryzm.UI
             paginated = false;
             prevPaginated = false;
             arrowResizer.Disable();
+            canvas.enabled = false;
         }
         #endregion
 
@@ -191,7 +202,7 @@ namespace Ryzm.UI
                 }
                 UpdateDimensions(newWidth);
             }
-            Debug.Log(newWidth + " " + minWidthAvailable + " " + widthAvailable + " " + paginated);
+            // Debug.Log(newWidth + " " + minWidthAvailable + " " + widthAvailable + " " + paginated);
         }
 
         float GetInversePageRatio()
@@ -244,7 +255,7 @@ namespace Ryzm.UI
             }
             else if(paginated)
             {
-                arrowResizer.UpdateHeight(newWidth);
+                arrowResizer.UpdateDimensions(newWidth);
             }
 
             prevPaginated = paginated;
@@ -310,7 +321,7 @@ namespace Ryzm.UI
         {
             foreach(ChildResizer resizer in resizers)
             {
-                resizer.UpdateHeight(newWidth);
+                resizer.UpdateDimensions(newWidth);
             }
         }
 

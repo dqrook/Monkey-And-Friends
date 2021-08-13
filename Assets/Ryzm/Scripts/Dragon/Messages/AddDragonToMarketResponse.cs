@@ -6,19 +6,17 @@ namespace Ryzm.Dragon.Messages
     public class AddDragonToMarketResponse : Message
     {
         public TransactionStatus status;
-        public int dragonId;
-        public float price;
+        public DragonResponse data;
 
         public AddDragonToMarketResponse(TransactionStatus status)
         {
             this.status = status;
         }
 
-        public AddDragonToMarketResponse(TransactionStatus status, int dragonId, float price)
+        public AddDragonToMarketResponse(TransactionStatus status, DragonResponse data)
         {
             this.status = status;
-            this.dragonId = dragonId;
-            this.price = price;
+            this.data = data;
         }
     }
 }

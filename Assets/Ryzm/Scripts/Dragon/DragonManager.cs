@@ -7,7 +7,6 @@ using Ryzm.Blockchain;
 using Ryzm.Utils;
 using UnityEngine.Networking;
 using Ryzm.Dragon.Messages;
-using Ryzm.EndlessRunner;
 using System.Linq;
 using Ryzm.Messages;
 
@@ -439,7 +438,6 @@ namespace Ryzm.Dragon
         IEnumerator GetDragonIds(string url, bool isBreeding)
         {
             UnityWebRequest request = RyzmUtils.GetRequest(url);
-            yield return request.SendWebRequest();
             int numFails = 0;
             bool failed = true;
             while(numFails < 3)
@@ -510,7 +508,6 @@ namespace Ryzm.Dragon
         IEnumerator GetDragonById(string url, bool isBreeding)
         {
             UnityWebRequest request = RyzmUtils.GetRequest(url);
-            yield return request.SendWebRequest();
             int numFails = 0;
             bool failed = true;
             while(numFails < 3)
@@ -601,7 +598,7 @@ namespace Ryzm.Dragon
                 {
                     dragons[dragonId].data.price = price;
                     Message.Send(new DragonsResponse(dragons.Values.ToList(), "marketUpdate"));
-                    Message.Send(new AddDragonToMarketResponse(TransactionStatus.Success, dragonId, price));
+                    Message.Send(new AddDragonToMarketResponse(TransactionStatus.Success, dragons[dragonId].data));
                 }
                 else
                 {
@@ -644,7 +641,7 @@ namespace Ryzm.Dragon
                 {
                     dragons[dragonId].data.price = 0;
                     Message.Send(new DragonsResponse(dragons.Values.ToList(), "marketUpdate"));
-                    Message.Send(new RemoveDragonFromMarketResponse(TransactionStatus.Success, dragonId));
+                    Message.Send(new RemoveDragonFromMarketResponse(TransactionStatus.Success, dragons[dragonId].data));
                 }
                 else
                 {

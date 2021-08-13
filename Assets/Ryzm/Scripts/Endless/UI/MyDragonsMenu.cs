@@ -64,8 +64,8 @@ namespace Ryzm.UI
                     {
                         Message.AddListener<DragonsResponse>(OnDragonsResponse);
                         Message.AddListener<MenuSetResponse>(OnMenuSetResponse);
-                        Message.AddListener<AddDragonToMarketResponse>(OnAddDragonToMarketResponse);
-                        Message.AddListener<RemoveDragonFromMarketResponse>(OnRemoveDragonFromMarketResponse);
+                        // Message.AddListener<AddDragonToMarketResponse>(OnAddDragonToMarketResponse);
+                        // Message.AddListener<RemoveDragonFromMarketResponse>(OnRemoveDragonFromMarketResponse);
 
                         Message.Send(new MoveCameraRequest(CameraTransformType.SingleDragon));
                         Message.Send(new DragonsRequest("myDragonsMenu"));
@@ -80,8 +80,8 @@ namespace Ryzm.UI
                     {
                         Message.RemoveListener<DragonsResponse>(OnDragonsResponse);
                         Message.RemoveListener<MenuSetResponse>(OnMenuSetResponse);
-                        Message.RemoveListener<AddDragonToMarketResponse>(OnAddDragonToMarketResponse);
-                        Message.RemoveListener<RemoveDragonFromMarketResponse>(OnRemoveDragonFromMarketResponse);
+                        // Message.RemoveListener<AddDragonToMarketResponse>(OnAddDragonToMarketResponse);
+                        // Message.RemoveListener<RemoveDragonFromMarketResponse>(OnRemoveDragonFromMarketResponse);
                     }
                     base.IsActive = value;
                 }
@@ -147,7 +147,7 @@ namespace Ryzm.UI
         {
             if(response.status == TransactionStatus.Success)
             {
-                successText.text = addingNewDragon ? "Successfully added dragon to market for " + response.price + " Near" : "Successfully updated price to " + priceInput + " Near";
+                successText.text = addingNewDragon ? "Successfully added dragon to market for " + response.data.price + " Near" : "Successfully updated price to " + priceInput.text + " Near";
                 successPanel.enabled = true;
                 errorPanel.enabled = false;
                 updatingPanel.enabled = false;
@@ -199,6 +199,7 @@ namespace Ryzm.UI
                 {
                     dragon.gameObject.SetActive(dragon.data.id == dragonId);
                 }
+                Message.Send(new EnableDragonInfoPanel(_dragon.data));
             }
         }
 
@@ -288,6 +289,7 @@ namespace Ryzm.UI
 
         public void Exit()
         {
+            Message.Send(new DisableDragonInfoPanel());
             Message.Send(new ActivateTimedLoadingMenu(1.5f));
             Message.Send(new ResetDragons());
             Message.Send(new ActivateMenu(activatedTypes: previousMenuSet == MenuSet.MainMenu ? mainMenus : marketMenus));

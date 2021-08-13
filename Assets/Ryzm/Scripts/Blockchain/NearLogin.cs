@@ -221,7 +221,7 @@ namespace Ryzm.Blockchain
 
         void Login(string _accountName)
         {
-            if(PublicKey == "" || SecretKey == "")
+            if(PublicKey == "" || SecretKey == "" && (TempPublicKey.Length > 0 && TempSecretKey.Length > 0))
             {
                 PublicKey = TempPublicKey;
                 SecretKey = TempSecretKey;

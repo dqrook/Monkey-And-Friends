@@ -4,17 +4,17 @@ namespace Ryzm.Dragon.Messages
 {
     public class RemoveDragonFromMarketResponse : Message
     {
-        public int dragonId;
         public TransactionStatus status;
+        public DragonResponse data;
 
         public RemoveDragonFromMarketResponse(TransactionStatus status)
         {
             this.status = status;
         }
 
-        public RemoveDragonFromMarketResponse(TransactionStatus status, int dragonId)
+        public RemoveDragonFromMarketResponse(TransactionStatus status, DragonResponse data)
         {
-            this.dragonId = dragonId;
+            this.data = data;
             this.status = status;
         }
     }

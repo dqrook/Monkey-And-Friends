@@ -21,7 +21,7 @@ namespace Ryzm.UI
         public void UpdateArrows(int currentPage, int maxPages, float newWidth)
         {
             UpdateArrows(currentPage, maxPages);
-            UpdateHeight(newWidth);
+            UpdateDimensions(newWidth);
             if(!gameObject.activeSelf)
             {
                 gameObject.SetActive(true);

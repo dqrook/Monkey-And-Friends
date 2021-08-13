@@ -35,7 +35,7 @@ namespace Ryzm.UI
         #endregion
 
         #region Public Functions
-        public void UpdateHeight(float newWidth)
+        public void UpdateDimensions(float newWidth)
         {
             float newHeight = newWidth / Ratio;
             RectTransform.sizeDelta = new Vector2(newWidth, newHeight);
