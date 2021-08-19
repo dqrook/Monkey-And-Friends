@@ -30,6 +30,7 @@ namespace Ryzm
         public string buyDragonTxHashPath;
         public string addDragonToMarketPath;
         public string removeDragonFromMarketPath;
+        public string marketQueryPath;
         #endregion
 
         #region Properties
@@ -135,6 +136,16 @@ namespace Ryzm
         public string SignTransactionUrl(string transactionHash)
         {
             string url = walletUrl + "/sign?transactions=" + RyzmUtils.UrlEncode(transactionHash) + "&callbackUrl=" + RyzmUtils.UrlEncode(TransactionUrl);
+            return url;
+        }
+
+        public string MarketQueryUrl(string queryString = "")
+        {
+            string url = apiUrl + marketQueryPath;
+            if(queryString.Length > 0)
+            {
+                url += "?" + queryString;
+            }
             return url;
         }
         #endregion

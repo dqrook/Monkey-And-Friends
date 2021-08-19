@@ -28,6 +28,10 @@ namespace Ryzm.Dragon
             }
             activeDragon = hornToDragons[data.data.hornType];
             activeDragon.data = data.data;
+            foreach(int hornType in hornToDragons.Keys)
+            {
+                hornToDragons[hornType].gameObject.SetActive(data.data.hornType == hornType);
+            }
             SetTexture(DragonMaterialType.Body, data.bodyTexture);
             SetTexture(DragonMaterialType.Wing, data.wingTexture);
             SetTexture(DragonMaterialType.Horn, data.hornTexture);

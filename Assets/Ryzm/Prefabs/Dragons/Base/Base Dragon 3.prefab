@@ -1,5 +1,110 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &234807773
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 234807774}
+  m_Layer: 0
+  m_Name: photo position
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &234807774
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 234807773}
+  m_LocalRotation: {x: -0.032260034, y: -0.43180898, z: -0.015456407, w: 0.9012555}
+  m_LocalPosition: {x: 0, y: -0.03, z: 0.03}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 1422862279}
+  m_Father: {fileID: 6926666988280839267}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: -4.1, y: -51.2, z: 0}
+--- !u!1 &1422862278
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1422862279}
+  - component: {fileID: 1422862280}
+  m_Layer: 0
+  m_Name: Main Camera
+  m_TagString: MainCamera
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1422862279
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1422862278}
+  m_LocalRotation: {x: -0.000000005465728, y: 0.9998107, z: 0.01945928, w: 0.0000002808271}
+  m_LocalPosition: {x: 0, y: 0.7, z: 2.5}
+  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_Children: []
+  m_Father: {fileID: 234807774}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: -2.23, y: 179.99998, z: 0}
+--- !u!20 &1422862280
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1422862278}
+  m_Enabled: 0
+  serializedVersion: 2
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_FocalLength: 50
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 50
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: -1
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
 --- !u!1 &1626806954411289252
 GameObject:
   m_ObjectHideFlags: 0
@@ -5178,7 +5283,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 01681fdca483e4ebead1e9d2b342b071, type: 2}
+  - {fileID: 2100000, guid: 62f235fe75c1a4bf7a1966e2388a33fc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5857,7 +5962,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 01681fdca483e4ebead1e9d2b342b071, type: 2}
+  - {fileID: 2100000, guid: ff2876fdb221d45a2b6bca5a34a3ef1c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5934,7 +6039,7 @@ GameObject:
   - component: {fileID: 6926666988273111953}
   - component: {fileID: 6115570681920007946}
   m_Layer: 0
-  m_Name: Endless Dragon 3
+  m_Name: Base Dragon 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5947,7 +6052,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6926666988280406083}
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0.00000028088027}
+  m_LocalRotation: {x: 0, y: -1, z: 0, w: 0.00000028088027}
   m_LocalPosition: {x: -0.929, y: 0.739, z: 10.513}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
@@ -5959,9 +6064,10 @@ Transform:
   - {fileID: 6926666988280839217}
   - {fileID: 6926666988280839219}
   - {fileID: 2429078963099102227}
+  - {fileID: 234807774}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -179.99998, z: 0}
 --- !u!95 &6926666988273111953
 Animator:
   serializedVersion: 3
@@ -5972,7 +6078,7 @@ Animator:
   m_GameObject: {fileID: 6926666988280406083}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 25567ed5ba919064a9de1228dfd2d8be, type: 3}
-  m_Controller: {fileID: 9100000, guid: b30d49d84c5684547a0e116b69a254b1, type: 2}
+  m_Controller: {fileID: 9100000, guid: f8f9398599b0749ee8fe4633134e6031, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -5996,17 +6102,26 @@ MonoBehaviour:
   data:
     id: 0
     owner: 
-    genes: 
-    baseSpeed: 0
-    baseAttack: 0
-    baseDefense: 0
-    baseHealth: 0
+    parent1: 0
+    parent2: 0
+    primaryColor: 0
+    secondaryColor: 0
+    bodyGenes: 
+    wingGenes: 
+    hornGenes: 
+    hornTypeGenes: 
+    moveGenes: 
     bodyTexture: 
     wingTexture: 
     backTexture: 
     hornTexture: 
+    bodyGenesSequence: 
+    wingGenesSequence: 
+    hornGenesSequence: 
+    moveGenesSequence: 
     hornType: 0
     price: 0
+    media: 
   materials:
   - go: {fileID: 6926666988280406081}
     type: 0
@@ -6240,7 +6355,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 01681fdca483e4ebead1e9d2b342b071, type: 2}
+  - {fileID: 2100000, guid: f3f08fe9dd94f4e6abd41af4bf5542a2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6512,7 +6627,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 01681fdca483e4ebead1e9d2b342b071, type: 2}
+  - {fileID: 2100000, guid: f3f08fe9dd94f4e6abd41af4bf5542a2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

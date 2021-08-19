@@ -345,7 +345,7 @@ namespace Ryzm.Dragon
             else
             {
                 string res = request.downloadHandler.text;
-                Debug.Log("POST SUCCESS " + res);
+                Debug.Log("GOT USER DRAGONS SUCCESS " + res);
                 GetDragonsPostResponse response = GetDragonsPostResponse.FromJson(res);
                 initializingDragons = true;
                 foreach(DragonResponse dragonRes in response.dragons)
@@ -692,10 +692,6 @@ namespace Ryzm.Dragon
         public string owner;
         public int parent1;
         public int parent2;
-        public int baseSpeed;
-        public int baseAttack;
-        public int baseDefense;
-        public int baseHealth;
         public int primaryColor;
         public int secondaryColor;
         public List<int> bodyGenes;
@@ -713,6 +709,7 @@ namespace Ryzm.Dragon
         public string moveGenesSequence;
         public int hornType;
         public float price;
+        public string media;
     }
 
     [System.Serializable]

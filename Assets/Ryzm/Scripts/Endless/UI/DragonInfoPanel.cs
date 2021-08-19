@@ -52,6 +52,7 @@ namespace Ryzm.UI
         string accountName;
         DragonResponse currentDragon;
         bool addingNewDragon;
+        bool isActive;
         #endregion
         
         #region Event Functions
@@ -117,30 +118,41 @@ namespace Ryzm.UI
 
         void OnEnableDragonInfoPanel(EnableDragonInfoPanel enable)
         {
+            if(!isActive)
+            {
+                isActive = true;
+            }
             Enable(enable.singleDragonData);
         }
 
         void OnDisableDragonInfoPanel(DisableDragonInfoPanel disable)
         {
+            if(isActive)
+            {
+                isActive = false;
+            }
             Disable();
         }
 
         void OnAddDragonToMarketResponse(AddDragonToMarketResponse response)
         {
-            if(response.status == TransactionStatus.Success)
+            if(isActive)
             {
-                successText.text = addingNewDragon ? "Successfully added dragon to market for " + response.data.price + " Near" : "Successfully updated price to " + priceInput.text + " Near";
-                successPanel.enabled = true;
-                errorPanel.enabled = false;
-                updatingPanel.enabled = false;
-                Enable(response.data);
-            }
-            else if(response.status == TransactionStatus.Failed)
-            {
-                errorText.text = addingNewDragon ? "Unable to add dragon to market" : "Unable to update the dragon's price";
-                successPanel.enabled = false;
-                errorPanel.enabled = true;
-                updatingPanel.enabled = false;
+                if(response.status == TransactionStatus.Success)
+                {
+                    successText.text = addingNewDragon ? "Successfully added dragon to market for " + response.data.price + " Near" : "Successfully updated price to " + priceInput.text + " Near";
+                    successPanel.enabled = true;
+                    errorPanel.enabled = false;
+                    updatingPanel.enabled = false;
+                    Enable(response.data);
+                }
+                else if(response.status == TransactionStatus.Failed)
+                {
+                    errorText.text = addingNewDragon ? "Unable to add dragon to market" : "Unable to update the dragon's price";
+                    successPanel.enabled = false;
+                    errorPanel.enabled = true;
+                    updatingPanel.enabled = false;
+                }
             }
         }
 

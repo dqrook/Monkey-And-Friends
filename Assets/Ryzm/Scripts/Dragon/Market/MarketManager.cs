@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using Ryzm.Dragon.Messages;
 using CodeControl;
-using Ryzm.EndlessRunner;
 using Ryzm.Utils;
 using UnityEngine.Networking;
 
@@ -11,11 +10,14 @@ namespace Ryzm.Dragon
 {
     public class MarketManager : MonoBehaviour
     {
+        #region Public Variables
         public List<MarketDragon> marketDragons = new List<MarketDragon>();
         public Envs envs;
         public Dictionary<int, MarketDragonData> allDragonsForSale = new Dictionary<int, MarketDragonData>();
         public Dictionary<int, BaseDragon> userDragonsForSale = new Dictionary<int, BaseDragon>();
+        #endregion
 
+        #region Private Variables
         // current queried page
         int currentPage;
         BaseDragon[] dragons;
@@ -30,7 +32,9 @@ namespace Ryzm.Dragon
         int loadingStartDex;
         int loadingFinDex;
         int loadingNumberOfDragons;
+        #endregion
 
+        #region Event Functions
         void Awake()
         {
             Message.AddListener<DragonsResponse>(OnDragonsResponse);
@@ -60,7 +64,9 @@ namespace Ryzm.Dragon
             Message.RemoveListener<NumberOfMarketDragonsRequest>(OnNumberOfMarketDragonsRequest);
             Message.RemoveListener<UpdateVisibleMarketDragons>(OnUpdateVisibleMarketDragons);
         }
+        #endregion
 
+        #region Listener Functions
         void OnDragonsResponse(DragonsResponse response)
         {
             dragons = response.dragons;
@@ -108,29 +114,21 @@ namespace Ryzm.Dragon
                 finDex = finDex < numberOfDragonsOnMarket ? finDex : numberOfDragonsOnMarket - 1;
                 if(!gotAllDragons)
                 {
+                    int _numberOfDragons = finDex - startDex + 1 < numberOfDragons ? finDex - startDex + 1 : numberOfDragons;
                     if(startDex < allDragonsForSale.Count)
                     {
                         if(finDex < allDragonsForSale.Count)
                         {
-                            int _numberOfDragons = finDex - startDex + 1 < numberOfDragons ? finDex - startDex + 1 : numberOfDragons;
                             UpdateMarketDragonData(_numberOfDragons, startDex, finDex);
                         }
                         else
                         {
-                            Message.Send(new DragonMarketResponse(MarketStatus.Loading));
-                            isLoading = true;
-                            loadingStartDex = startDex;
-                            loadingFinDex = finDex;
-                            loadingNumberOfDragons = finDex - startDex + 1 < numberOfDragons ? finDex - startDex + 1 : numberOfDragons;
+                            LoadMoreDragons(startDex, finDex, _numberOfDragons);
                         }
                     }
                     else
                     {
-                        Message.Send(new DragonMarketResponse(MarketStatus.Loading));
-                        isLoading = true;
-                        loadingStartDex = startDex;
-                        loadingFinDex = finDex;
-                        loadingNumberOfDragons = finDex - startDex + 1 < numberOfDragons ? finDex - startDex + 1 : numberOfDragons;
+                        LoadMoreDragons(startDex, finDex, _numberOfDragons);
                     }
                 }
                 else
@@ -178,6 +176,21 @@ namespace Ryzm.Dragon
                 }
             }
         }
+        #endregion
+
+        #region Private Functions
+        void LoadMoreDragons(int startDex, int finDex, int numberOfDragons)
+        {
+            Message.Send(new DragonMarketResponse(MarketStatus.Loading));
+            isLoading = true;
+            loadingStartDex = startDex;
+            loadingFinDex = finDex;
+            loadingNumberOfDragons = numberOfDragons;
+
+            getMarketDragons = null;
+            getMarketDragons = GetMarketDragons(!initialized);
+            StartCoroutine(getMarketDragons);
+        }
 
         void UpdateMarketDragonData(int numberOfDragons, int startDex, int finDex)
         {
@@ -206,7 +219,9 @@ namespace Ryzm.Dragon
             allDragonsForSale.Values.CopyTo(data, 0);
             return data;
         }
+        #endregion
 
+        #region Coroutines
         IEnumerator GetMarketDragons(bool getNumberOfDragons)
         {
             gettingDragons = true;
@@ -255,10 +270,10 @@ namespace Ryzm.Dragon
                         {
                             if(!allDragonsForSale.ContainsKey(dragon.id))
                             {
-                                MarketDragonData marketDragon = new MarketDragonData(dragon, userDragonsForSale.ContainsKey(dragon.id));
-                                getTextures = GetTextures(marketDragon);
+                                MarketDragonData marketDragonData = new MarketDragonData(dragon, userDragonsForSale.ContainsKey(dragon.id));
+                                getTextures = GetTextures(marketDragonData);
                                 StartCoroutine(getTextures);
-                                allDragonsForSale.Add(dragon.id, marketDragon);
+                                allDragonsForSale.Add(dragon.id, marketDragonData);
                             }
                         }
                         currentPage++;
@@ -278,17 +293,17 @@ namespace Ryzm.Dragon
                 }
             }
             gettingDragons = false;
-            if(continueQuery)
-            {
-                getMarketDragons = null;
-                getMarketDragons = GetMarketDragons(false);
-                StartCoroutine(getMarketDragons);
-            }
+            // if(continueQuery)
+            // {
+            //     getMarketDragons = null;
+            //     getMarketDragons = GetMarketDragons(false);
+            //     StartCoroutine(getMarketDragons);
+            // }
         }
 
         IEnumerator GetTextures(MarketDragonData dragon)
         {
-            List<MaterialTypeToUrlMap> map = new List<MaterialTypeToUrlMap>
+            List<MaterialTypeToUrlMap> maps = new List<MaterialTypeToUrlMap>
             {
                 new MaterialTypeToUrlMap(DragonMaterialType.Body, dragon.data.bodyTexture),
                 new MaterialTypeToUrlMap(DragonMaterialType.Wing, dragon.data.wingTexture),
@@ -296,34 +311,46 @@ namespace Ryzm.Dragon
                 new MaterialTypeToUrlMap(DragonMaterialType.Back, dragon.data.backTexture)
             };
             
-            int numMaterials = map.Count;
+            int numMaterials = maps.Count;
             int index = 0;
-            while(index < numMaterials)
+            foreach(MaterialTypeToUrlMap map in maps)
             {
-                string url = map[index].url;
-                DragonMaterialType type = map[index].type;
-                Texture _texture = Resources.Load<Texture>("Dragon/" + url);
+                string u = maps[index].url;
+                DragonMaterialType type = maps[index].type;
+                Texture _texture = Resources.Load<Texture>("Dragon/" + u);
                 dragon.SetTexture(type, _texture);
-
-                // UnityWebRequest request = RyzmUtils.TextureRequest(url);
-                // yield return request.SendWebRequest();
-                // if(request.isNetworkError || request.isHttpError)
-                // {
-                //     Debug.LogError("ERROR");
-                //     // todo: handle this case
-                // }
-                // else
-                // {
-                //     Texture _texture = DownloadHandlerTexture.GetContent(request);
-                //     dragon.SetTexture(type, _texture);
-
-                // }
-                
                 index++;
-                yield return null;
             }
-            // allDragonsForSale.Add(dragon.data.id, dragon);
+            string url = dragon.data.media;
+            UnityWebRequest request = RyzmUtils.TextureRequest(url);
+            int numFails = 0;
+            bool failed = true;
+            if(dragon.Initialized)
+            {
+                yield break;
+            }
+            while(numFails < 3)
+            {
+                yield return request.SendWebRequest();
+                if(request.isNetworkError || request.isHttpError)
+                {
+                    request = RyzmUtils.TextureRequest(url);
+                    numFails++;
+                    Debug.LogError("Failed getting market dragons " + numFails + " times");
+                }
+                else
+                {
+                    failed = false;
+                    break;
+                }
+            }
+            if(failed)
+            {
+
+            }
+            yield break;
         }
+        #endregion
     }
 
     [System.Serializable]
@@ -357,6 +384,7 @@ namespace Ryzm.Dragon
         public Texture backTexture;
         public Texture hornTexture;
         public bool isUser;
+        public Texture dragonImage;
 
         public bool Initialized
         {
@@ -375,6 +403,10 @@ namespace Ryzm.Dragon
                     return false;
                 }
                 if(hornTexture == null)
+                {
+                    return false;
+                }
+                if(dragonImage == null)
                 {
                     return false;
                 }

@@ -1,5 +1,79 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1097437818
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1097437819}
+  - component: {fileID: 1097437821}
+  m_Layer: 0
+  m_Name: Main Camera
+  m_TagString: MainCamera
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1097437819
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1097437818}
+  m_LocalRotation: {x: -0.000000005465728, y: 0.9998107, z: 0.01945928, w: 0.0000002808271}
+  m_LocalPosition: {x: 0, y: 0.7, z: 2.5}
+  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_Children: []
+  m_Father: {fileID: 1937621895}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: -2.23, y: 179.99998, z: 0}
+--- !u!20 &1097437821
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1097437818}
+  m_Enabled: 0
+  serializedVersion: 2
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_FocalLength: 50
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 50
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: -1
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
 --- !u!1 &1640650997
 GameObject:
   m_ObjectHideFlags: 0
@@ -31,6 +105,37 @@ Transform:
   m_Father: {fileID: 4394551291816670357}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1937621894
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1937621895}
+  m_Layer: 0
+  m_Name: photo position
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1937621895
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1937621894}
+  m_LocalRotation: {x: 0.032260027, y: 0.43180946, z: 0.015456426, w: -0.90125525}
+  m_LocalPosition: {x: 0, y: -0.03, z: 0.03}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 1097437819}
+  m_Father: {fileID: 4394551291816670357}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: -4.1, y: -51.2, z: 0}
 --- !u!1 &3675126527248550197
 GameObject:
   m_ObjectHideFlags: 0
@@ -5037,7 +5142,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 01681fdca483e4ebead1e9d2b342b071, type: 2}
+  - {fileID: 2100000, guid: f3f08fe9dd94f4e6abd41af4bf5542a2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5287,7 +5392,7 @@ GameObject:
   - component: {fileID: 4394551291806849895}
   - component: {fileID: 1631934804955934591}
   m_Layer: 0
-  m_Name: Endless Dragon 2
+  m_Name: Base Dragon 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5312,6 +5417,7 @@ Transform:
   - {fileID: 4394551291816670407}
   - {fileID: 4394551291816670405}
   - {fileID: 1640650998}
+  - {fileID: 1937621895}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: -179.99998, z: 0}
@@ -5325,7 +5431,7 @@ Animator:
   m_GameObject: {fileID: 4394551291816241333}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: fa891a7d8b093ac47af23885c2f7f773, type: 3}
-  m_Controller: {fileID: 9100000, guid: b30d49d84c5684547a0e116b69a254b1, type: 2}
+  m_Controller: {fileID: 9100000, guid: f8f9398599b0749ee8fe4633134e6031, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -5349,17 +5455,26 @@ MonoBehaviour:
   data:
     id: 0
     owner: 
-    genes: 
-    baseSpeed: 0
-    baseAttack: 0
-    baseDefense: 0
-    baseHealth: 0
+    parent1: 0
+    parent2: 0
+    primaryColor: 0
+    secondaryColor: 0
+    bodyGenes: 
+    wingGenes: 
+    hornGenes: 
+    hornTypeGenes: 
+    moveGenes: 
     bodyTexture: 
     wingTexture: 
     backTexture: 
     hornTexture: 
+    bodyGenesSequence: 
+    wingGenesSequence: 
+    hornGenesSequence: 
+    moveGenesSequence: 
     hornType: 0
     price: 0
+    media: 
   materials:
   - go: {fileID: 4394551291816241335}
     type: 0
@@ -5431,7 +5546,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 01681fdca483e4ebead1e9d2b342b071, type: 2}
+  - {fileID: 2100000, guid: ff2876fdb221d45a2b6bca5a34a3ef1c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5545,7 +5660,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 01681fdca483e4ebead1e9d2b342b071, type: 2}
+  - {fileID: 2100000, guid: f3f08fe9dd94f4e6abd41af4bf5542a2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6126,7 +6241,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 01681fdca483e4ebead1e9d2b342b071, type: 2}
+  - {fileID: 2100000, guid: 62f235fe75c1a4bf7a1966e2388a33fc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

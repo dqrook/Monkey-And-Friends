@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using CodeControl;
 using Ryzm.Dragon.Messages;
-using Ryzm.Utils;
-using UnityEngine.Networking;
 
 namespace Ryzm.Dragon
 {
@@ -100,18 +98,33 @@ namespace Ryzm.Dragon
             }
             if(MaterialsInitialized)
             {
-                Debug.Log("dragon is initialized " + data.id);
+                // Debug.Log("dragon is initialized " + data.id);
                 Message.Send(new DragonInitialized(data.id));
             }
         }
 
         public void GetTextures()
         {
-            // Debug.Log("dragon is initialized " + data.id);
-            // Message.Send(new DragonInitialized(data.id));
-            getDragonTexture = null;
-            getDragonTexture = _GetTextures();
-            StartCoroutine(getDragonTexture);
+            // getDragonTexture = null;
+            // getDragonTexture = _GetTextures();
+            // StartCoroutine(getDragonTexture);
+
+            List<MaterialTypeToUrlMap> maps = new List<MaterialTypeToUrlMap>
+            {
+                new MaterialTypeToUrlMap(DragonMaterialType.Body, data.bodyTexture),
+                new MaterialTypeToUrlMap(DragonMaterialType.Wing, data.wingTexture),
+                new MaterialTypeToUrlMap(DragonMaterialType.Horn, data.hornTexture),
+                new MaterialTypeToUrlMap(DragonMaterialType.Back, data.backTexture)
+            };
+            int index = 0;
+            foreach(MaterialTypeToUrlMap map in maps)
+            {
+                string url = maps[index].url;
+                DragonMaterialType type = maps[index].type;
+                Texture _texture = Resources.Load<Texture>("Dragon/" + url);
+                SetTexture(type, _texture);
+                index++;
+            }
         }
 
         public void DisableMaterials()

@@ -233,7 +233,7 @@ namespace Ryzm.UI
             parentTransform.sizeDelta = new Vector2(newWidth, parentTransform.rect.height);
             foreach(ResizerPage page in pages)
             {
-                page.UpdateHeight(newWidth);
+                page.UpdateDimensions(newWidth);
             }
 
             if(!paginated && prevPaginated)
@@ -277,10 +277,11 @@ namespace Ryzm.UI
             _totalInverseRatio = 0;
             foreach(ResizerPage page in pages)
             {
-                foreach(ChildResizer child in page.resizers)
-                {
-                    _totalInverseRatio += 1 / child.Ratio;
-                }
+                _totalInverseRatio += page.TotalInverseRatio;
+                // foreach(ChildResizer child in page.resizers)
+                // {
+                //     _totalInverseRatio += 1 / child.Ratio;
+                // }
             }
         }
 
@@ -317,7 +318,7 @@ namespace Ryzm.UI
             }
         }
 
-        public void UpdateHeight(float newWidth)
+        public void UpdateDimensions(float newWidth)
         {
             foreach(ChildResizer resizer in resizers)
             {

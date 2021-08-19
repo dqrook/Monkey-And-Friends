@@ -6,6 +6,7 @@ using Ryzm.Dragon.Messages;
 using Ryzm.Dragon;
 using Ryzm.UI.Messages;
 using TMPro;
+using UnityEngine.UI;
 
 namespace Ryzm.UI
 {
@@ -54,6 +55,7 @@ namespace Ryzm.UI
             }
         }
 
+        #region Public Variables
         [Header("Dragon Panels")]
         public List<MarketDragonPanel> dragonPanels = new List<MarketDragonPanel>();
 
@@ -83,7 +85,9 @@ namespace Ryzm.UI
 
         [Header("Misc")]
         public GameObject backButton;
+        #endregion
 
+        #region Private Variables
         int currentPage = 0;
         bool cameraInitialized;
         List<MenuType> mainMenus = new List<MenuType> {};
@@ -99,13 +103,18 @@ namespace Ryzm.UI
         bool cameraZoomed;
         int dragon2BuyIndex;
         List<MarketPanel> marketPanels = new List<MarketPanel>();
-        bool intializedPanels;
+        bool initialized;
         List<PanelType> activatedPanelTypes = new List<PanelType>();
+        WaitForSeconds initializingWait;
+        IEnumerator waitForInitialization;
+        RawImage i;
+        #endregion
 
+        #region Properties
         public override bool IsActive 
         { 
             get
-            { 
+            {
                 return base.IsActive;
             }
             set 
@@ -118,9 +127,10 @@ namespace Ryzm.UI
                         {
                             panel.Deactivate();
                         }
-                        if(!intializedPanels)
+                        if(!initialized)
                         {
-                            intializedPanels = true;
+                            initializingWait = new WaitForSeconds(2 * Time.deltaTime);
+                            initialized = true;
                             MarketPanel _buyPanel = new MarketPanel();
                             _buyPanel.panel = buyPanel;
                             _buyPanel.type = PanelType.Buy;
@@ -196,39 +206,9 @@ namespace Ryzm.UI
                 }
             }
         }
+        #endregion
 
-        void ActivatePanels(List<PanelType> activatedTypes)
-        {
-            foreach(MarketPanel panel in marketPanels)
-            {
-                panel.ChangeStatus(activatedTypes.Contains(panel.type));
-            }
-        }
-
-        void ActivatePanel(PanelType activatedType)
-        {
-            foreach(MarketPanel panel in marketPanels)
-            {
-                if(panel.type == activatedType)
-                {
-                    panel.ChangeStatus(true);
-                    break;
-                }
-            }
-        }
-
-        void DeactivatePanel(PanelType deactivatedType)
-        {
-            foreach(MarketPanel panel in marketPanels)
-            {
-                if(panel.type == deactivatedType)
-                {
-                    panel.ChangeStatus(false);
-                    break;
-                }
-            }
-        }
-
+        #region Event Listeners
         void OnDragonMarketResponse(DragonMarketResponse response)
         {
             if(response.status == MarketStatus.Loading)
@@ -248,22 +228,24 @@ namespace Ryzm.UI
             {
                 DeactivatePanel(PanelType.Loading);
                 // loadingPanel.SetActive(false);
-                data = new MarketDragonData[response.data.Length];
-                response.data.CopyTo(data, 0);
-                dataInitialized = true;
-                int numPanels = dragonPanels.Count;
-                int dataLength = data.Length;
-                for(int i = 0; i < numPanels; i++)
-                {
-                    if(i < dataLength)
-                    {
-                        dragonPanels[i].Activate(data[i]);
-                    }
-                    else
-                    {
-                        dragonPanels[i].Deactivate();
-                    }
-                }
+                // data = new MarketDragonData[response.data.Length];
+                // response.data.CopyTo(data, 0);
+                waitForInitialization = WaitForInitialization(data);
+                StartCoroutine(waitForInitialization);
+                // dataInitialized = true;
+                // int numPanels = dragonPanels.Count;
+                // int dataLength = data.Length;
+                // for(int i = 0; i < numPanels; i++)
+                // {
+                //     if(i < dataLength)
+                //     {
+                //         dragonPanels[i].Activate(data[i]);
+                //     }
+                //     else
+                //     {
+                //         dragonPanels[i].Deactivate();
+                //     }
+                // }
             }
         }
 
@@ -305,28 +287,9 @@ namespace Ryzm.UI
                 Message.Send(new ActivateMenu(activatedTypes: singleDragonMenus));
             }
         }
+        #endregion
 
-        void UpdatePagePanel()
-        {
-            if(numberOfDragonsOnMarket == 0)
-            {
-                noDragonsText.gameObject.SetActive(true);
-                pageText.gameObject.SetActive(false);
-                previousPageButton.SetActive(false);
-                nextPageButton.SetActive(false);
-            }
-            else
-            {
-                noDragonsText.gameObject.SetActive(false);
-                pageText.gameObject.SetActive(true);
-                maxPages = Mathf.CeilToInt(numberOfDragonsOnMarket / 5);
-                maxPages = maxPages > 0 ? maxPages : 1;
-                pageText.text = (currentPage + 1).ToString() + "/" + maxPages.ToString();
-                previousPageButton.SetActive(currentPage > 0);
-                nextPageButton.SetActive(currentPage < maxPages - 1);
-            }
-        }
-
+        #region Public Functions
         public void CancelLoading()
         {
             if(dataInitialized) 
@@ -478,6 +441,100 @@ namespace Ryzm.UI
             Message.Send(new ActivateMenu(activatedTypes: myDragonsMenus));
             Message.Send(new PreviousMenusUpdate(MenuSet.MarketMenu));
         }
+        #endregion
+
+        #region Private Functions
+        void ActivatePanels(List<PanelType> activatedTypes)
+        {
+            foreach(MarketPanel panel in marketPanels)
+            {
+                panel.ChangeStatus(activatedTypes.Contains(panel.type));
+            }
+        }
+
+        void ActivatePanel(PanelType activatedType)
+        {
+            foreach(MarketPanel panel in marketPanels)
+            {
+                if(panel.type == activatedType)
+                {
+                    panel.ChangeStatus(true);
+                    break;
+                }
+            }
+        }
+
+        void DeactivatePanel(PanelType deactivatedType)
+        {
+            foreach(MarketPanel panel in marketPanels)
+            {
+                if(panel.type == deactivatedType)
+                {
+                    panel.ChangeStatus(false);
+                    break;
+                }
+            }
+        }
+
+        void UpdatePagePanel()
+        {
+            if(numberOfDragonsOnMarket == 0)
+            {
+                noDragonsText.gameObject.SetActive(true);
+                pageText.gameObject.SetActive(false);
+                previousPageButton.SetActive(false);
+                nextPageButton.SetActive(false);
+            }
+            else
+            {
+                noDragonsText.gameObject.SetActive(false);
+                pageText.gameObject.SetActive(true);
+                maxPages = Mathf.CeilToInt(numberOfDragonsOnMarket / 5);
+                maxPages = maxPages > 0 ? maxPages : 1;
+                pageText.text = (currentPage + 1).ToString() + "/" + maxPages.ToString();
+                previousPageButton.SetActive(currentPage > 0);
+                nextPageButton.SetActive(currentPage < maxPages - 1);
+            }
+        }
+        #endregion
+
+        #region Coroutines
+        IEnumerator WaitForInitialization(MarketDragonData[] data)
+        {
+            bool allInitialized = false;
+            while(!allInitialized)
+            {
+                bool init = true;
+                foreach(MarketDragonData dragon in data)
+                {
+                    if(!dragon.Initialized)
+                    {
+                        init = false;
+                        break;
+                    }
+                }
+                allInitialized = init;
+                yield return initializingWait;
+                yield return null;
+            }
+            DeactivatePanel(PanelType.Loading);
+            dataInitialized = true;
+            int numPanels = dragonPanels.Count;
+            int dataLength = data.Length;
+            for(int i = 0; i < numPanels; i++)
+            {
+                if(i < dataLength)
+                {
+                    dragonPanels[i].Activate(data[i]);
+                }
+                else
+                {
+                    dragonPanels[i].Deactivate();
+                }
+            }
+            yield break;
+        }
+        #endregion
     }
 
     [System.Serializable]

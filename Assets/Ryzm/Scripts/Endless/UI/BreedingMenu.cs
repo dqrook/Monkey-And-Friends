@@ -34,8 +34,10 @@ namespace Ryzm.UI
         public GameObject arrowsPanel;
         public GameObject dragon1BackButton;
         public GameObject dragon1FwdButton;
+        public GameObject dragon1ZoomButton;
         public GameObject dragon2BackButton;
         public GameObject dragon2FwdButton;
+        public GameObject dragon2ZoomButton;
 
         [Header("Dragon 1")]
         public Transform dragon1Spawn;
@@ -184,12 +186,14 @@ namespace Ryzm.UI
                 if(marketDragon == 1)
                 {
                     dragon1BackButton.SetActive(true);
-                    dragon2FwdButton.SetActive(true);
+                    dragon1FwdButton.SetActive(true);
+                    dragon1ZoomButton.SetActive(true);
                 }
                 else
                 {
                     dragon2BackButton.SetActive(true);
                     dragon2FwdButton.SetActive(true);
+                    dragon2ZoomButton.SetActive(true);
                 }
             }
             else if(response.status == TransactionStatus.Failed)
@@ -367,11 +371,13 @@ namespace Ryzm.UI
             {
                 dragon1FwdButton.SetActive(false);
                 dragon1BackButton.SetActive(false);
+                dragon1ZoomButton.SetActive(false);
             }
             else
             {
                 dragon2FwdButton.SetActive(false);
                 dragon2BackButton.SetActive(false);
+                dragon2ZoomButton.SetActive(false);
             }
             Message.Send(new RemoveDragonFromMarketRequest(is1 ? dragon1.data.id : dragon2.data.id));
         }
@@ -412,8 +418,10 @@ namespace Ryzm.UI
                 UpdateDragons();
                 dragon1BackButton.SetActive(dragons.Length > 2);
                 dragon1FwdButton.SetActive(dragons.Length > 2);
+                dragon1ZoomButton.SetActive(true);
                 dragon2BackButton.SetActive(dragons.Length > 2);
                 dragon2FwdButton.SetActive(dragons.Length > 2);
+                dragon2ZoomButton.SetActive(true);
                 zoomedBackButton.SetActive(dragons.Length > 2);
                 zoomedFwdButton.SetActive(dragons.Length > 2);
             }

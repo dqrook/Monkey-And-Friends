@@ -8,8 +8,8 @@ namespace Ryzm.UI
     {
         #region Public Variables
         public RectTransform rectTransform;
-        public float defaultHeight;
         public float defaultWidth;
+        public float defaultHeight;
         #endregion
 
         #region Properties
