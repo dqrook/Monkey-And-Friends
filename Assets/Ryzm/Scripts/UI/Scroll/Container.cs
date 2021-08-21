@@ -14,6 +14,7 @@ namespace Ryzm.UI
         public ScrollView scrollView;
         public float yOffset = 20;
         public RectTransform noDragonsPanel;
+        public bool disableScrollView;
         #endregion
 
         #region Event Functions
@@ -27,13 +28,16 @@ namespace Ryzm.UI
             float totalWidth = rectTransform.sizeDelta.x;
             float totalHeight = rectTransform.sizeDelta.y;
             header.UpdateWidth(totalWidth - header.widthOffset);
-            float availableHeight = totalHeight - header.Dimensions.y - yOffset - layoutGroup.spacing;
-            float newWidth = totalWidth - scrollView.widthOffset;
-            float newHeight = availableHeight;
-            scrollView.UpdateDimensions(newWidth, newHeight);
-            if(noDragonsPanel != null)
+            if(!disableScrollView)
             {
-                noDragonsPanel.sizeDelta = new Vector2(newWidth, newHeight);
+                float availableHeight = totalHeight - header.Dimensions.y - yOffset - layoutGroup.spacing;
+                float newWidth = totalWidth - scrollView.widthOffset;
+                float newHeight = availableHeight;
+                scrollView.UpdateDimensions(newWidth, newHeight);
+                if(noDragonsPanel != null)
+                {
+                    noDragonsPanel.sizeDelta = new Vector2(newWidth, newHeight);
+                }
             }
         }
         #endregion

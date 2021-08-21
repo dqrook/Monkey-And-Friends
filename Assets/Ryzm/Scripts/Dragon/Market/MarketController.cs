@@ -5,6 +5,7 @@ using Ryzm.Dragon.Messages;
 using CodeControl;
 using UnityEngine.Networking;
 using Ryzm.Utils;
+using Ryzm.UI.Messages;
 
 namespace Ryzm.Dragon
 {
@@ -13,16 +14,20 @@ namespace Ryzm.Dragon
         #region Public Variables
         public int dragonsPerPage = 10;
         public Envs envs;
-        public int[] currentDragonIds;
+        public MarketFilterMaps marketFilterMaps;
+        public List<DisplayDragon> displayDragons = new List<DisplayDragon>();
+        public List<CameraTransform> marketCameraTransforms = new List<CameraTransform>();
         #endregion
 
         #region Private Variables
+        int[] currentDragonIds;
         BaseDragon[] userDragons;
         IEnumerator queryMarket;
         DragonCardMetadata[] dragonCards;
         IEnumerator getMediaImage;
         IEnumerator waitForInitialization;
         WaitForEndOfFrame waitForEndOfFrame;
+        IEnumerator getDragonById;
         #endregion
 
         #region Event Functions
@@ -31,12 +36,26 @@ namespace Ryzm.Dragon
             waitForEndOfFrame = new WaitForEndOfFrame();
             Message.AddListener<DragonsResponse>(OnDragonsResponse);
             Message.AddListener<QueryMarketRequest>(OnQueryMarketRequest);
+            Message.AddListener<DisplayDragonZoomRequest>(OnDisplayDragonZoomRequest);
+            Message.AddListener<ReturnToMarket>(OnReturnToMarket);
+            Message.AddListener<MarketCameraTransformsRequest>(OnMarketCameraTransformsRequest);
+            Message.AddListener<FilterDragonZoomRequest>(OnFilterDragonZoomRequest);
+            Message.AddListener<MarketFilterMapsRequest>(OnMarketFilterMapsRequest);
+            foreach(DisplayDragon dragon in displayDragons)
+            {
+                dragon.Disable();
+            }
         }
 
         void OnDestroy()
         {
             Message.RemoveListener<DragonsResponse>(OnDragonsResponse);
             Message.RemoveListener<QueryMarketRequest>(OnQueryMarketRequest);
+            Message.RemoveListener<DisplayDragonZoomRequest>(OnDisplayDragonZoomRequest);
+            Message.RemoveListener<ReturnToMarket>(OnReturnToMarket);
+            Message.RemoveListener<MarketCameraTransformsRequest>(OnMarketCameraTransformsRequest);
+            Message.RemoveListener<FilterDragonZoomRequest>(OnFilterDragonZoomRequest);
+            Message.RemoveListener<MarketFilterMapsRequest>(OnMarketFilterMapsRequest);
         }
         #endregion
 
@@ -107,6 +126,64 @@ namespace Ryzm.Dragon
                 StartCoroutine(queryMarket);
             }
         }
+
+        void OnDisplayDragonZoomRequest(DisplayDragonZoomRequest request)
+        {
+            int numDisplayDragons = displayDragons.Count;
+            for(int i = 0; i < numDisplayDragons; i++)
+            {
+                if(request.displayDragonIndex == i)
+                {
+                    displayDragons[i].DisableCanvas();
+                }
+                else
+                {
+                    displayDragons[i].DisableMaterials();
+                }
+            }
+            if(getDragonById != null)
+            {
+                StopCoroutine(getDragonById);
+                getDragonById = null;
+            }
+            string url = envs.DragonByIdApiUrl(request.dragonId);
+            getDragonById = GetDragonById(url);
+            StartCoroutine(getDragonById);
+        }
+
+        void OnFilterDragonZoomRequest(FilterDragonZoomRequest request)
+        {
+            foreach(DisplayDragon dragon in displayDragons)
+            {
+                dragon.DisableMaterials();
+            }
+        }
+
+        void OnReturnToMarket(ReturnToMarket returnToMarket)
+        {
+            ReturnToMarketReset();
+        }
+
+        void OnMarketCameraTransformsRequest(MarketCameraTransformsRequest request)
+        {
+            Message.Send(new MarketCameraTransformsResponse(marketCameraTransforms));
+        }
+
+        void OnMarketFilterMapsRequest(MarketFilterMapsRequest request)
+        {
+            Message.Send(new MarketFilterMapsResponse(marketFilterMaps, request.sender));
+        }
+        #endregion
+
+        #region Private Functions
+        void ReturnToMarketReset()
+        {
+            foreach(DisplayDragon dragon in displayDragons)
+            {
+                dragon.ReEnable();
+            }
+            Message.Send(new MoveCameraRequest(CameraTransformType.Market));
+        }
         #endregion
 
         #region Coroutines
@@ -146,23 +223,75 @@ namespace Ryzm.Dragon
                     currentDragonIds = response.dragonIds.ToArray();
                 }
                 
-                int numNewDragons = response.dragonIds.Count;
-                dragonCards = new DragonCardMetadata[numNewDragons];
-                for(int i = 0; i < numNewDragons; i++)
+                int totalNumDragons = response.dragonIds.Count;
+                int numDisplayDragons = displayDragons.Count;
+                int numNewDragons = response.dragons.Count;
+                for(int i = 0; i < numDisplayDragons; i++)
                 {
-                    MarketDragonMetadata metadata = response.dragons[i];
-                    DragonCardMetadata card = new DragonCardMetadata();
-                    card.owner = metadata.owner;
-                    card.id = metadata.id;
-                    card.price = metadata.price;
-                    card.media = metadata.media;
-                    dragonCards[i] = card;
-                    getMediaImage = GetMediaImage(card.media, i);
-                    StartCoroutine(getMediaImage);
+                    DisplayDragon dragon = displayDragons[i];
+                    if(i < numNewDragons)
+                    {
+                        dragon.Enable(response.dragons[i]);
+                    }
+                    else
+                    {
+                        dragon.Disable();
+                    }
                 }
+                Message.Send(new QueryMarketResponse(numNewDragons, page, totalNumDragons));
+                
+                // dragonCards = new DragonCardMetadata[totalNumDragons];
+                // for(int i = 0; i < totalNumDragons; i++)
+                // {
+                //     MarketDragonMetadata metadata = response.dragons[i];
+                //     DragonCardMetadata card = new DragonCardMetadata();
+                //     card.owner = metadata.owner;
+                //     card.id = metadata.id;
+                //     card.price = metadata.price;
+                //     card.media = metadata.media;
+                //     dragonCards[i] = card;
+                //     getMediaImage = GetMediaImage(card.media, i);
+                //     StartCoroutine(getMediaImage);
+                // }
 
-                waitForInitialization = WaitForInitialization(page, currentDragonIds.Length);
-                StartCoroutine(waitForInitialization);
+                // waitForInitialization = WaitForInitialization(page, totalNumDragons);
+                // StartCoroutine(waitForInitialization);
+            }
+        }
+
+        IEnumerator GetDragonById(string url)
+        {
+            UnityWebRequest request = RyzmUtils.GetRequest(url);
+            int numFails = 0;
+            bool failed = true;
+            while(numFails < 3)
+            {
+                yield return request.SendWebRequest();
+                if(request.isNetworkError || request.isHttpError)
+                {
+                    request = RyzmUtils.GetRequest(url);
+                    numFails++;
+                    Debug.LogError("Failed getting dragon ids " + numFails + " times");
+                }
+                else
+                {
+                    failed = false;
+                    break;
+                }
+            }
+
+            if(failed)
+            {
+                ReturnToMarketReset();
+                Message.Send(new DisplayDragonZoomResponse(true));
+            }
+            else
+            {
+                string res = request.downloadHandler.text;
+                Debug.Log("GET SUCCESS " + res);
+                DragonByIdGetResponse response = DragonByIdGetResponse.FromJson(res);
+                Message.Send(new EnableDragonInfoPanel(response.dragon));
+                Message.Send(new DisplayDragonZoomResponse());
             }
         }
 

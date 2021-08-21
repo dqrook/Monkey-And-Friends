@@ -15,9 +15,7 @@ namespace Ryzm.UI
         public TextMeshProUGUI priceText;
         public RectTransform rectTransform;
         public RawImage dragonImage;
-        public Image image;
         public CanvasGroup group;
-        public Texture texture;
         #endregion
 
         #region Private Variables
@@ -90,7 +88,6 @@ namespace Ryzm.UI
             if(dragonIndex >= 0 && dragonCards != null && dragonIndex < dragonCards.Length)
             {
                 DragonCardMetadata card = dragonCards[dragonIndex];
-                texture = card.image;
                 dragonImage.texture = card.image;
                 priceText.text = card.price + " Near";
                 if(group != null && group.alpha != 1)

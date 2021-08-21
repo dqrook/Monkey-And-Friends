@@ -20,6 +20,18 @@ namespace Ryzm.Dragon
             }
             return null;
         }
+
+        public DragonPrefab GetPrefabByHornType(string hornType)
+        {
+            foreach(DragonPrefab prefab in prefabs)
+            {
+                if(prefab.hornType.ToString() == hornType)
+                {
+                    return prefab;
+                }
+            }
+            return null;
+        }
     }
 
     [System.Serializable]

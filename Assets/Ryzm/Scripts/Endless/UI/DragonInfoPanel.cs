@@ -121,8 +121,8 @@ namespace Ryzm.UI
             if(!isActive)
             {
                 isActive = true;
+                Enable(enable.singleDragonData);
             }
-            Enable(enable.singleDragonData);
         }
 
         void OnDisableDragonInfoPanel(DisableDragonInfoPanel disable)
@@ -130,8 +130,8 @@ namespace Ryzm.UI
             if(isActive)
             {
                 isActive = false;
+                Disable();
             }
-            Disable();
         }
 
         void OnAddDragonToMarketResponse(AddDragonToMarketResponse response)

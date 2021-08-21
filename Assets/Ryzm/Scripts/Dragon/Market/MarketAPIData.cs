@@ -11,6 +11,12 @@ namespace Ryzm.Dragon
         public string price;
         public string media;
         public string owner;
+        public string primaryColor;
+        public string secondaryColor;
+        public string bodyGenes;
+        public string wingGenes;
+        public string hornGenes;
+        public string hornType;
     }
 
     [System.Serializable]

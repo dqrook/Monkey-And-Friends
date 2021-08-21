@@ -126,6 +126,11 @@ namespace Ryzm
             return apiUrl + dragonByIdPath + "?dragon_id=" + id.ToString();
         }
 
+        public string DragonByIdApiUrl(string id)
+        {
+            return apiUrl + dragonByIdPath + "?dragon_id=" + id;
+        }
+
         public string LoginUrl(string publicKey)
         {
             string url = walletUrl + "/login?app_url=" + RyzmUtils.UrlEncode(frontendUrl) + "&title=" + RyzmUtils.UrlEncode(title) + "&success_url=" + RyzmUtils.UrlEncode(SuccessUrl) + "&failure_url=" + RyzmUtils.UrlEncode(FailureUrl) + "&public_key=" + RyzmUtils.UrlEncode("ed25519:" + publicKey);

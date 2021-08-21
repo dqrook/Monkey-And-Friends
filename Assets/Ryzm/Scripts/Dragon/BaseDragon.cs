@@ -17,6 +17,7 @@ namespace Ryzm.Dragon
         #region Private Variables
         Transform trans;
         IEnumerator getDragonTexture;
+        Animator animator;
         #endregion
 
         #region Properties
@@ -67,6 +68,7 @@ namespace Ryzm.Dragon
         void Awake()
         {
             trans = transform;
+            animator = GetComponent<Animator>();
         }
         #endregion
 
@@ -144,48 +146,53 @@ namespace Ryzm.Dragon
                 material.Enable();
             }
         }
+
+        public void Fly(bool shouldFly)
+        {
+            animator.SetBool("fly", shouldFly);
+        }
         #endregion
 
         #region Coroutines
-        IEnumerator _GetTextures()
-        {
-            List<MaterialTypeToUrlMap> map = new List<MaterialTypeToUrlMap>
-            {
-                new MaterialTypeToUrlMap(DragonMaterialType.Body, data.bodyTexture),
-                new MaterialTypeToUrlMap(DragonMaterialType.Wing, data.wingTexture),
-                new MaterialTypeToUrlMap(DragonMaterialType.Horn, data.hornTexture),
-                new MaterialTypeToUrlMap(DragonMaterialType.Back, data.backTexture)
-            };
+        // IEnumerator _GetTextures()
+        // {
+        //     List<MaterialTypeToUrlMap> map = new List<MaterialTypeToUrlMap>
+        //     {
+        //         new MaterialTypeToUrlMap(DragonMaterialType.Body, data.bodyTexture),
+        //         new MaterialTypeToUrlMap(DragonMaterialType.Wing, data.wingTexture),
+        //         new MaterialTypeToUrlMap(DragonMaterialType.Horn, data.hornTexture),
+        //         new MaterialTypeToUrlMap(DragonMaterialType.Back, data.backTexture)
+        //     };
             
-            int numMaterials = map.Count;
-            int index = 0;
-            while(index < numMaterials)
-            {
-                string url = map[index].url;
-                DragonMaterialType type = map[index].type;
-                Texture _texture = Resources.Load<Texture>("Dragon/" + url);
-                SetTexture(type, _texture);
-                // UnityWebRequest request = RyzmUtils.TextureRequest(url);
-                // yield return request.SendWebRequest();
-                // if(request.isNetworkError || request.isHttpError)
-                // {
-                //     Debug.LogError("ERROR");
-                //     // todo: handle this case
-                // }
-                // else
-                // {
-                //     if(materials != null)
-                //     {
-                //         Texture _texture = DownloadHandlerTexture.GetContent(request);
-                //         SetTexture(type, _texture);
-                //     }
+        //     int numMaterials = map.Count;
+        //     int index = 0;
+        //     while(index < numMaterials)
+        //     {
+        //         string url = map[index].url;
+        //         DragonMaterialType type = map[index].type;
+        //         Texture _texture = Resources.Load<Texture>("Dragon/" + url);
+        //         SetTexture(type, _texture);
+        //         // UnityWebRequest request = RyzmUtils.TextureRequest(url);
+        //         // yield return request.SendWebRequest();
+        //         // if(request.isNetworkError || request.isHttpError)
+        //         // {
+        //         //     Debug.LogError("ERROR");
+        //         //     // todo: handle this case
+        //         // }
+        //         // else
+        //         // {
+        //         //     if(materials != null)
+        //         //     {
+        //         //         Texture _texture = DownloadHandlerTexture.GetContent(request);
+        //         //         SetTexture(type, _texture);
+        //         //     }
 
-                // }
+        //         // }
 
-                index++;
-                yield return null;
-            }
-        }
+        //         index++;
+        //         yield return null;
+        //     }
+        // }
         #endregion
     }
 

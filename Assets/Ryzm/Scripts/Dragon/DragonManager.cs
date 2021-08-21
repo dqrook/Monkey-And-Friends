@@ -707,7 +707,7 @@ namespace Ryzm.Dragon
         public string wingGenesSequence;
         public string hornGenesSequence;
         public string moveGenesSequence;
-        public int hornType;
+        public string hornType;
         public float price;
         public string media;
     }

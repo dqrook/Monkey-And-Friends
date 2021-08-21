@@ -4,41 +4,90 @@ using UnityEngine;
 
 namespace Ryzm.Dragon
 {
-    public class MarketDragon : MonoBehaviour
+    public abstract class MarketDragon : MonoBehaviour
     {
+        #region Public Variables
         public DragonPrefabs prefabs;
-        public Dictionary<int, BaseDragon> hornToDragons = new Dictionary<int, BaseDragon>();
-        BaseDragon activeDragon;
-        Transform trans;
+        #endregion
 
-        void Awake()
+        #region Protected Variables
+        protected Dictionary<string, BaseDragon> hornToDragons = new Dictionary<string, BaseDragon>();
+        protected BaseDragon activeDragon;
+        protected Transform trans;
+        protected string bodyPath = "Dragon/Plain/default";
+        protected string wingPath = "Dragon/Plain/default";
+        protected string hornPath = "Dragon/Plain/default";
+        protected string hornType = "1";
+        #endregion
+
+        #region Event Functions
+        protected virtual void Awake()
         {
             trans = transform;
         }
+        #endregion
 
+        #region Public Functions
         public void UpdateData(MarketDragonData data)
         {
-            if(!hornToDragons.ContainsKey(data.data.hornType))
-            {
-                BaseDragon newDragon = Instantiate(prefabs.GetPrefabByHornType(data.data.hornType).dragon).GetComponent<BaseDragon>();
-                newDragon.transform.parent = this.trans;
-                newDragon.transform.localPosition = Vector3.zero;
-                newDragon.transform.localEulerAngles = Vector3.zero;
-                hornToDragons.Add(data.data.hornType, newDragon);
-            }
-            activeDragon = hornToDragons[data.data.hornType];
+            hornType = data.data.hornType;
+            SetActiveDragon();
             activeDragon.data = data.data;
-            foreach(int hornType in hornToDragons.Keys)
-            {
-                hornToDragons[hornType].gameObject.SetActive(data.data.hornType == hornType);
-            }
+            
             SetTexture(DragonMaterialType.Body, data.bodyTexture);
             SetTexture(DragonMaterialType.Wing, data.wingTexture);
             SetTexture(DragonMaterialType.Horn, data.hornTexture);
             SetTexture(DragonMaterialType.Back, data.backTexture);
         }
 
-        public void SetTexture(DragonMaterialType type, Texture texture)
+        public virtual void DisableMaterials()
+        {
+            foreach(BaseDragon dragon in hornToDragons.Values)
+            {
+                dragon.DisableMaterials();
+            }
+        }
+
+        public virtual void EnableMaterials()
+        {
+            activeDragon.EnableMaterials();
+        }
+        #endregion
+
+        #region Protected Functions
+        protected void UpdateDragons()
+        {
+            SetActiveDragon();
+
+            Texture bodyTexture = Resources.Load<Texture>(bodyPath);
+            Texture wingTexture = Resources.Load<Texture>(bodyPath);
+            Texture hornTexture = Resources.Load<Texture>(hornPath);
+
+            SetTexture(DragonMaterialType.Body, bodyTexture);
+            SetTexture(DragonMaterialType.Wing, wingTexture);
+            SetTexture(DragonMaterialType.Horn, hornTexture);
+            SetTexture(DragonMaterialType.Back, hornTexture);
+        }
+
+        protected void SetActiveDragon()
+        {
+            if(!hornToDragons.ContainsKey(hornType))
+            {
+                BaseDragon newDragon = Instantiate(prefabs.GetPrefabByHornType(hornType).dragon).GetComponent<BaseDragon>();
+                newDragon.transform.parent = this.trans;
+                newDragon.transform.localPosition = Vector3.zero;
+                newDragon.transform.localEulerAngles = Vector3.zero;
+                hornToDragons.Add(hornType, newDragon);
+            }
+            activeDragon = hornToDragons[hornType];
+
+            foreach(string dragonHornType in hornToDragons.Keys)
+            {
+                hornToDragons[hornType].gameObject.SetActive(hornType == dragonHornType);
+            }
+        }
+
+        protected void SetTexture(DragonMaterialType type, Texture texture)
         {
             if(activeDragon != null)
             {
@@ -51,18 +100,6 @@ namespace Ryzm.Dragon
                 }
             }
         }
-
-        public void DisableMaterials()
-        {
-            foreach(BaseDragon dragon in hornToDragons.Values)
-            {
-                dragon.DisableMaterials();
-            }
-        }
-
-        public void EnableMaterials()
-        {
-            activeDragon.EnableMaterials();
-        }
+        #endregion
     }
 }

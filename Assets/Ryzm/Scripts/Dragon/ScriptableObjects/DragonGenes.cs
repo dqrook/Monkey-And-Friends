@@ -16,6 +16,7 @@ namespace Ryzm.Dragon
             DragonGene gene = GetGene(dragonGenes, ConvertGenes(genes));
             return gene;
         }
+        
         public DragonGene GetGeneBySequence(int[] genes, bool isMoveGenes)
         {
             if(isMoveGenes)
@@ -87,6 +88,7 @@ namespace Ryzm.Dragon
     [System.Serializable]
     public struct DragonGene
     {
+        public Sprite image;
         public string name;
         public string sequence;
         [Range(1, 5)]

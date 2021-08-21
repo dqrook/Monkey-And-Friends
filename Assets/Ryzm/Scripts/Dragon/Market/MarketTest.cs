@@ -10,6 +10,12 @@ namespace Ryzm.Dragon
     {
         void Start()
         {
+            StartCoroutine(PauseThenStart());
+        }
+
+        IEnumerator PauseThenStart()
+        {
+            yield return new WaitForSeconds(0.5f);
             Message.Send(new ActivateMenu(UI.MenuType.DragonMarket));
         }
     }

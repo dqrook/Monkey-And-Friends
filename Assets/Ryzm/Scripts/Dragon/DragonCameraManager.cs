@@ -10,23 +10,38 @@ namespace Ryzm.Dragon
     {
         public GameObject dragonCamera;
         public List<CameraTransform> cameraTransforms = new List<CameraTransform>();
+        public List<CameraTransform> marketCameraTransforms = new List<CameraTransform>();
 
         Transform camTrans;
         IEnumerator moveCamera;
 
+        #region Event Functions
         void Awake()
         {
             camTrans = dragonCamera.transform;
             Message.AddListener<DragonCameraRequest>(OnDragonCameraRequest);
             Message.AddListener<MoveCameraRequest>(OnMoveCameraRequest);
+            Message.AddListener<DisplayDragonZoomRequest>(OnDisplayDragonZoomRequest);
+            Message.AddListener<MarketCameraTransformsResponse>(OnMarketCameraTransformsResponse);
+            Message.AddListener<FilterDragonZoomRequest>(OnFilterDragonZoomRequest);
+        }
+
+        void Start()
+        {
+            Message.Send(new MarketCameraTransformsRequest());
         }
 
         void OnDestroy()
         {
             Message.RemoveListener<DragonCameraRequest>(OnDragonCameraRequest);
             Message.RemoveListener<MoveCameraRequest>(OnMoveCameraRequest);
+            Message.RemoveListener<DisplayDragonZoomRequest>(OnDisplayDragonZoomRequest);
+            Message.RemoveListener<MarketCameraTransformsResponse>(OnMarketCameraTransformsResponse);
+            Message.RemoveListener<FilterDragonZoomRequest>(OnFilterDragonZoomRequest);
         }
+        #endregion
 
+        #region Listener Functions
         void OnDragonCameraRequest(DragonCameraRequest request)
         {
             Message.Send(new DragonCameraResponse(dragonCamera));
@@ -35,29 +50,98 @@ namespace Ryzm.Dragon
         void OnMoveCameraRequest(MoveCameraRequest request)
         {
             Debug.Log(request.type);
+            bool foundIt = false;
             foreach(CameraTransform xform in cameraTransforms)
             {
                 if(xform.type == request.type)
                 {
                     camTrans.parent = xform.pivot != null ? xform.pivot : null;
-                    MoveCamera(xform.camTrans);
+                    MoveCamera(xform.camTrans, request.type);
+                    foundIt = true;
                     break;
+                }
+            }
+            if(!foundIt)
+            {
+                foreach(CameraTransform xform in marketCameraTransforms)
+                {
+                    if(xform.type == request.type)
+                    {
+                        camTrans.parent = xform.pivot != null ? xform.pivot : null;
+                        MoveCamera(xform.camTrans, request.type);
+                        foundIt = true;
+                        break;
+                    }
                 }
             }
         }
 
-        void MoveCamera(Transform target)
+        void OnDisplayDragonZoomRequest(DisplayDragonZoomRequest request)
+        {
+            int index = request.displayDragonIndex;
+            CameraTransformType type = CameraTransformType.MarketDragon1;
+            switch(index)
+            {
+                case 0:
+                    type = CameraTransformType.MarketDragon1;
+                    break;
+                case 1:
+                    type = CameraTransformType.MarketDragon2;
+                    break;
+                case 2:
+                    type = CameraTransformType.MarketDragon3;
+                    break;
+                case 3:
+                    type = CameraTransformType.MarketDragon4;
+                    break;
+                case 4:
+                    type = CameraTransformType.MarketDragon5;
+                    break;
+                case 5:
+                    type = CameraTransformType.MarketDragon6;
+                    break;
+                case 6:
+                    type = CameraTransformType.MarketDragon7;
+                    break;
+                case 7:
+                    type = CameraTransformType.MarketDragon8;
+                    break;
+                case 8:
+                    type = CameraTransformType.MarketDragon9;
+                    break;
+                case 9:
+                    type = CameraTransformType.MarketDragon10;
+                    break;
+            }
+            OnMoveCameraRequest(new MoveCameraRequest(type));
+        }
+
+        void OnFilterDragonZoomRequest(FilterDragonZoomRequest request)
+        {
+            OnMoveCameraRequest(new MoveCameraRequest(CameraTransformType.FilterDragon));
+        }
+
+        void OnMarketCameraTransformsResponse(MarketCameraTransformsResponse response)
+        {
+            marketCameraTransforms = response.transforms;
+        }
+        #endregion
+
+        #region Private Functions
+        void MoveCamera(Transform target, CameraTransformType type)
         {
             if(moveCamera != null)
             {
                 StopCoroutine(moveCamera);
             }
             moveCamera = null;
-            moveCamera = _MoveCamera(target);
+            moveCamera = _MoveCamera(target, type);
             StartCoroutine(moveCamera);
         }
+        #endregion
 
-        IEnumerator _MoveCamera(Transform target)
+        #region Coroutines
+        IEnumerator _MoveCamera(Transform target, CameraTransformType type)
         {
             Debug.Log("moving camera");
             Vector3 endPos = target.position;
@@ -76,6 +160,7 @@ namespace Ryzm.Dragon
             // camTrans.rotation = target.rotation;
             yield break;
         }
+        #endregion
     }
 
     public enum CameraTransformType
@@ -90,7 +175,13 @@ namespace Ryzm.Dragon
         MarketDragon2,
         MarketDragon3,
         MarketDragon4,
-        MarketDragon5
+        MarketDragon5,
+        MarketDragon6,
+        MarketDragon7,
+        MarketDragon8,
+        MarketDragon9,
+        MarketDragon10,
+        FilterDragon
     }
 
     [System.Serializable]

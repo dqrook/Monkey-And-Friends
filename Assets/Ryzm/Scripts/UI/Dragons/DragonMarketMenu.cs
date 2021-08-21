@@ -107,7 +107,6 @@ namespace Ryzm.UI
         List<PanelType> activatedPanelTypes = new List<PanelType>();
         WaitForSeconds initializingWait;
         IEnumerator waitForInitialization;
-        RawImage i;
         #endregion
 
         #region Properties
