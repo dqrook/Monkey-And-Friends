@@ -78,7 +78,7 @@ namespace Ryzm.Dragon
                 }
                 if(wingGenes.Length > 0)
                 {
-                    wingPath = "Dragon/" + wingGenes + "/" + primaryColor;
+                    wingPath = "Dragon/" + wingGenes + "0/" + primaryColor;
                 }
                 else
                 {
@@ -93,7 +93,7 @@ namespace Ryzm.Dragon
                 }
                 if(wingGenes.Length > 0)
                 {
-                    wingPath = "Dragon/" + wingGenes + "/0";
+                    wingPath = "Dragon/" + wingGenes + "0/0";
                 }
             }
 
@@ -101,7 +101,7 @@ namespace Ryzm.Dragon
             {
                 if(hornGenes.Length > 0)
                 {
-                    hornPath = "Dragon/" + hornGenes + "/" + secondaryColor;
+                    hornPath = "Dragon/" + hornGenes + "0/" + secondaryColor;
                 }
                 else
                 {
@@ -110,7 +110,7 @@ namespace Ryzm.Dragon
             }
             else if(hornGenes.Length > 0)
             {
-                hornPath = "Dragon/" + hornGenes + "/0";
+                hornPath = "Dragon/" + hornGenes + "0/0";
             }
 
             UpdateDragons();
