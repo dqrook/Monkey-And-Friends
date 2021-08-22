@@ -268,12 +268,12 @@ namespace Ryzm.UI
                 switch(panel.type)
                 {
                     case GeneType.Body:
-                        DragonGene gene = genes.GetGeneBySequence(data.bodyGenes.ToArray());
+                        DragonGene gene = genes.GetGeneBySequence(data.bodyGenes.ToArray(), GeneType.Body);
                         gene.rawSequence = data.bodyGenesSequence;
                         panel.Initialize(gene);
                         break;
                     case GeneType.Wing:
-                        DragonGene wingGene = genes.GetGeneBySequence(data.wingGenes.ToArray());
+                        DragonGene wingGene = genes.GetGeneBySequence(data.wingGenes.ToArray(), GeneType.Wing);
                         wingGene.rawSequence = data.wingGenesSequence;
                         panel.Initialize(wingGene);
                         break;
@@ -283,7 +283,7 @@ namespace Ryzm.UI
                         panel.Initialize(hornGene);
                         break;
                     case GeneType.Moves:
-                        DragonGene movesGene = genes.GetGeneBySequence(data.moveGenes.ToArray(), true);
+                        DragonGene movesGene = genes.GetGeneBySequence(data.moveGenes.ToArray(), GeneType.Moves);
                         movesGene.rawSequence = data.moveGenesSequence;
                         panel.Initialize(movesGene);
                         break;

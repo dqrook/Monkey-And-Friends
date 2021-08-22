@@ -6,20 +6,16 @@ namespace Ryzm.Dragon
     public class DragonGenes : ScriptableObject
     {
         #region Public Variables
+        public DragonGene[] bodyGenes;
         public DragonGene[] dragonGenes;
         public DragonGene[] hornGenes;
+        public DragonColor[] colors;
         #endregion
 
         #region Public Functions
-        public DragonGene GetGeneBySequence(int[] genes)
+        public DragonGene GetGeneBySequence(int[] genes, GeneType type)
         {
-            DragonGene gene = GetGene(dragonGenes, ConvertGenes(genes));
-            return gene;
-        }
-        
-        public DragonGene GetGeneBySequence(int[] genes, bool isMoveGenes)
-        {
-            if(isMoveGenes)
+            if(type == GeneType.Moves)
             {
                 DragonGene moveGene = new DragonGene();
                 int rarity = 1;
@@ -34,10 +30,11 @@ namespace Ryzm.Dragon
                 moveGene.name = "";
                 return moveGene;
             }
-            else
+            else if(type == GeneType.Body)
             {
-                return GetGeneBySequence(genes);
+                return GetGene(bodyGenes, genes);
             }
+            return GetGene(dragonGenes, genes);
         }
 
         public DragonGene GetGeneBySequence(int[] genes, int[] hornTypeGenes)
@@ -59,15 +56,10 @@ namespace Ryzm.Dragon
         #endregion
 
         #region Private Functions
-        string ConvertGenes(int[] genes)
+        DragonGene GetGene(DragonGene[] targetGenes, int[] genes)
         {
-            string sequence = "";
-            foreach(int gene in genes)
-            {
-                int convertedGene = gene > 1 ? 1 : gene;
-                sequence += convertedGene.ToString();
-            }
-            return sequence;
+            DragonGene gene = GetGene(targetGenes, ConvertGenes(genes));
+            return gene;
         }
 
         DragonGene GetGene(DragonGene[] genes, string sequence)
@@ -80,6 +72,17 @@ namespace Ryzm.Dragon
                 }
             }
             return new DragonGene();
+        }
+
+        string ConvertGenes(int[] genes)
+        {
+            string sequence = "";
+            foreach(int gene in genes)
+            {
+                int convertedGene = gene > 1 ? 1 : gene;
+                sequence += convertedGene.ToString();
+            }
+            return sequence;
         }
         #endregion
         
@@ -97,6 +100,15 @@ namespace Ryzm.Dragon
         public string rawSequence;
         [HideInInspector]
         public bool hasHalfStar;
+        public string hornType;
+    }
+
+    [System.Serializable]
+    public struct DragonColor
+    {
+        public Sprite image;
+        public string name;
+        public string value;
     }
 
     public enum GeneType

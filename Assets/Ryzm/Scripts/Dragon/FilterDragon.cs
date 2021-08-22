@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using CodeControl;
+using Ryzm.Dragon.Messages;
 
 namespace Ryzm.Dragon
 {
@@ -11,6 +13,19 @@ namespace Ryzm.Dragon
         {
             base.Awake();
             UpdateFilters(new MarketFilter[0]);
+            Message.AddListener<UpdateMarketFilters>(OnUpdateMarketFilters);
+        }
+        
+        protected override void OnDestroy()
+        {
+            Message.RemoveListener<UpdateMarketFilters>(OnUpdateMarketFilters);
+        }
+        #endregion
+
+        #region Listener Functions
+        void OnUpdateMarketFilters(UpdateMarketFilters update)
+        {
+            UpdateFilters(update.marketFilters);
         }
         #endregion
 

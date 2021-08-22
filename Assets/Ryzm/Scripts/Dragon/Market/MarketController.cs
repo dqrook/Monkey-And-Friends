@@ -15,6 +15,7 @@ namespace Ryzm.Dragon
         public int dragonsPerPage = 10;
         public Envs envs;
         public MarketFilterMaps marketFilterMaps;
+        public DragonGenes genes;
         public List<DisplayDragon> displayDragons = new List<DisplayDragon>();
         public List<CameraTransform> marketCameraTransforms = new List<CameraTransform>();
         #endregion
@@ -41,6 +42,7 @@ namespace Ryzm.Dragon
             Message.AddListener<MarketCameraTransformsRequest>(OnMarketCameraTransformsRequest);
             Message.AddListener<FilterDragonZoomRequest>(OnFilterDragonZoomRequest);
             Message.AddListener<MarketFilterMapsRequest>(OnMarketFilterMapsRequest);
+            Message.AddListener<DragonGenesRequest>(OnDragonGenesRequest);
             foreach(DisplayDragon dragon in displayDragons)
             {
                 dragon.Disable();
@@ -56,6 +58,7 @@ namespace Ryzm.Dragon
             Message.RemoveListener<MarketCameraTransformsRequest>(OnMarketCameraTransformsRequest);
             Message.RemoveListener<FilterDragonZoomRequest>(OnFilterDragonZoomRequest);
             Message.RemoveListener<MarketFilterMapsRequest>(OnMarketFilterMapsRequest);
+            Message.RemoveListener<DragonGenesRequest>(OnDragonGenesRequest);
         }
         #endregion
 
@@ -172,6 +175,11 @@ namespace Ryzm.Dragon
         void OnMarketFilterMapsRequest(MarketFilterMapsRequest request)
         {
             Message.Send(new MarketFilterMapsResponse(marketFilterMaps, request.sender));
+        }
+
+        void OnDragonGenesRequest(DragonGenesRequest request)
+        {
+            Message.Send(new DragonGenesResponse(request.sender, genes));
         }
         #endregion
 

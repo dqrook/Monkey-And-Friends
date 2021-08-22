@@ -9,6 +9,18 @@ namespace Ryzm.Dragon
     {
         public List<MarketFilter> filters = new List<MarketFilter>();
 
+        public MarketFilter GetMarketFilter(FilterType type)
+        {
+            foreach(MarketFilter filter in filters)
+            {
+                if(filter.type == type)
+                {
+                    return filter;
+                }
+            }
+            return new MarketFilter();
+        }
+
         // public string GetQueryString(FilterType type, string value)
         // {
         //     foreach(MarketFilter filter in filters)

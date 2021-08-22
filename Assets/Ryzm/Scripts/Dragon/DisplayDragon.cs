@@ -92,8 +92,8 @@ namespace Ryzm.Dragon
             hornType = data.hornType;
             price = data.price;
             bodyPath = "Dragon/" + data.bodyGenes + "/" + data.primaryColor;
-            wingPath = "Dragon/" + data.wingGenes + "/" + data.primaryColor;
-            hornPath = "Dragon/" + data.hornGenes + "/" + data.secondaryColor;
+            wingPath = "Dragon/" + data.wingGenes + "0/" + data.primaryColor;
+            hornPath = "Dragon/" + data.hornGenes + "0/" + data.secondaryColor;
             UpdateDragons();
             activeDragon.Fly(true);
             UpdateCanvas();

@@ -25,7 +25,8 @@ namespace Ryzm.UI
         int numNewDragons;
         DragonCardMetadata[] currentCardMetadata;
         bool inZoom;
-        DragonGenes genes;
+        bool filtering;
+        List<MarketFilter> currentFilters = new List<MarketFilter>();
         #endregion
 
         #region Properties
@@ -47,13 +48,9 @@ namespace Ryzm.UI
                         Message.AddListener<DisplayDragonZoomRequest>(OnDisplayDragonZoomRequest);
                         Message.AddListener<DisplayDragonZoomResponse>(OnDisplayDragonZoomResponse);
                         Message.AddListener<FilterDragonZoomRequest>(OnFilterDragonZoomRequest);
-                        Message.AddListener<DragonGenesResponse>(OnDragonGenesResponse);
+                        Message.AddListener<UpdateMarketFilters>(OnUpdateMarketFilters);
                         Message.Send(new MoveCameraRequest(CameraTransformType.Market));
                         Message.Send(new QueryMarketRequest());
-                        if(genes == null)
-                        {
-                            Message.Send(new DragonGenesRequest("marketMenu"));
-                        }
                         scrollViewGroup.alpha = 0;
                         loadingPanel.enabled = true;
                         noDragonsPanel.SetActive(false);
@@ -67,7 +64,7 @@ namespace Ryzm.UI
                         Message.RemoveListener<DisplayDragonZoomRequest>(OnDisplayDragonZoomRequest);
                         Message.RemoveListener<DisplayDragonZoomResponse>(OnDisplayDragonZoomResponse);
                         Message.RemoveListener<FilterDragonZoomRequest>(OnFilterDragonZoomRequest);
-                        Message.RemoveListener<DragonGenesResponse>(OnDragonGenesResponse);
+                        Message.RemoveListener<UpdateMarketFilters>(OnUpdateMarketFilters);
                     }
                     base.IsActive = value;
                 }
@@ -121,11 +118,19 @@ namespace Ryzm.UI
             filterButton.SetActive(false);
         }
 
-        void OnDragonGenesResponse(DragonGenesResponse response)
+        void OnUpdateMarketFilters(UpdateMarketFilters update)
         {
-            if(response.receiver == "marketMenu")
+            if(update.sendApiRequest)
             {
-                genes = response.genes;
+                currentFilters = update.MarketFilterList;
+                Debug.Log("sending api request");
+                Message.Send(new MoveCameraRequest(CameraTransformType.Market));
+                Message.Send(new DisableDragonFilterPanel(false));
+                Message.Send(new ReturnToMarket());
+                inZoom = false;
+                arrowsPanel.SetActive(true);
+                filterButton.SetActive(true);
+                // Message.Send(new QueryMarketRequest(currentFilters));
             }
         }
 
@@ -143,6 +148,8 @@ namespace Ryzm.UI
                 // todo: leave dragon panel
                 Message.Send(new DisableDragonInfoPanel());
                 Message.Send(new ReturnToMarket());
+                Message.Send(new DisableDragonFilterPanel(true));
+                Message.Send(new UpdateMarketFilters(currentFilters));
                 inZoom = false;
                 arrowsPanel.SetActive(true);
                 filterButton.SetActive(true);
@@ -150,12 +157,14 @@ namespace Ryzm.UI
             else
             {
                 // todo: return to main menu
+                Message.Send(new ResetDragonFilterPanel());
             }
         }
 
         public void OnClickFilterButton()
         {
             Message.Send(new FilterDragonZoomRequest());
+            Message.Send(new EnableDragonFilterPanel());
         }
         #endregion
 
@@ -165,6 +174,8 @@ namespace Ryzm.UI
             currentPage = 0;
             totalNumDragons = 0;
             inZoom = false;
+            filtering = false;
+            currentFilters.Clear();
         }
         #endregion
     }

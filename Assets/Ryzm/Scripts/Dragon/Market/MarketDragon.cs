@@ -14,9 +14,9 @@ namespace Ryzm.Dragon
         protected Dictionary<string, BaseDragon> hornToDragons = new Dictionary<string, BaseDragon>();
         protected BaseDragon activeDragon;
         protected Transform trans;
-        protected string bodyPath = "Dragon/Plain/default";
-        protected string wingPath = "Dragon/Plain/default";
-        protected string hornPath = "Dragon/Plain/default";
+        public string bodyPath = "Dragon/Plain/default";
+        public string wingPath = "Dragon/Plain/default";
+        public string hornPath = "Dragon/Plain/default";
         protected string hornType = "1";
         #endregion
 
@@ -25,6 +25,8 @@ namespace Ryzm.Dragon
         {
             trans = transform;
         }
+
+        protected virtual void OnDestroy() {}
         #endregion
 
         #region Public Functions
@@ -60,7 +62,7 @@ namespace Ryzm.Dragon
             SetActiveDragon();
 
             Texture bodyTexture = Resources.Load<Texture>(bodyPath);
-            Texture wingTexture = Resources.Load<Texture>(bodyPath);
+            Texture wingTexture = Resources.Load<Texture>(wingPath);
             Texture hornTexture = Resources.Load<Texture>(hornPath);
 
             SetTexture(DragonMaterialType.Body, bodyTexture);
@@ -81,9 +83,16 @@ namespace Ryzm.Dragon
             }
             activeDragon = hornToDragons[hornType];
 
-            foreach(string dragonHornType in hornToDragons.Keys)
+            foreach(BaseDragon dragon in hornToDragons.Values)
             {
-                hornToDragons[hornType].gameObject.SetActive(hornType == dragonHornType);
+                if(dragon != activeDragon)
+                {
+                    dragon.gameObject.SetActive(false);
+                }
+                else
+                {
+                    dragon.gameObject.SetActive(true);
+                }
             }
         }
 
