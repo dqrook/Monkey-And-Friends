@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Ryzm.Dragon
 {
-    public abstract class MarketDragon : MonoBehaviour
+    public abstract class CustomDragon : MonoBehaviour
     {
         #region Public Variables
         public DragonPrefabs prefabs;

@@ -7,7 +7,7 @@ using Ryzm.Dragon.Messages;
 
 namespace Ryzm.Dragon
 {
-    public class DisplayDragon : MarketDragon
+    public class DisplayDragon : CustomDragon
     {
         #region Public Variables
         public int dragonIndex;

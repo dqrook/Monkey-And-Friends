@@ -13,6 +13,7 @@ namespace Ryzm.Dragon
     {
         #region Public Variables
         public int dragonsPerPage = 10;
+        public int dragonsPerChunk = 1000;
         public Envs envs;
         public MarketFilterMaps marketFilterMaps;
         public DragonGenes genes;
@@ -22,6 +23,7 @@ namespace Ryzm.Dragon
 
         #region Private Variables
         int[] currentDragonIds;
+        Dictionary<int, List<MarketDragonMetadata>> chunkDragonDataMap = new Dictionary<int, List<MarketDragonMetadata>>();
         BaseDragon[] userDragons;
         IEnumerator queryMarket;
         DragonCardMetadata[] dragonCards;
@@ -29,6 +31,7 @@ namespace Ryzm.Dragon
         IEnumerator waitForInitialization;
         WaitForEndOfFrame waitForEndOfFrame;
         IEnumerator getDragonById;
+        List<MarketFilter> currentFilters = new List<MarketFilter>();
         #endregion
 
         #region Event Functions
@@ -47,6 +50,25 @@ namespace Ryzm.Dragon
             {
                 dragon.Disable();
             }
+            // int[] gene1 = new int[4];
+            // int[] gene2 = new int[4];
+            // gene1[0] = 2;
+            // gene2[0] = 1;
+            
+            // gene1[1] = 1;
+            // gene2[1] = 1;
+            
+            // gene1[2] = 1;
+            // gene2[2] = 1;
+            
+            // gene1[3] = 1;
+            // gene2[3] = 0;
+
+            // List<GeneProbability> probs = genes.GetGeneProbablity(gene1, gene2);
+            // foreach(GeneProbability prob in probs)
+            // {
+            //     Debug.Log(prob.value + " " + prob.probablity);
+            // }
         }
 
         void OnDestroy()
@@ -72,6 +94,9 @@ namespace Ryzm.Dragon
         {
             if(request.type == MarketQueryType.Exit)
             {
+                chunkDragonDataMap.Clear();
+                currentDragonIds = new int[0];
+                currentFilters.Clear();
                 if(queryMarket != null)
                 {
                     StopCoroutine(queryMarket);
@@ -83,23 +108,13 @@ namespace Ryzm.Dragon
                 string url = envs.MarketQueryUrl();
                 bool updateDragonIds = true;
                 int page = 0;
+                int chunk = 0;
+                bool makeRequest = true;
                 if(request.type == MarketQueryType.UpdateFilters)
                 {
-                    string filterString = "";
-                    int numFilters = request.filters.Count;
-                    for(int i = 0; i < numFilters; i++)
-                    {
-                        MarketFilter filter = request.filters[0];
-                        if(i == 0)
-                        {
-                            filterString = filter.GetQueryString();
-                        }
-                        else
-                        {
-                            filterString += "&" + filter.GetQueryString();
-                        }
-                    }
-                    url = envs.MarketQueryUrl(filterString);
+                    currentFilters = request.filters;
+                    url = GetMarketQueryUrl(chunk);
+                    chunkDragonDataMap.Clear();
                 }
                 else if(request.type == MarketQueryType.UpdatePage)
                 {
@@ -107,26 +122,42 @@ namespace Ryzm.Dragon
                     updateDragonIds = false;
                     int startIndex = request.page * dragonsPerPage;
                     int endIndex = startIndex + 9;
-                    endIndex = endIndex < currentDragonIds.Length ? endIndex : currentDragonIds.Length - 1;
-                    int numDragons = endIndex - startIndex;
-                    string filterString = "";
-                    for(int i = 0; i < numDragons; i++)
+                    chunk = Mathf.FloorToInt(endIndex / dragonsPerChunk);
+                    if(chunkDragonDataMap.ContainsKey(chunk))
                     {
-                        string id = currentDragonIds[i + startIndex].ToString();
-                        if(i == 0)
+                        int max = chunkDragonDataMap[chunk].Count - startIndex;
+                        max = max < dragonsPerPage ? max : dragonsPerPage;
+                        List<MarketDragonMetadata> data = chunkDragonDataMap[chunk].GetRange(startIndex, max);
+                        int totalNumDragons = currentDragonIds.Length;
+                        int numDisplayDragons = displayDragons.Count;
+                        int numNewDragons = data.Count;
+                        for(int i = 0; i < numDisplayDragons; i++)
                         {
-                            filterString = "dragons=" + id;
+                            DisplayDragon dragon = displayDragons[i];
+                            if(i < numNewDragons)
+                            {
+                                dragon.Enable(data[i]);
+                            }
+                            else
+                            {
+                                dragon.Disable();
+                            }
                         }
-                        else
-                        {
-                            filterString += "," + id;
-                        }
+                        makeRequest = false;
+                        Message.Send(new QueryMarketResponse(numNewDragons, page, totalNumDragons));
                     }
-                    url = envs.MarketQueryUrl(filterString);
+                    else
+                    {
+                        // make new api request
+                        url = GetMarketQueryUrl(chunk);
+                    }
                 }
-                queryMarket = null;
-                queryMarket = QueryMarket(url, updateDragonIds, page);
-                StartCoroutine(queryMarket);
+                if(makeRequest)
+                {
+                    queryMarket = null;
+                    queryMarket = QueryMarket(url, updateDragonIds, page, chunk);
+                    StartCoroutine(queryMarket);
+                }
             }
         }
 
@@ -192,10 +223,29 @@ namespace Ryzm.Dragon
             }
             Message.Send(new MoveCameraRequest(CameraTransformType.Market));
         }
+
+        string GetMarketQueryUrl(int chunk)
+        {
+            string filterString = "chunk=" + chunk.ToString();
+            int numFilters = currentFilters.Count;
+            for(int i = 0; i < numFilters; i++)
+            {
+                MarketFilter filter = currentFilters[i];
+                // if(i == 0)
+                // {
+                //     filterString = filter.GetQueryString();
+                // }
+                // else
+                // {
+                // }
+                filterString += "&" + filter.GetQueryString();
+            }
+            return envs.MarketQueryUrl(filterString);
+        }
         #endregion
 
         #region Coroutines
-        IEnumerator QueryMarket(string url, bool updateDragonIds, int page)
+        IEnumerator QueryMarket(string url, bool updateDragonIds, int page, int chunk)
         {
             UnityWebRequest request = RyzmUtils.GetRequest(url);
             Debug.Log("query market dragons url: " + url);
@@ -230,7 +280,7 @@ namespace Ryzm.Dragon
                 {
                     currentDragonIds = response.dragonIds.ToArray();
                 }
-                
+                chunkDragonDataMap[chunk] = response.dragons;
                 int totalNumDragons = response.dragonIds.Count;
                 int numDisplayDragons = displayDragons.Count;
                 int numNewDragons = response.dragons.Count;
@@ -303,56 +353,56 @@ namespace Ryzm.Dragon
             }
         }
 
-        IEnumerator GetMediaImage(string url, int index)
-        {
-            UnityWebRequest request = RyzmUtils.TextureRequest(url);
-            int numFails = 0;
-            bool failed = true;
-            while(numFails < 3)
-            {
-                yield return request.SendWebRequest();
-                if(request.isNetworkError || request.isHttpError)
-                {
-                    request = RyzmUtils.TextureRequest(url);
-                    numFails++;
-                    Debug.LogError("Failed getting media image " + numFails + " times");
-                }
-                else
-                {
-                    failed = false;
-                    break;
-                }
-            }
-            if(failed)
-            {
-                // todo: how to handle this
-            }
-            else
-            {
-                dragonCards[index].image = DownloadHandlerTexture.GetContent(request);
-            }
-        }
+        // IEnumerator GetMediaImage(string url, int index)
+        // {
+        //     UnityWebRequest request = RyzmUtils.TextureRequest(url);
+        //     int numFails = 0;
+        //     bool failed = true;
+        //     while(numFails < 3)
+        //     {
+        //         yield return request.SendWebRequest();
+        //         if(request.isNetworkError || request.isHttpError)
+        //         {
+        //             request = RyzmUtils.TextureRequest(url);
+        //             numFails++;
+        //             Debug.LogError("Failed getting media image " + numFails + " times");
+        //         }
+        //         else
+        //         {
+        //             failed = false;
+        //             break;
+        //         }
+        //     }
+        //     if(failed)
+        //     {
+        //         // todo: how to handle this
+        //     }
+        //     else
+        //     {
+        //         dragonCards[index].image = DownloadHandlerTexture.GetContent(request);
+        //     }
+        // }
 
-        IEnumerator WaitForInitialization(int page, int totalNumDragons)
-        {
-            bool initialized = false;
-            while(!initialized)
-            {
-                bool isInitialized = true;
-                foreach(DragonCardMetadata card in dragonCards)
-                {
-                    if(!card.Initialized)
-                    {
-                        isInitialized = false;
-                        break;
-                    }
-                }
-                initialized = isInitialized;
-                yield return waitForEndOfFrame;
-            }
-            Message.Send(new QueryMarketResponse(dragonCards, page, totalNumDragons));
-            yield break;
-        }
+        // IEnumerator WaitForInitialization(int page, int totalNumDragons)
+        // {
+        //     bool initialized = false;
+        //     while(!initialized)
+        //     {
+        //         bool isInitialized = true;
+        //         foreach(DragonCardMetadata card in dragonCards)
+        //         {
+        //             if(!card.Initialized)
+        //             {
+        //                 isInitialized = false;
+        //                 break;
+        //             }
+        //         }
+        //         initialized = isInitialized;
+        //         yield return waitForEndOfFrame;
+        //     }
+        //     Message.Send(new QueryMarketResponse(dragonCards, page, totalNumDragons));
+        //     yield break;
+        // }
         #endregion
     }
 

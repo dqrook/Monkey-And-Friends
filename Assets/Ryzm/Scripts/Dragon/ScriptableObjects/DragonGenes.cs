@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 namespace Ryzm.Dragon
 {
@@ -36,6 +37,14 @@ namespace Ryzm.Dragon
             }
             return GetGene(dragonGenes, genes);
         }
+        public DragonGene GetGeneBySequence(string sequence, GeneType type)
+        {
+            if(type == GeneType.Body)
+            {
+                return GetGene(bodyGenes, sequence);
+            }
+            return GetGene(dragonGenes, sequence);
+        }
 
         public DragonGene GetGeneBySequence(int[] genes, int[] hornTypeGenes)
         {
@@ -52,6 +61,116 @@ namespace Ryzm.Dragon
                 combinedGene.hasHalfStar = true;
             }
             return combinedGene;
+        }
+
+        public DragonColor GetDragonColor(string color)
+        {
+            foreach(DragonColor dragonColor in colors)
+            {
+                if(dragonColor.value == color)
+                {
+                    return dragonColor;
+                }
+            }
+            return colors[0];
+        }
+
+        public List<GeneProbability> GetGeneProbablities(int[] gene1, int[] gene2)
+        {
+            List<GeneProbability> geneProbabilities = new List<GeneProbability>();
+            int numGenes = gene1.Length;
+            for(int i = 0; i < numGenes; i++)
+            {
+                int curGene1 = gene1[i];
+                int curGene2 = gene2[i];
+                float domProbablity = 0;
+                float recProbablity = 0;
+                if(curGene1 == 2 || curGene2 == 2)
+                {
+                    domProbablity = 1;
+                }
+                else if(curGene1 == 0 && curGene2 == 0)
+                {
+                    recProbablity = 1;
+                }
+                else if(curGene1 == 1 && curGene2 == 1)
+                {
+                    domProbablity = 0.75f;
+                    recProbablity = 0.25f;
+                }
+                else
+                {
+                    domProbablity = 0.5f;
+                    recProbablity = 0.5f;
+                }
+                Debug.Log(domProbablity + " " + recProbablity + " " + curGene1 + " " + curGene2);
+                if(i > 0)
+                {
+                    List<GeneProbability> probs = new List<GeneProbability>();
+                    if(domProbablity > 0)
+                    {
+                        foreach(GeneProbability probability in geneProbabilities)
+                        {
+                            GeneProbability newProb = new GeneProbability();
+                            newProb.value = probability.value + "1";
+                            newProb.probablity = probability.probablity * domProbablity;
+                            probs.Add(newProb);
+                        }
+                    }
+                    if(recProbablity > 0)
+                    {
+                        foreach(GeneProbability probability in geneProbabilities)
+                        {
+                            GeneProbability newProb = new GeneProbability();
+                            newProb.value = probability.value + "0";
+                            newProb.probablity = probability.probablity * recProbablity;
+                            probs.Add(newProb);
+                        }
+                    }
+                    geneProbabilities = probs;
+                    // geneProbabilities = probs;
+                }
+                else
+                {
+                    if(domProbablity > 0)
+                    {
+                        GeneProbability domProb = new GeneProbability();
+                        domProb.value = "1";
+                        domProb.probablity = domProbablity;
+                        geneProbabilities.Add(domProb);
+                    }
+                    if(recProbablity > 0)
+                    {
+                        GeneProbability recProb = new GeneProbability();
+                        recProb.value = "0";
+                        recProb.probablity = recProbablity;
+                        geneProbabilities.Add(recProb);
+                    }
+                }
+            }
+
+            return geneProbabilities;
+        }
+
+        public List<GeneProbability> GetColorProbablities(string color1, string color2)
+        {
+            List<GeneProbability> probabilities = new List<GeneProbability>();
+            for(int i = 0; i < 2; i++)
+            {
+                GeneProbability colorProb = new GeneProbability();
+                if(i == 0)
+                {
+                    colorProb.value = color1;
+                }
+                else
+                {
+                    colorProb.value = color2;
+                }
+                colorProb.probablity = 0.5f;
+                probabilities.Add(colorProb);
+            }
+
+            return probabilities;
         }
         #endregion
 
@@ -108,6 +227,13 @@ namespace Ryzm.Dragon
     {
         public Sprite image;
         public string name;
+        public string value;
+    }
+
+    [System.Serializable]
+    public struct GeneProbability
+    {
+        public float probablity;
         public string value;
     }
 

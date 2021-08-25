@@ -17,6 +17,8 @@ namespace Ryzm.UI
         
         [Header("Header Row")]
         public GameObject arrowsPanel;
+        public GameObject forwardArrow;
+        public GameObject backwardArrow;
         public GameObject filterButton;
 
         #region Private Variables
@@ -48,7 +50,7 @@ namespace Ryzm.UI
                         Message.AddListener<DisplayDragonZoomRequest>(OnDisplayDragonZoomRequest);
                         Message.AddListener<DisplayDragonZoomResponse>(OnDisplayDragonZoomResponse);
                         Message.AddListener<FilterDragonZoomRequest>(OnFilterDragonZoomRequest);
-                        Message.AddListener<UpdateMarketFilters>(OnUpdateMarketFilters);
+                        Message.AddListener<UpdateDragonFilters>(OnUpdateDragonFilters);
                         Message.Send(new MoveCameraRequest(CameraTransformType.Market));
                         Message.Send(new QueryMarketRequest());
                         scrollViewGroup.alpha = 0;
@@ -64,7 +66,7 @@ namespace Ryzm.UI
                         Message.RemoveListener<DisplayDragonZoomRequest>(OnDisplayDragonZoomRequest);
                         Message.RemoveListener<DisplayDragonZoomResponse>(OnDisplayDragonZoomResponse);
                         Message.RemoveListener<FilterDragonZoomRequest>(OnFilterDragonZoomRequest);
-                        Message.RemoveListener<UpdateMarketFilters>(OnUpdateMarketFilters);
+                        Message.RemoveListener<UpdateDragonFilters>(OnUpdateDragonFilters);
                     }
                     base.IsActive = value;
                 }
@@ -75,9 +77,9 @@ namespace Ryzm.UI
         #region Listener Functions
         void OnQueryMarketResponse(QueryMarketResponse response)
         {
-            currentPage = response.page;
             totalNumDragons = response.totalNumDragons;
             numNewDragons = response.numNewDragons;
+            UpdateCurrentPage(currentPage);
 
             loadingPanel.enabled = false;
             // failedPanel.enabled = false;
@@ -118,7 +120,7 @@ namespace Ryzm.UI
             filterButton.SetActive(false);
         }
 
-        void OnUpdateMarketFilters(UpdateMarketFilters update)
+        void OnUpdateDragonFilters(UpdateDragonFilters update)
         {
             if(update.sendApiRequest)
             {
@@ -130,7 +132,10 @@ namespace Ryzm.UI
                 inZoom = false;
                 arrowsPanel.SetActive(true);
                 filterButton.SetActive(true);
-                // Message.Send(new QueryMarketRequest(currentFilters));
+                loadingPanel.enabled = true;
+                noDragonsPanel.SetActive(false);
+                UpdateCurrentPage(0);
+                Message.Send(new QueryMarketRequest(currentFilters));
             }
         }
 
@@ -149,7 +154,7 @@ namespace Ryzm.UI
                 Message.Send(new DisableDragonInfoPanel());
                 Message.Send(new ReturnToMarket());
                 Message.Send(new DisableDragonFilterPanel(true));
-                Message.Send(new UpdateMarketFilters(currentFilters));
+                Message.Send(new UpdateDragonFilters(currentFilters));
                 inZoom = false;
                 arrowsPanel.SetActive(true);
                 filterButton.SetActive(true);
@@ -166,12 +171,33 @@ namespace Ryzm.UI
             Message.Send(new FilterDragonZoomRequest());
             Message.Send(new EnableDragonFilterPanel());
         }
+
+        public void OnClickNexPage()
+        {
+            UpdateCurrentPage(currentPage + 1);
+            loadingPanel.enabled = true;
+            Message.Send(new QueryMarketRequest(currentPage));
+        }
+
+        public void OnClickPreviousPage()
+        {
+            UpdateCurrentPage(currentPage - 1);
+            loadingPanel.enabled = true;
+            Message.Send(new QueryMarketRequest(currentPage));
+        }
         #endregion
 
         #region Private Functions
+        void UpdateCurrentPage(int currentPage)
+        {
+            this.currentPage = currentPage;
+            forwardArrow.SetActive((currentPage + 1) * 10 < totalNumDragons);
+            backwardArrow.SetActive(currentPage > 0);
+        }
+
         void Reset()
         {
-            currentPage = 0;
+            UpdateCurrentPage(0);
             totalNumDragons = 0;
             inZoom = false;
             filtering = false;

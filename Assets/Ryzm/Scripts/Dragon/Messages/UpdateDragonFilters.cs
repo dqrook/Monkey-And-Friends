@@ -3,7 +3,7 @@ using CodeControl;
 
 namespace Ryzm.Dragon.Messages
 {
-    public class UpdateMarketFilters : Message
+    public class UpdateDragonFilters : Message
     {
         public MarketFilter[] marketFilters;
         public bool sendApiRequest;
@@ -21,12 +21,12 @@ namespace Ryzm.Dragon.Messages
             }
         }
 
-        public UpdateMarketFilters(List<MarketFilter> filters)
+        public UpdateDragonFilters(List<MarketFilter> filters)
         {
             CreateFilters(filters);
         }
 
-        public UpdateMarketFilters(List<MarketFilter> filters, bool sendApiRequest)
+        public UpdateDragonFilters(List<MarketFilter> filters, bool sendApiRequest)
         {
             CreateFilters(filters);
             this.sendApiRequest = sendApiRequest;

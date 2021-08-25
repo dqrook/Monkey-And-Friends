@@ -103,7 +103,7 @@ namespace Ryzm.UI
                     filters.Add(filter);
                 }
             }
-            Message.Send(new UpdateMarketFilters(filters, sendApiRequest));
+            Message.Send(new UpdateDragonFilters(filters, sendApiRequest));
         }
         #endregion
     }

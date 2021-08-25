@@ -6,24 +6,24 @@ using Ryzm.Dragon.Messages;
 
 namespace Ryzm.Dragon
 {
-    public class FilterDragon : MarketDragon
+    public class FilterDragon : CustomDragon
     {
         #region Event Functions
         protected override void Awake()
         {
             base.Awake();
             UpdateFilters(new MarketFilter[0]);
-            Message.AddListener<UpdateMarketFilters>(OnUpdateMarketFilters);
+            Message.AddListener<UpdateDragonFilters>(OnUpdateDragonFilters);
         }
         
         protected override void OnDestroy()
         {
-            Message.RemoveListener<UpdateMarketFilters>(OnUpdateMarketFilters);
+            Message.RemoveListener<UpdateDragonFilters>(OnUpdateDragonFilters);
         }
         #endregion
 
         #region Listener Functions
-        void OnUpdateMarketFilters(UpdateMarketFilters update)
+        void OnUpdateDragonFilters(UpdateDragonFilters update)
         {
             UpdateFilters(update.marketFilters);
         }

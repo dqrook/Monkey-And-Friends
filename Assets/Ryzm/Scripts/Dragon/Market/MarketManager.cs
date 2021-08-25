@@ -11,7 +11,7 @@ namespace Ryzm.Dragon
     public class MarketManager : MonoBehaviour
     {
         #region Public Variables
-        public List<MarketDragon> marketDragons = new List<MarketDragon>();
+        public List<CustomDragon> marketDragons = new List<CustomDragon>();
         public Envs envs;
         public Dictionary<int, MarketDragonData> allDragonsForSale = new Dictionary<int, MarketDragonData>();
         public Dictionary<int, BaseDragon> userDragonsForSale = new Dictionary<int, BaseDragon>();
@@ -48,7 +48,7 @@ namespace Ryzm.Dragon
             getMarketDragons = null;
             getMarketDragons = GetMarketDragons(true);
             StartCoroutine(getMarketDragons);
-            foreach(MarketDragon dragon in marketDragons)
+            foreach(CustomDragon dragon in marketDragons)
             {
                 if(dragon.gameObject.activeSelf)
                 {
@@ -143,7 +143,7 @@ namespace Ryzm.Dragon
             }
             else if(request.status == MarketStatus.Exit)
             {
-                foreach(MarketDragon dragon in marketDragons)
+                foreach(CustomDragon dragon in marketDragons)
                 {
                     dragon.EnableMaterials();
                     dragon.gameObject.SetActive(false);
