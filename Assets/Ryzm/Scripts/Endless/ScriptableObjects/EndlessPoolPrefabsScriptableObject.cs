@@ -12,5 +12,6 @@ namespace Ryzm.EndlessRunner
         public List<BarrierPrefab> barrierPrefabs = new List<BarrierPrefab>();
         public List<EnvironmentPrefab> environmentPrefabs = new List<EnvironmentPrefab>();
         public List<WallPrefab> wallPrefabs = new List<WallPrefab>();
+        public List<MonsterPrefab> monsterPrefabs = new List<MonsterPrefab>();
     }
 }

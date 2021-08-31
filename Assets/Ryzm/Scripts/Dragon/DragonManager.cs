@@ -350,6 +350,7 @@ namespace Ryzm.Dragon
                 initializingDragons = true;
                 foreach(DragonResponse dragonRes in response.dragons)
                 {
+                    Debug.Log(dragonRes.hornType);
                     GameObject go = GameObject.Instantiate(prefabs.GetPrefabByHornType(dragonRes.hornType).dragon);
                     BaseDragon dragon = go.GetComponent<BaseDragon>();
                     dragon.DisableMaterials();

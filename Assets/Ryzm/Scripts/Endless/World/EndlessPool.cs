@@ -18,18 +18,21 @@ namespace Ryzm.EndlessRunner
         List<PooledBarrier> pooledBarriers = new List<PooledBarrier>();
         List<PooledEnvironment> pooledEnvironments = new List<PooledEnvironment>();
         List<PooledWall> pooledWalls = new List<PooledWall>();
+        List<PooledMonster> pooledMonsters = new List<PooledMonster>();
 
         List<PooledSection> _possiblePooledSections = new List<PooledSection>();
         // contains only the barriers that an endless section could spawn
         List<PooledBarrier> _possiblePooledBarriers = new List<PooledBarrier>();
         List<PooledEnvironment> _possiblePooledEnvironments = new List<PooledEnvironment>();
         List<PooledWall> _possiblePooledWalls = new List<PooledWall>();
+        List<PooledMonster> _possiblePooledMonsters = new List<PooledMonster>();
 
         private static EndlessPool _instance;
         bool madeWorld;
         bool gotCurrentMap;
         IEnumerator _makeWorld;
         EndlessPoolPrefabsScriptableObject currentPrefab;
+        GameDifficulty difficulty = GameDifficulty.Easy;
         #endregion
 
         #region Properties
@@ -64,11 +67,20 @@ namespace Ryzm.EndlessRunner
                 return currentPrefab.wallPrefabs;
             }
         }
+
+        List<MonsterPrefab> MonsterPrefabs 
+        {
+            get
+            {
+                return currentPrefab.monsterPrefabs;
+            }
+        }
         #endregion
 
         #region Event Functions
         void Awake()
         {
+            currentPrefab = prefabs[0];
             if(_instance != null && _instance != this)
             {
                 Destroy(this.gameObject);
@@ -114,6 +126,7 @@ namespace Ryzm.EndlessRunner
                 pooledSections.Clear();
                 pooledEnvironments.Clear();
                 pooledWalls.Clear();
+                difficulty = GameDifficulty.Easy;
             }
         }
 
@@ -128,6 +141,11 @@ namespace Ryzm.EndlessRunner
                 }
             }
             gotCurrentMap = true;
+        }
+
+        void OnGameDifficultyResponse(GameDifficultyResponse response)
+        {
+            difficulty = response.difficulty;
         }
 
         #endregion
@@ -161,6 +179,11 @@ namespace Ryzm.EndlessRunner
         public GameObject GetSpecifiedWall(WallType type)
         {
             return GetRandom(pooledWalls, WallPrefabs, type);
+        }
+
+        public GameObject GetSpecifiedMonster(MonsterType type)
+        {
+            return GetRandom(pooledMonsters, MonsterPrefabs, type);
         }
         #endregion
 
@@ -367,6 +390,40 @@ namespace Ryzm.EndlessRunner
             }
             return null;
         }
+
+        GameObject GetRandom(List<PooledMonster> pooledMonsters, List<MonsterPrefab> _prefabs, MonsterType type)
+        {
+            _possiblePooledMonsters.Clear();
+            foreach(PooledMonster item in pooledMonsters)
+            {
+                if(item.type == type)
+                {
+                    _possiblePooledMonsters.Add(item);
+                }
+            }
+
+            EndlessUtils.Shuffle(_possiblePooledMonsters);
+            for(int i = 0; i < _possiblePooledMonsters.Count; i++)
+            {
+                if(!_possiblePooledMonsters[i].Monster.IsActive)
+                {
+                    return _possiblePooledMonsters[i].gameObject;
+                }
+            }
+            
+            foreach(MonsterPrefab item in _prefabs)
+            {
+                if(item.expandable && item.Type == type)
+                {
+                    GameObject obj = Instantiate(item.prefab);
+                    obj.SetActive(false);
+                    pooledMonsters.Add(new PooledMonster(obj, type));
+                    Debug.Log("creating monster");
+                    return obj;
+                }
+            }
+            return null;
+        }
         #endregion
 
         #region Coroutines
@@ -448,6 +505,18 @@ namespace Ryzm.EndlessRunner
     }
 
     [System.Serializable]
+    public class MonsterPrefab: ItemPrefab
+    {
+        public MonsterType Type
+        {
+            get
+            {
+                return prefab.GetComponent<EndlessMonster>().type;
+            }
+        }
+    }
+
+    [System.Serializable]
     public abstract class PooledItem 
     {
         public GameObject gameObject;
@@ -516,6 +585,26 @@ namespace Ryzm.EndlessRunner
         public WallType type;
 
         public PooledWall(GameObject gameObject, WallType type)
+        {
+            this.gameObject = gameObject;
+            this.type = type;
+        }
+    }
+
+    [System.Serializable]
+    public class PooledMonster: PooledItem
+    {
+        public MonsterType type;
+
+        public EndlessMonster Monster
+        {
+            get
+            {
+                return this.gameObject.GetComponent<EndlessMonster>();
+            }
+        }
+
+        public PooledMonster(GameObject gameObject, MonsterType type)
         {
             this.gameObject = gameObject;
             this.type = type;

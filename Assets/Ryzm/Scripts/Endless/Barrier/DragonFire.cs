@@ -46,6 +46,7 @@ namespace Ryzm.EndlessRunner
 
         void OnParticleCollision(GameObject other)
         {
+            Debug.Log("collision");
             if(type == FireType.Enemy)
             {
                 collisionTime += Time.deltaTime;
@@ -65,7 +66,7 @@ namespace Ryzm.EndlessRunner
                 EndlessMonster monster = other.GetComponent<EndlessMonster>();
                 if(monster != null)
                 {
-                    monster.Die();
+                    monster.TakeDamage();
                 }
             }
         }

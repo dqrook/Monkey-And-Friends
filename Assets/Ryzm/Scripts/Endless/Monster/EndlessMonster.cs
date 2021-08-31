@@ -6,69 +6,94 @@ using Ryzm.EndlessRunner.Messages;
 
 namespace Ryzm.EndlessRunner
 {
-    public abstract class EndlessMonster : EndlessScroller
+    public abstract class EndlessMonster : EndlessItem
     {
         #region Public Variables
+        public MonsterType type;
         public Renderer bodyRenderer;
+        public List<Renderer> renderers = new List<Renderer>();
         public Collider bodyCollider;
+        public List<Collider> colliders = new List<Collider>();
         public List<Material> materials = new List<Material>();
         #endregion
 
         #region Protected Variables
-        protected Animator anim;
+        protected Animator animator;
         protected Vector3 startPosition;
+        protected Transform trans;
+        protected bool _isActive;
         #endregion
+
+        public bool IsActive
+        {
+            get
+            {
+                return _isActive;
+            }
+            set
+            {
+                animator.enabled = value;
+                EnableCollider(value);
+            }
+        }
 
         #region Event Functions
         protected override void Awake()
         {
             base.Awake();
-            anim = GetComponent<Animator>();
-            startPosition = transform.localPosition;
+            animator = GetComponent<Animator>();
+            trans = transform;
+            startPosition = trans.localPosition;
         }
 
-        protected override void OnEnable()
+        protected virtual void OnEnable()
         {
-            base.OnEnable();
-            if(bodyRenderer != null)
+            if(materials.Count > 0)
             {
-                int materialIndex = -1;
-                if(materials.Count > 0)
+                int materialIndex = Random.Range(0, materials.Count);
+                if(bodyRenderer != null)
                 {
-                    materialIndex = Random.Range(0, materials.Count);
                     bodyRenderer.material = materials[materialIndex];
+                }
+                foreach(Renderer ren in renderers)
+                {
+                    ren.material = materials[materialIndex];
                 }
             }
         }
 
         protected override void Start() {}
 
-        protected override void OnDisable()
+        protected virtual void OnDisable()
         {
-            base.OnDisable();
             Reset();
         }
 
-        void OnCollisionEnter(Collision other)
+        protected virtual void OnCollisionEnter(Collision other)
         {
-            if(other.gameObject.GetComponent<EndlessController>())
+            if(LayerMask.LayerToName(other.GetContact(0).otherCollider.gameObject.layer) == "PlayerBody")
             {
                 Message.Send(new RunnerDie());
             }
         }
+
+        protected override void OnGameStatusResponse(GameStatusResponse gameStatusResponse)
+        {
+            gameStatus = gameStatusResponse.status;
+        }
         #endregion
 
         #region Public Functions
-        public void Reset()
+        public virtual void Reset()
         {
-            anim.SetBool("dead", false);
+            animator.SetBool("dead", false);
             EnableCollider(true);
             transform.localPosition = startPosition;
         }
 
-        public void Die()
+        public virtual void TakeDamage()
         {
-            anim.SetBool("dead", true);
+            animator.SetBool("dead", true);
             EnableCollider(false);
         }
         #endregion
@@ -76,8 +101,28 @@ namespace Ryzm.EndlessRunner
         #region Protected Functions
         protected virtual void EnableCollider(bool shouldEnable)
         {
-            bodyCollider.enabled = shouldEnable;
+            if(bodyCollider != null)
+            {
+                bodyCollider.enabled = shouldEnable;
+            }
+            foreach(Collider col in colliders)
+            {
+                col.enabled = shouldEnable;
+            }
         }
         #endregion
+    }
+
+    public enum MonsterType
+    {
+        Monafly,
+        Tregon,
+        Rabby,
+        Bombee,
+        Fawks,
+        Krake,
+        Draze,
+        DiveDraze,
+        SideDraze
     }
 }

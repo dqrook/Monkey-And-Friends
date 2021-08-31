@@ -43,30 +43,11 @@ namespace Ryzm.EndlessRunner
             childGO.SetActive(false);
         }
 
-        // protected virtual void FixedUpdate()
-        // {
-        //     if(!startedCoroutine)
-        //     {
-        //         if(gameStatus == GameStatus.Active && parentSection == _currentSection)
-        //         {
-        //             Transform location = parentSection.GetSpawnTransformForBarrier(type, runnerPosition);
-        //             if(location != null)
-        //             {
-        //                 gameObject.transform.position = location.position;
-        //                 gameObject.transform.rotation = location.rotation;
-        //             }
-        //             _flyToPosition = FlyToPosition();
-        //             StartCoroutine(_flyToPosition);
-        //         }
-        //     }
-        // }
-
         protected override void OnDisable()
         {
             _currentSection = null;
             animator.SetBool("fireBreath", false);
             startedCoroutine = false;
-            StopAllCoroutines();
             childTransform.localPosition = initialPosition;
             childTransform.localEulerAngles = initialEulerAngles;
             childGO.SetActive(false);

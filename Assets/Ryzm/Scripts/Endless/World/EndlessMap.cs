@@ -266,6 +266,6 @@ namespace Ryzm.EndlessRunner
     public enum MapType
     {
         Floating,
-        Rock
+        Water
     }
 }

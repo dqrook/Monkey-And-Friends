@@ -26,9 +26,9 @@ namespace Ryzm.EndlessRunner
         {
             if(gameStatusResponse.status == GameStatus.Restart)
             {
-                foreach(EndlessMonster rabby in monsters)
+                foreach(EndlessMonster monster in monsters)
                 {
-                    rabby.Reset();
+                    monster.Reset();
                 }
             }
             base.OnGameStatusResponse(gameStatusResponse);

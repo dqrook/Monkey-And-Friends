@@ -150,6 +150,11 @@ namespace CodeControl {
             }
 
             List<Delegate> messageHandlers = handlers[messageName];
+            // if(messageName == "Ryzm.EndlessRunner.Messages.CurrentSectionChange")
+            // {
+            //     UnityEngine.Debug.Log(messageName + " " + messageHandlers.Count);
+            // }
+            // UnityEngine.Debug.Log(messageName);
             foreach (Delegate messageHandler in messageHandlers) {
                 if (messageHandler.GetType() != typeof(Action<T>) && messageHandler.GetType() != typeof(Action)) { continue; }
 

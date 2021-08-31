@@ -19,6 +19,8 @@ namespace Ryzm.EndlessRunner
         public Transform nextSectionSpawn; 
         [Range(0, 1)]
         public float barrierLikelihood = 0.5f;
+        public BaseSectionPrefab baseSection;
+        public EndlessSectionCombinations combinations;
 
         [Header("Environment")]
         public List<GameObject> environments = new List<GameObject>();
@@ -36,6 +38,9 @@ namespace Ryzm.EndlessRunner
 
         #region Private Variables
         List<BarrierType> _possibleBarrierTypes = new List<BarrierType>();
+        GameDifficulty difficulty = GameDifficulty.Easy;
+        bool gettingDifficulty;
+        IEnumerator waitForDifficulty;
         #endregion
 
         #region Properties
@@ -57,11 +62,25 @@ namespace Ryzm.EndlessRunner
         #endregion
 
         #region Event Functions
+        protected override void Awake()
+        {
+            base.Awake();
+            Message.AddListener<GameDifficultyResponse>(OnGameDifficultyResponse);
+            Message.Send(new GameDifficultyRequest());
+        }
+
         protected override void OnEnable()
         {
             base.OnEnable();
-            // Debug.Log(gameObject.name + " activated");
-            if(environments.Count > 1 && CanPlaceEnvironment(environmentLikelihood))
+            // if(baseSection != null)
+            // {
+            //     baseSection.Deactivate();
+            // }
+            gettingDifficulty = true;
+            Message.Send(new GameDifficultyRequest());
+            waitForDifficulty = WaitForDifficulty();
+            StartCoroutine(waitForDifficulty);
+            if(environments.Count > 0 && CanPlaceEnvironment(environmentLikelihood))
             {
                 EndlessUtils.Shuffle(environments);
                 int i = 0;
@@ -73,7 +92,16 @@ namespace Ryzm.EndlessRunner
             }
         }
 
-        protected override void OnDisable() {}
+        protected override void OnDisable()
+        {
+            gettingDifficulty = false;
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            Message.RemoveListener<GameDifficultyResponse>(OnGameDifficultyResponse);
+        }
         #endregion
 
         #region Listener Functions
@@ -88,6 +116,12 @@ namespace Ryzm.EndlessRunner
             {
                 CancelDeactivation();
             }
+        }
+
+        void OnGameDifficultyResponse(GameDifficultyResponse response)
+        {
+            difficulty = response.difficulty;
+            gettingDifficulty = false;
         }
         #endregion
 
@@ -189,10 +223,24 @@ namespace Ryzm.EndlessRunner
         }
         #endregion
 
-        #region Protected Functions
-        protected bool CanPlaceEnvironment(float likelihood)
+        #region Private Functions
+        bool CanPlaceEnvironment(float likelihood)
         {
             return Random.Range(0, 1f) <= likelihood;
+        }
+        #endregion
+
+        #region Coroutines
+        IEnumerator WaitForDifficulty()
+        {
+            while(gettingDifficulty)
+            {
+                yield return null;
+            }
+            if(baseSection != null)
+            {
+                baseSection.Activate(difficulty);
+            }
         }
         #endregion
     }
@@ -276,6 +324,7 @@ namespace Ryzm.EndlessRunner
         WaterBridgeKrab,
         WaterKrake2,
         WaterStone,
-        WaterBeachPillar
+        WaterBeachPillar,
+        FloatingMonster1
     }
 }

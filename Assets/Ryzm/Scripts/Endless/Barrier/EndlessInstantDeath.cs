@@ -10,7 +10,7 @@ namespace Ryzm.EndlessRunner
     {
         protected void OnCollisionEnter(Collision other)
         {
-            if(other.gameObject.GetComponent<EndlessController>())
+            if(LayerMask.LayerToName(other.GetContact(0).otherCollider.gameObject.layer) == "PlayerBody")
             {
                 Message.Send(new RunnerDie());
             }

@@ -12,6 +12,7 @@ namespace Ryzm.EndlessRunner
     {
         #region Public Variables
         public GameStatus status = GameStatus.MainMenu;
+        public GameDifficulty difficulty = GameDifficulty.Easy;
         public float speed = 0.15f;
         #endregion
 
@@ -46,6 +47,7 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<ResumeGame>(OnResumeGame);
             Message.AddListener<RestartGame>(OnRestartGame);
             Message.AddListener<ExitGame>(OnExitGame);
+            Message.AddListener<GameDifficultyRequest>(OnGameDifficultyRequest);
             wait2Seconds = new WaitForSeconds(2);
             wait4Seconds = new WaitForSeconds(4);
         }
@@ -71,6 +73,7 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<ResumeGame>(OnResumeGame);
             Message.RemoveListener<RestartGame>(OnRestartGame);
             Message.RemoveListener<ExitGame>(OnExitGame);
+            Message.RemoveListener<GameDifficultyRequest>(OnGameDifficultyRequest);
         }
 
         void Update()
@@ -181,9 +184,9 @@ namespace Ryzm.EndlessRunner
             }
         }
 
-        void OnGameTypeResponse(GameTypeResponse response)
+        void OnGameDifficultyRequest(GameDifficultyRequest request)
         {
-
+            UpdateGameDifficulty(difficulty);
         }
         #endregion
 
@@ -207,6 +210,12 @@ namespace Ryzm.EndlessRunner
             Message.Send(new GameStatusResponse(status));
         }
 
+        void UpdateGameDifficulty(GameDifficulty difficulty)
+        {
+            this.difficulty = difficulty;
+            Message.Send(new GameDifficultyResponse(difficulty));
+        }
+
         void UpdateSpeed(float newSpeed)
         {
             this.speed = newSpeed;
@@ -217,6 +226,7 @@ namespace Ryzm.EndlessRunner
         {
             if(!isStartingGame)
             {
+                UpdateGameDifficulty(GameDifficulty.Easy);
                 isStartingGame = true;
                 if(fadeMenu != null)
                 {
@@ -335,5 +345,12 @@ namespace Ryzm.EndlessRunner
         CreatingMap,
         Exit,
         Temp
+    }
+
+    public enum GameDifficulty
+    {
+        Easy,
+        Medium,
+        Hard
     }
 }

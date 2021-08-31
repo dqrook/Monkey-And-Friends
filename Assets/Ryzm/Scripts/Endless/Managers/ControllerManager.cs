@@ -8,11 +8,14 @@ namespace Ryzm.EndlessRunner
 {
     public class ControllerManager : MonoBehaviour
     {
+        #region Public Variables
         public EndlessMonkey monkey;
         public EndlessDragon dragon;
         public ControllerMode mode = ControllerMode.Monkey;
         public List<DragonByHorn> dragons = new List<DragonByHorn>();
+        #endregion
 
+        #region Event Functions
         void Awake()
         {
             Message.AddListener<ControllerModeRequest>(OnControllerModeRequest);
@@ -26,7 +29,9 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<UpdateControllerMode>(OnUpdateControllerMode);
             Message.RemoveListener<ControllersRequest>(OnControllersRequest);
         }
+        #endregion
 
+        #region Listener Functions
         void OnControllerModeRequest(ControllerModeRequest request)
         {
             ShoutMode(mode);
@@ -51,6 +56,7 @@ namespace Ryzm.EndlessRunner
         {
             Message.Send(new ControllersResponse(monkey, dragon));
         }
+        #endregion
     }
 
 	public enum ControllerMode

@@ -9,6 +9,7 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessController : MonoBehaviour
     {
+        #region Public Variables
         public RuntimeAnimatorController animatorController;
         public float forwardSpeed = 10;
 		public Animator animator;
@@ -17,6 +18,8 @@ namespace Ryzm.EndlessRunner
         public float distanceToGround = 0.5f;
 		public LayerMask groundLayer;
         public Transform localCameraSpawn;
+        public List<Collider> bodyColliders = new List<Collider>();
+        #endregion
 
         #region Events
         public delegate void StartTouch(Vector2 position, float time);
@@ -25,6 +28,7 @@ namespace Ryzm.EndlessRunner
         public event EndTouch OnEndTouch;
         #endregion
 
+        #region Protected Variables
         protected Rigidbody rb;
 		protected Player playerInput;
 		protected Vector3 move;
@@ -47,8 +51,13 @@ namespace Ryzm.EndlessRunner
         protected bool inSlide;
         protected float maxShiftCooldown = 0.25f;
         protected RaycastHit hit;
-        Ray checkGround;
+        #endregion
 
+        #region Private Variables
+        Ray checkGround;
+        #endregion
+
+        #region Properties
         public int CurrentPosition
         {
             get
@@ -87,7 +96,9 @@ namespace Ryzm.EndlessRunner
                 animator.SetInteger("state", state);
             }
         }
+        #endregion
         
+        #region Event Functions
 		protected virtual void Awake()
 		{
             trans = GetComponent<Transform> ();
@@ -112,6 +123,7 @@ namespace Ryzm.EndlessRunner
 
             mainCamera = Camera.main;
             State = 0;
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
             // playerInput.Touch.PrimaryContact.started += (ctx) => StartTouchPrimary(ctx);
             // playerInput.Touch.PrimaryContact.canceled += (ctx) => EndTouchPrimary(ctx);
 		}
@@ -168,7 +180,9 @@ namespace Ryzm.EndlessRunner
             // Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
             // Message.RemoveListener<ControllerModeResponse>(OnControllerModeResponse);
         }
+        #endregion
 
+        #region Listener Functions
         protected virtual void OnCurrentSectionChange(CurrentSectionChange change)
         {
             turned = false;
@@ -198,32 +212,9 @@ namespace Ryzm.EndlessRunner
 		}
 
         protected virtual void OnRunnerDistanceRequest(RunnerDistanceRequest request) {}
+        #endregion
 
-		protected bool IsAttacking()
-        {
-			return playerInput.PlayerMain.Attack.WasPressedThisFrame();
-        }
-
-        protected bool IsShifting(Direction direction)
-        {
-            if(direction == Direction.Left)
-            {
-                return playerInput.Endless.ShiftLeft.WasPressedThisFrame();
-            }
-            if(direction == Direction.Right)
-            {
-                return playerInput.Endless.ShiftRight.WasPressedThisFrame();
-            }
-            return false;
-        }
-
-        protected bool IsGrounded()
-        {
-            checkGround = new Ray(rootTransform.position, Vector3.down);
-            bool grounded = Physics.Raycast(checkGround, out hit, distanceToGround, groundLayer);
-            return grounded;
-        }
-
+        #region Public Variables
         public virtual void Shift(Direction direction)
         {
             if(!inShift && !InJump && !inSlide)
@@ -244,7 +235,78 @@ namespace Ryzm.EndlessRunner
             shift = _Shift(pos, type);
             StartCoroutine(shift);
         }
+
+        public void FinishShift()
+        {
+            inShift = false;
+            // float diff = Time.time - shiftTime;
+            // Debug.Log("shift finished " + diff);
+        }
+
+        public virtual void Attack() {}
+
+		public virtual void Jump() {}
+
+		public virtual void Slide() {}
+
+        public virtual void Die() {}
+        #endregion
+
+        #region Protected Functions
+        protected bool IsGrounded()
+        {
+            checkGround = new Ray(rootTransform.position, Vector3.down);
+            bool grounded = Physics.Raycast(checkGround, out hit, distanceToGround, groundLayer);
+            return grounded;
+        }
+
+        protected float GetShiftDistance(Transform target, ShiftDistanceType type = ShiftDistanceType.x)
+        {
+            return type == ShiftDistanceType.x ? target.InverseTransformPoint(trans.position).x : target.InverseTransformPoint(trans.position).z;
+        }
+
+		protected bool IsAttacking()
+        {
+			return playerInput.PlayerMain.Attack.WasPressedThisFrame();
+        }
+
+        protected bool IsShifting(Direction direction)
+        {
+            if(direction == Direction.Left)
+            {
+                return playerInput.Endless.ShiftLeft.WasPressedThisFrame();
+            }
+            if(direction == Direction.Right)
+            {
+                return playerInput.Endless.ShiftRight.WasPressedThisFrame();
+            }
+            return false;
+        }
+
+        protected virtual void Reset()
+        {
+            Debug.Log("reset this beeeotch");
+            StopAllCoroutines();
+            turned = false;
+            // state = 0;
+            // animator.SetInteger("state", state);
+            State = 0;
+            InJump = false;
+            inShift = false;
+            inSlide = false;
+            distanceTraveled = 0;
+            CurrentPosition = 1;
+            shiftSpeed = 0;
+            rb.isKinematic = true;
+            rb.isKinematic = false;
+            _endlessSection = null;
+            _endlessTSection = null;
+            _endlessTurnSection = null;
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
+        }
+        #endregion
         
+        #region Coroutines
         protected IEnumerator _Shift(Transform target, ShiftDistanceType type = ShiftDistanceType.x)
         {
             inShift = true;
@@ -283,46 +345,6 @@ namespace Ryzm.EndlessRunner
             inShift = false;
             yield break;
         }
-
-        public void FinishShift()
-        {
-            inShift = false;
-            // float diff = Time.time - shiftTime;
-            // Debug.Log("shift finished " + diff);
-        }
-
-        protected float GetShiftDistance(Transform target, ShiftDistanceType type = ShiftDistanceType.x)
-        {
-            return type == ShiftDistanceType.x ? target.InverseTransformPoint(trans.position).x : target.InverseTransformPoint(trans.position).z;
-        }
-
-        public virtual void Attack() {}
-
-		public virtual void Jump() {}
-
-		public virtual void Slide() {}
-
-        public virtual void Die() {}
-
-        protected virtual void Reset()
-        {
-            Debug.Log("reset this beeeotch");
-            StopAllCoroutines();
-            turned = false;
-            // state = 0;
-            // animator.SetInteger("state", state);
-            State = 0;
-            InJump = false;
-            inShift = false;
-            inSlide = false;
-            distanceTraveled = 0;
-            CurrentPosition = 1;
-            shiftSpeed = 0;
-            rb.isKinematic = true;
-            rb.isKinematic = false;
-            _endlessSection = null;
-            _endlessTSection = null;
-            _endlessTurnSection = null;
-        }
+        #endregion
     }
 }
