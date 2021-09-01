@@ -91,6 +91,7 @@ namespace Ryzm.EndlessRunner
         public override void Reset()
         {
             base.Reset();
+            Debug.Log("resetting");
             startedDisable = false;
             childTransform.localPosition = initialPosition;
             childTransform.localEulerAngles = initialEulerAngles;

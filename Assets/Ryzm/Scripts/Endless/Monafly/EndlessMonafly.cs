@@ -10,12 +10,11 @@ namespace Ryzm.EndlessRunner
     public class EndlessMonafly : EndlessWaitingMonster
     {
         #region Public Variables
-        public MonaflyType monaflyType;
-        public float forwardSpeed = 10;
         public ParticlesContainer particlesContainer;
         #endregion
 
         #region Private Variables
+        float forwardSpeed = 7;
         IEnumerator forwardAttack;
         IEnumerator stationarySpecial;
         float firePauseRate = 1;
@@ -59,16 +58,12 @@ namespace Ryzm.EndlessRunner
             if(!startedAttack)
             {
                 startedAttack = true;
-                if(monaflyType == MonaflyType.StationaryAttack)
-                {
-                    SetIsAttacking(true);
-                }
-                else if(monaflyType == MonaflyType.ForwardAttack)
+                if(type == MonsterType.PhysicalMonafly)
                 {
                     forwardAttack = ForwardAttack();
                     StartCoroutine(forwardAttack);
                 }
-                else if(monaflyType == MonaflyType.StationarySpecial && particlesContainer != null)
+                else if(type == MonsterType.SpecialMonafly && particlesContainer != null)
                 {
                     stationarySpecial = StationarySpecial();
                     StartCoroutine(stationarySpecial);
@@ -103,6 +98,7 @@ namespace Ryzm.EndlessRunner
 
         IEnumerator ForwardAttack()
         {
+            Debug.Log(forwardSpeed);
             SetIsMoving(true);
             float zMove = Time.deltaTime * forwardSpeed;
             while(currentDistance > -10)
@@ -121,24 +117,19 @@ namespace Ryzm.EndlessRunner
             while(true)
             {
                 float t = 0;
-                particlesContainer.EnableParticle();
+                bool hasParticle = particlesContainer.EnableParticle();
                 while(t < particlesContainer.ExpansionTime)
                 {
                     t += Time.deltaTime;
                     yield return null;
                 }
-                SetSpecial();
+                if(hasParticle)
+                {
+                    SetSpecial();
+                }
                 yield return firePause;
-                yield return null;
             }
         }
         #endregion
-    }
-
-    public enum MonaflyType
-    {
-        StationaryAttack,
-        ForwardAttack,
-        StationarySpecial
     }
 }

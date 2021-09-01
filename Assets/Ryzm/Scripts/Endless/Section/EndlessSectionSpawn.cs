@@ -6,49 +6,42 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessSectionSpawn : MonoBehaviour
     {
+        #region Public Variables
         public int difficultyPoints;
-        public List<EndlessMonsterSpawn> spawns = new List<EndlessMonsterSpawn>();
-
-        void OnDisable()
-        {
-            Deactivate();
-        }
-
-        public void Activate()
-        {
-            foreach(EndlessMonsterSpawn spawn in spawns)
-            {
-                GameObject monsterObj = EndlessPool.Instance.GetSpecifiedMonster(spawn.monsterType);
-                if(monsterObj != null)
-                {
-                    monsterObj.transform.position = spawn.spawn.position;
-                    monsterObj.transform.rotation = spawn.spawn.rotation;
-                    EndlessMonster monster = monsterObj.GetComponent<EndlessMonster>();
-                    spawn.monster = monster;
-                    monster.IsActive = true;
-                }
-            }
-        }
-
-        public void Deactivate()
-        {
-            foreach(EndlessMonsterSpawn spawn in spawns)
-            {
-                if(spawn.monster != null)
-                {
-                    spawn.monster.IsActive = false;
-                    spawn.monster = null;
-                }
-            }
-        }
-    }
-
-    [System.Serializable]
-    public class EndlessMonsterSpawn
-    {
-        public Transform spawn;
         public MonsterType monsterType;
-        [HideInInspector]
-        public EndlessMonster monster;
+        public SpawnPosition spawnPosition;
+        public List<AddOnSpawn> addOnSpawns = new List<AddOnSpawn>();
+        #endregion
+
+        #region Public Functions
+        public AddOnSpawn GetAddOnSpawn()
+        {
+            int numAddOnSpawns = addOnSpawns.Count;
+            if(numAddOnSpawns == 0)
+            {
+                return new AddOnSpawn();
+            }
+            return addOnSpawns[Random.Range(0, numAddOnSpawns)];
+        }
+
+        public AddOnSpawn GetAddOnSpawn(AddOnSpawnType spawnType)
+        {
+            foreach(AddOnSpawn spawn in addOnSpawns)
+            {
+                if(spawn.type == spawnType)
+                {
+                    return spawn;
+                }
+            }
+            return new AddOnSpawn();
+        }
+        #endregion
+    }
+    
+    public enum SpawnPosition
+    {
+        Left,
+        Middle,
+        Right
     }
 }

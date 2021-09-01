@@ -46,7 +46,6 @@ namespace Ryzm.EndlessRunner
 
         void OnParticleCollision(GameObject other)
         {
-            Debug.Log("collision");
             if(type == FireType.Enemy)
             {
                 collisionTime += Time.deltaTime;

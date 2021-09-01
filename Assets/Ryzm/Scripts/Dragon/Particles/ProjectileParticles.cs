@@ -1,34 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ryzm.EndlessRunner;
-using Ryzm.EndlessRunner.Messages;
-using CodeControl;
 
 namespace Ryzm.Dragon
 {
-    public class ProjectileParticles : CustomParticles
+    public class ProjectileParticles : TriggerParticles
     {
         #region Public Variables
         public float speed;
-        public HitParticles hitParticles;
         #endregion
 
         #region Private Variables
         IEnumerator expandAndFire;
-        bool hasHit;
-        #endregion
-        
-        #region Event Functions
-        protected override void OnTriggerEnter(Collider other)
-        {
-            CheckHit(other);
-        }
-
-        protected override void OnTriggerStay(Collider other)
-        {
-            CheckHit(other);
-        }
+        Vector3 startPosition;
         #endregion
 
         #region Public Variables
@@ -36,60 +20,23 @@ namespace Ryzm.Dragon
         {
             trans.localScale = Vector3.zero;
             ResetLocalPosition();
-            hasHit = false;
             base.Enable();
             expandAndFire = ExpandAndFire();
             StartCoroutine(expandAndFire);
+            startPosition = trans.position;
         }
 
         public override void Disable()
         {
             base.Disable();
-            StopAllCoroutines();
             ResetLocalPosition();
-            hasHit = false;
+            trans.localScale = Vector3.zero;
             if(hitParticles != null)
             {
                 hitParticles.Disable();
             }
         }
         #endregion
-
-        void CheckHit(Collider other)
-        {
-            if(!hasHit)
-            {
-                bool checkUser = target == ParticleTarget.User || target == ParticleTarget.Any;
-                bool checkEnemy = target == ParticleTarget.Enemy || target == ParticleTarget.Any;
-                Debug.Log(LayerMask.LayerToName(other.gameObject.layer));
-                if(checkUser)
-                {
-                    if(LayerMask.LayerToName(other.gameObject.layer) == "PlayerBody")
-                    {
-                        Message.Send(new RunnerDie());
-                        hasHit = true;
-                    }
-                }
-
-                if(checkEnemy)
-                {
-                    EndlessMonster monster = other.gameObject.GetComponent<EndlessMonster>();
-                    if(monster != null)
-                    {
-                        monster.TakeDamage();
-                        hasHit = true;
-                    }
-                }
-
-                if(hasHit && hitParticles != null)
-                {
-                    hitParticles.Enable();
-                    PlayParticles(false);
-                    isEnabled = false;
-                    StopAllCoroutines();
-                }
-            }
-        }
 
         #region Coroutines
         IEnumerator ExpandAndFire()
@@ -104,12 +51,17 @@ namespace Ryzm.Dragon
             }
             trans.localScale = startLocalScale;
             trans.parent = null;
-            while(true)
+            Vector3 currentPosition = trans.position;
+            float diff = Vector3.Distance(currentPosition, startPosition);
+            while(diff < 20)
             {
                 move.z = Time.deltaTime * speed;
                 trans.Translate(move);
+                currentPosition = trans.position;
+                diff = Vector3.Distance(currentPosition, startPosition);
                 yield return null;
             }
+            Disable();
         }
         #endregion
     }

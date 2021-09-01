@@ -95,6 +95,10 @@ namespace Ryzm.EndlessRunner
         protected override void OnDisable()
         {
             gettingDifficulty = false;
+            if(baseSection != null)
+            {
+                baseSection.Deactivate();
+            }
         }
 
         protected override void OnDestroy()
@@ -325,6 +329,7 @@ namespace Ryzm.EndlessRunner
         WaterKrake2,
         WaterStone,
         WaterBeachPillar,
-        FloatingMonster1
+        FloatingMonster1,
+        FloatingMonster2
     }
 }

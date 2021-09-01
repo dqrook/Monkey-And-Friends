@@ -102,6 +102,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1997747314223144807}
   - component: {fileID: 2077846236722657984}
+  - component: {fileID: 5977778259551235573}
   m_Layer: 10
   m_Name: center
   m_TagString: Untagged
@@ -138,6 +139,19 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.2
   m_Center: {x: 0, y: 0.16, z: -0.02}
+--- !u!114 &5977778259551235573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1997747314223301447}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bbbb01ea4a2646f99efe251ace9e27b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  monster: {fileID: 1997747314223301467}
 --- !u!1 &1997747314223301449
 GameObject:
   m_ObjectHideFlags: 0
@@ -485,8 +499,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7518853f4e9047d5a7975dcf4423cac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 0
   bodyRenderer: {fileID: 1997747314228579911}
+  renderers: []
   bodyCollider: {fileID: 2077846236722657984}
+  colliders: []
   materials:
   - {fileID: 2100000, guid: f31ff426fcf76264e8b0833cb7a17d79, type: 2}
   - {fileID: 2100000, guid: 0a151553bbc202c44b9da5e4ce8e0219, type: 2}

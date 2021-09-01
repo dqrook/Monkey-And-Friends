@@ -6,7 +6,7 @@ using Ryzm.EndlessRunner.Messages;
 
 namespace Ryzm.EndlessRunner
 {
-    public abstract class EndlessMonster : EndlessItem
+    public abstract class EndlessMonster : MonsterBase
     {
         #region Public Variables
         public MonsterType type;
@@ -22,6 +22,7 @@ namespace Ryzm.EndlessRunner
         protected Vector3 startPosition;
         protected Transform trans;
         protected bool _isActive;
+        protected GameStatus gameStatus;
         #endregion
 
         public bool IsActive
@@ -38,9 +39,9 @@ namespace Ryzm.EndlessRunner
         }
 
         #region Event Functions
-        protected override void Awake()
+        protected virtual void Awake()
         {
-            base.Awake();
+            Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
             animator = GetComponent<Animator>();
             trans = transform;
             startPosition = trans.localPosition;
@@ -48,6 +49,7 @@ namespace Ryzm.EndlessRunner
 
         protected virtual void OnEnable()
         {
+            Message.Send(new GameStatusRequest());
             if(materials.Count > 0)
             {
                 int materialIndex = Random.Range(0, materials.Count);
@@ -62,11 +64,14 @@ namespace Ryzm.EndlessRunner
             }
         }
 
-        protected override void Start() {}
-
         protected virtual void OnDisable()
         {
             Reset();
+        }
+
+        protected virtual void OnDestroy()
+        {
+            Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
         }
 
         protected virtual void OnCollisionEnter(Collision other)
@@ -77,7 +82,7 @@ namespace Ryzm.EndlessRunner
             }
         }
 
-        protected override void OnGameStatusResponse(GameStatusResponse gameStatusResponse)
+        protected virtual void OnGameStatusResponse(GameStatusResponse gameStatusResponse)
         {
             gameStatus = gameStatusResponse.status;
         }
@@ -91,7 +96,7 @@ namespace Ryzm.EndlessRunner
             transform.localPosition = startPosition;
         }
 
-        public virtual void TakeDamage()
+        public override void TakeDamage()
         {
             animator.SetBool("dead", true);
             EnableCollider(false);
@@ -115,7 +120,7 @@ namespace Ryzm.EndlessRunner
 
     public enum MonsterType
     {
-        Monafly,
+        SpecialMonafly,
         Tregon,
         Rabby,
         Bombee,
@@ -123,6 +128,8 @@ namespace Ryzm.EndlessRunner
         Krake,
         Draze,
         DiveDraze,
-        SideDraze
+        SideDraze,
+        PhysicalMonafly,
+        None
     }
 }

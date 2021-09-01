@@ -8,7 +8,7 @@ namespace Ryzm.Dragon
     public class DragonTailSlap : CustomParticles
     {
         #region Public Variables
-        public DragonExplosion explosion;
+        public ExplosionParticles explosion;
         public float shrinkTime = 0.5f;
         #endregion
 
@@ -86,6 +86,7 @@ namespace Ryzm.Dragon
                 t += Time.deltaTime;
                 yield return null;
             }
+            explosion.Disable(shrinkTime);
             t = 0;
             Vector3 s = trans.localScale;
             while(t < shrinkTime)
@@ -97,7 +98,6 @@ namespace Ryzm.Dragon
             }
             explosionEnabled = false;
             trans.localScale = Vector3.zero;
-            explosion.Disable();
             explosionTrans.parent = trans.parent;
             explosionTrans.localPosition = trans.localPosition;
             explosionTrans.localRotation = trans.localRotation;

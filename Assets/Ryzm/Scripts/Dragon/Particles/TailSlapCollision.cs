@@ -10,7 +10,7 @@ namespace Ryzm.Dragon
         public DragonTailSlap tailSlap;
         protected override void OnParticleCollision(GameObject other)
         {
-            Debug.Log("particle collision");
+            Debug.Log("particle collision " + other.gameObject.name);
             EndlessMonster monster = other.GetComponent<EndlessMonster>();
             if(monster != null)
             {

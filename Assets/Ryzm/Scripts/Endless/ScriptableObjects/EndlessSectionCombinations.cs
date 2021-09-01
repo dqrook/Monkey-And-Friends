@@ -37,7 +37,7 @@ namespace Ryzm.EndlessRunner
             combinationsGroups = combinationsGroups.OrderBy(x => x.difficulty).ToList();
         }
 
-        public SectionCombination GetCombinationGroupByDifficulty(GameDifficulty difficulty)
+        public SectionCombination GetSectionCombinationByDifficulty(GameDifficulty difficulty)
         {
             int minValue = 16;
             int maxValue = 1000;

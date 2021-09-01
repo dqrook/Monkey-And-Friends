@@ -102,17 +102,6 @@ namespace Ryzm.EndlessRunner
         void OnStartingGame(StartingGame starting)
         {
             FadeMenu();
-            // if(!isStartingGame)
-            // {
-            //     isStartingGame = true;
-            //     if(fadeMenu != null)
-            //     {
-            //         StopCoroutine(fadeMenu);
-            //         fadeMenu = null;
-            //     }
-            //     fadeMenu = _FadeMenu();
-            //     StartCoroutine(fadeMenu);
-            // }
         }
 
         void OnStartGame(StartGame start)
@@ -132,6 +121,7 @@ namespace Ryzm.EndlessRunner
         void OnResumeGame(ResumeGame resume)
         {
             UpdateGameStatus(GameStatus.Active);
+            StartCoroutine(ForceSetActive());
         }
 
         void OnRunnerDie(RunnerDie runnerDie)
@@ -249,6 +239,16 @@ namespace Ryzm.EndlessRunner
         #endregion
 
         #region Coroutines
+        IEnumerator ForceSetActive()
+        {
+            float t = 0;
+            while(t < 0.5f)
+            {
+                t += Time.deltaTime;
+                yield return null;
+            }
+            UpdateGameStatus(GameStatus.Active);
+        }
         IEnumerator _FadeMenu(bool restarting)
         {
             float timer = 0;

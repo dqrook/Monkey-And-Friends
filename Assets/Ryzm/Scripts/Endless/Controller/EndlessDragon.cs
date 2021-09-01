@@ -40,7 +40,7 @@ namespace Ryzm.EndlessRunner
         IEnumerator flyToPosition;
         IEnumerator fireBreath;
         IEnumerator getDragonTexture;
-        bool isAttacking;
+        bool isBreathingFire;
         bool _isFlying;
         bool flyingInitialized;
         float elevation = 2f;
@@ -52,6 +52,7 @@ namespace Ryzm.EndlessRunner
         bool canFly;
         IEnumerator tailSlap;
         IEnumerator simulateTailSlap;
+        IEnumerator finishShiftThenTailSlap;
         float _speedMultiplier;
         Vector3 prevPosition;
         Vector3 currentPosition;
@@ -167,7 +168,7 @@ namespace Ryzm.EndlessRunner
             {
                 if(LayerMask.LayerToName(col.GetContact(0).thisCollider.gameObject.layer) == "PlayerAttack")
                 {
-                    EndlessMonster monster = col.gameObject.GetComponent<EndlessMonster>();
+                    MonsterBase monster = col.gameObject.GetComponent<MonsterBase>();
                     if(monster != null)
                     {
                         monster.TakeDamage();
@@ -254,26 +255,31 @@ namespace Ryzm.EndlessRunner
 
         public override void Attack()
         {
-            if(!isAttacking && !isHeadbutting && !isTailSlapping)
+            if(!isBreathingFire && !isHeadbutting && !isTailSlapping)
             {
                 float absDiff = Mathf.Abs(trans.position.y - baselineY);
                 if(absDiff > 0.25f && InJump) // high enough above ground to do ground pound move
                 {
-                    if(flyUp != null)
-                    {
-                        StopCoroutine(flyUp);
-                        flyUp = null;
-                    }
-                    tailSlap = _TailSlap();
-                    StartCoroutine(tailSlap);
+                    // if(flyUp != null)
+                    // {
+                    //     StopCoroutine(flyUp);
+                    //     flyUp = null;
+                    // }
+                    // tailSlap = _TailSlap();
+                    // StartCoroutine(tailSlap);
+                    finishShiftThenTailSlap = FinishShiftAndTailSlap();
+                    StartCoroutine(finishShiftThenTailSlap);
                 }
-                else if(fire != null)
+                else 
                 {
                     headbutt = _Headbutt(false);
                     StartCoroutine(headbutt);
-                    // fireBreath = FireBreath();
-                    // StartCoroutine(fireBreath);
                 }
+                // else if(fire != null)
+                // {
+                //     fireBreath = FireBreath();
+                //     StartCoroutine(fireBreath);
+                // }
             }
         }
 
@@ -380,7 +386,7 @@ namespace Ryzm.EndlessRunner
             SetHeadbutt(false);
             isHeadbutting = false;
             isTailSlapping = false;
-            isAttacking = false;
+            isBreathingFire = false;
             if(InJump)
             {
                 // if(isFlyingUp)
@@ -499,7 +505,7 @@ namespace Ryzm.EndlessRunner
         #region Coroutines
         IEnumerator FireBreath()
         {
-            isAttacking = true;
+            isBreathingFire = true;
             animator.SetBool("fireBreath", true);
             fire.Play();
             float fbTime = 1f;
@@ -509,7 +515,7 @@ namespace Ryzm.EndlessRunner
                 time += Time.deltaTime;
                 yield return null;
             }
-            isAttacking = false;
+            isBreathingFire = false;
             animator.SetBool("fireBreath", false);
             fire.Stop();
             yield break;
@@ -532,8 +538,30 @@ namespace Ryzm.EndlessRunner
             yield break;
         }
 
+        IEnumerator PlaceGameObjs()
+        {
+            Vector3 currentPosition = transform.position;
+            Vector3 previousPosition = transform.position;
+            GameObject go = new GameObject();
+            go.transform.position = currentPosition;
+            while(true)
+            {
+                currentPosition = transform.position;
+                // float diff = Vector3.Distance(currentPosition, previousPosition);
+                float diff = Mathf.Abs(currentPosition.z - previousPosition.z);
+                if(diff > 0.25f)
+                {
+                    previousPosition = currentPosition;
+                    go = new GameObject();
+                    go.transform.position = currentPosition;
+                }
+                yield return null;
+            }
+        }
+
         IEnumerator FlyUp(float initY)
         {
+            // StartCoroutine(PlaceGameObjs());
             canFly = false;
             SetWingTrailEffect(true);
             animator.SetBool("flyDown", false);
@@ -543,20 +571,30 @@ namespace Ryzm.EndlessRunner
             float currentY = trans.position.y;
             float absDiff = Mathf.Abs(currentY - baselineY);
             float multiplier = 2 * (elevation - absDiff);
-            while(multiplier > 0.1f)
+            while(multiplier > 0.01f)
             {
                 currentY = trans.position.y;
                 absDiff = Mathf.Abs(currentY - baselineY);
                 multiplier = 2 * (elevation - absDiff);
                 multiplier = multiplier > 1 ? 1 : multiplier;
+                multiplier = multiplier > 0 ? multiplier : 0;
                 Move(flyUpSpeed * multiplier * Time.deltaTime);
                 yield return null;
             }
-            // animator.SetTrigger("flyDown");
+            float glideTime = 2 * Time.deltaTime;
+            float t = 0;
+            float intervals = 2;
+            while(t < intervals)
+            {
+                t += 1;
+                Move(0);
+                yield return null;
+            }
+            
             animator.SetBool("flyDown", true);
             animator.SetBool("flyUp", false);
-            float timeMultiplier = 0.1f;
-            while(absDiff > 0.25f)
+            float timeMultiplier = 0.6f;
+            while(absDiff > 0.2f && currentY > baselineY)
             {
                 timeMultiplier += Time.deltaTime;
                 timeMultiplier = timeMultiplier < 1 ? timeMultiplier : 1;
@@ -691,6 +729,27 @@ namespace Ryzm.EndlessRunner
             InJump = false;
             isTailSlapping = false;
             SetBodyColliders(true);
+        }
+
+        IEnumerator FinishShiftAndTailSlap()
+        {
+            if(flyUp != null)
+            {
+                StopCoroutine(flyUp);
+                flyUp = null;
+            }
+            float t = 0;
+            float maxT = 0.5f;
+            while(inShift)
+            {
+                t += Time.deltaTime;
+                float multiplier = 1 - t / maxT;
+                multiplier = multiplier > 0 ? multiplier : 0;
+                Move(0, multiplier);
+                yield return null;
+            }
+            tailSlap = _TailSlap();
+            StartCoroutine(tailSlap);
         }
 
         IEnumerator SimulateTailSlap()

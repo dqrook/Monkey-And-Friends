@@ -38,7 +38,7 @@ namespace Ryzm.Dragon
         #endregion
 
         #region Public Functions
-        public void EnableParticle()
+        public bool EnableParticle()
         {
             int activeParticles = 0;
             CustomParticles currentParticle = null;
@@ -60,13 +60,16 @@ namespace Ryzm.Dragon
                 if(currentParticle == null)
                 {
                     currentParticle = Instantiate(particlesPrefab.gameObject, trans).GetComponent<CustomParticles>();
+                    currentParticle.transform.parent = trans;
                     currentParticle.transform.localPosition = Vector3.zero;
                     currentParticle.transform.localEulerAngles = Vector3.zero;
                     customParticles.Add(currentParticle);
                 }
 
                 currentParticle.Enable();
+                return true;
             }
+            return false;
         }
 
         public void DisableParticles()
