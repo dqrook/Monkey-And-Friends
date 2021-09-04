@@ -28,6 +28,7 @@ namespace Ryzm.EndlessRunner
             bool openedMouth = false;
             bool startedFire = false;
             float diff = childTransform.localPosition.sqrMagnitude;
+            Vector3 targetEuler = new Vector3(0, childTransform.localEulerAngles.y, 0);
             float fireTime = 0;
             while(diff > 0.01f)
             {
@@ -46,12 +47,12 @@ namespace Ryzm.EndlessRunner
                     }
                 }
                 childTransform.localPosition = Vector3.Lerp(childTransform.localPosition, Vector3.zero, Time.deltaTime * dropSpeed);
-                childTransform.localEulerAngles = Vector3.Lerp(childTransform.localEulerAngles, Vector3.zero, Time.deltaTime * dropSpeed);
+                childTransform.localEulerAngles = Vector3.Lerp(childTransform.localEulerAngles, targetEuler, Time.deltaTime * dropSpeed);
                 diff = childTransform.localPosition.sqrMagnitude;
                 yield return null;
             }
             childTransform.localPosition = Vector3.zero;
-            childTransform.localEulerAngles = Vector3.zero;
+            childTransform.localEulerAngles = targetEuler;
             
             if(!openedMouth)
             {

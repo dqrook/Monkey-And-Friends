@@ -9,6 +9,7 @@ namespace Ryzm.Dragon
         #region Public Variables
         public Transform colliderTransform;
         public Collider explosionCollider;
+        public float scale = 2;
         #endregion
 
         #region Private Variables
@@ -30,6 +31,7 @@ namespace Ryzm.Dragon
         #region Public Functions
         public override void Enable()
         {
+            ResetTransform();
             base.Enable();
             trans.parent = null;
             trans.rotation = Quaternion.identity;
@@ -57,6 +59,23 @@ namespace Ryzm.Dragon
         }
         #endregion
 
+        protected override void PlayParticles(bool shouldPlay)
+        {
+            foreach(ParticleSystem system in particleSystems)
+            {
+                if(shouldPlay)
+                {
+                    system.transform.localScale = Vector3.one * scale;
+                    system.Play();
+                }
+                else
+                {
+                    system.transform.localScale = Vector3.zero;
+                    system.Stop();
+                }
+            }
+        }
+
         #region Private Functions
         void ResetTransform()
         {
@@ -79,21 +98,23 @@ namespace Ryzm.Dragon
                 yield return null;
             }
             colliderTransform.localScale = colliderStartScale;
+            
         }
 
         IEnumerator ShrinkThenDisable(float shrinkTime)
         {
             float t = 0;
+            Vector3 start = colliderTransform.localScale;
             while(t < shrinkTime)
             {
                 t += Time.deltaTime;
                 float multiplier = 1 - t / shrinkTime;
                 multiplier = multiplier > 0 ? multiplier : 0;
-                colliderTransform.localScale = colliderStartScale * multiplier;
+                colliderTransform.localScale = start * multiplier;
                 yield return null;
             }
-            ResetTransform();
             PlayParticles(false);
+            ResetTransform();
             isEnabled = false;
         }
         #endregion

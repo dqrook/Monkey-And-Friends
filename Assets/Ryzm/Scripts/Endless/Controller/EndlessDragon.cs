@@ -11,6 +11,7 @@ namespace Ryzm.EndlessRunner
     public class EndlessDragon : EndlessController
     {
         #region Public Variables
+        public GameObject placeGOPrefab;
         public BaseDragon baseDragon;
         public Transform monkeyPos;
         public DragonFire fire;
@@ -19,6 +20,8 @@ namespace Ryzm.EndlessRunner
         public bool forceJump;
         public bool forceHeadbutt;
         public bool forceTailSlap;
+        public bool forceShift;
+        public Transform fakeShiftTransform;
         public float headbuttTime = 1;
 
         [Header("Trail Effects")]
@@ -42,7 +45,7 @@ namespace Ryzm.EndlessRunner
         bool isBreathingFire;
         bool _isFlying;
         bool flyingInitialized;
-        float elevation = 2f;
+        float elevation = 1.5f;
         IEnumerator flyUp;
         float baselineY;
         bool isHeadbutting;
@@ -222,10 +225,8 @@ namespace Ryzm.EndlessRunner
 
         void OnTriggerEnter(Collider col)
         {
-            Debug.Log("on trigger enter");
             if(HeadbuttAttackState != AttackState.Off || ShiftAttackState != AttackState.Off)
             {
-                Debug.Log("shift attack state " + ShiftAttackState);
                 MonsterBase monster = col.gameObject.GetComponent<MonsterBase>();
                 if(monster != null)
                 {
@@ -345,7 +346,8 @@ namespace Ryzm.EndlessRunner
                 }
                 else if(!InJump && ShiftAttackState != AttackState.On)
                 {
-                    ShiftAttackState = AttackState.Off;
+                    // ShiftAttackState = AttackState.Off;
+                    SetShiftAttack(false);
                     headbutt = _Headbutt();
                     StartCoroutine(headbutt);
                 }
@@ -432,6 +434,7 @@ namespace Ryzm.EndlessRunner
         {
             if(isTailSlapping)
             {
+                Debug.Log("force enable tail slap");
                 dragonTailSlap.EnableExplosion();
             }
         }
@@ -627,38 +630,41 @@ namespace Ryzm.EndlessRunner
             baselineY = initY;
             float currentY = trans.position.y;
             float absDiff = Mathf.Abs(currentY - baselineY);
-            float multiplier = 2 * (elevation - absDiff);
-            while(multiplier > 0.01f)
+            float multiScale = 1.5f;
+            float multiplier = multiScale * (elevation - absDiff);
+            while(multiplier > 0.05f)
             {
                 currentY = trans.position.y;
                 absDiff = Mathf.Abs(currentY - baselineY);
-                multiplier = 2 * (elevation - absDiff);
+                multiplier = multiScale * (elevation - absDiff);
+                // multiplier *= multiplier;
                 multiplier = multiplier > 1 ? 1 : multiplier;
                 multiplier = multiplier > 0 ? multiplier : 0;
                 Move(flyUpSpeed * multiplier * Time.deltaTime);
                 yield return null;
             }
-            float glideTime = 2 * Time.deltaTime;
-            float t = 0;
-            float intervals = 2;
-            while(t < intervals)
-            {
-                t += 1;
-                Move(0);
-                yield return null;
-            }
+            // float glideTime = 2 * Time.deltaTime;
+            // float t = 0;
+            // float intervals = 2;
+            // while(t < intervals)
+            // {
+            //     t += 1;
+            //     Move(0);
+            //     yield return null;
+            // }
             
             animator.SetBool("flyDown", true);
             animator.SetBool("flyUp", false);
-            float timeMultiplier = 0.6f;
-            while(absDiff > 0.2f && currentY > baselineY)
+            float timeMulti = 3;
+            float timeMultiplier = 0.1f;
+            while(absDiff > 0.1f && currentY > baselineY)
             {
-                timeMultiplier += Time.deltaTime;
-                timeMultiplier = timeMultiplier < 1 ? timeMultiplier : 1;
                 currentY = trans.position.y;
                 absDiff = Mathf.Abs(currentY - baselineY);
                 float downMultiplier = absDiff > 1 ? 1 : absDiff > 0.5f ? absDiff : 0.5f;
                 Move(-flyDownSpeed * timeMultiplier * downMultiplier * Time.deltaTime);
+                timeMultiplier += timeMulti * Time.deltaTime;
+                timeMultiplier = timeMultiplier < 1 ? timeMultiplier : 1;
                 yield return null;
             }
             canFly = true;
@@ -750,11 +756,12 @@ namespace Ryzm.EndlessRunner
             animator.SetBool("tailSlapDown", true);
             float currentY = trans.position.y;
             float absDiff = Mathf.Abs(currentY - baselineY);
+            float moveMulti = 0.5f;
             while(absDiff > 0.1f && currentY > baselineY)
             {
                 currentY = trans.position.y;
                 absDiff = Mathf.Abs(trans.position.y - baselineY);
-                Move(-flyDownSpeed * Time.deltaTime, 0);
+                Move(-flyDownSpeed * Time.deltaTime, moveMulti);
                 float speedMulti = SpeedMultiplier;
                 if(speedMulti < targetMulti)
                 {
@@ -769,11 +776,13 @@ namespace Ryzm.EndlessRunner
             absDiff = Mathf.Abs(currentY - baselineY);
             while(absDiff > 0.01f && currentY > baselineY)
             {
+                moveMulti += Time.deltaTime;
+                moveMulti = moveMulti > 1 ? 1 : moveMulti;
                 SpeedMultiplier = Mathf.Lerp(SpeedMultiplier, 1, Time.deltaTime * 5);
                 currentY = trans.position.y;
                 absDiff = Mathf.Abs(currentY - baselineY);
                 float downMultiplier = absDiff > 0.05f ? absDiff : 0.05f;
-                Move(-flyDownSpeed * downMultiplier * Time.deltaTime);
+                Move(-flyDownSpeed * downMultiplier * Time.deltaTime, moveMulti);
                 yield return null;
             }
             SpeedMultiplier = 1;
@@ -884,12 +893,26 @@ namespace Ryzm.EndlessRunner
             yield break;
         }
 
+        void MakeGO(Vector3 curPos)
+        {
+            if(placeGOPrefab != null)
+            {
+                GameObject go = Instantiate(placeGOPrefab, curPos, Quaternion.identity);
+            }
+            else
+            {
+                GameObject go = new GameObject();
+                go.transform.position = curPos;
+            }
+        }
+
         IEnumerator PlaceGameObjs()
         {
             Vector3 curPos = transform.position;
             Vector3 prevPos = transform.position;
-            GameObject go = new GameObject();
-            go.transform.position = curPos;
+            // GameObject go = new GameObject();
+            // go.transform.position = curPos;
+            MakeGO(curPos);
             while(true)
             {
                 curPos = transform.position;
@@ -897,8 +920,9 @@ namespace Ryzm.EndlessRunner
                 if(diff > 0.25f)
                 {
                     prevPos = curPos;
-                    go = new GameObject();
-                    go.transform.position = curPos;
+                    // go = new GameObject();
+                    // go.transform.position = curPos;
+                    MakeGO(curPos);
                 }
                 yield return null;
             }

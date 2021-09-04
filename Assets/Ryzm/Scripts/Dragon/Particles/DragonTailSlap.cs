@@ -49,6 +49,7 @@ namespace Ryzm.Dragon
         {
             if(!explosionEnabled)
             {
+                explosionEnabled = true;
                 explosionTrans.parent = null;
                 explosion.Enable();
             }
@@ -67,25 +68,25 @@ namespace Ryzm.Dragon
         {
             trans.localScale = Vector3.zero;
             yield break;
-            float t = 0;
-            while(t < expansionTime)
-            {
-                t += Time.deltaTime;
-                float val = t / expansionTime;
-                trans.localScale = startLocalScale * val;
-                yield return null;
-            }
-            trans.localScale = startLocalScale;
+            // float t = 0;
+            // while(t < expansionTime)
+            // {
+            //     t += Time.deltaTime;
+            //     float val = t / expansionTime;
+            //     trans.localScale = startLocalScale * val;
+            //     yield return null;
+            // }
+            // trans.localScale = startLocalScale;
         }
 
         IEnumerator ShrinkThenDisable()
         {
             float t = 0;
-            while(t < 0.5f)
-            {
-                t += Time.deltaTime;
-                yield return null;
-            }
+            // while(t < 0.5f)
+            // {
+            //     t += Time.deltaTime;
+            //     yield return null;
+            // }
             explosion.Disable(shrinkTime);
             t = 0;
             Vector3 s = trans.localScale;
@@ -98,9 +99,9 @@ namespace Ryzm.Dragon
             }
             explosionEnabled = false;
             trans.localScale = Vector3.zero;
-            explosionTrans.parent = trans.parent;
-            explosionTrans.localPosition = trans.localPosition;
-            explosionTrans.localRotation = trans.localRotation;
+            // explosionTrans.parent = trans.parent;
+            // explosionTrans.localPosition = trans.localPosition;
+            // explosionTrans.localRotation = trans.localRotation;
             PlayParticles(false);
         }
         #endregion

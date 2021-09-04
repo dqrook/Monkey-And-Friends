@@ -159,6 +159,7 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<CurrentPositionRequest>(OnCurrentPositionRequest);
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
             Message.AddListener<ControllerModeResponse>(OnControllerModeResponse);
+            Debug.Log("registered ya bish");
         }
 
         protected virtual void OnDisable()
@@ -285,7 +286,6 @@ namespace Ryzm.EndlessRunner
 
         protected virtual void Reset()
         {
-            Debug.Log("reset this beeeotch");
             StopAllCoroutines();
             turned = false;
             // state = 0;
@@ -309,7 +309,6 @@ namespace Ryzm.EndlessRunner
         #region Coroutines
         protected IEnumerator _Shift(Transform target, ShiftDistanceType type = ShiftDistanceType.x)
         {
-            Debug.Log("we doing it ya bish");
             inShift = true;
             float _shiftDistance = GetShiftDistance(target, type);
             float _distance = Mathf.Lerp(0, _shiftDistance, 0.1f);

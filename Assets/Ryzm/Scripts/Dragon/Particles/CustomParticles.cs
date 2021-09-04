@@ -68,7 +68,7 @@ namespace Ryzm.Dragon
         #endregion
 
         #region Protected Functions
-        protected void PlayParticles(bool shouldPlay)
+        protected virtual void PlayParticles(bool shouldPlay)
         {
             foreach(ParticleSystem system in particleSystems)
             {

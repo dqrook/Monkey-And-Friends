@@ -28,6 +28,7 @@ namespace Ryzm.EndlessRunner
             base.Awake();
             move = Vector3.zero;
             firePause = new WaitForSeconds(firePauseRate);
+            attackDistance = 15;
         }
         #endregion
 

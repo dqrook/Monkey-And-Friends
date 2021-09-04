@@ -74,7 +74,6 @@ namespace Ryzm.EndlessRunner
                 for(int i = 0; i < numRows; i++)
                 {
                     AddOnSpawn spawn = new AddOnSpawn();
-                    Debug.Log(combination.subSectionCombinations[i]);
                     if(previousSpawn.spawn == null || previousSpawn.type != AddOnSpawnType.Jump)
                     {
                         spawn = GetAddOnSpawn(rows[i].Activate(combination.subSectionCombinations[i]));
@@ -465,22 +464,26 @@ namespace Ryzm.EndlessRunner
             {
                 if(metadata.subSectionIndex == 1)
                 {
-                    if(subSectionMetadatas[0].monsterType == MonsterType.SideDraze)
+                    if(subSectionMetadatas[0].monsterType == MonsterType.SideDraze || subSectionMetadatas[0].monsterType == MonsterType.Reyflora)
                     {
                         return false;
                     }
-                    if(mType == MonsterType.SideDraze && subSectionMetadatas[0].monsterType != MonsterType.None)
+                    if((mType == MonsterType.SideDraze || mType == MonsterType.Reyflora) && subSectionMetadatas[0].monsterType != MonsterType.None)
                     {
                         return false;
                     }
                 }
                 else if(metadata.subSectionIndex == 2)
                 {
-                    if(subSectionMetadatas[0].monsterType == MonsterType.SideDraze || subSectionMetadatas[1].monsterType == MonsterType.SideDraze)
+                    if(subSectionMetadatas[0].monsterType == MonsterType.SideDraze || subSectionMetadatas[1].monsterType == MonsterType.SideDraze || subSectionMetadatas[1].monsterType == MonsterType.Reyflora)
                     {
                         return false;
                     }
                     if(mType == MonsterType.SideDraze && (subSectionMetadatas[0].monsterType != MonsterType.None || subSectionMetadatas[1].monsterType != MonsterType.None))
+                    {
+                        return false;
+                    }
+                    if(mType == MonsterType.SideDraze && subSectionMetadatas[1].monsterType != MonsterType.None)
                     {
                         return false;
                     }
@@ -506,7 +509,7 @@ namespace Ryzm.EndlessRunner
                     {
                         return false;
                     }
-                    if(prevMType == MonsterType.SideDraze || prevMType2 == MonsterType.SideDraze)
+                    if(prevMType == MonsterType.SideDraze || prevMType2 == MonsterType.SideDraze || prevMType == MonsterType.Reyflora)
                     {
                         return false;
                     }
@@ -514,14 +517,18 @@ namespace Ryzm.EndlessRunner
                     {
                         return false;
                     }
-                }
-                else if(metadata.subSectionIndex == 1)
-                {
-                    if(prevMType == MonsterType.SideDraze)
+                    if(mType == MonsterType.Reyflora && prevMType != MonsterType.None)
                     {
                         return false;
                     }
-                    if(mType == MonsterType.SideDraze && prevMType != MonsterType.None)
+                }
+                else if(metadata.subSectionIndex == 1)
+                {
+                    if(prevMType == MonsterType.SideDraze || prevMType == MonsterType.Reyflora)
+                    {
+                        return false;
+                    }
+                    if((mType == MonsterType.SideDraze || prevMType == MonsterType.Reyflora) && prevMType != MonsterType.None)
                     {
                         return false;
                     }
@@ -614,7 +621,6 @@ namespace Ryzm.EndlessRunner
             for(int i = 0; i < numIndices; i++)
             {
                 int index = combination.activatedIndices[i];
-                Debug.Log(index);
                 spawns.Add(subSections[i].Activate(index));
             }
             return spawns;

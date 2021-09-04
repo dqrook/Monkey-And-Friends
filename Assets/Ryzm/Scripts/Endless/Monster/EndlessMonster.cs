@@ -98,7 +98,7 @@ namespace Ryzm.EndlessRunner
         {
             animator.SetBool("dead", false);
             EnableCollider(true);
-            transform.localPosition = startPosition;
+            trans.localPosition = startPosition;
         }
 
         public override void TakeDamage()

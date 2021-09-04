@@ -102,7 +102,6 @@ namespace Ryzm.UI
 
 		void _OnPointerUp(PointerEventData data)
 		{
-			Debug.Log("up");
 			_destination = Input.mousePosition;
 			_deltaSwipe = _destination - _firstTouchPosition;
 			_length = _deltaSwipe.magnitude;

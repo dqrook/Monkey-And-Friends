@@ -58,10 +58,9 @@ namespace Ryzm.EndlessRunner
         #region Private Functions
         void OnTrigger(Collider other)
         {
-            Debug.Log("entered");
-            animator.SetBool("shrink", true);
             if(!orbCollected)
             {
+                animator.SetBool("shrink", true);
                 orbCollected = true;
             }
         }
