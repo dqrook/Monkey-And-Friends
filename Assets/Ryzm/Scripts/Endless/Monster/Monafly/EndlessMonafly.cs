@@ -98,14 +98,16 @@ namespace Ryzm.EndlessRunner
 
         IEnumerator ForwardAttack()
         {
-            Debug.Log(forwardSpeed);
+            Vector3 attackStartPosition = trans.position;
+            float distanceTraveled = Mathf.Abs(trans.InverseTransformPoint(attackStartPosition).z);
             SetIsMoving(true);
             float zMove = Time.deltaTime * forwardSpeed;
-            while(currentDistance > -10)
+            while(currentDistance > -10 && distanceTraveled < 25)
             {
                 currentDistance = trans.InverseTransformPoint(currentDragonPosition).z;
                 move.z = zMove;
                 trans.Translate(move);
+                distanceTraveled = Mathf.Abs(trans.InverseTransformPoint(attackStartPosition).z);
                 yield return null;
             }
             SetIsMoving(false);

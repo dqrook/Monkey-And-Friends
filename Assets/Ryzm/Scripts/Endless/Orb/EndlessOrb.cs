@@ -8,9 +8,12 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessOrb : EndlessItem
     {
+        #region Private Variables
         Animator animator;
         bool orbCollected;
+        #endregion
 
+        #region Event Functions
         protected override void Awake()
         {
             base.Awake();
@@ -32,14 +35,16 @@ namespace Ryzm.EndlessRunner
 
         void OnTriggerEnter(Collider other)
         {
-            animator.SetBool("shrink", true);
-            if(!orbCollected)
-            {
-                orbCollected = true;
-                // Message.Send(new CollectCoin());
-            }
+            OnTrigger(other);
         }
 
+        void OnTriggerStay(Collider other)
+        {
+            OnTrigger(other);
+        }
+        #endregion
+
+        #region Listener Functions
         protected override void OnGameStatusResponse(GameStatusResponse gameStatusResponse)
         {
             base.OnGameStatusResponse(gameStatusResponse);
@@ -48,5 +53,18 @@ namespace Ryzm.EndlessRunner
                 animator.SetBool("shrink", false);
             }
         }
+        #endregion
+
+        #region Private Functions
+        void OnTrigger(Collider other)
+        {
+            Debug.Log("entered");
+            animator.SetBool("shrink", true);
+            if(!orbCollected)
+            {
+                orbCollected = true;
+            }
+        }
+        #endregion
     }
 }

@@ -230,7 +230,7 @@ namespace Ryzm.EndlessRunner
             }
         }
         
-        public void ShiftToPosition(Transform pos, ShiftDistanceType type)
+        public virtual void ShiftToPosition(Transform pos, ShiftDistanceType type)
         {
             shift = _Shift(pos, type);
             StartCoroutine(shift);
@@ -309,6 +309,7 @@ namespace Ryzm.EndlessRunner
         #region Coroutines
         protected IEnumerator _Shift(Transform target, ShiftDistanceType type = ShiftDistanceType.x)
         {
+            Debug.Log("we doing it ya bish");
             inShift = true;
             float _shiftDistance = GetShiftDistance(target, type);
             float _distance = Mathf.Lerp(0, _shiftDistance, 0.1f);
@@ -341,9 +342,7 @@ namespace Ryzm.EndlessRunner
                 cooldownTime += Time.deltaTime;
                 yield return null;
             }
-            // Debug.Log(inShift + " " + cooldownTime);
             inShift = false;
-            yield break;
         }
         #endregion
     }

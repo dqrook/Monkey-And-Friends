@@ -128,7 +128,7 @@ namespace Ryzm.UI
 			}
 			else if(_swipeDirection == Direction.Down)
 			{
-				InputManager.Instance.Slide();
+				InputManager.Instance.Down();
 			}
 			else
 			{

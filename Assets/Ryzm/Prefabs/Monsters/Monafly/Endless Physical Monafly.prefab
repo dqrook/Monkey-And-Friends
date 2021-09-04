@@ -424,12 +424,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 9
-  bodyRenderer: {fileID: 650690543820815802}
-  renderers: []
-  bodyCollider: {fileID: 650690543817278920}
-  colliders: []
+  renderers:
+  - {fileID: 650690543820815802}
+  colliders:
+  - {fileID: 650690543817278920}
   materials: []
-  forwardSpeed: 10
   particlesContainer: {fileID: 650690545231978702}
 --- !u!54 &650690544475164638
 Rigidbody:

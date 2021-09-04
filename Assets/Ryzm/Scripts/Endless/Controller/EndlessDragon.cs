@@ -39,7 +39,6 @@ namespace Ryzm.EndlessRunner
         #region Private Variables
         IEnumerator flyToPosition;
         IEnumerator fireBreath;
-        IEnumerator getDragonTexture;
         bool isBreathingFire;
         bool _isFlying;
         bool flyingInitialized;
@@ -56,6 +55,10 @@ namespace Ryzm.EndlessRunner
         float _speedMultiplier;
         Vector3 prevPosition;
         Vector3 currentPosition;
+        IEnumerator shiftAttack;
+        bool noShifting;
+        AttackState _shiftAttackState;
+        AttackState _headbuttAttackState;
         #endregion
 
         #region Properties
@@ -88,6 +91,32 @@ namespace Ryzm.EndlessRunner
                 animator.SetFloat("speedMultiplier", _speedMultiplier);
             }
         }
+
+        AttackState ShiftAttackState
+        {
+            get
+            {
+                return _shiftAttackState;
+            }
+            set
+            {
+                _shiftAttackState = value;
+                Message.Send(new ShiftAttackStateResponse(_shiftAttackState));
+            }
+        }
+
+        AttackState HeadbuttAttackState
+        {
+            get
+            {
+                return _headbuttAttackState;
+            }
+            set
+            {
+                _headbuttAttackState = value;
+                Message.Send(new HeadbuttAttackStateResponse(_headbuttAttackState));
+            }
+        }
         #endregion
 
         #region Event Functions
@@ -102,19 +131,36 @@ namespace Ryzm.EndlessRunner
             }
             SetBodyTrailEffect(false);
             SetWingTrailEffect(false);
+        }
+
+        protected override void OnEnable()
+        {
+            base.OnEnable();
             Message.AddListener<ControllerTransformRequest>(OnControllerTransformRequest);
+            Message.AddListener<ShiftAttackStateRequest>(OnShiftAttackStateRequest);
+            Message.AddListener<HeadbuttAttackStateRequest>(OnHeadbuttAttackStateRequest);
         }
 
         void Start()
         {
             SpeedMultiplier = 1;
             SetHeadbutt(false);
+            SetShiftAttack(false);
             prevPosition = transform.position;
             Message.Send(new ControllerTransformResponse(prevPosition));
         }
 
         void Update()
         {
+            currentPosition = trans.position;
+            Vector3 distance = (currentPosition - prevPosition);
+            float sqrDistance = distance.sqrMagnitude;
+            if(sqrDistance > 1)
+            {
+                Message.Send(new ControllerTransformResponse(currentPosition));
+                prevPosition = currentPosition;
+            }
+
             // animator.SetInteger("state", state);
             if((mode == ControllerMode.MonkeyDragon || mode == ControllerMode.Dragon) && gameStatus == GameStatus.Active)
             {
@@ -131,10 +177,15 @@ namespace Ryzm.EndlessRunner
                 forceJump = false;
             }
 
-            if(!isHeadbutting && forceHeadbutt)
+            if(HeadbuttAttackState == AttackState.Off && forceHeadbutt)
             {
                 IsFlying = true;
-                Headbutt(true);
+                if(headbutt != null)
+                {
+                    StopCoroutine(headbutt);
+                }
+                headbutt = _Headbutt(true);
+                StartCoroutine(headbutt);
             }
             else
             {
@@ -151,36 +202,44 @@ namespace Ryzm.EndlessRunner
             {
                 forceTailSlap = false;
             }
-
-            Vector3 currentPosition = trans.position;
-            Vector3 distance = (currentPosition - prevPosition);
-            float sqrDistance = distance.sqrMagnitude;
-            if(sqrDistance > 1)
-            {
-                Message.Send(new ControllerTransformResponse(currentPosition));
-                prevPosition = currentPosition;
-            }
         }
 
-        void OnCollisionEnter(Collision col)
+        // void OnCollisionEnter(Collision col)
+        // {
+        //     if(HeadbuttAttackState != AttackState.Off || ShiftAttackState != AttackState.Off)
+        //     {
+        //         Debug.Log("shift attack state " + ShiftAttackState);
+        //         if(LayerMask.LayerToName(col.GetContact(0).thisCollider.gameObject.layer) == "PlayerAttack")
+        //         {
+        //             MonsterBase monster = col.gameObject.GetComponent<MonsterBase>();
+        //             if(monster != null)
+        //             {
+        //                 monster.TakeDamage();
+        //             }
+        //         }
+        //     }
+        // }
+
+        void OnTriggerEnter(Collider col)
         {
-            if(isHeadbutting)
+            Debug.Log("on trigger enter");
+            if(HeadbuttAttackState != AttackState.Off || ShiftAttackState != AttackState.Off)
             {
-                if(LayerMask.LayerToName(col.GetContact(0).thisCollider.gameObject.layer) == "PlayerAttack")
+                Debug.Log("shift attack state " + ShiftAttackState);
+                MonsterBase monster = col.gameObject.GetComponent<MonsterBase>();
+                if(monster != null)
                 {
-                    MonsterBase monster = col.gameObject.GetComponent<MonsterBase>();
-                    if(monster != null)
-                    {
-                        monster.TakeDamage();
-                    }
+                    monster.TakeDamage();
                 }
             }
         }
 
-        protected override void OnDestroy()
+        protected override void OnDisable()
         {
-            base.OnDestroy();
+            base.OnDisable();
             Message.RemoveListener<ControllerTransformRequest>(OnControllerTransformRequest);
+            Message.RemoveListener<ShiftAttackStateRequest>(OnShiftAttackStateRequest);
+            Message.RemoveListener<HeadbuttAttackStateRequest>(OnHeadbuttAttackStateRequest);
         }
         #endregion
 
@@ -212,8 +271,18 @@ namespace Ryzm.EndlessRunner
 
         void OnControllerTransformRequest(ControllerTransformRequest request)
         {
-            Vector3 currentPosition = trans.position;
+            currentPosition = trans.position;
             Message.Send(new ControllerTransformResponse(currentPosition));
+        }
+
+        void OnShiftAttackStateRequest(ShiftAttackStateRequest request)
+        {
+            Message.Send(new ShiftAttackStateResponse(ShiftAttackState));
+        }
+
+        void OnHeadbuttAttackStateRequest(HeadbuttAttackStateRequest request)
+        {
+            Message.Send(new HeadbuttAttackStateResponse(HeadbuttAttackState));
         }
         #endregion
 
@@ -238,13 +307,11 @@ namespace Ryzm.EndlessRunner
 
         public override void Shift(Direction direction)
         {
-            if(!inShift)
+            if(!inShift && !noShifting)
             {
                 if(_endlessTurnSection != null)
                 {
                     _endlessTurnSection.Shift(direction, this, ref turned);
-                    // turned = true;
-                    // Debug.Log(turned);
                 }
                 else if(_endlessSection != null)
                 {
@@ -253,26 +320,33 @@ namespace Ryzm.EndlessRunner
             }
         }
 
+        public override void ShiftToPosition(Transform pos, ShiftDistanceType type)
+        {
+            base.ShiftToPosition(pos, type);
+            StopHeadbutt();
+            if(ShiftAttackState != AttackState.Off)
+            {
+                ShiftAttackState = AttackState.Off;
+                StopCoroutine(shiftAttack);
+            }
+            shiftAttack = ShiftAttack();
+            StartCoroutine(shiftAttack);
+        }
+
         public override void Attack()
         {
-            if(!isBreathingFire && !isHeadbutting && !isTailSlapping)
+            if(!isBreathingFire && HeadbuttAttackState == AttackState.Off && !isTailSlapping)
             {
                 float absDiff = Mathf.Abs(trans.position.y - baselineY);
                 if(absDiff > 0.25f && InJump) // high enough above ground to do ground pound move
                 {
-                    // if(flyUp != null)
-                    // {
-                    //     StopCoroutine(flyUp);
-                    //     flyUp = null;
-                    // }
-                    // tailSlap = _TailSlap();
-                    // StartCoroutine(tailSlap);
                     finishShiftThenTailSlap = FinishShiftAndTailSlap();
                     StartCoroutine(finishShiftThenTailSlap);
                 }
-                else 
+                else if(!InJump && ShiftAttackState != AttackState.On)
                 {
-                    headbutt = _Headbutt(false);
+                    ShiftAttackState = AttackState.Off;
+                    headbutt = _Headbutt();
                     StartCoroutine(headbutt);
                 }
                 // else if(fire != null)
@@ -280,20 +354,6 @@ namespace Ryzm.EndlessRunner
                 //     fireBreath = FireBreath();
                 //     StartCoroutine(fireBreath);
                 // }
-            }
-        }
-
-        public void Headbutt(bool shouldWait)
-        {
-            if(IsFlying && !isHeadbutting)
-            {
-                if(headbutt != null)
-                {
-                    StopCoroutine(headbutt);
-                    headbutt = null;
-                }
-                headbutt = _Headbutt(shouldWait);
-                StartCoroutine(headbutt);
             }
         }
 
@@ -305,13 +365,14 @@ namespace Ryzm.EndlessRunner
                 {
                     if(!InJump)
                     {
+                        StopHeadbutt();
                         flyUp = FlyUp(trans.position.y);
                         StartCoroutine(flyUp);
                     }
                     else if(canFly)
                     {
+                        StopHeadbutt();
                         Debug.Log("double jump");
-                        // animator.SetTrigger("finishFly");
                         StopCoroutine(flyUp);
                         flyUp = FlyUp(baselineY);
                         StartCoroutine(flyUp);
@@ -327,7 +388,6 @@ namespace Ryzm.EndlessRunner
         public override void Die()
         {
             StopAllCoroutines();
-            // state = 2;
             State = 2;
             if(fire != null)
             {
@@ -338,6 +398,7 @@ namespace Ryzm.EndlessRunner
             SetHeadbutt(false);
             SetBodyTrailEffect(false);
             SetWingTrailEffect(false);
+            SetShiftAttack(false);
             animator.SetBool("tailSlapUp", false);
             animator.SetBool("tailSlapDown", false);
         }
@@ -384,19 +445,13 @@ namespace Ryzm.EndlessRunner
             animator.SetBool("tailSlapUp", false);
             animator.SetBool("tailSlapDown", false);
             SetHeadbutt(false);
-            isHeadbutting = false;
+            HeadbuttAttackState = AttackState.Off;
             isTailSlapping = false;
             isBreathingFire = false;
+            noShifting = false;
+            ShiftAttackState = AttackState.Off;
             if(InJump)
             {
-                // if(isFlyingUp)
-                // {
-                //     animator.SetTrigger("resetFly");
-                // }
-                // else
-                // {
-                //     animator.SetTrigger("finishFly");
-                // }
                 trans.position = new Vector3(trans.position.x, baselineY, trans.position.z);
             }
             base.Reset();
@@ -409,7 +464,7 @@ namespace Ryzm.EndlessRunner
         void EndlessRun()
         {
             IsFlying = true;
-            if(!InJump && !isHeadbutting)
+            if(!InJump && HeadbuttAttackState == AttackState.Off)
             {
                 Move(0);
             }
@@ -474,11 +529,9 @@ namespace Ryzm.EndlessRunner
 
         void SetHeadbutt(bool enabled)
         {
+            HeadbuttAttackState = enabled ? AttackState.On : AttackState.Off;
             animator.SetBool("headbutt", enabled);
-            if(attackCollider != null)
-            {
-                attackCollider.enabled = enabled;
-            }
+            SetAttackCollider(enabled);
             if(dragonHeadbutt != null)
             {
                 if(enabled)
@@ -492,6 +545,14 @@ namespace Ryzm.EndlessRunner
             }
         }
 
+        void SetAttackCollider(bool enabled)
+        {
+            if(attackCollider != null)
+            {
+                attackCollider.enabled = enabled;
+            }
+        }
+
         void DisableHeadbuttAnim()
         {
             animator.SetBool("headbutt", false);
@@ -500,27 +561,44 @@ namespace Ryzm.EndlessRunner
                 dragonHeadbutt.Disable();
             }
         }
+
+        void SetShiftAttack(bool enabled)
+        {
+            ShiftAttackState = enabled ? AttackState.On : AttackState.Off;
+            SetAttackCollider(enabled);
+            SetBodyColliders(!enabled);
+
+            if(shiftParticles != null)
+            {
+                if(enabled)
+                {
+                    shiftParticles.Enable();
+                }
+                else
+                {
+                    shiftParticles.Disable();
+                }
+            }
+        }
+
+        void StopHeadbutt()
+        {
+            if(HeadbuttAttackState != AttackState.Off)
+            {
+                DisableHeadbuttAnim();
+                SetBodyTrailEffect(false);
+                HeadbuttAttackState = AttackState.Off;
+                // isHeadbutting = false;
+                if(headbutt != null)
+                {
+                    StopCoroutine(headbutt);
+                    headbutt = null;
+                }
+            }
+        }
         #endregion
 
         #region Coroutines
-        IEnumerator FireBreath()
-        {
-            isBreathingFire = true;
-            animator.SetBool("fireBreath", true);
-            fire.Play();
-            float fbTime = 1f;
-            float time = 0;
-            while(time < fbTime)
-            {
-                time += Time.deltaTime;
-                yield return null;
-            }
-            isBreathingFire = false;
-            animator.SetBool("fireBreath", false);
-            fire.Stop();
-            yield break;
-        }
-
         IEnumerator _FlyToPosition(Transform target, float speed)
         {
             float distance = Vector3.Distance(trans.position, target.position);
@@ -536,27 +614,6 @@ namespace Ryzm.EndlessRunner
             trans.position = target.position;
             trans.rotation = target.rotation;
             yield break;
-        }
-
-        IEnumerator PlaceGameObjs()
-        {
-            Vector3 currentPosition = transform.position;
-            Vector3 previousPosition = transform.position;
-            GameObject go = new GameObject();
-            go.transform.position = currentPosition;
-            while(true)
-            {
-                currentPosition = transform.position;
-                // float diff = Vector3.Distance(currentPosition, previousPosition);
-                float diff = Mathf.Abs(currentPosition.z - previousPosition.z);
-                if(diff > 0.25f)
-                {
-                    previousPosition = currentPosition;
-                    go = new GameObject();
-                    go.transform.position = currentPosition;
-                }
-                yield return null;
-            }
         }
 
         IEnumerator FlyUp(float initY)
@@ -621,9 +678,9 @@ namespace Ryzm.EndlessRunner
             yield break;
         }
 
-        IEnumerator _Headbutt(bool shouldWait)
+        IEnumerator _Headbutt(bool shouldWait = false)
         {
-            isHeadbutting = true;
+            HeadbuttAttackState = AttackState.On;
             float t = 0;
             if(shouldWait)
             {
@@ -639,7 +696,6 @@ namespace Ryzm.EndlessRunner
             SetBodyTrailEffect(true);
             t = 0;
             float multiplier = 1f;
-            // animator.SetBool("headbutt", true);
             while(t < headbuttTime)
             {
                 t += Time.deltaTime;
@@ -648,6 +704,7 @@ namespace Ryzm.EndlessRunner
             }
             DisableHeadbuttAnim();
             t = 0;
+            HeadbuttAttackState = AttackState.Cooldown;
             while(t < 0.2f) //cooldown time
             {
                 t += Time.deltaTime;
@@ -656,14 +713,13 @@ namespace Ryzm.EndlessRunner
             }
             SetHeadbutt(false);
             SetBodyColliders(true);
-            // animator.SetBool("headbutt", false);
             SetBodyTrailEffect(false);
-            isHeadbutting = false;
         }
 
         IEnumerator _TailSlap()
         {
             isTailSlapping = true;
+            noShifting = true;
             animator.SetBool("flyDown", false);
             animator.SetBool("flyUp", false);
             canFly = false;
@@ -707,6 +763,7 @@ namespace Ryzm.EndlessRunner
                 yield return null;
             }
 
+            noShifting = false;
             dragonTailSlap.EnableExplosion();
             currentY = trans.position.y;
             absDiff = Mathf.Abs(currentY - baselineY);
@@ -717,7 +774,6 @@ namespace Ryzm.EndlessRunner
                 absDiff = Mathf.Abs(currentY - baselineY);
                 float downMultiplier = absDiff > 0.05f ? absDiff : 0.05f;
                 Move(-flyDownSpeed * downMultiplier * Time.deltaTime);
-                Debug.Log("going down " + absDiff);
                 yield return null;
             }
             SpeedMultiplier = 1;
@@ -748,6 +804,7 @@ namespace Ryzm.EndlessRunner
                 Move(0, multiplier);
                 yield return null;
             }
+            ShiftAttackState = AttackState.Off;
             tailSlap = _TailSlap();
             StartCoroutine(tailSlap);
         }
@@ -786,6 +843,83 @@ namespace Ryzm.EndlessRunner
             }
             Attack();
         }
+
+        IEnumerator ShiftAttack()
+        {
+            SetShiftAttack(true);
+            while(inShift)
+            {
+                yield return null;
+            }
+            float t = 0;
+            float minCooldownTime = 0.25f;
+            float shiftAttackCooldown = shiftParticles == null ? minCooldownTime : shiftParticles.deactivationTime;
+            shiftAttackCooldown = shiftAttackCooldown < minCooldownTime ? minCooldownTime : shiftAttackCooldown;
+            ShiftAttackState = AttackState.Cooldown;
+            while(ShiftAttackState == AttackState.Cooldown && t < shiftAttackCooldown)
+            {
+                t += Time.deltaTime;
+                yield return null;
+            }
+            if(ShiftAttackState == AttackState.Cooldown)
+            {
+                SetShiftAttack(false);
+            }
+        }
+        IEnumerator FireBreath()
+        {
+            isBreathingFire = true;
+            animator.SetBool("fireBreath", true);
+            fire.Play();
+            float fbTime = 1f;
+            float time = 0;
+            while(time < fbTime)
+            {
+                time += Time.deltaTime;
+                yield return null;
+            }
+            isBreathingFire = false;
+            animator.SetBool("fireBreath", false);
+            fire.Stop();
+            yield break;
+        }
+
+        IEnumerator PlaceGameObjs()
+        {
+            Vector3 curPos = transform.position;
+            Vector3 prevPos = transform.position;
+            GameObject go = new GameObject();
+            go.transform.position = curPos;
+            while(true)
+            {
+                curPos = transform.position;
+                float diff = Mathf.Abs(curPos.z - prevPos.z);
+                if(diff > 0.25f)
+                {
+                    prevPos = curPos;
+                    go = new GameObject();
+                    go.transform.position = curPos;
+                }
+                yield return null;
+            }
+        }
         #endregion
+    }
+
+    public enum DragonState
+    {
+        Idle,
+        Fly,
+        FlyUp,
+        FlyDown,
+        Headbutt,
+        TailSlap
+    }
+
+    public enum AttackState
+    {
+        Off,
+        On,
+        Cooldown
     }
 }

@@ -5,7 +5,7 @@ using System;
 
 namespace Ryzm.EndlessRunner
 {
-    public class CreateSections : MonoBehaviour
+    public class CreateSectionCombinations : MonoBehaviour
     {
         public BaseSectionPrefab baseSectionPrefab;
 

@@ -11,7 +11,7 @@ namespace Ryzm.Dragon
         protected override void OnParticleCollision(GameObject other)
         {
             Debug.Log("particle collision " + other.gameObject.name);
-            EndlessMonster monster = other.GetComponent<EndlessMonster>();
+            MonsterBase monster = other.GetComponent<MonsterBase>();
             if(monster != null)
             {
                 monster.TakeDamage();

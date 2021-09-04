@@ -8,6 +8,7 @@ namespace Ryzm.Dragon
     {
         #region Public Variables
         public Transform colliderTransform;
+        public Collider explosionCollider;
         #endregion
 
         #region Private Variables
@@ -22,6 +23,7 @@ namespace Ryzm.Dragon
             base.Awake();
             colliderStartScale = colliderTransform.localScale;
             colliderTransform.localScale = Vector3.zero;
+            explosionCollider.enabled = false;
         }
         #endregion
 
@@ -29,14 +31,17 @@ namespace Ryzm.Dragon
         public override void Enable()
         {
             base.Enable();
+            trans.parent = null;
+            trans.rotation = Quaternion.identity;
             expandCollider = ExpandCollider();
             StartCoroutine(expandCollider);
+            explosionCollider.enabled = true;
         }
 
         public override void Disable()
         {
             base.Disable();
-            colliderTransform.localScale = Vector3.zero;
+            ResetTransform();
         }
 
         public void Disable(float shrinkTime = 0)
@@ -47,9 +52,19 @@ namespace Ryzm.Dragon
 
         public void OnTrigger(Collider other)
         {
-            Debug.Log("sup bish");
             hasHit = false;
             CheckHit(other);
+        }
+        #endregion
+
+        #region Private Functions
+        void ResetTransform()
+        {
+            explosionCollider.enabled = false;
+            colliderTransform.localScale = Vector3.zero;
+            trans.parent = parent;
+            trans.localPosition = startLocalPosition;
+            trans.localRotation = startLocalRotation;
         }
         #endregion
 
@@ -77,7 +92,7 @@ namespace Ryzm.Dragon
                 colliderTransform.localScale = colliderStartScale * multiplier;
                 yield return null;
             }
-            colliderTransform.localScale = Vector3.zero;
+            ResetTransform();
             PlayParticles(false);
             isEnabled = false;
         }

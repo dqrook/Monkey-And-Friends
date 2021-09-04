@@ -9,7 +9,7 @@ namespace Ryzm.EndlessRunner
         #region Public Variables
         public int difficultyPoints;
         public MonsterType monsterType;
-        public SpawnPosition spawnPosition;
+        public SubSectionPosition spawnPosition;
         public List<AddOnSpawn> addOnSpawns = new List<AddOnSpawn>();
         #endregion
 
@@ -36,12 +36,5 @@ namespace Ryzm.EndlessRunner
             return new AddOnSpawn();
         }
         #endregion
-    }
-    
-    public enum SpawnPosition
-    {
-        Left,
-        Middle,
-        Right
     }
 }

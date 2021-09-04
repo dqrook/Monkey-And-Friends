@@ -47,7 +47,7 @@ namespace Ryzm.EndlessRunner
             {
                 currentDragonPosition = response.position;
                 currentDistance = trans.InverseTransformPoint(currentDragonPosition).z;
-                bool inFront = IsInFront(response.position);
+                bool inFront = IsInFront(currentDragonPosition);
                 float diff = Mathf.Abs((response.position - trans.position).z);
                 if(inFront && currentDistance < attackDistance)
                 {

@@ -60,17 +60,11 @@ namespace Ryzm.Dragon
                 if(checkEnemy)
                 {
                     MonsterBase monster = other.gameObject.GetComponent<MonsterBase>();
-                    // MonsterHitpoint hitpoint = other.gameObject.GetComponent<MonsterHitpoint>();
                     if(monster != null)
                     {
                         monster.TakeDamage();
                         hasHit = true;
                     }
-                    // else if(hitpoint != null)
-                    // {
-                    //     hitpoint.TakeDamage();
-                    //     hasHit = true;
-                    // }
                 }
 
                 if(hasHit && hitParticles != null)

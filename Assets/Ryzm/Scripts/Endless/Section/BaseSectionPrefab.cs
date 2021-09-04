@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace Ryzm.EndlessRunner
 {
@@ -12,6 +13,7 @@ namespace Ryzm.EndlessRunner
         public List<SectionRow> rows = new List<SectionRow>();
         public List<RowCombination> rowCombinations = new List<RowCombination>();
         public List<SectionCombination> approvedSectionCombinations = new List<SectionCombination>();
+        public List<SectionCombination> generatedSectionCombinations = new List<SectionCombination>();
         public int rowCombinationIndex = 0;
         public int approvedComboIndex = -1;
         #endregion
@@ -72,6 +74,7 @@ namespace Ryzm.EndlessRunner
                 for(int i = 0; i < numRows; i++)
                 {
                     AddOnSpawn spawn = new AddOnSpawn();
+                    Debug.Log(combination.subSectionCombinations[i]);
                     if(previousSpawn.spawn == null || previousSpawn.type != AddOnSpawnType.Jump)
                     {
                         spawn = GetAddOnSpawn(rows[i].Activate(combination.subSectionCombinations[i]));
@@ -146,7 +149,7 @@ namespace Ryzm.EndlessRunner
                 sectionLengths.Clear();
                 foreach(SubSection subSection in row.subSections)
                 {
-                    sectionLengths.Add(subSection.Selections.Count);
+                    sectionLengths.Add(subSection.spawns.Count);
                 }
                 int numInitCombos = sectionLengths[0];
                 for(int i = 0; i < numInitCombos; i++)
@@ -161,12 +164,12 @@ namespace Ryzm.EndlessRunner
                     List<SubSectionCombination> ssCombos = new List<SubSectionCombination>();
                     for(int j = 0; j < sectionLengths[i]; j++)
                     {
-                        foreach(SubSectionCombination rowCombination in subSectionCombos)
+                        foreach(SubSectionCombination subSecCombination in subSectionCombos)
                         {
                             SubSectionCombination ssc = new SubSectionCombination();
-                            foreach(int shit in rowCombination.activatedIndices)
+                            foreach(int activatedIndex in subSecCombination.activatedIndices)
                             {
-                                ssc.activatedIndices.Add(shit);
+                                ssc.activatedIndices.Add(activatedIndex);
                             }
                             ssc.activatedIndices.Add(j);
                             ssCombos.Add(ssc);
@@ -256,14 +259,10 @@ namespace Ryzm.EndlessRunner
 
         public void CreateEndlessSectionCombinations()
         {
-            int numCombos = approvedSectionCombinations.Count;
-            for(int i = 0; i < numCombos; i++)
-            {
-                approvedSectionCombinations[i].index = i;
-            }
+            GenerateSectionCombinations();
             if(section?.combinations != null)
             {
-                section.combinations.CreateCombinationGroups(approvedSectionCombinations);
+                section.combinations.CreateCombinationGroups(generatedSectionCombinations);
             }
         }
 
@@ -280,6 +279,80 @@ namespace Ryzm.EndlessRunner
                     }
                 }
             }
+        }
+
+        public void CreateSpawns()
+        {
+            foreach(SectionRow row in rows)
+            {
+                foreach(SubSection subSection in row.subSections)
+                {
+                    subSection.CreateSpawns();
+                }
+            }
+        }
+
+        public void GenerateSectionCombinations()
+        {
+            this.generatedSectionCombinations.Clear();
+            int numRows = rows.Count;
+            int numSS = 0;
+            foreach(SectionRow row in rows)
+            {
+                numSS += row.subSections.Count;
+            }
+            
+            SubSection[] subSections = new SubSection[numSS];
+            int index = 0;
+            for(int i = 0; i < numRows; i++)
+            {
+                int numSubSections = rows[i].subSections.Count;
+                for(int j = 0; j < numSubSections; j++)
+                {
+                    subSections[index] = rows[i].subSections[j];
+                    index++;
+                }
+            }
+
+            List<List<SelectionMetadata>> selectionMetadatas = Generate(0, subSections, new List<SelectionMetadata>());
+            index = 0;
+            foreach(List<SelectionMetadata> metadatas in selectionMetadatas)
+            {
+                List<SubSectionCombination> ssCombos = new List<SubSectionCombination>();
+                ssCombos.Add(new SubSectionCombination(0));
+                ssCombos.Add(new SubSectionCombination(1));
+                ssCombos.Add(new SubSectionCombination(2));
+
+                foreach(SelectionMetadata metadata in metadatas)
+                {
+                    ssCombos[metadata.rowIndex].activatedIndices.Add(metadata.selectionIndex);
+                }
+                foreach(SubSectionCombination combination in ssCombos)
+                {
+                    int totalDifficulty = 0;
+                    int numGreaterThan0 = 0;
+                    int numIndices = combination.activatedIndices.Count;
+                    for(int j = 0; j < numIndices; j++)
+                    {
+                        int totalIndex = combination.rowIndex * 3 + j;
+                        EndlessSectionSpawn ss = subSections[totalIndex].Spawns[combination.activatedIndices[j]];
+                        totalDifficulty += ss.difficultyPoints;
+                        if(ss.difficultyPoints > 0)
+                        {
+                            numGreaterThan0++;
+                        }
+                    }
+                    combination.totalDifficulty = totalDifficulty;
+                    float multiplier = numGreaterThan0 < 2 ? 1 : 1 + 0.5f * (numGreaterThan0 - 1);
+                    combination.multipliedDifficulty = Mathf.Ceil(multiplier * totalDifficulty);
+                    combination.CreateMonsterTypes(rows[combination.rowIndex].subSections);
+                }
+
+                generatedSectionCombinations.Add(new SectionCombination(index, ssCombos));
+                index++;
+            }
+
+            Debug.Log(generatedSectionCombinations.Count);
         }
         #endregion
 
@@ -313,9 +386,9 @@ namespace Ryzm.EndlessRunner
 
         void UpdateRowCombinations()
         {
-            int numSecCombos = rowCombinations.Count;
+            int numberOfRows = rowCombinations.Count;
             
-            for(int i = 0; i < numSecCombos; i++)
+            for(int i = 0; i < numberOfRows; i++)
             {
                 RowCombination rowCombo = rowCombinations[i];
                 foreach(SubSectionCombination subSectionCombo in rowCombo.subSectionCombinations)
@@ -362,6 +435,170 @@ namespace Ryzm.EndlessRunner
             int rand = Random.Range(0, numSpawns);
             return spawns[rand].GetAddOnSpawn(spawnType);
         }
+
+        int GetMonsterMax(MonsterType monsterType)
+        {
+            if(monsterType == MonsterType.Rabby || monsterType == MonsterType.Bombee)
+            {
+                return 3;
+            }
+            else if(monsterType == MonsterType.Tregon || monsterType == MonsterType.Reyflora)
+            {
+                return 2;
+            }
+            else
+            {
+                return 1;
+            }
+        }
+
+        bool CheckIfValid(SelectionMetadata metadata, List<SelectionMetadata> subSectionMetadatas)
+        {
+            MonsterType mType = metadata.monsterType;
+            int monsterMax = GetMonsterMax(mType);
+            int totalIndex = metadata.TotalIndex;
+            if(mType == MonsterType.None || totalIndex == 0)
+            {
+                return true;
+            }
+            else if(metadata.rowIndex == 0)
+            {
+                if(metadata.subSectionIndex == 1)
+                {
+                    if(subSectionMetadatas[0].monsterType == MonsterType.SideDraze)
+                    {
+                        return false;
+                    }
+                    if(mType == MonsterType.SideDraze && subSectionMetadatas[0].monsterType != MonsterType.None)
+                    {
+                        return false;
+                    }
+                }
+                else if(metadata.subSectionIndex == 2)
+                {
+                    if(subSectionMetadatas[0].monsterType == MonsterType.SideDraze || subSectionMetadatas[1].monsterType == MonsterType.SideDraze)
+                    {
+                        return false;
+                    }
+                    if(mType == MonsterType.SideDraze && (subSectionMetadatas[0].monsterType != MonsterType.None || subSectionMetadatas[1].monsterType != MonsterType.None))
+                    {
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                // on row 1 or 2
+                int previousRowIndex = totalIndex - 3;
+                int previousIndex = totalIndex - 1;
+                int previousIndex2 = totalIndex - 2;
+                MonsterType prevRowMType = subSectionMetadatas[previousRowIndex].monsterType;
+                MonsterType prevMType = subSectionMetadatas[previousIndex].monsterType;
+                MonsterType prevMType2 = subSectionMetadatas[previousIndex2].monsterType;
+                if(prevRowMType == mType)
+                {
+                    return false;
+                }
+                if(metadata.subSectionIndex == 2)
+                {
+                    // need to check if other 2 in row are same
+                    if(mType == prevMType && mType == prevMType2)
+                    {
+                        return false;
+                    }
+                    if(prevMType == MonsterType.SideDraze || prevMType2 == MonsterType.SideDraze)
+                    {
+                        return false;
+                    }
+                    if(mType == MonsterType.SideDraze && (prevMType != MonsterType.None || prevMType2 != MonsterType.None))
+                    {
+                        return false;
+                    }
+                }
+                else if(metadata.subSectionIndex == 1)
+                {
+                    if(prevMType == MonsterType.SideDraze)
+                    {
+                        return false;
+                    }
+                    if(mType == MonsterType.SideDraze && prevMType != MonsterType.None)
+                    {
+                        return false;
+                    }
+                }
+                if(mType == MonsterType.DiveDraze || mType == MonsterType.SpecialMonafly || mType == MonsterType.PhysicalMonafly)
+                {
+                    if(metadata.rowIndex == 2)
+                    {
+                        MonsterType prevRowMType2 = subSectionMetadatas[totalIndex - 6].monsterType;
+                        if(prevRowMType != MonsterType.None || prevRowMType2 != MonsterType.None)
+                        {
+                            return false;
+                        }
+                    }
+                    else if(prevRowMType != MonsterType.None)
+                    {
+                        return false;
+                    }
+                }
+            }
+            int numOfSameType = 0;
+            foreach(SelectionMetadata subSectionMetadata in subSectionMetadatas)
+            {
+                if(subSectionMetadata.monsterType == mType)
+                {
+                    numOfSameType++;
+                }
+            }
+            
+            if(numOfSameType >= monsterMax)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        List<List<SelectionMetadata>> Generate(int index, SubSection[] subSections, List<SelectionMetadata> selectionMetadatas)
+        {
+            SubSection subSection = subSections[index];
+            int numSubSections = subSections.Length;
+            int numSelections = subSection.spawns.Count;
+            // int numSubSections = 3;
+            // int numSelections = 3;
+            List<List<SelectionMetadata>> responseMetadatas = new List<List<SelectionMetadata>>();
+            List<List<SelectionMetadata>> tempResponses = new List<List<SelectionMetadata>>();
+            for(int i = 0; i < numSelections; i++)
+            {
+                SelectionMetadata metadata = new SelectionMetadata();
+                metadata.monsterType = subSection.Spawns[i].monsterType;
+                metadata.rowIndex = subSection.rowIndex;
+                metadata.selectionIndex = i;
+                metadata.subSectionIndex = (int)subSection.subSectionPosition;
+                bool canAdd = CheckIfValid(metadata, selectionMetadatas);
+                if(canAdd)
+                {
+                    List<SelectionMetadata> newSelectionMetadata = selectionMetadatas.ToList();
+                    // todo check did shiiiiiit
+                    newSelectionMetadata.Add(metadata);
+                    if(index < numSubSections - 1)
+                    {
+                        tempResponses = Generate(index + 1, subSections, newSelectionMetadata);
+                        
+                        foreach(List<SelectionMetadata> response in tempResponses)
+                        {
+                            responseMetadatas.Add(response);
+                        }
+                    }
+                    else
+                    {
+                        responseMetadatas.Add(newSelectionMetadata);
+                    }
+                }
+            }
+
+            return responseMetadatas;
+        }
         #endregion
     }
 
@@ -377,6 +614,7 @@ namespace Ryzm.EndlessRunner
             for(int i = 0; i < numIndices; i++)
             {
                 int index = combination.activatedIndices[i];
+                Debug.Log(index);
                 spawns.Add(subSections[i].Activate(index));
             }
             return spawns;
@@ -395,46 +633,27 @@ namespace Ryzm.EndlessRunner
     public class SubSection
     {
         #region Public Variables
-        public Transform parent;
+        public int rowIndex;
+        public SubSectionPosition subSectionPosition;
         public List<GameObject> selections = new List<GameObject>();
+        public List<EndlessSectionSpawn> spawns = new List<EndlessSectionSpawn>();
         #endregion
 
-        #region Private Variables
-        List<EndlessSectionSpawn> _spawns = new List<EndlessSectionSpawn>();
-        #endregion
-
-        #region Properties
-        public List<GameObject> Selections
+        public void CreateSpawns()
         {
-            get
+            spawns.Clear();
+            foreach(GameObject sel in selections)
             {
-                if(parent != null)
-                {
-                    selections.Clear();
-                    foreach(Transform t in parent)
-                    {
-                        if(t.parent == parent)
-                        {
-                            selections.Add(t.gameObject);
-                        }
-                    }
-                }
-                return selections;
+                spawns.Add(sel.GetComponent<EndlessSectionSpawn>());
             }
         }
 
+        #region Properties
         public List<EndlessSectionSpawn> Spawns
         {
             get
             {
-                if(_spawns.Count == 0)
-                {
-                    foreach(GameObject sel in Selections)
-                    {
-                        _spawns.Add(sel.GetComponent<EndlessSectionSpawn>());
-                    }
-                }
-                return _spawns;
+                return spawns;
             }
         }
         #endregion
@@ -457,12 +676,39 @@ namespace Ryzm.EndlessRunner
 
         public void Deactivate()
         {
-            foreach(GameObject go in selections)
+            foreach(EndlessSectionSpawn spawn in spawns)
             {
-                go.SetActive(false);
+                spawn.gameObject.SetActive(false);
             }
+            // foreach(GameObject go in selections)
+            // {
+            //     go.SetActive(false);
+            // }
         }
         #endregion
+    }
+    
+    public enum SubSectionPosition
+    {
+        Left,
+        Middle,
+        Right
+    }
+
+    public class SelectionMetadata
+    {
+        public int rowIndex;
+        public int subSectionIndex;
+        public MonsterType monsterType;
+        public int selectionIndex;
+
+        public int TotalIndex
+        {
+            get
+            {
+                return rowIndex * 3 + subSectionIndex;
+            }
+        }
     }
 
     [System.Serializable]
@@ -512,20 +758,28 @@ namespace Ryzm.EndlessRunner
     {
         public int rowIndex;
         public List<int> activatedIndices = new List<int>();
+        public List<MonsterType> monsterTypes = new List<MonsterType>();
         public int totalDifficulty;
         public float multipliedDifficulty;
 
         public SubSectionCombination() {}
 
-        public SubSectionCombination(int rowIndex, List<int> activatedIndices, int totalDifficulty, float multipliedDifficulty)
+        public SubSectionCombination(int rowIndex)
         {
             this.rowIndex = rowIndex;
-            foreach(int index in activatedIndices)
+        }
+
+        public void CreateMonsterTypes(List<SubSection> subSections)
+        {
+            monsterTypes.Clear();
+            int numSS = subSections.Count;
+            for(int i = 0; i < numSS; i++)
             {
-                this.activatedIndices.Add(index);
+                if(subSections[i].rowIndex == rowIndex)
+                {
+                    monsterTypes.Add(subSections[i].Spawns[activatedIndices[i]].monsterType);
+                }
             }
-            this.totalDifficulty = totalDifficulty;
-            this.multipliedDifficulty = multipliedDifficulty;
         }
     }
 
@@ -539,15 +793,11 @@ namespace Ryzm.EndlessRunner
 
         public SectionCombination() {}
 
-        public SectionCombination(int index, int totalDifficulty, float multipliedDifficulty, List<SubSectionCombination> subSectionCombinations)
+        public SectionCombination(int index, List<SubSectionCombination> subSectionCombinations)
         {
             this.index = index;
-            this.totalDifficulty = totalDifficulty;
-            this.multipliedDifficulty = multipliedDifficulty;
-            foreach(SubSectionCombination combination in subSectionCombinations)
-            {
-                this.subSectionCombinations.Add(new SubSectionCombination(combination.rowIndex, combination.activatedIndices, combination.totalDifficulty, combination.multipliedDifficulty));
-            }
+            this.subSectionCombinations = subSectionCombinations.ToList();
+            UpdateTotalDifficulty();
         }
 
         public void UpdateTotalDifficulty()
@@ -630,37 +880,6 @@ namespace Ryzm.EndlessRunner
             }
             return addOn;
         }
-
-        // public Transform GetAddOn(int index)
-        // {
-        //     AddOn addOn = new AddOn();
-        //     int numCoins = coinAddOns.Length;
-        //     int numOrbs = orbAddOns.Length;
-        //     bool skipCoins = index > numCoins - 1;
-        //     bool skipOrbs = index > numOrbs - 1;
-
-        //     if(skipCoins && skipOrbs)
-        //     {
-        //         return null;
-        //     }
-        //     else if(skipCoins)
-        //     {
-        //         return orbAddOns[index];
-        //     }
-        //     else if(skipOrbs)
-        //     {
-        //         return coinAddOns[index];
-        //     }
-        //     else
-        //     {
-        //         int rand = Random.Range(0, 2);
-        //         if(rand == 0)
-        //         {
-        //             return coinAddOns[index];
-        //         }
-        //         return orbAddOns[index];
-        //     }
-        // }
 
         public void Deactivate()
         {

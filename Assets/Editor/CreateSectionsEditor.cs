@@ -5,14 +5,14 @@ using UnityEditor;
 
 namespace Ryzm.EndlessRunner
 {
-    [CustomEditor(typeof(CreateSections))]
+    [CustomEditor(typeof(CreateSectionCombinations))]
     public class CreateSectionsEditor : Editor
     {
         public override void OnInspectorGUI()
         {
             DrawDefaultInspector();
             
-            CreateSections createSections = (CreateSections)target;
+            CreateSectionCombinations createSections = (CreateSectionCombinations)target;
             if(GUILayout.Button("Bad bitch"))
             {
                 createSections.GetCombos();

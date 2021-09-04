@@ -10,9 +10,7 @@ namespace Ryzm.EndlessRunner
     {
         #region Public Variables
         public MonsterType type;
-        public Renderer bodyRenderer;
         public List<Renderer> renderers = new List<Renderer>();
-        public Collider bodyCollider;
         public List<Collider> colliders = new List<Collider>();
         public List<Material> materials = new List<Material>();
         #endregion
@@ -23,6 +21,7 @@ namespace Ryzm.EndlessRunner
         protected Transform trans;
         protected bool _isActive;
         protected GameStatus gameStatus;
+        protected Material currentMaterial;
         #endregion
 
         public bool IsActive
@@ -53,10 +52,6 @@ namespace Ryzm.EndlessRunner
             if(materials.Count > 0)
             {
                 int materialIndex = Random.Range(0, materials.Count);
-                if(bodyRenderer != null)
-                {
-                    bodyRenderer.material = materials[materialIndex];
-                }
                 foreach(Renderer ren in renderers)
                 {
                     ren.material = materials[materialIndex];
@@ -76,11 +71,21 @@ namespace Ryzm.EndlessRunner
 
         protected virtual void OnCollisionEnter(Collision other)
         {
-            if(LayerMask.LayerToName(other.GetContact(0).otherCollider.gameObject.layer) == "PlayerBody")
-            {
-                Message.Send(new RunnerDie());
-            }
+            // if(LayerMask.LayerToName(other.GetContact(0).otherCollider.gameObject.layer) == "PlayerBody")
+            // {
+            //     Message.Send(new RunnerDie());
+            // }
+            OnCollide(other.GetContact(0).otherCollider.gameObject);
         }
+
+        // protected virtual void OnTriggerEnter(Collider other)
+        // {
+        //     // if(LayerMask.LayerToName(other.gameObject.layer) == "PlayerBody")
+        //     // {
+        //     //     Message.Send(new RunnerDie());
+        //     // }
+        //     OnCollide(other.gameObject);
+        // }
 
         protected virtual void OnGameStatusResponse(GameStatusResponse gameStatusResponse)
         {
@@ -106,13 +111,17 @@ namespace Ryzm.EndlessRunner
         #region Protected Functions
         protected virtual void EnableCollider(bool shouldEnable)
         {
-            if(bodyCollider != null)
-            {
-                bodyCollider.enabled = shouldEnable;
-            }
             foreach(Collider col in colliders)
             {
                 col.enabled = shouldEnable;
+            }
+        }
+
+        protected virtual void OnCollide(GameObject other)
+        {
+            if(LayerMask.LayerToName(other.layer) == "PlayerBody")
+            {
+                Message.Send(new RunnerDie());
             }
         }
         #endregion
@@ -130,6 +139,7 @@ namespace Ryzm.EndlessRunner
         DiveDraze,
         SideDraze,
         PhysicalMonafly,
-        None
+        None,
+        Reyflora
     }
 }

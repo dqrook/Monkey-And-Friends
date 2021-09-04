@@ -499,11 +499,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7518853f4e9047d5a7975dcf4423cac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 0
+  type: 2
   bodyRenderer: {fileID: 1997747314228579911}
-  renderers: []
+  renderers:
+  - {fileID: 1997747314228579911}
   bodyCollider: {fileID: 2077846236722657984}
-  colliders: []
+  colliders:
+  - {fileID: 2077846236722657984}
   materials:
   - {fileID: 2100000, guid: f31ff426fcf76264e8b0833cb7a17d79, type: 2}
   - {fileID: 2100000, guid: 0a151553bbc202c44b9da5e4ce8e0219, type: 2}

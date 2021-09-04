@@ -4,5 +4,8 @@ using UnityEngine;
 
 namespace Ryzm.Dragon
 {
-    public class ShiftParticles : CustomParticles {}
+    public class ShiftParticles : CustomParticles
+    {
+        public float deactivationTime = 0.25f;
+    }
 }

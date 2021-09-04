@@ -10,7 +10,7 @@ namespace Ryzm.Dragon
         #region Protected Functions
         protected virtual void OnParticleCollision(GameObject other)
         {
-            EndlessMonster monster = other.GetComponent<EndlessMonster>();
+            MonsterBase monster = other.GetComponent<MonsterBase>();
             if(monster != null)
             {
                 monster.TakeDamage();

@@ -64,7 +64,7 @@ namespace Ryzm.EndlessRunner
             }
             else if(Input.GetKeyDown(downPress))
             {
-                Slide();
+                Down();
             }
         }
 
@@ -116,7 +116,7 @@ namespace Ryzm.EndlessRunner
             }
         }
 
-        public void Slide()
+        public void Down()
         {
             if(!CanMove())
             {
