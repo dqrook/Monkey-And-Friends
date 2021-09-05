@@ -76,7 +76,7 @@ namespace Ryzm.Dragon
                 {
                     system.Play();
                 }
-                else
+                else if(system != null)
                 {
                     system.Stop();
                 }
@@ -85,9 +85,12 @@ namespace Ryzm.Dragon
 
         protected void ResetLocalPosition()
         {
-            trans.parent = parent;
-            trans.localPosition = startLocalPosition;
-            trans.localRotation = startLocalRotation;
+            if(trans != null)
+            {
+                trans.parent = parent;
+                trans.localPosition = startLocalPosition;
+                trans.localRotation = startLocalRotation;
+            }
         }
         #endregion
     }

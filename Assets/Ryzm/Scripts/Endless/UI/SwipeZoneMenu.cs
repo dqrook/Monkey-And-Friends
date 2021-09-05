@@ -18,14 +18,13 @@ namespace Ryzm.UI
 
 		#region Private Variables
         Vector2 _firstTouchPosition;
-		float _angle;
-		float _length;
-		Vector2 _destination;
-		Vector2 _deltaSwipe;
 		Direction _swipeDirection;
 		GameStatus gameStatus;
 		float tapTime;
+		Vector2 tapPosition;
 		int taps;
+		IEnumerator trackPosition;
+		bool checkingSwipe;
 		#endregion
 
 		#region Properties
@@ -51,22 +50,7 @@ namespace Ryzm.UI
 		/// </summary>
 		public void OnPointerDown(PointerEventData data)
 		{
-			_OnPointerDown(data);
-			taps++;
-			if(taps == 1)
-			{
-				tapTime = Time.time;
-			}
-			else
-			{
-				float timeDiff = Time.time - tapTime;
-				if(taps == 2 && timeDiff < doubleTapTime)
-				{
-					// todo: ask for special attack
-					Debug.Log("special attack");
-				}
-				taps = 0;
-			}
+			_OnPointerDown();
 		}
 
 		/// <summary>
@@ -74,7 +58,7 @@ namespace Ryzm.UI
 		/// </summary>
 		public void OnPointerUp(PointerEventData data)
 		{
-			_OnPointerUp(data);
+			_OnPointerUp();
 		}
 
 		/// <summary>
@@ -82,7 +66,7 @@ namespace Ryzm.UI
 		/// </summary>
 		public void OnPointerEnter(PointerEventData data)
 		{
-			_OnPointerDown(data);
+			_OnPointerDown();
 		}
 
 		/// <summary>
@@ -90,30 +74,75 @@ namespace Ryzm.UI
 		/// </summary>
 		public void OnPointerExit(PointerEventData data)
 		{
-			_OnPointerUp(data);	
+			_OnPointerUp();	
 		}
 		#endregion
 
 		#region Private Functions
-		void _OnPointerDown(PointerEventData data)
+		void _OnPointerDown()
 		{
+			bool specialAttack = false;
+			taps++;
+			if(taps == 1)
+			{
+				tapTime = Time.time;
+				tapPosition = Input.mousePosition;
+			}
+			else
+			{
+				float timeDiff = Time.time - tapTime;
+				float length = GetLength(tapPosition);
+				if(taps == 2 && timeDiff < doubleTapTime && length < minimalSwipeLength * 0.5f)
+				{
+					// todo: ask for special attack
+					Debug.Log("special attack");
+					specialAttack = true;
+				}
+				taps = 0;
+			}
 			_firstTouchPosition = Input.mousePosition;
+			checkingSwipe = true;
+			trackPosition = TrackPosition();
+			StartCoroutine(trackPosition);
 		}
 
-		void _OnPointerUp(PointerEventData data)
+		void _OnPointerUp()
 		{
-			_destination = Input.mousePosition;
-			_deltaSwipe = _destination - _firstTouchPosition;
-			_length = _deltaSwipe.magnitude;
-
-			// if the swipe has been long enough
-			if (_length > minimalSwipeLength)
+			if(trackPosition != null)
 			{
-				_angle = EndlessUtils.AngleBetweenVectors(_deltaSwipe, Vector2.right);
-				_swipeDirection = EndlessUtils.AngleToSwipeDirection(_angle);
-				Swipe();
+				StopCoroutine(trackPosition);
+			}
+			CheckForSwipe();
+			checkingSwipe = false;
+		}
+
+		void CheckForSwipe()
+		{
+			if(checkingSwipe)
+			{
+				Vector2 _destination = Input.mousePosition;
+				Vector2 _deltaSwipe = _destination - _firstTouchPosition;
+				float _length = _deltaSwipe.magnitude;
+
+				// if the swipe has been long enough
+				if (_length > minimalSwipeLength)
+				{
+					float _angle = EndlessUtils.AngleBetweenVectors(_deltaSwipe, Vector2.right);
+					_swipeDirection = EndlessUtils.AngleToSwipeDirection(_angle);
+					Swipe();
+					checkingSwipe = false;
+				}
 			}
 		}
+
+		float GetLength(Vector2 position)
+		{
+			Vector2 _destination = Input.mousePosition;
+			Vector2 _deltaSwipe = _destination - position;
+			
+			return _deltaSwipe.magnitude;
+		}
+
         void Swipe()
 		{
 			if(_swipeDirection == Direction.Up)
@@ -130,5 +159,14 @@ namespace Ryzm.UI
 			}
 		}
 		#endregion
+
+		IEnumerator TrackPosition()
+		{
+			while(checkingSwipe)
+			{
+				CheckForSwipe();
+				yield return null;
+			}
+		}
     }
 }

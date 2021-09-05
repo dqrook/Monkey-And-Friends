@@ -46,11 +46,17 @@ namespace Ryzm.Dragon
         {
             if(!hasHit)
             {
+                Debug.Log("hit it ya bish");
                 bool checkUser = target == ParticleTarget.User || target == ParticleTarget.Any;
                 bool checkEnemy = target == ParticleTarget.Enemy || target == ParticleTarget.Any;
                 if(checkUser)
                 {
-                    if(LayerMask.LayerToName(other.gameObject.layer) == "PlayerBody")
+                    // if(LayerMask.LayerToName(other.gameObject.layer) == "PlayerBody")
+                    // {
+                    //     Message.Send(new RunnerDie());
+                    //     hasHit = true;
+                    // }
+                    if(other.gameObject.GetComponent<EndlessController>())
                     {
                         Message.Send(new RunnerDie());
                         hasHit = true;

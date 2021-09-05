@@ -12,13 +12,11 @@ namespace Ryzm.EndlessRunner
         public EndlessCamera endlessCamera;
         public Transform startTransform;
         public int startClipPlane = 1000;
-        public Transform endTransform;
-        public int gameClipPlane = 50;
+        public int mainMenuFieldOfView = 50;
         #endregion
 
         #region Private Variables
         GameStatus gameStatus;
-        IEnumerator rotateCamera;
         Transform cameraTrans;
         bool initializedCamera;
         #endregion
@@ -48,69 +46,17 @@ namespace Ryzm.EndlessRunner
                 cameraTrans.rotation = startTransform.rotation;
                 endlessCamera.cam.farClipPlane = startClipPlane;
                 initializedCamera = false;
+                if(gameStatus == GameStatus.MainMenu)
+                {
+                    endlessCamera.cam.fieldOfView = mainMenuFieldOfView;
+                }
             }
-            // else if(gameStatus == GameStatus.Starting)
-            // {
-            //     rotateCamera = null;
-            //     rotateCamera = RotateCamera(endTransform);
-            //     StartCoroutine(rotateCamera);
-            //     endlessCamera.cam.farClipPlane = gameClipPlane;
-            //     if(!initializedCamera)
-            //     {
-            //         Message.Send(new MapSettingsRequest("initCamera"));
-            //     }
-            // }
-            // else if(gameStatus == GameStatus.Restart)
-            // {
-            //     cameraTrans.position = startTransform.position;
-            //     cameraTrans.rotation = startTransform.rotation;
-            //     initializedCamera = false;
-            // }
         }
 
         void OnCameraRequest(CameraRequest request)
         {
             Message.Send(new CameraResponse(endlessCamera.gameObject));
         }
-
-        void OnMapSettingsResponse(MapSettingsResponse response)
-        {
-            if(response.requestId == "initCamera" && !initializedCamera)
-            {
-                // cameraTrans.position = response.settings.cameraSpawn.position;
-                // cameraTrans.rotation = response.settings.cameraSpawn.rotation;
-                endlessCamera.cam.farClipPlane = response.settings.farClipPlane;
-                initializedCamera = true;
-            }
-        }
-        #endregion
-
-
-        #region Private Functions
-        float GetTotalDifference(Transform target)
-        {
-            float posDiff = Vector3.Distance(cameraTrans.position, target.position);
-            float rotDiff = Vector3.Distance(cameraTrans.eulerAngles, target.eulerAngles);
-            return posDiff + rotDiff;
-        }
-        #endregion
-
-        #region Coroutines
-        // IEnumerator RotateCamera(Transform target)
-        // {
-        //     float diff = GetTotalDifference(target);
-        //     while(diff > 0.1f)
-        //     {
-        //         cameraTrans.position = Vector3.Lerp(cameraTrans.position, target.position, Time.deltaTime * 2f);
-        //         cameraTrans.rotation = Quaternion.Lerp(cameraTrans.rotation, target.rotation, Time.deltaTime * 2f);
-        //         diff = GetTotalDifference(target);
-        //         yield return null;
-        //     }
-        //     cameraTrans.position = target.position;
-        //     cameraTrans.rotation = target.rotation;
-        //     Message.Send(new StartGame());
-        //     yield break;
-        // }
         #endregion
     }
 }

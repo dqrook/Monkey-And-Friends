@@ -222,7 +222,7 @@ namespace Ryzm.EndlessRunner
                 }
                 if(headbuttAttackState != AttackState.Off)
                 {
-                    canKill = curX > 0.1f;
+                    canKill = curX > 0.5f;
                 }
                 yield return null;
             }

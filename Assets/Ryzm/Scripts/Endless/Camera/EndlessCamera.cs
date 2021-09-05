@@ -110,36 +110,31 @@ namespace Ryzm.EndlessRunner
             _parentTransform = mode == ControllerMode.Monkey ? monkeyTrans : dragonTrans;
             var newpos = _parentTransform.TransformPoint(pos);
             var newfw = _parentTransform.TransformDirection(fw);
-            if(currentSection != null)
-            {
-                currentPlatformPos = currentSection.GetPosition(1).position;
-                // todo: how to handle going on a curve?
-                // if we are going forward in the global z direction then we want to keep the global x location the same as the center of the platform
-                if(Mathf.Abs(newfw.z) > Mathf.Abs(newfw.x))
-                {
-                    newpos.x = currentPlatformPos.x;
-                    // newpos.z = Mathf.Lerp(_transform.position.z, newpos.z, 0.1f);
-                }
-                else
-                {
-                    newpos.z = currentPlatformPos.z;
-                    // newpos.x = Mathf.Lerp(_transform.position.x, newpos.x, 0.1f);
-                }
-            }
-            // float newY = newpos.y;
-            // newpos = Vector3.Lerp(_transform.position, newpos, 0.01f);
-            // newpos.y = newY;
-            // newpos.y = initY;
-            // newpos.y = Mathf.Lerp(prevPos.y, newpos.y, 0.03f);
+            // if(currentSection != null)
+            // {
+            //     currentPlatformPos = currentSection.GetPosition(1).position;
+            //     // todo: how to handle going on a curve?
+            //     // if we are going forward in the global z direction then we want to keep the global x location the same as the center of the platform
+            //     if(Mathf.Abs(newfw.z) > Mathf.Abs(newfw.x))
+            //     {
+            //         newpos.x = currentPlatformPos.x;
+            //         // newpos.z = Mathf.Lerp(_transform.position.z, newpos.z, 0.1f);
+            //     }
+            //     else
+            //     {
+            //         newpos.z = currentPlatformPos.z;
+            //         // newpos.x = Mathf.Lerp(_transform.position.x, newpos.x, 0.1f);
+            //     }
+            // }
             
             var newup = _parentTransform.TransformDirection(up);
             var newrot = Quaternion.LookRotation(newfw, newup);
             newrot = Quaternion.Lerp(prevRot, newrot, 0.05f);
             _transform.rotation = newrot;
-            _transform.position = newpos;
-            // abs(fw.z) > abs(fw.x) keep x the same
-            // Debug.Log($"{newpos.x - prevPos.x}" + " " + $"{newpos.z - prevPos.z}" + $"{newfw} \t newpos: {newpos} \t currentPlatformpos: {currentPlatformPos}" + "");
-            // prevPos = newpos;
+            Vector3 finPos = newpos;
+            // finPos.x = Mathf.Lerp(_transform.position.x, newpos.x, 5 * Time.deltaTime);
+            _transform.position = finPos;
+            
             prevRot = newrot;
         }
     }

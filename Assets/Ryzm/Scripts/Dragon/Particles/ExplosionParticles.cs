@@ -7,8 +7,7 @@ namespace Ryzm.Dragon
     public class ExplosionParticles : TriggerParticles
     {
         #region Public Variables
-        public Transform colliderTransform;
-        public Collider explosionCollider;
+        public SphereCollider explosionCollider;
         public float scale = 2;
         #endregion
 
@@ -16,15 +15,18 @@ namespace Ryzm.Dragon
         Vector3 colliderStartScale;
         IEnumerator expandCollider;
         IEnumerator shrinkThenDisable;
+        float finRadius;
         #endregion
 
         #region Event Functions
         protected override void Awake()
         {
             base.Awake();
-            colliderStartScale = colliderTransform.localScale;
-            colliderTransform.localScale = Vector3.zero;
+            // colliderStartScale = colliderTransform.localScale;
+            // colliderTransform.localScale = Vector3.zero;
             explosionCollider.enabled = false;
+            finRadius = explosionCollider.radius;
+            explosionCollider.radius = 0;
         }
         #endregion
 
@@ -80,7 +82,8 @@ namespace Ryzm.Dragon
         void ResetTransform()
         {
             explosionCollider.enabled = false;
-            colliderTransform.localScale = Vector3.zero;
+            explosionCollider.radius = 0;
+            // colliderTransform.localScale = Vector3.zero;
             trans.parent = parent;
             trans.localPosition = startLocalPosition;
             trans.localRotation = startLocalRotation;
@@ -94,23 +97,27 @@ namespace Ryzm.Dragon
             while(t < expansionTime)
             {
                 t += Time.deltaTime;
-                colliderTransform.localScale = colliderStartScale * t / expansionTime;
+                explosionCollider.radius = finRadius * t / expansionTime;
+                // colliderTransform.localScale = colliderStartScale * t / expansionTime;
                 yield return null;
             }
-            colliderTransform.localScale = colliderStartScale;
+            // colliderTransform.localScale = colliderStartScale;
+            explosionCollider.radius = finRadius;
             
         }
 
         IEnumerator ShrinkThenDisable(float shrinkTime)
         {
             float t = 0;
-            Vector3 start = colliderTransform.localScale;
+            // Vector3 start = colliderTransform.localScale;
+            float _start = explosionCollider.radius;
             while(t < shrinkTime)
             {
                 t += Time.deltaTime;
                 float multiplier = 1 - t / shrinkTime;
                 multiplier = multiplier > 0 ? multiplier : 0;
-                colliderTransform.localScale = start * multiplier;
+                // colliderTransform.localScale = start * multiplier;
+                explosionCollider.radius = _start * multiplier;
                 yield return null;
             }
             PlayParticles(false);

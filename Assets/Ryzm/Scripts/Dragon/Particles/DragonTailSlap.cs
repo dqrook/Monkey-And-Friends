@@ -10,12 +10,13 @@ namespace Ryzm.Dragon
         #region Public Variables
         public ExplosionParticles explosion;
         public float shrinkTime = 0.5f;
+        [HideInInspector]
+        public bool explosionEnabled;
         #endregion
 
         #region Private Variables
         IEnumerator expand;
         IEnumerator shrinkThenDisable;
-        bool explosionEnabled;
         Transform explosionTrans;
         #endregion
 

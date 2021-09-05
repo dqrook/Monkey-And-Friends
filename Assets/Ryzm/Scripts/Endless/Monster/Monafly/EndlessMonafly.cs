@@ -28,7 +28,6 @@ namespace Ryzm.EndlessRunner
             base.Awake();
             move = Vector3.zero;
             firePause = new WaitForSeconds(firePauseRate);
-            attackDistance = 15;
         }
         #endregion
 
@@ -41,6 +40,10 @@ namespace Ryzm.EndlessRunner
             SetIsAttacking(false);
             SetIsMoving(false);
             trans.localPosition = startPosition;
+            if(type == MonsterType.SpecialMonafly)
+            {
+                particlesContainer.DisableParticles();
+            }
         }
 
         public override void TakeDamage()
