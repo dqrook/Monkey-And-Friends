@@ -8,18 +8,19 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessTregon : EndlessMonster
     {
-        #region Event Functions
-        protected override void OnCollisionEnter(Collision other)
-        {
-            if(other.gameObject.GetComponent<EndlessController>())
-            {
-                Message.Send(new RunnerDie());
-            }
-        }
-        #endregion
 
         #region Public Functions
         public override void TakeDamage() {}
+        #endregion
+        
+        #region Protected Functions
+        protected override void OnCollide(GameObject other)
+        {
+            if(other.GetComponent<EndlessController>())
+            {
+                Message.Send(new RunnerHit());
+            }
+        }
         #endregion
     }
 }

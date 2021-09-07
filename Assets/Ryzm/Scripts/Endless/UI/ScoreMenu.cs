@@ -9,9 +9,15 @@ namespace Ryzm.UI
 {
     public class ScoreMenu : RyzmMenu
     {
+        #region Public Variables
         public TextMeshProUGUI score;
-        int currentScore;
+        #endregion
 
+        #region Private Variables
+        int currentScore;
+        #endregion
+
+        #region Properties
         public override bool IsActive
         {
             get
@@ -30,13 +36,15 @@ namespace Ryzm.UI
                     else
                     {
                         Message.RemoveListener<TotalCoinsResponse>(OnTotalCoinsResponse);
-                        currentScore = 0;
+                        currentScore = -1;
                     }
                     base.IsActive = value;
                 }
             }
         }
+        #endregion
 
+        #region Listener Functions
         void OnTotalCoinsResponse(TotalCoinsResponse response)
         {
             if(response.coinsCollected != currentScore)
@@ -45,5 +53,6 @@ namespace Ryzm.UI
                 score.text = currentScore.ToString();
             }
         }
+        #endregion
     }
 }

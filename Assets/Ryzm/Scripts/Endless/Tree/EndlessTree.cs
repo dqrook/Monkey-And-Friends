@@ -12,7 +12,7 @@ namespace Ryzm.EndlessRunner
         {
             if(other.gameObject.GetComponent<EndlessController>())
             {
-                Message.Send(new RunnerDie());
+                Message.Send(new RunnerHit());
             }
         }
     }

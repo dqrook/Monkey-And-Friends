@@ -46,7 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 4
   monsterType: 7
-  spawnPosition: 0
+  subSectionPosition: 0
   addOnSpawns: []
 --- !u!1 &214618711813950879
 GameObject:
@@ -403,7 +403,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 4
   monsterType: 7
-  spawnPosition: 0
+  subSectionPosition: 0
   addOnSpawns: []
 --- !u!1 &4228844797332754811
 GameObject:
@@ -543,12 +543,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 3
   monsterType: 8
-  spawnPosition: 1
+  subSectionPosition: 1
   addOnSpawns:
   - type: 0
     spawn: {fileID: 4228844797890490747}
+    subSectionPosition: 0
   - type: 1
     spawn: {fileID: 4228844797332754812}
+    subSectionPosition: 0
 --- !u!1 &4228844798448162767
 GameObject:
   m_ObjectHideFlags: 0
@@ -625,10 +627,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 0
   monsterType: 10
-  spawnPosition: 1
+  subSectionPosition: 1
   addOnSpawns:
   - type: 0
     spawn: {fileID: 4228844797715752158}
+    subSectionPosition: 0
 --- !u!1 &4228844798806416063
 GameObject:
   m_ObjectHideFlags: 0
@@ -676,10 +679,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 4
   monsterType: 7
-  spawnPosition: 1
+  subSectionPosition: 1
   addOnSpawns:
   - type: 1
     spawn: {fileID: 4228844798448162752}
+    subSectionPosition: 0
 --- !u!1 &4340801320831978815
 GameObject:
   m_ObjectHideFlags: 0
@@ -816,7 +820,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 4
   monsterType: 7
-  spawnPosition: 2
+  subSectionPosition: 2
   addOnSpawns: []
 --- !u!1 &4722495740149237097
 GameObject:
@@ -957,7 +961,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 4
   monsterType: 7
-  spawnPosition: 2
+  subSectionPosition: 2
   addOnSpawns: []
 --- !u!1 &5334128574655577366
 GameObject:
@@ -1425,10 +1429,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 2
   monsterType: 9
-  spawnPosition: 0
+  subSectionPosition: 0
   addOnSpawns:
   - type: 0
     spawn: {fileID: 993423699957153199}
+    subSectionPosition: 0
 --- !u!1 &7411610622836368655
 GameObject:
   m_ObjectHideFlags: 0
@@ -1476,10 +1481,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 2
   monsterType: 9
-  spawnPosition: 1
+  subSectionPosition: 1
   addOnSpawns:
   - type: 0
     spawn: {fileID: 2263395613302177448}
+    subSectionPosition: 0
 --- !u!1 &7417265638366155500
 GameObject:
   m_ObjectHideFlags: 0
@@ -1741,10 +1747,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 1
   monsterType: 2
-  spawnPosition: 2
+  subSectionPosition: 2
   addOnSpawns:
   - type: 1
     spawn: {fileID: 8105590749598068104}
+    subSectionPosition: 0
 --- !u!1 &9057621002698656380
 GameObject:
   m_ObjectHideFlags: 0
@@ -1951,7 +1958,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 3
   monsterType: 1
-  spawnPosition: 2
+  subSectionPosition: 2
   addOnSpawns: []
 --- !u!1 &9057621002741670027
 GameObject:
@@ -2065,10 +2072,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 3
   monsterType: 0
-  spawnPosition: 1
+  subSectionPosition: 1
   addOnSpawns:
   - type: 1
     spawn: {fileID: 2349517640498594866}
+    subSectionPosition: 0
 --- !u!1 &9057621002812194334
 GameObject:
   m_ObjectHideFlags: 0
@@ -2252,30 +2260,18 @@ MonoBehaviour:
   - subSections:
     - rowIndex: 0
       subSectionPosition: 0
-      selections:
-      - {fileID: 9057621003999644599}
-      - {fileID: 9057621003846011992}
-      - {fileID: 9057621004022189661}
       spawns:
       - {fileID: 9057621003999644601}
       - {fileID: 9057621003846011994}
       - {fileID: 9057621004022189663}
     - rowIndex: 0
       subSectionPosition: 1
-      selections:
-      - {fileID: 4228844798489218201}
-      - {fileID: 4228844798806416063}
-      - {fileID: 4228844798137723346}
       spawns:
       - {fileID: 4228844798489218202}
       - {fileID: 4228844798806416048}
       - {fileID: 4228844798137723347}
     - rowIndex: 0
       subSectionPosition: 2
-      selections:
-      - {fileID: 9057621004297473539}
-      - {fileID: 9057621002583667311}
-      - {fileID: 9057621002722789530}
       spawns:
       - {fileID: 9057621004297473541}
       - {fileID: 9057621002583667313}
@@ -2283,24 +2279,12 @@ MonoBehaviour:
   - subSections:
     - rowIndex: 1
       subSectionPosition: 0
-      selections:
-      - {fileID: 9057621004671648635}
-      - {fileID: 7411610622137542901}
-      - {fileID: 3998148980362913841}
       spawns:
       - {fileID: 9057621004671648637}
       - {fileID: 7411610622137542900}
       - {fileID: 789203813912572020}
     - rowIndex: 1
       subSectionPosition: 1
-      selections:
-      - {fileID: 9057621003917820649}
-      - {fileID: 9057621004697723270}
-      - {fileID: 9057621003861646061}
-      - {fileID: 9057621003380847230}
-      - {fileID: 9057621003119398460}
-      - {fileID: 7411610622836368655}
-      - {fileID: 9057621002787375704}
       spawns:
       - {fileID: 9057621003917820651}
       - {fileID: 9057621004697723272}
@@ -2311,11 +2295,6 @@ MonoBehaviour:
       - {fileID: 9057621002787375706}
     - rowIndex: 1
       subSectionPosition: 2
-      selections:
-      - {fileID: 9057621003349683709}
-      - {fileID: 9057621003016169065}
-      - {fileID: 9057621004389276994}
-      - {fileID: 4648031580478361291}
       spawns:
       - {fileID: 9057621003349683711}
       - {fileID: 9057621003016169067}
@@ -2324,21 +2303,12 @@ MonoBehaviour:
   - subSections:
     - rowIndex: 2
       subSectionPosition: 0
-      selections:
-      - {fileID: 9057621004656121177}
-      - {fileID: 9057621003942785007}
-      - {fileID: 169860951906566277}
       spawns:
       - {fileID: 9057621004656121179}
       - {fileID: 9057621003942785009}
       - {fileID: 7767808586199690176}
     - rowIndex: 2
       subSectionPosition: 1
-      selections:
-      - {fileID: 9057621003012188074}
-      - {fileID: 9057621004675841136}
-      - {fileID: 9057621004459023946}
-      - {fileID: 9057621004461047226}
       spawns:
       - {fileID: 9057621003012188076}
       - {fileID: 9057621004675841138}
@@ -2346,10 +2316,6 @@ MonoBehaviour:
       - {fileID: 9057621004461047228}
     - rowIndex: 2
       subSectionPosition: 2
-      selections:
-      - {fileID: 9057621004101387359}
-      - {fileID: 9057621004467077524}
-      - {fileID: 5185155124227591836}
       spawns:
       - {fileID: 9057621004101387361}
       - {fileID: 9057621004467077526}
@@ -3096,7 +3062,6 @@ MonoBehaviour:
       monsterTypes: 
       totalDifficulty: 11
       multipliedDifficulty: 22
-  approvedSectionCombinations: []
   generatedSectionCombinations:
   - index: 0
     totalDifficulty: 0
@@ -51929,7 +51894,7 @@ MonoBehaviour:
       totalDifficulty: 2
       multipliedDifficulty: 3
   rowCombinationIndex: 0
-  approvedComboIndex: 0
+  generatedComboIndex: -1
 --- !u!1 &9057621002938927457
 GameObject:
   m_ObjectHideFlags: 0
@@ -52055,10 +52020,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 0
   monsterType: 10
-  spawnPosition: 1
+  subSectionPosition: 1
   addOnSpawns:
   - type: 0
     spawn: {fileID: 4283885163056535105}
+    subSectionPosition: 0
 --- !u!1 &9057621003016169065
 GameObject:
   m_ObjectHideFlags: 0
@@ -52109,10 +52075,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 1
   monsterType: 2
-  spawnPosition: 2
+  subSectionPosition: 2
   addOnSpawns:
   - type: 0
     spawn: {fileID: 2105860420636785495}
+    subSectionPosition: 0
 --- !u!1 &9057621003064653136
 GameObject:
   m_ObjectHideFlags: 0
@@ -52239,10 +52206,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 4
   monsterType: 7
-  spawnPosition: 1
+  subSectionPosition: 1
   addOnSpawns:
   - type: 1
     spawn: {fileID: 7430617282093388780}
+    subSectionPosition: 0
 --- !u!1 &9057621003214320225
 GameObject:
   m_ObjectHideFlags: 0
@@ -52557,10 +52525,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 0
   monsterType: 10
-  spawnPosition: 2
+  subSectionPosition: 2
   addOnSpawns:
   - type: 0
     spawn: {fileID: 5621418168638675386}
+    subSectionPosition: 0
 --- !u!1 &9057621003357399442
 GameObject:
   m_ObjectHideFlags: 0
@@ -52640,12 +52609,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 3
   monsterType: 8
-  spawnPosition: 1
+  subSectionPosition: 1
   addOnSpawns:
   - type: 0
     spawn: {fileID: 1930206433637086138}
+    subSectionPosition: 0
   - type: 1
     spawn: {fileID: 2205960106224072733}
+    subSectionPosition: 0
 --- !u!1 &9057621003466511804
 GameObject:
   m_ObjectHideFlags: 0
@@ -53013,10 +52984,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 1
   monsterType: 2
-  spawnPosition: 0
+  subSectionPosition: 0
   addOnSpawns:
   - type: 1
     spawn: {fileID: 5766459419580276841}
+    subSectionPosition: 0
 --- !u!1 &9057621003861646061
 GameObject:
   m_ObjectHideFlags: 0
@@ -53064,7 +53036,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 3
   monsterType: 1
-  spawnPosition: 1
+  subSectionPosition: 1
   addOnSpawns: []
 --- !u!1 &9057621003917820649
 GameObject:
@@ -53111,7 +53083,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 0
   monsterType: 10
-  spawnPosition: 1
+  subSectionPosition: 1
   addOnSpawns: []
 --- !u!1 &9057621003942785007
 GameObject:
@@ -53162,10 +53134,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 1
   monsterType: 2
-  spawnPosition: 0
+  subSectionPosition: 0
   addOnSpawns:
   - type: 1
     spawn: {fileID: 4492657921963150534}
+    subSectionPosition: 0
 --- !u!1 &9057621003964940992
 GameObject:
   m_ObjectHideFlags: 0
@@ -53291,10 +53264,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 0
   monsterType: 10
-  spawnPosition: 0
+  subSectionPosition: 0
   addOnSpawns:
   - type: 0
     spawn: {fileID: 4056622263480116987}
+    subSectionPosition: 0
 --- !u!1 &9057621004022189661
 GameObject:
   m_ObjectHideFlags: 0
@@ -53343,7 +53317,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 3
   monsterType: 1
-  spawnPosition: 0
+  subSectionPosition: 0
   addOnSpawns: []
 --- !u!1 &9057621004087615391
 GameObject:
@@ -53470,10 +53444,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 0
   monsterType: 10
-  spawnPosition: 2
+  subSectionPosition: 2
   addOnSpawns:
   - type: 0
     spawn: {fileID: 4326393665457642917}
+    subSectionPosition: 0
 --- !u!1 &9057621004118406779
 GameObject:
   m_ObjectHideFlags: 0
@@ -53867,10 +53842,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 0
   monsterType: 10
-  spawnPosition: 2
+  subSectionPosition: 2
   addOnSpawns:
   - type: 0
     spawn: {fileID: 8009230279862363266}
+    subSectionPosition: 0
 --- !u!1 &9057621004389276994
 GameObject:
   m_ObjectHideFlags: 0
@@ -53920,10 +53896,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 3
   monsterType: 1
-  spawnPosition: 2
+  subSectionPosition: 2
   addOnSpawns:
   - type: 0
     spawn: {fileID: 1011650623239327072}
+    subSectionPosition: 0
 --- !u!1 &9057621004459023946
 GameObject:
   m_ObjectHideFlags: 0
@@ -53971,10 +53948,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 4
   monsterType: 7
-  spawnPosition: 1
+  subSectionPosition: 1
   addOnSpawns:
   - type: 1
     spawn: {fileID: 4595381326863737516}
+    subSectionPosition: 0
 --- !u!1 &9057621004461047226
 GameObject:
   m_ObjectHideFlags: 0
@@ -54023,12 +54001,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 3
   monsterType: 8
-  spawnPosition: 1
+  subSectionPosition: 1
   addOnSpawns:
   - type: 0
     spawn: {fileID: 7906061886705071465}
+    subSectionPosition: 0
   - type: 1
     spawn: {fileID: 7640028462174042445}
+    subSectionPosition: 0
 --- !u!1 &9057621004467077524
 GameObject:
   m_ObjectHideFlags: 0
@@ -54078,10 +54058,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 1
   monsterType: 2
-  spawnPosition: 2
+  subSectionPosition: 2
   addOnSpawns:
   - type: 1
     spawn: {fileID: 5189583984970761292}
+    subSectionPosition: 0
 --- !u!1 &9057621004597723507
 GameObject:
   m_ObjectHideFlags: 0
@@ -54160,10 +54141,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 0
   monsterType: 10
-  spawnPosition: 0
+  subSectionPosition: 0
   addOnSpawns:
   - type: 0
     spawn: {fileID: 3477264195825651509}
+    subSectionPosition: 0
 --- !u!1 &9057621004671648635
 GameObject:
   m_ObjectHideFlags: 0
@@ -54210,10 +54192,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 0
   monsterType: 10
-  spawnPosition: 0
+  subSectionPosition: 0
   addOnSpawns:
   - type: 0
     spawn: {fileID: 7030996571038304707}
+    subSectionPosition: 0
 --- !u!1 &9057621004675841136
 GameObject:
   m_ObjectHideFlags: 0
@@ -54262,10 +54245,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 3
   monsterType: 1
-  spawnPosition: 1
+  subSectionPosition: 1
   addOnSpawns:
   - type: 0
     spawn: {fileID: 6492056489142995117}
+    subSectionPosition: 0
 --- !u!1 &9057621004697723270
 GameObject:
   m_ObjectHideFlags: 0
@@ -54316,12 +54300,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   difficultyPoints: 1
   monsterType: 2
-  spawnPosition: 1
+  subSectionPosition: 1
   addOnSpawns:
   - type: 1
     spawn: {fileID: 5087169391637290116}
+    subSectionPosition: 0
   - type: 0
     spawn: {fileID: 5700910608959503875}
+    subSectionPosition: 0
 --- !u!1001 &350210546316993562
 PrefabInstance:
   m_ObjectHideFlags: 0

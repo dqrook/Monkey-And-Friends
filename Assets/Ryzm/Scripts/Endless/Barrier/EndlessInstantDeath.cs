@@ -12,7 +12,7 @@ namespace Ryzm.EndlessRunner
         {
             if(LayerMask.LayerToName(other.GetContact(0).otherCollider.gameObject.layer) == "PlayerBody")
             {
-                Message.Send(new RunnerDie());
+                Message.Send(new RunnerHit());
             }
         }
     }

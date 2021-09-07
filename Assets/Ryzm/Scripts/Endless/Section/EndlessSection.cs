@@ -41,6 +41,7 @@ namespace Ryzm.EndlessRunner
         GameDifficulty difficulty = GameDifficulty.Easy;
         bool gettingDifficulty;
         IEnumerator waitForDifficulty;
+        float runnerDistance;
         #endregion
 
         #region Properties
@@ -66,6 +67,7 @@ namespace Ryzm.EndlessRunner
         {
             base.Awake();
             Message.AddListener<GameDifficultyResponse>(OnGameDifficultyResponse);
+            Message.AddListener<RunnerDistanceResponse>(OnRunnerDistanceResponse);
             Message.Send(new GameDifficultyRequest());
         }
 
@@ -77,6 +79,7 @@ namespace Ryzm.EndlessRunner
             //     baseSection.Deactivate();
             // }
             gettingDifficulty = true;
+            Message.Send(new RunnerDistanceRequest());
             Message.Send(new GameDifficultyRequest());
             waitForDifficulty = WaitForDifficulty();
             StartCoroutine(waitForDifficulty);
@@ -105,6 +108,7 @@ namespace Ryzm.EndlessRunner
         {
             base.OnDestroy();
             Message.RemoveListener<GameDifficultyResponse>(OnGameDifficultyResponse);
+            Message.RemoveListener<RunnerDistanceResponse>(OnRunnerDistanceResponse);
         }
         #endregion
 
@@ -126,6 +130,11 @@ namespace Ryzm.EndlessRunner
         {
             difficulty = response.difficulty;
             gettingDifficulty = false;
+        }
+
+        void OnRunnerDistanceResponse(RunnerDistanceResponse response)
+        {
+            runnerDistance = response.distance;
         }
         #endregion
 
@@ -243,7 +252,8 @@ namespace Ryzm.EndlessRunner
             }
             if(baseSection != null)
             {
-                baseSection.Activate(difficulty);
+                // baseSection.Activate(difficulty);
+                baseSection.Activate(runnerDistance);
             }
         }
         #endregion
@@ -330,6 +340,8 @@ namespace Ryzm.EndlessRunner
         WaterStone,
         WaterBeachPillar,
         FloatingMonster1,
-        FloatingMonster2
+        FloatingMonster2,
+        FloatingMonster3,
+        FloatingMonster4
     }
 }

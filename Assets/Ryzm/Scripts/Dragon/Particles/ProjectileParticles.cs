@@ -8,6 +8,7 @@ namespace Ryzm.Dragon
     {
         #region Public Variables
         public float speed;
+        public Collider particleCollider;
         #endregion
 
         #region Private Variables
@@ -15,9 +16,20 @@ namespace Ryzm.Dragon
         Vector3 startPosition;
         #endregion
 
-        #region Public Variables
+        #region Event Functions
+        protected override void Awake()
+        {
+            base.Awake();
+            if(particleCollider == null)
+            {
+                particleCollider = GetComponent<Collider>();
+            }
+            EnableCollider(false);
+        }
+
         public override void Enable()
         {
+            EnableCollider(false);
             trans.localScale = Vector3.zero;
             ResetLocalPosition();
             base.Enable();
@@ -35,6 +47,17 @@ namespace Ryzm.Dragon
             {
                 hitParticles.Disable();
             }
+            EnableCollider(false);
+        }
+        #endregion
+
+        #region Private Functions
+        void EnableCollider(bool enabled)
+        {
+            if(particleCollider != null)
+            {
+                particleCollider.enabled = enabled;
+            }
         }
         #endregion
 
@@ -50,6 +73,7 @@ namespace Ryzm.Dragon
                 yield return null;
             }
             trans.localScale = startLocalScale;
+            EnableCollider(true);
             trans.parent = null;
             Vector3 currentPosition = trans.position;
             float diff = Vector3.Distance(currentPosition, startPosition);

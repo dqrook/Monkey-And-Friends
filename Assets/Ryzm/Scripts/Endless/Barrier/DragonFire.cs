@@ -51,7 +51,7 @@ namespace Ryzm.EndlessRunner
                 collisionTime += Time.deltaTime;
                 if(collisionTime > Time.deltaTime * 3)
                 {
-                    Message.Send(new RunnerDie());
+                    Message.Send(new RunnerHit());
                     collisionTime = 0;
                 }
             }

@@ -30,7 +30,7 @@ namespace Ryzm.UI
                     else
                     {
                         Message.RemoveListener<RunnerDistanceResponse>(OnRunnerDistanceResponse);
-                        currentDistance = 0;
+                        currentDistance = -1;
                     }
                     base.IsActive = value;
                 }
@@ -43,7 +43,7 @@ namespace Ryzm.UI
             if(_distance != currentDistance)
             {
                 currentDistance = _distance;
-                distance.text = currentDistance.ToString() + " m";
+                distance.text = currentDistance.ToString();
             }
         }
     }

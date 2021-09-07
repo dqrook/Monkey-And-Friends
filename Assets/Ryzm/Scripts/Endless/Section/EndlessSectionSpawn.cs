@@ -9,7 +9,7 @@ namespace Ryzm.EndlessRunner
         #region Public Variables
         public int difficultyPoints;
         public MonsterType monsterType;
-        public SubSectionPosition spawnPosition;
+        public SubSectionPosition subSectionPosition;
         public List<AddOnSpawn> addOnSpawns = new List<AddOnSpawn>();
         #endregion
 

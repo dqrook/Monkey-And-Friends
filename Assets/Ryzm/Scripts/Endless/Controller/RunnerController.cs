@@ -89,7 +89,7 @@ namespace Ryzm.EndlessRunner
 			animator.runtimeAnimatorController = animatorController;
             rb = GetComponent<Rigidbody>();
             Message.AddListener<CurrentSectionChange>(OnCurrentSectionChange);
-            Message.AddListener<RunnerDie>(OnRunnerDie);
+            Message.AddListener<RunnerHit>(OnRunnerHit);
             Message.AddListener<CurrentPositionRequest>(OnCurrentPositionRequest);
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
 		}
@@ -108,7 +108,7 @@ namespace Ryzm.EndlessRunner
         void OnDestroy()
         {
             Message.RemoveListener<CurrentSectionChange>(OnCurrentSectionChange);
-            Message.RemoveListener<RunnerDie>(OnRunnerDie);
+            Message.RemoveListener<RunnerHit>(OnRunnerHit);
             Message.RemoveListener<CurrentPositionRequest>(OnCurrentPositionRequest);
             Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
         }
@@ -121,7 +121,7 @@ namespace Ryzm.EndlessRunner
             _endlessTSection = change.endlessTSection;
         }
 
-        void OnRunnerDie(RunnerDie runnerDie)
+        void OnRunnerHit(RunnerHit runnerHit)
         {
             Die();
         }

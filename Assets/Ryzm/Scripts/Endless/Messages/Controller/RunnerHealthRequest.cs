@@ -2,5 +2,5 @@
 
 namespace Ryzm.EndlessRunner.Messages
 {
-    public class RunnerDie : Message {}
+    public class RunnerHealthRequest : Message {}
 }

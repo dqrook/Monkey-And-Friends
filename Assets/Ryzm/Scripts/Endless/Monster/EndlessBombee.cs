@@ -46,7 +46,7 @@ namespace Ryzm.EndlessRunner
             if(other.gameObject.GetComponent<EndlessController>())
             {
                 Explode();
-                Message.Send(new RunnerDie());
+                Message.Send(new RunnerHit());
             }
         }
         protected override void Attack()

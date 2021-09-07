@@ -27,12 +27,14 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<TotalCoinsRequest>(OnTotalCoinsRequest);
         }
 
+        #region Listener Functions
         void OnGameStatusResponse(GameStatusResponse response)
         {
-            if(response.status == GameStatus.Restart)
+            if(response.status == GameStatus.Restart || response.status == GameStatus.Exit)
             {
                 coinsCollected = 0;
                 distanceTraveled = 0;
+                UpdateCoins();
             }
         }
 
@@ -51,11 +53,14 @@ namespace Ryzm.EndlessRunner
         {
             UpdateCoins();
         }
+        #endregion
 
+        #region Private Functions
         void UpdateCoins()
         {
             Message.Send(new TotalCoinsResponse(coinsCollected));
         }
+        #endregion
         
     }
 }

@@ -48,7 +48,7 @@ namespace Ryzm.EndlessRunner
         protected override void OnGameStatusResponse(GameStatusResponse gameStatusResponse)
         {
             base.OnGameStatusResponse(gameStatusResponse);
-            if(gameStatusResponse.status == GameStatus.Restart)
+            if(gameStatusResponse.status == GameStatus.Restart || gameStatusResponse.status == GameStatus.Exit)
             {
                 animator.SetBool("shrink", false);
             }

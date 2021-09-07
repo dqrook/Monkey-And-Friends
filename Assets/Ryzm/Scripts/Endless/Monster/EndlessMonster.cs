@@ -21,7 +21,6 @@ namespace Ryzm.EndlessRunner
         protected Transform trans;
         protected bool _isActive;
         protected GameStatus gameStatus;
-        protected Material currentMaterial;
         #endregion
 
         public bool IsActive
@@ -78,6 +77,15 @@ namespace Ryzm.EndlessRunner
             OnCollide(other.GetContact(0).otherCollider.gameObject);
         }
 
+        protected virtual void OnCollisionStay(Collision other)
+        {
+            // if(LayerMask.LayerToName(other.GetContact(0).otherCollider.gameObject.layer) == "PlayerBody")
+            // {
+            //     Message.Send(new RunnerDie());
+            // }
+            OnCollide(other.GetContact(0).otherCollider.gameObject);
+        }
+
         // protected virtual void OnTriggerEnter(Collider other)
         // {
         //     // if(LayerMask.LayerToName(other.gameObject.layer) == "PlayerBody")
@@ -121,7 +129,7 @@ namespace Ryzm.EndlessRunner
         {
             if(LayerMask.LayerToName(other.layer) == "PlayerBody")
             {
-                Message.Send(new RunnerDie());
+                Message.Send(new RunnerHit());
             }
         }
         #endregion
@@ -140,6 +148,8 @@ namespace Ryzm.EndlessRunner
         SideDraze,
         PhysicalMonafly,
         None,
-        Reyflora
+        Reyflora,
+        StonePillar,
+        StoneRow
     }
 }

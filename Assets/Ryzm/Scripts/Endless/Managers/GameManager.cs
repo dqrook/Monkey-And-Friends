@@ -35,7 +35,7 @@ namespace Ryzm.EndlessRunner
         void Awake()
         {
             Message.AddListener<GameStatusRequest>(OnGameStatusRequest);
-            Message.AddListener<RunnerDie>(OnRunnerDie);
+            Message.AddListener<RunnerHit>(OnRunnerHit);
             Message.AddListener<RequestGameSpeedChange>(OnRequestGameSpeedChange);
             Message.AddListener<GameSpeedRequest>(OnGameSpeedRequest);
             Message.AddListener<MadeWorld>(OnMadeWorld);
@@ -61,7 +61,7 @@ namespace Ryzm.EndlessRunner
         void OnDestroy()
         {
             Message.RemoveListener<GameStatusRequest>(OnGameStatusRequest);
-            Message.RemoveListener<RunnerDie>(OnRunnerDie);
+            Message.RemoveListener<RunnerHit>(OnRunnerHit);
             Message.RemoveListener<RequestGameSpeedChange>(OnRequestGameSpeedChange);
             Message.RemoveListener<GameSpeedRequest>(OnGameSpeedRequest);
             Message.RemoveListener<MadeWorld>(OnMadeWorld);
@@ -124,7 +124,7 @@ namespace Ryzm.EndlessRunner
             StartCoroutine(ForceSetActive());
         }
 
-        void OnRunnerDie(RunnerDie runnerDie)
+        void OnRunnerHit(RunnerHit runnerHit)
         {
             if(status == GameStatus.Active)
             {

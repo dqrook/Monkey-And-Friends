@@ -208,6 +208,7 @@ namespace Ryzm.UI
         DragonMarket,
         SingleDragon,
         MyDragons,
-        LoadingFade
+        LoadingFade,
+        Health
     }
 }

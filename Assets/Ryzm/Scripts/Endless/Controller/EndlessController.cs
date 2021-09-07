@@ -51,6 +51,8 @@ namespace Ryzm.EndlessRunner
         protected bool inSlide;
         protected float maxShiftCooldown = 0.25f;
         protected RaycastHit hit;
+        protected Transform shiftTarget;
+        protected ShiftDistanceType shiftType;
         #endregion
 
         #region Private Variables
@@ -123,7 +125,7 @@ namespace Ryzm.EndlessRunner
 
             mainCamera = Camera.main;
             State = 0;
-            rb.constraints = RigidbodyConstraints.FreezeRotation;
+            rb.constraints = RigidbodyConstraints.FreezeAll;
             // playerInput.Touch.PrimaryContact.started += (ctx) => StartTouchPrimary(ctx);
             // playerInput.Touch.PrimaryContact.canceled += (ctx) => EndTouchPrimary(ctx);
 		}
@@ -155,7 +157,7 @@ namespace Ryzm.EndlessRunner
 			Message.Send(new ControllerModeRequest());
             Message.AddListener<RunnerDistanceRequest>(OnRunnerDistanceRequest);
             Message.AddListener<CurrentSectionChange>(OnCurrentSectionChange);
-            Message.AddListener<RunnerDie>(OnRunnerDie);
+            Message.AddListener<RunnerHit>(OnRunnerHit);
             Message.AddListener<CurrentPositionRequest>(OnCurrentPositionRequest);
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
             Message.AddListener<ControllerModeResponse>(OnControllerModeResponse);
@@ -167,7 +169,7 @@ namespace Ryzm.EndlessRunner
 			playerInput.Disable();
             Message.RemoveListener<RunnerDistanceRequest>(OnRunnerDistanceRequest);
             Message.RemoveListener<CurrentSectionChange>(OnCurrentSectionChange);
-            Message.RemoveListener<RunnerDie>(OnRunnerDie);
+            Message.RemoveListener<RunnerHit>(OnRunnerHit);
             Message.RemoveListener<CurrentPositionRequest>(OnCurrentPositionRequest);
             Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
             Message.RemoveListener<ControllerModeResponse>(OnControllerModeResponse);
@@ -192,7 +194,7 @@ namespace Ryzm.EndlessRunner
             _endlessTSection = change.endlessTSection;
         }
 
-        protected virtual void OnRunnerDie(RunnerDie runnerDie)
+        protected virtual void OnRunnerHit(RunnerHit runnerHit)
         {
             Die();
         }
@@ -284,6 +286,17 @@ namespace Ryzm.EndlessRunner
             return false;
         }
 
+        protected void TakeDamageAndShift()
+        {
+            if(shift != null)
+            {
+                StopCoroutine(shift);
+                shift = null;
+            }
+            shift = _Shift(shiftTarget, shiftType, true);
+            StartCoroutine(shift);
+        }
+
         protected virtual void Reset()
         {
             StopAllCoroutines();
@@ -303,24 +316,28 @@ namespace Ryzm.EndlessRunner
             _endlessTSection = null;
             _endlessTurnSection = null;
             rb.constraints = RigidbodyConstraints.FreezeRotation;
+            Message.Send(new RunnerDistanceResponse(distanceTraveled));
         }
         #endregion
         
         #region Coroutines
-        protected IEnumerator _Shift(Transform target, ShiftDistanceType type = ShiftDistanceType.x)
+        protected IEnumerator _Shift(Transform target, ShiftDistanceType type = ShiftDistanceType.x, bool skipAnim = false)
         {
             inShift = true;
             float _shiftDistance = GetShiftDistance(target, type);
             float _distance = Mathf.Lerp(0, _shiftDistance, 0.1f);
             float signDistance = Mathf.Sign(_distance);
-
-            if(signDistance == 1)
+            
+            if(!skipAnim)
             {
-                animator.SetTrigger("shiftRight");
-            }
-            else
-            {
-                animator.SetTrigger("shiftLeft");
+                if(signDistance == 1)
+                {
+                    animator.SetTrigger("shiftRight");
+                }
+                else
+                {
+                    animator.SetTrigger("shiftLeft");
+                }
             }
             float absDistance = _distance * signDistance;
             shiftSpeed = signDistance;

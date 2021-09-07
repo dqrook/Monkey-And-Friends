@@ -21,8 +21,10 @@ namespace Ryzm.EndlessRunner
         EndlessDragon dragon;
         AttackState shiftAttackState;
         AttackState headbuttAttackState;
+        AttackState tailSlapAttackState;
         bool canKill;
         bool checkedShift;
+        bool hasHitRunner;
         #endregion
 
         #region Event Functions
@@ -44,6 +46,7 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<ControllersResponse>(OnControllersResponse);
             Message.AddListener<ShiftAttackStateResponse>(OnShiftAttackStateResponse);
             Message.AddListener<HeadbuttAttackStateResponse>(OnHeadbuttAttackStateResponse);
+            Message.AddListener<TailSlapAttackStateResponse>(OnTailSlapAttackStateResponse);
         }
 
         protected override void OnDisable()
@@ -52,6 +55,7 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<ControllersResponse>(OnControllersResponse);
             Message.RemoveListener<ShiftAttackStateResponse>(OnShiftAttackStateResponse);
             Message.RemoveListener<HeadbuttAttackStateResponse>(OnHeadbuttAttackStateResponse);
+            Message.RemoveListener<TailSlapAttackStateResponse>(OnTailSlapAttackStateResponse);
         }
 
         
@@ -77,6 +81,11 @@ namespace Ryzm.EndlessRunner
         {
             headbuttAttackState = response.headbuttAttackState;
         }
+
+        void OnTailSlapAttackStateResponse(TailSlapAttackStateResponse response)
+        {
+            tailSlapAttackState = response.tailSlapAttackState;
+        }
         #endregion
 
         #region Public Functions
@@ -85,6 +94,7 @@ namespace Ryzm.EndlessRunner
             base.Reset();
             canKill = false;
             checkedShift = false;
+            hasHitRunner = false;
         }
 
         public override void TakeDamage()
@@ -93,8 +103,7 @@ namespace Ryzm.EndlessRunner
             StopCoroutine(attack);
             if(canKill)
             {
-                Message.Send(new RunnerDie());
-                animator.SetBool("attack", false);
+                HitRunner();
             }
             else
             {
@@ -115,13 +124,32 @@ namespace Ryzm.EndlessRunner
                 StartCoroutine(attack);
             }
         }
-        #endregion
-        bool gotEm = false;
+
         protected override void OnCollide(GameObject other)
         {
-            base.OnCollide(other);
-            gotEm = true;
+            Debug.Log(LayerMask.LayerToName(other.layer));
+            if(LayerMask.LayerToName(other.layer) == "PlayerBody")
+            {
+                HitRunner();
+            }
+            else if(LayerMask.LayerToName(other.layer) == "Player")
+            {
+                TakeDamage();
+            }
         }
+        #endregion
+
+        #region Private Methods
+        void HitRunner()
+        {
+            if(!hasHitRunner)
+            {
+                hasHitRunner = true;
+                Message.Send(new RunnerHit());
+                animator.SetBool("attack", false);
+            }
+        }
+        #endregion
 
         #region Coroutines
         IEnumerator _Attack()
@@ -220,20 +248,21 @@ namespace Ryzm.EndlessRunner
                 {
                     rootTransform.LookAt(currentDragonPosition);
                 }
-                if(headbuttAttackState != AttackState.Off)
+                if(tailSlapAttackState == AttackState.On)
+                {
+                    canKill = false;
+                }
+                else if(headbuttAttackState != AttackState.Off || tailSlapAttackState == AttackState.Cooldown)
                 {
                     canKill = curX > 0.5f;
+                }
+                else if(headbuttAttackState == AttackState.Off && tailSlapAttackState == AttackState.Off && shiftAttackState == AttackState.Off)
+                {
+                    canKill = true;
                 }
                 yield return null;
             }
             animator.SetBool("attack", false);
-            // float t = 0;
-            // while(t < 0.5f)
-            // {
-            //     t += Time.deltaTime;
-            //     dragon.MoveWithMultiplier(1);
-            //     yield return null;
-            // }
         }
 
         IEnumerator FinishDaJob()

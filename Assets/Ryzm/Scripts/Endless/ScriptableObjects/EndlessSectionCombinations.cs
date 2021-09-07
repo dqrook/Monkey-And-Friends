@@ -39,17 +39,17 @@ namespace Ryzm.EndlessRunner
 
         public SectionCombination GetSectionCombinationByDifficulty(GameDifficulty difficulty)
         {
-            int minValue = 16;
+            int minValue = 20;
             int maxValue = 1000;
             if(difficulty == GameDifficulty.Easy)
             {
                 minValue = 0;
-                maxValue = 7;
+                maxValue = 9;
             }
             else if(difficulty == GameDifficulty.Medium)
             {
-                minValue = 8;
-                maxValue = 15;
+                minValue = 10;
+                maxValue = 19;
             }
             currentGroups.Clear();
             foreach(SectionCombinationsGroup group in combinationsGroups)
@@ -63,6 +63,15 @@ namespace Ryzm.EndlessRunner
             int randCombo = Random.Range(0, currentGroups[randGroup].sectionCombinations.Count);
             
             return currentGroups[randGroup].sectionCombinations[randCombo];
+        }
+
+        public SectionCombination GetSectionCombinationByDistance(float runnerDistance)
+        {
+            int value = Mathf.FloorToInt(runnerDistance / 100);
+            value = value < combinationsGroups.Count ? value : combinationsGroups.Count - 1;
+
+            int randCombo = Random.Range(0, combinationsGroups[value].sectionCombinations.Count);
+            return combinationsGroups[value].sectionCombinations[randCombo];
         }
     }
 

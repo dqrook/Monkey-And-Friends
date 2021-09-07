@@ -70,12 +70,29 @@ namespace Ryzm.EndlessRunner
         //     }
         // }
 
+        // public override void OnInspectorGUI()
+        // {
+        //     DrawDefaultInspector();
+        //     BaseSectionPrefab bsp = (BaseSectionPrefab)target;
+
+        //     if(GUILayout.Button("Fill Rows"))
+        //     {
+        //         bsp.FillRows();
+        //     }
+        // }
+
         public override void OnInspectorGUI()
         {
             DrawDefaultInspector();
             BaseSectionPrefab bsp = (BaseSectionPrefab)target;
-            EditorUtility.SetDirty(target);
+        
             GUILayout.Label("Current Sub Section Combo Dex " + bsp.SubSectionComboIndex.ToString());
+
+            GUILayout.Label("Main");
+            if(GUILayout.Button("Fill Rows"))
+            {
+                bsp.FillRows();
+            }
 
             if(GUILayout.Button("Get Combinations"))
             {
@@ -123,25 +140,25 @@ namespace Ryzm.EndlessRunner
             GUILayout.Label("Approved Combos");
             if(GUILayout.Button("Save Approved Combo"))
             {
-                bsp.SaveApprovedCombo();
+                bsp.SaveGeneratedCombo();
             }
 
             if(GUILayout.Button("Next Approved Combo"))
             {
-                bsp.NextApprovedCombo();
+                bsp.NextGeneratedCombo();
             }
 
             if(GUILayout.Button("Previous Approved Combo"))
             {
-                bsp.PreviousApprovedCombo();
+                bsp.PreviousGeneratedCombo();
             }
 
             if(GUILayout.Button("Remove Approved Combo"))
             {
-                bsp.RemoveApprovedCombo();
+                bsp.RemoveGeneratedCombo();
             }
 
-            GUILayout.Label("Misc");
+            GUILayout.Label("Endless Section Combos");
             if(GUILayout.Button("Create Endless Section Combinations"))
             {
                 bsp.CreateEndlessSectionCombinations();
@@ -150,9 +167,9 @@ namespace Ryzm.EndlessRunner
             {
                 bsp.GenerateSectionCombinations();
             }
-            if(GUILayout.Button("Create Spawns"))
+            if(GUILayout.Button("Clear Generated Combinations"))
             {
-                bsp.CreateSpawns();
+                bsp.ClearGeneratedCombinations();
             }
         }
     }
