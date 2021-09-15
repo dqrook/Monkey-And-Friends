@@ -46,7 +46,6 @@ namespace Ryzm.Dragon
         {
             if(!hasHit)
             {
-                Debug.Log("hit it ya bish");
                 bool checkUser = target == ParticleTarget.User || target == ParticleTarget.Any;
                 bool checkEnemy = target == ParticleTarget.Enemy || target == ParticleTarget.Any;
                 if(checkUser)
@@ -58,7 +57,7 @@ namespace Ryzm.Dragon
                     // }
                     if(other.gameObject.GetComponent<EndlessController>())
                     {
-                        Message.Send(new RunnerHit());
+                        Message.Send(new RunnerHit(monsterMetadata.monsterType, AttackType.Special));
                         hasHit = true;
                     }
                 }

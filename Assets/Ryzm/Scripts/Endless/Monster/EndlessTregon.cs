@@ -11,14 +11,20 @@ namespace Ryzm.EndlessRunner
 
         #region Public Functions
         public override void TakeDamage() {}
+
+        public override void TakeSpecialDamage()
+        {
+            Die();
+        }
         #endregion
-        
+
         #region Protected Functions
         protected override void OnCollide(GameObject other)
         {
-            if(other.GetComponent<EndlessController>())
+            if(!hasHit && other.GetComponent<EndlessController>())
             {
-                Message.Send(new RunnerHit());
+                hasHit = true;
+                Message.Send(new RunnerHit(monsterMetadata.monsterType, AttackType.Physical));
             }
         }
         #endregion

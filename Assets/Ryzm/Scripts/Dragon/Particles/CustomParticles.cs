@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Ryzm.EndlessRunner;
 
 namespace Ryzm.Dragon
 {
@@ -12,6 +13,7 @@ namespace Ryzm.Dragon
         public float expansionTime;
         [HideInInspector]
         public bool isEnabled;
+        public MonsterMetadata monsterMetadata = new MonsterMetadata();
         #endregion
 
         #region Protected Variables
@@ -38,7 +40,7 @@ namespace Ryzm.Dragon
                 for(int i = 0; i < numChildren; i++)
                 {
                     ParticleSystem ps =  trans.GetChild(i).GetComponent<ParticleSystem>();
-                    if(ps != null)
+                    if(ps != null && ps.gameObject.activeSelf)
                     {
                         particleSystems.Add(ps);
                     }

@@ -24,7 +24,7 @@ namespace Ryzm.EndlessRunner
         AttackState tailSlapAttackState;
         bool canKill;
         bool checkedShift;
-        bool hasHitRunner;
+        Vector3 _distanceVec;
         #endregion
 
         #region Event Functions
@@ -94,12 +94,12 @@ namespace Ryzm.EndlessRunner
             base.Reset();
             canKill = false;
             checkedShift = false;
-            hasHitRunner = false;
         }
 
         public override void TakeDamage()
         {
-            Debug.Log("canKill " + canKill);
+            // Debug.Log("canKill " + canKill + " tailslapattackstate " + tailSlapAttackState);
+            UpdateCanKill();
             StopCoroutine(attack);
             if(canKill)
             {
@@ -111,6 +111,11 @@ namespace Ryzm.EndlessRunner
                 EnableCollider(false);
                 // StartCoroutine(FinishDaJob());
             }
+        }
+
+        public override void TakeSpecialDamage()
+        {
+            Die();
         }
         #endregion
 
@@ -127,7 +132,6 @@ namespace Ryzm.EndlessRunner
 
         protected override void OnCollide(GameObject other)
         {
-            Debug.Log(LayerMask.LayerToName(other.layer));
             if(LayerMask.LayerToName(other.layer) == "PlayerBody")
             {
                 HitRunner();
@@ -142,11 +146,30 @@ namespace Ryzm.EndlessRunner
         #region Private Methods
         void HitRunner()
         {
-            if(!hasHitRunner)
+            if(!hasHit)
             {
-                hasHitRunner = true;
-                Message.Send(new RunnerHit());
+                hasHit = true;
+                Message.Send(new RunnerHit(monsterMetadata.monsterType, AttackType.Physical));
                 animator.SetBool("attack", false);
+            }
+        }
+
+        void UpdateCanKill()
+        {
+            _distanceVec = trans.InverseTransformPoint(currentDragonPosition);
+            float curX = Mathf.Abs(_distanceVec.x);
+            // Debug.Log(tailSlapAttackState + " " + curX);
+            if(tailSlapAttackState == AttackState.On)
+            {
+                canKill = false;
+            }
+            else if(headbuttAttackState != AttackState.Off || tailSlapAttackState != AttackState.Off)
+            {
+                canKill = curX > 0.5f;
+            }
+            else if(headbuttAttackState == AttackState.Off && tailSlapAttackState == AttackState.Off && shiftAttackState == AttackState.Off)
+            {
+                canKill = true;
             }
         }
         #endregion
@@ -248,18 +271,8 @@ namespace Ryzm.EndlessRunner
                 {
                     rootTransform.LookAt(currentDragonPosition);
                 }
-                if(tailSlapAttackState == AttackState.On)
-                {
-                    canKill = false;
-                }
-                else if(headbuttAttackState != AttackState.Off || tailSlapAttackState == AttackState.Cooldown)
-                {
-                    canKill = curX > 0.5f;
-                }
-                else if(headbuttAttackState == AttackState.Off && tailSlapAttackState == AttackState.Off && shiftAttackState == AttackState.Off)
-                {
-                    canKill = true;
-                }
+                UpdateCanKill();
+                // Debug.Log("canKill " + canKill + " tailslapattackstate " + tailSlapAttackState);
                 yield return null;
             }
             animator.SetBool("attack", false);

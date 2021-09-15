@@ -171,6 +171,12 @@ namespace Ryzm.EndlessRunner
             {
                 bsp.ClearGeneratedCombinations();
             }
+
+            GUILayout.Label("Replace Monster");
+            if(GUILayout.Button("Replace Monster"))
+            {
+                bsp.ReplaceMonster();
+            }
         }
     }
 }

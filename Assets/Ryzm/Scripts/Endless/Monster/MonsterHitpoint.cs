@@ -8,5 +8,10 @@
         {
             monster.TakeDamage();
         }
+
+        public override void TakeSpecialDamage()
+        {
+            monster.TakeSpecialDamage();
+        }
     }
 }

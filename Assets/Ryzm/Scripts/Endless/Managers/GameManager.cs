@@ -14,6 +14,7 @@ namespace Ryzm.EndlessRunner
         public GameStatus status = GameStatus.MainMenu;
         public GameDifficulty difficulty = GameDifficulty.Easy;
         public float speed = 0.15f;
+        public Material defaultSkyboxMaterial;
         #endregion
 
         #region Private Variables
@@ -35,7 +36,7 @@ namespace Ryzm.EndlessRunner
         void Awake()
         {
             Message.AddListener<GameStatusRequest>(OnGameStatusRequest);
-            Message.AddListener<RunnerHit>(OnRunnerHit);
+            Message.AddListener<RunnerDie>(OnRunnerDie);
             Message.AddListener<RequestGameSpeedChange>(OnRequestGameSpeedChange);
             Message.AddListener<GameSpeedRequest>(OnGameSpeedRequest);
             Message.AddListener<MadeWorld>(OnMadeWorld);
@@ -61,7 +62,7 @@ namespace Ryzm.EndlessRunner
         void OnDestroy()
         {
             Message.RemoveListener<GameStatusRequest>(OnGameStatusRequest);
-            Message.RemoveListener<RunnerHit>(OnRunnerHit);
+            Message.RemoveListener<RunnerDie>(OnRunnerDie);
             Message.RemoveListener<RequestGameSpeedChange>(OnRequestGameSpeedChange);
             Message.RemoveListener<GameSpeedRequest>(OnGameSpeedRequest);
             Message.RemoveListener<MadeWorld>(OnMadeWorld);
@@ -124,7 +125,7 @@ namespace Ryzm.EndlessRunner
             StartCoroutine(ForceSetActive());
         }
 
-        void OnRunnerHit(RunnerHit runnerHit)
+        void OnRunnerDie(RunnerDie runnerDie)
         {
             if(status == GameStatus.Active)
             {
@@ -196,6 +197,11 @@ namespace Ryzm.EndlessRunner
         #region Private Functions
         void UpdateGameStatus(GameStatus status)
         {
+            if(status == GameStatus.MainMenu)
+            {
+                RenderSettings.fog = false;
+                RenderSettings.skybox = defaultSkyboxMaterial;
+            }
             this.status = status;
             Message.Send(new GameStatusResponse(status));
         }

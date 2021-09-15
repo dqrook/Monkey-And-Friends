@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using CodeControl;
 using Ryzm.EndlessRunner.Messages;
-using UnityEngine.InputSystem;
 
 namespace Ryzm.EndlessRunner
 {
@@ -30,7 +29,6 @@ namespace Ryzm.EndlessRunner
 
         #region Protected Variables
         protected Rigidbody rb;
-		protected Player playerInput;
 		protected Vector3 move;
 		protected Transform trans;
         protected int _currentPosition = 1;
@@ -51,8 +49,6 @@ namespace Ryzm.EndlessRunner
         protected bool inSlide;
         protected float maxShiftCooldown = 0.25f;
         protected RaycastHit hit;
-        protected Transform shiftTarget;
-        protected ShiftDistanceType shiftType;
         #endregion
 
         #region Private Variables
@@ -120,8 +116,6 @@ namespace Ryzm.EndlessRunner
 				Debug.LogError ("Missing : animatorController.");
 			}
             animator.runtimeAnimatorController = animatorController;
-			
-            playerInput = new Player();
 
             mainCamera = Camera.main;
             State = 0;
@@ -153,7 +147,6 @@ namespace Ryzm.EndlessRunner
 
         protected virtual void OnEnable()
         {
-            playerInput.Enable();
 			Message.Send(new ControllerModeRequest());
             Message.AddListener<RunnerDistanceRequest>(OnRunnerDistanceRequest);
             Message.AddListener<CurrentSectionChange>(OnCurrentSectionChange);
@@ -161,12 +154,10 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<CurrentPositionRequest>(OnCurrentPositionRequest);
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
             Message.AddListener<ControllerModeResponse>(OnControllerModeResponse);
-            Debug.Log("registered ya bish");
         }
 
         protected virtual void OnDisable()
 		{
-			playerInput.Disable();
             Message.RemoveListener<RunnerDistanceRequest>(OnRunnerDistanceRequest);
             Message.RemoveListener<CurrentSectionChange>(OnCurrentSectionChange);
             Message.RemoveListener<RunnerHit>(OnRunnerHit);
@@ -270,31 +261,20 @@ namespace Ryzm.EndlessRunner
 
 		protected bool IsAttacking()
         {
-			return playerInput.PlayerMain.Attack.WasPressedThisFrame();
+			return false;
         }
 
         protected bool IsShifting(Direction direction)
         {
             if(direction == Direction.Left)
             {
-                return playerInput.Endless.ShiftLeft.WasPressedThisFrame();
+                return false;
             }
             if(direction == Direction.Right)
             {
-                return playerInput.Endless.ShiftRight.WasPressedThisFrame();
+                return false;
             }
             return false;
-        }
-
-        protected void TakeDamageAndShift()
-        {
-            if(shift != null)
-            {
-                StopCoroutine(shift);
-                shift = null;
-            }
-            shift = _Shift(shiftTarget, shiftType, true);
-            StartCoroutine(shift);
         }
 
         protected virtual void Reset()

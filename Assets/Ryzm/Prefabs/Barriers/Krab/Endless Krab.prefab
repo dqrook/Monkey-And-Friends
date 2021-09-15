@@ -361,8 +361,8 @@ SkinnedMeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3556994622423952944}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
@@ -706,16 +706,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d95b16969cbd44d2c9a5965cc7643d1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bodyRenderer: {fileID: 3556994622420771622}
-  bodyCollider: {fileID: 0}
+  type: 0
+  renderers: []
+  colliders: []
   materials:
   - {fileID: 2100000, guid: e4b8696763f694cdbb34866a2671962c, type: 2}
   - {fileID: 2100000, guid: b06372bfdcaf14f0a8e16716f89041e7, type: 2}
   - {fileID: 2100000, guid: 0f809ebdf0b3b435f99e510fd8d375b6, type: 2}
-  bodyColliders:
-  - {fileID: 3936472925632161894}
-  - {fileID: 9038052367917268947}
-  - {fileID: 919530327306008147}
 --- !u!54 &4825601523381653849
 Rigidbody:
   m_ObjectHideFlags: 0

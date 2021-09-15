@@ -18,12 +18,15 @@ namespace Ryzm.EndlessRunner
             base.Awake();
             barrierType = BarrierType.Krake;
         }
-        
-        protected override void OnCollisionEnter(Collision other)
+        #endregion
+
+        #region Protected Functions
+        protected override void OnCollide(GameObject other)
         {
-            if(other.gameObject.GetComponent<EndlessController>())
+            if(!hasHit && other.gameObject.GetComponent<EndlessController>())
             {
-                Message.Send(new RunnerHit());
+                hasHit = true;
+                Message.Send(new RunnerHit(monsterMetadata.monsterType, AttackType.Physical));
             }
         }
         #endregion

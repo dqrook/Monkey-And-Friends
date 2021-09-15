@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Ryzm.EndlessRunner;
 
 namespace Ryzm.Dragon
 {
@@ -41,9 +40,17 @@ namespace Ryzm.Dragon
         #region Public Functions
         public override void Enable()
         {
-            base.Enable();
-            expand = Expand();
-            StartCoroutine(expand);
+            // base.Enable();
+            PlayParticles(true);
+            isEnabled = true;
+            if(shrinkThenDisable != null)
+            {
+                StopCoroutine(shrinkThenDisable);
+                shrinkThenDisable = null;
+            }
+            trans.localScale = Vector3.zero;
+            // expand = Expand();
+            // StartCoroutine(expand);
         }
 
         public void EnableExplosion()
@@ -61,23 +68,27 @@ namespace Ryzm.Dragon
             shrinkThenDisable = ShrinkThenDisable();
             StartCoroutine(shrinkThenDisable);
         }
+
+        public void InstantDisable()
+        {
+            explosionEnabled = false;
+            explosion.InstantDisable();
+        }
         #endregion
 
 
         #region Coroutines
         IEnumerator Expand()
         {
-            trans.localScale = Vector3.zero;
-            yield break;
-            // float t = 0;
-            // while(t < expansionTime)
-            // {
-            //     t += Time.deltaTime;
-            //     float val = t / expansionTime;
-            //     trans.localScale = startLocalScale * val;
-            //     yield return null;
-            // }
-            // trans.localScale = startLocalScale;
+            float t = 0;
+            while(t < expansionTime)
+            {
+                t += Time.deltaTime;
+                float val = t / expansionTime;
+                trans.localScale = startLocalScale * val;
+                yield return null;
+            }
+            trans.localScale = startLocalScale;
         }
 
         IEnumerator ShrinkThenDisable()
@@ -91,11 +102,12 @@ namespace Ryzm.Dragon
             explosion.Disable(shrinkTime);
             t = 0;
             Vector3 s = trans.localScale;
+            explosionEnabled = false;
             while(t < shrinkTime)
             {
                 t += Time.deltaTime;
-                float val = 1 - t / shrinkTime;
-                trans.localScale = s * val;
+                // float val = 1 - t / shrinkTime;
+                // trans.localScale = s * val;
                 yield return null;
             }
             explosionEnabled = false;

@@ -156,12 +156,12 @@ namespace Ryzm.EndlessRunner
 
         bool IsJumping()
         {
-			return playerInput.PlayerMain.Jump.WasPressedThisFrame();
+			return false;
         }
 
         bool IsSliding()
         {
-            return playerInput.Endless.Slide.WasPressedThisFrame();
+            return false;
         }
 
         bool HasBarrier(Direction direction)

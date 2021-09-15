@@ -7,5 +7,10 @@ namespace Ryzm.EndlessRunner
     public class MonsterBase : MonoBehaviour
     {
         public virtual void TakeDamage() {}
+
+        public virtual void TakeSpecialDamage()
+        {
+            TakeDamage();
+        }
     }
 }

@@ -8,9 +8,15 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessOrb : EndlessItem
     {
+
+        #region Public Variables
+        public ParticleSystem sparkle;
+        public GameObject gem;
+        #endregion
+
         #region Private Variables
         Animator animator;
-        bool orbCollected;
+        bool gemCollected;
         #endregion
 
         #region Event Functions
@@ -24,13 +30,13 @@ namespace Ryzm.EndlessRunner
 
         protected void OnEnable()
         {
-            orbCollected = false;
-            animator.SetBool("shrink", false);
+            gemCollected = false;
+            Reset();
         }
 
         protected void OnDisable()
         {
-            animator.SetBool("shrink", false);
+            Reset();
         }
 
         void OnTriggerEnter(Collider other)
@@ -50,7 +56,7 @@ namespace Ryzm.EndlessRunner
             base.OnGameStatusResponse(gameStatusResponse);
             if(gameStatusResponse.status == GameStatus.Restart || gameStatusResponse.status == GameStatus.Exit)
             {
-                animator.SetBool("shrink", false);
+                Reset();
             }
         }
         #endregion
@@ -58,11 +64,22 @@ namespace Ryzm.EndlessRunner
         #region Private Functions
         void OnTrigger(Collider other)
         {
-            if(!orbCollected)
+            if(!gemCollected)
             {
-                animator.SetBool("shrink", true);
-                orbCollected = true;
+                sparkle.Play();
+                gemCollected = true;
+                gem.SetActive(false);
+                Message.Send(new CollectGem());
             }
+        }
+        #endregion
+
+        #region Private Functions
+        void Reset()
+        {
+            gemCollected = false;
+            gem.SetActive(true);
+            sparkle.Stop();
         }
         #endregion
     }

@@ -209,6 +209,7 @@ namespace Ryzm.UI
         SingleDragon,
         MyDragons,
         LoadingFade,
-        Health
+        Health,
+        Special
     }
 }

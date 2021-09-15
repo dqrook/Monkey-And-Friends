@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Ryzm.EndlessRunner;
 
 namespace Ryzm.Dragon
 {
@@ -10,6 +11,7 @@ namespace Ryzm.Dragon
         public CustomParticles particlesPrefab;
         public List<CustomParticles> customParticles = new List<CustomParticles>();
         public int maxParticles = 3;
+        public MonsterMetadata monsterMetadata = new MonsterMetadata();
         #endregion
 
         #region Private Variables
@@ -65,7 +67,7 @@ namespace Ryzm.Dragon
                     currentParticle.transform.localEulerAngles = Vector3.zero;
                     customParticles.Add(currentParticle);
                 }
-
+                currentParticle.monsterMetadata = monsterMetadata;
                 currentParticle.Enable();
                 return true;
             }

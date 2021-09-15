@@ -15,6 +15,8 @@ namespace Ryzm.EndlessRunner
         public List<SectionCombination> generatedSectionCombinations = new List<SectionCombination>();
         public int rowCombinationIndex = 0;
         public int generatedComboIndex = -1;
+        public EndlessMonster newMonsterPrefab;
+        public MonsterType targetMonsterType;
         #endregion
 
         #region Properties
@@ -59,6 +61,37 @@ namespace Ryzm.EndlessRunner
         }
         #endregion
 
+        public void ReplaceMonster()
+        {
+            foreach(SectionRow row in rows)
+            {
+                foreach(SubSection subSection in row.subSections)
+                {
+                    foreach(EndlessSectionSpawn spawn in subSection.spawns)
+                    {
+                        if(spawn.monsterType == targetMonsterType)
+                        {
+                            EndlessMonster[] monsters = spawn.transform.GetComponentsInChildren<EndlessMonster>();
+                            EndlessMonster targetMonster = monsters[0];
+                            Transform targetTrans = targetMonster.transform;
+                            if(targetMonster.type == targetMonsterType)
+                            {
+                                EndlessMonster newMonster = Instantiate(newMonsterPrefab);
+                                Transform newTrans = newMonster.transform;
+                                newTrans.parent = targetTrans.parent;
+                                newTrans.localPosition = targetTrans.localPosition;
+                                newTrans.localEulerAngles = targetTrans.localEulerAngles;
+                                string[] targetName = targetTrans.parent.gameObject.name.Split('-');
+                                targetTrans.parent.gameObject.name = targetName[0] + "-" + newMonster.type.ToString().ToLower();
+                                spawn.monsterType = newMonster.type;
+                                DestroyImmediate(targetMonster.gameObject);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         #region Public Functions
         public void Activate(GameDifficulty difficulty)
         {
@@ -89,7 +122,7 @@ namespace Ryzm.EndlessRunner
             for(int i = 0; i < numRows; i++)
             {
                 AddOnSpawn spawn = new AddOnSpawn();
-                if(previousSpawn.spawn == null || previousSpawn.type != AddOnSpawnType.Jump)
+                if(previousSpawn.spawn == null) // || previousSpawn.type != AddOnSpawnType.Jump
                 {
                     spawn = GetAddOnSpawn(rows[i].Activate(combination.subSectionCombinations[i]));
                 }
@@ -368,15 +401,6 @@ namespace Ryzm.EndlessRunner
             foreach(EndlessSectionSpawn spawn in spawns)
             {
                 SubSectionPosition position = spawn.subSectionPosition;
-                // if(spawn.name.Contains("right"))
-                // {
-                //     position = SubSectionPosition.Right;
-                // }
-                // else if(spawn.name.Contains("middle"))
-                // {
-                //     position = SubSectionPosition.Middle;
-                // }
-
                 int rowIndex = 0;
                 if(spawn.name.Contains("2"))
                 {
@@ -524,7 +548,7 @@ namespace Ryzm.EndlessRunner
 
         int GetMonsterMax(MonsterType monsterType)
         {
-            if(monsterType == MonsterType.Rabby || monsterType == MonsterType.Bombee)
+            if(monsterType == MonsterType.Rabby || monsterType == MonsterType.Bombee || monsterType == MonsterType.Deyon || monsterType == MonsterType.Fawks)
             {
                 return 3;
             }
@@ -559,11 +583,11 @@ namespace Ryzm.EndlessRunner
                 }
                 if(metadata.subSectionIndex == 1)
                 {
-                    if(prevMType == MonsterType.SideDraze || prevMType == MonsterType.Reyflora)
+                    if(prevMType == MonsterType.SideDraze || prevMType == MonsterType.Reyflora || prevMType == MonsterType.Azel)
                     {
                         return false;
                     }
-                    if((mType == MonsterType.SideDraze || mType == MonsterType.Reyflora) && prevMType != MonsterType.None)
+                    if((mType == MonsterType.SideDraze || mType == MonsterType.Reyflora || mType == MonsterType.Azel) && prevMType != MonsterType.None)
                     {
                         return false;
                     }
@@ -571,7 +595,7 @@ namespace Ryzm.EndlessRunner
                 else if(metadata.subSectionIndex == 2)
                 {
                     MonsterType prevMType2 = subSectionMetadatas[previousIndex2].monsterType;
-                    if(prevMType2 == MonsterType.SideDraze || prevMType == MonsterType.SideDraze || prevMType == MonsterType.Reyflora)
+                    if(prevMType2 == MonsterType.SideDraze || prevMType == MonsterType.SideDraze || prevMType == MonsterType.Reyflora || prevMType == MonsterType.Azel)
                     {
                         return false;
                     }
@@ -579,7 +603,7 @@ namespace Ryzm.EndlessRunner
                     {
                         return false;
                     }
-                    if(mType == MonsterType.Reyflora && prevMType != MonsterType.None)
+                    if((mType == MonsterType.Reyflora || mType == MonsterType.Azel) && prevMType != MonsterType.None)
                     {
                         return false;
                     }
@@ -606,7 +630,7 @@ namespace Ryzm.EndlessRunner
                     {
                         return false;
                     }
-                    if(prevMType == MonsterType.SideDraze || prevMType2 == MonsterType.SideDraze || prevMType == MonsterType.Reyflora)
+                    if(prevMType == MonsterType.SideDraze || prevMType2 == MonsterType.SideDraze || prevMType == MonsterType.Reyflora || prevMType == MonsterType.Azel)
                     {
                         return false;
                     }
@@ -614,7 +638,7 @@ namespace Ryzm.EndlessRunner
                     {
                         return false;
                     }
-                    if(mType == MonsterType.Reyflora && prevMType != MonsterType.None)
+                    if((mType == MonsterType.Reyflora || mType == MonsterType.Azel) && prevMType != MonsterType.None)
                     {
                         return false;
                     }
@@ -625,16 +649,16 @@ namespace Ryzm.EndlessRunner
                     {
                         return false;
                     }
-                    if(prevMType == MonsterType.SideDraze || prevMType == MonsterType.Reyflora)
+                    if(prevMType == MonsterType.SideDraze || prevMType == MonsterType.Reyflora || prevMType == MonsterType.Azel)
                     {
                         return false;
                     }
-                    if((mType == MonsterType.SideDraze || mType == MonsterType.Reyflora) && prevMType != MonsterType.None)
+                    if((mType == MonsterType.SideDraze || mType == MonsterType.Reyflora || mType == MonsterType.Azel) && prevMType != MonsterType.None)
                     {
                         return false;
                     }
                 }
-                if(mType == MonsterType.DiveDraze || mType == MonsterType.SpecialMonafly || mType == MonsterType.PhysicalMonafly)
+                if(mType == MonsterType.DiveDraze || mType == MonsterType.SpecialMonafly || mType == MonsterType.PhysicalMonafly || mType == MonsterType.Pegasus)
                 {
                     if(metadata.rowIndex == 2)
                     {
@@ -772,11 +796,12 @@ namespace Ryzm.EndlessRunner
             EndlessSectionSpawn spawn = null;
             for(int i = 0; i < numSelect; i++)
             {
+                Spawns[i]?.gameObject?.SetActive(index == i);
                 if(index == i)
                 {
                     spawn = Spawns[i];
+                    spawn.Activate();
                 }
-                Spawns[i]?.gameObject?.SetActive(index == i);
             }
             return spawn;
         }

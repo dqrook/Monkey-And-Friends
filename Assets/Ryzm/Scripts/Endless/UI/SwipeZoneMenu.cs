@@ -50,6 +50,7 @@ namespace Ryzm.UI
 		/// </summary>
 		public void OnPointerDown(PointerEventData data)
 		{
+			// Debug.Log("on pointer down");
 			_OnPointerDown();
 		}
 
@@ -66,6 +67,7 @@ namespace Ryzm.UI
 		/// </summary>
 		public void OnPointerEnter(PointerEventData data)
 		{
+			// Debug.Log("on point enter");
 			_OnPointerDown();
 		}
 
@@ -81,39 +83,55 @@ namespace Ryzm.UI
 		#region Private Functions
 		void _OnPointerDown()
 		{
-			bool specialAttack = false;
-			taps++;
-			if(taps == 1)
+			if(!checkingSwipe)
 			{
-				tapTime = Time.time;
-				tapPosition = Input.mousePosition;
-			}
-			else
-			{
-				float timeDiff = Time.time - tapTime;
-				float length = GetLength(tapPosition);
-				if(taps == 2 && timeDiff < doubleTapTime && length < minimalSwipeLength * 0.5f)
+				taps++;
+				// Debug.Log("pointer down " + taps + " " + tapTime + " " + Time.time);
+				if(taps == 1)
 				{
-					// todo: ask for special attack
-					Debug.Log("special attack");
-					specialAttack = true;
+					tapTime = Time.time;
+					tapPosition = Input.mousePosition;
+					// Debug.Log("tap time and pos " + tapTime + " " + tapPosition);
 				}
-				taps = 0;
+				else
+				{
+					float timeDiff = Time.time - tapTime;
+					float length = GetLength(tapPosition);
+					// Debug.Log("pointer down 2 " + timeDiff + " " + length + " " + tapPosition + " " + Input.mousePosition);
+					if(taps == 2 && timeDiff < doubleTapTime)
+					{
+						// Debug.Log("special attack");
+						Message.Send(new SpecialAttackRequest());
+						taps = 0;
+					}
+					else
+					{
+						tapTime = Time.time;
+						tapPosition = Input.mousePosition;
+						taps = 1;
+					}
+					// taps = 0;
+				}
+				_firstTouchPosition = Input.mousePosition;
+				checkingSwipe = true;
+				trackPosition = TrackPosition();
+				StartCoroutine(trackPosition);
 			}
-			_firstTouchPosition = Input.mousePosition;
-			checkingSwipe = true;
-			trackPosition = TrackPosition();
-			StartCoroutine(trackPosition);
 		}
 
 		void _OnPointerUp()
 		{
-			if(trackPosition != null)
+			if(checkingSwipe)
 			{
-				StopCoroutine(trackPosition);
+				if(trackPosition != null)
+				{
+					StopCoroutine(trackPosition);
+					trackPosition = null;
+				}
+				CheckForSwipe();
+				Debug.Log("pointer up " + Time.time);
+				checkingSwipe = false;
 			}
-			CheckForSwipe();
-			checkingSwipe = false;
 		}
 
 		void CheckForSwipe()
@@ -157,6 +175,7 @@ namespace Ryzm.UI
 			{
 				InputManager.Instance.Shift(_swipeDirection);
 			}
+			taps = 0;
 		}
 		#endregion
 

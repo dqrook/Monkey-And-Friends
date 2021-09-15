@@ -31,6 +31,11 @@ namespace Ryzm.EndlessRunner
             Explode();
         }
 
+        public override void TakeSpecialDamage()
+        {
+            Die(); // or Explode() ?
+        }
+
         public override void Reset()
         {
             base.Reset();
@@ -43,10 +48,11 @@ namespace Ryzm.EndlessRunner
         #region Protected Functions
         protected override void OnCollide(GameObject other)
         {
-            if(other.gameObject.GetComponent<EndlessController>())
+            if(!hasHit && other.gameObject.GetComponent<EndlessController>())
             {
+                hasHit = true;
                 Explode();
-                Message.Send(new RunnerHit());
+                Message.Send(new RunnerHit(monsterMetadata.monsterType, AttackType.Physical));
             }
         }
         protected override void Attack()
@@ -66,7 +72,7 @@ namespace Ryzm.EndlessRunner
             {
                 exploded = true;
                 explosionParticles.Enable();
-                animator.SetBool("dead", true);
+                Die();
             }
         }
         #endregion

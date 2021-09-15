@@ -10,17 +10,24 @@ namespace Ryzm.EndlessRunner
     {
         #region Public Variables
         public MonsterType type;
-        public List<Renderer> renderers = new List<Renderer>();
         public List<Collider> colliders = new List<Collider>();
+        
+        [Header("Style")]
+        public List<Renderer> renderers = new List<Renderer>();
         public List<Material> materials = new List<Material>();
+        public int targetMaterialIndex;
         #endregion
 
         #region Protected Variables
+        protected MonsterMetadata monsterMetadata;
         protected Animator animator;
         protected Vector3 startPosition;
         protected Transform trans;
         protected bool _isActive;
         protected GameStatus gameStatus;
+        protected bool gotMetadata;
+        protected bool hasHit;
+        protected int deadAnimHash;
         #endregion
 
         public bool IsActive
@@ -40,9 +47,12 @@ namespace Ryzm.EndlessRunner
         protected virtual void Awake()
         {
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
+            Message.AddListener<MonsterMetadataResponse>(OnMonsterMetadataResponse);
+            Message.Send(new MonsterMetadataRequest());
             animator = GetComponent<Animator>();
             trans = transform;
             startPosition = trans.localPosition;
+            deadAnimHash = Animator.StringToHash("dead");
         }
 
         protected virtual void OnEnable()
@@ -53,7 +63,14 @@ namespace Ryzm.EndlessRunner
                 int materialIndex = Random.Range(0, materials.Count);
                 foreach(Renderer ren in renderers)
                 {
-                    ren.material = materials[materialIndex];
+                    if(targetMaterialIndex == 0)
+                    {
+                        ren.sharedMaterial = materials[materialIndex];
+                    }
+                    else
+                    {
+                        ren.sharedMaterials[targetMaterialIndex] = materials[materialIndex];
+                    }
                 }
             }
         }
@@ -66,53 +83,52 @@ namespace Ryzm.EndlessRunner
         protected virtual void OnDestroy()
         {
             Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
+            Message.RemoveListener<MonsterMetadataResponse>(OnMonsterMetadataResponse);
         }
+
+        protected virtual void OnTriggerEnter(Collider other) {}
+        protected virtual void OnTriggerStay(Collider other) {}
 
         protected virtual void OnCollisionEnter(Collision other)
         {
-            // if(LayerMask.LayerToName(other.GetContact(0).otherCollider.gameObject.layer) == "PlayerBody")
-            // {
-            //     Message.Send(new RunnerDie());
-            // }
             OnCollide(other.GetContact(0).otherCollider.gameObject);
         }
 
         protected virtual void OnCollisionStay(Collision other)
         {
-            // if(LayerMask.LayerToName(other.GetContact(0).otherCollider.gameObject.layer) == "PlayerBody")
-            // {
-            //     Message.Send(new RunnerDie());
-            // }
             OnCollide(other.GetContact(0).otherCollider.gameObject);
         }
 
-        // protected virtual void OnTriggerEnter(Collider other)
-        // {
-        //     // if(LayerMask.LayerToName(other.gameObject.layer) == "PlayerBody")
-        //     // {
-        //     //     Message.Send(new RunnerDie());
-        //     // }
-        //     OnCollide(other.gameObject);
-        // }
+        #endregion
 
+        #region Listener Functions
         protected virtual void OnGameStatusResponse(GameStatusResponse gameStatusResponse)
         {
             gameStatus = gameStatusResponse.status;
+        }
+
+        protected virtual void OnMonsterMetadataResponse(MonsterMetadataResponse response)
+        {
+            if(!gotMetadata)
+            {
+                monsterMetadata = response.monsterMetadata.GetMonsterMetadata(type);
+                gotMetadata = true;
+            }
         }
         #endregion
 
         #region Public Functions
         public virtual void Reset()
         {
-            animator.SetBool("dead", false);
+            animator.SetBool(deadAnimHash, false);
             EnableCollider(true);
             trans.localPosition = startPosition;
+            hasHit = false;
         }
 
         public override void TakeDamage()
         {
-            animator.SetBool("dead", true);
-            EnableCollider(false);
+            Die();
         }
         #endregion
 
@@ -127,10 +143,17 @@ namespace Ryzm.EndlessRunner
 
         protected virtual void OnCollide(GameObject other)
         {
-            if(LayerMask.LayerToName(other.layer) == "PlayerBody")
+            if(!hasHit && LayerMask.LayerToName(other.layer) == "PlayerBody")
             {
-                Message.Send(new RunnerHit());
+                hasHit = true;
+                Message.Send(new RunnerHit(monsterMetadata.monsterType, AttackType.Physical));
             }
+        }
+
+        protected virtual void Die()
+        {
+            animator.SetBool(deadAnimHash, true);
+            EnableCollider(false);
         }
         #endregion
     }
@@ -142,7 +165,7 @@ namespace Ryzm.EndlessRunner
         Rabby,
         Bombee,
         Fawks,
-        Krake,
+        Psyken,
         Draze,
         DiveDraze,
         SideDraze,
@@ -150,6 +173,10 @@ namespace Ryzm.EndlessRunner
         None,
         Reyflora,
         StonePillar,
-        StoneRow
+        StoneRow,
+        Deyon,
+        Azel,
+        MovingFawks,
+        Pegasus
     }
 }

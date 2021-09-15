@@ -1,149 +1,431 @@
 fileFormatVersion: 2
 guid: bb9b5fc491ada424096b903f207a19ac
 ModelImporter:
-  serializedVersion: 23
-  fileIDToRecycleName:
-    100000: ArmL1
-    100002: ArmL2
-    100004: ArmL3
-    100006: ArmR1
-    100008: ArmR2
-    100010: ArmR3
-    100012: Character1_Ctrl_ChestEndEffector
-    100014: Character1_Ctrl_ChestOriginEffector
-    100016: Character1_Ctrl_Head
-    100018: Character1_Ctrl_HeadEffector
-    100020: Character1_Ctrl_Hips
-    100022: Character1_Ctrl_HipsEffector
-    100024: Character1_Ctrl_LeftAnkleEffector
-    100026: Character1_Ctrl_LeftArm
-    100028: Character1_Ctrl_LeftElbowEffector
-    100030: Character1_Ctrl_LeftFoot
-    100032: Character1_Ctrl_LeftForeArm
-    100034: Character1_Ctrl_LeftHand
-    100036: Character1_Ctrl_LeftHipEffector
-    100038: Character1_Ctrl_LeftKneeEffector
-    100040: Character1_Ctrl_LeftLeg
-    100042: Character1_Ctrl_LeftShoulderEffector
-    100044: Character1_Ctrl_LeftUpLeg
-    100046: Character1_Ctrl_LeftWristEffector
-    100048: Character1_Ctrl_Neck
-    100050: Character1_Ctrl_Reference
-    100052: Character1_Ctrl_RightAnkleEffector
-    100054: Character1_Ctrl_RightArm
-    100056: Character1_Ctrl_RightElbowEffector
-    100058: Character1_Ctrl_RightFoot
-    100060: Character1_Ctrl_RightForeArm
-    100062: Character1_Ctrl_RightHand
-    100064: Character1_Ctrl_RightHipEffector
-    100066: Character1_Ctrl_RightKneeEffector
-    100068: Character1_Ctrl_RightLeg
-    100070: Character1_Ctrl_RightShoulderEffector
-    100072: Character1_Ctrl_RightUpLeg
-    100074: Character1_Ctrl_RightWristEffector
-    100076: Character1_Ctrl_Spine
-    100078: //RootNode
-    100080: Dino_Back
-    100082: Dino_Body
-    100084: Dino_Center
-    100086: Dino_Face
-    100088: Dino_Teeth
-    100090: Head
-    100092: Head_End
-    100094: LegL1
-    100096: LegL2
-    100098: LegL3
-    100100: LegR1
-    100102: LegR2
-    100104: LegR3
-    100106: Mesh
-    100108: Mouth_Top1
-    100110: Mouth_Top2
-    100112: Mouth_Under1
-    100114: Mouth_Under2
-    100116: Spine1
-    100118: Spine2
-    100120: Tail1
-    100122: Tail2
-    100124: Tail3
-    100126: Tail4
-    100128: Tail5
-    400000: ArmL1
-    400002: ArmL2
-    400004: ArmL3
-    400006: ArmR1
-    400008: ArmR2
-    400010: ArmR3
-    400012: Character1_Ctrl_ChestEndEffector
-    400014: Character1_Ctrl_ChestOriginEffector
-    400016: Character1_Ctrl_Head
-    400018: Character1_Ctrl_HeadEffector
-    400020: Character1_Ctrl_Hips
-    400022: Character1_Ctrl_HipsEffector
-    400024: Character1_Ctrl_LeftAnkleEffector
-    400026: Character1_Ctrl_LeftArm
-    400028: Character1_Ctrl_LeftElbowEffector
-    400030: Character1_Ctrl_LeftFoot
-    400032: Character1_Ctrl_LeftForeArm
-    400034: Character1_Ctrl_LeftHand
-    400036: Character1_Ctrl_LeftHipEffector
-    400038: Character1_Ctrl_LeftKneeEffector
-    400040: Character1_Ctrl_LeftLeg
-    400042: Character1_Ctrl_LeftShoulderEffector
-    400044: Character1_Ctrl_LeftUpLeg
-    400046: Character1_Ctrl_LeftWristEffector
-    400048: Character1_Ctrl_Neck
-    400050: Character1_Ctrl_Reference
-    400052: Character1_Ctrl_RightAnkleEffector
-    400054: Character1_Ctrl_RightArm
-    400056: Character1_Ctrl_RightElbowEffector
-    400058: Character1_Ctrl_RightFoot
-    400060: Character1_Ctrl_RightForeArm
-    400062: Character1_Ctrl_RightHand
-    400064: Character1_Ctrl_RightHipEffector
-    400066: Character1_Ctrl_RightKneeEffector
-    400068: Character1_Ctrl_RightLeg
-    400070: Character1_Ctrl_RightShoulderEffector
-    400072: Character1_Ctrl_RightUpLeg
-    400074: Character1_Ctrl_RightWristEffector
-    400076: Character1_Ctrl_Spine
-    400078: //RootNode
-    400080: Dino_Back
-    400082: Dino_Body
-    400084: Dino_Center
-    400086: Dino_Face
-    400088: Dino_Teeth
-    400090: Head
-    400092: Head_End
-    400094: LegL1
-    400096: LegL2
-    400098: LegL3
-    400100: LegR1
-    400102: LegR2
-    400104: LegR3
-    400106: Mesh
-    400108: Mouth_Top1
-    400110: Mouth_Top2
-    400112: Mouth_Under1
-    400114: Mouth_Under2
-    400116: Spine1
-    400118: Spine2
-    400120: Tail1
-    400122: Tail2
-    400124: Tail3
-    400126: Tail4
-    400128: Tail5
-    2100000: dino_face_01
-    2100002: dino_00
-    4300000: Dino_Face
-    4300002: Dino_Teeth
-    4300004: Dino_Back
-    4300006: Dino_Body
-    9500000: //RootNode
-    13700000: Dino_Back
-    13700002: Dino_Body
-    13700004: Dino_Face
-    13700006: Dino_Teeth
+  serializedVersion: 19301
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: ArmL1
+  - first:
+      1: 100002
+    second: ArmL2
+  - first:
+      1: 100004
+    second: ArmL3
+  - first:
+      1: 100006
+    second: ArmR1
+  - first:
+      1: 100008
+    second: ArmR2
+  - first:
+      1: 100010
+    second: ArmR3
+  - first:
+      1: 100012
+    second: Character1_Ctrl_ChestEndEffector
+  - first:
+      1: 100014
+    second: Character1_Ctrl_ChestOriginEffector
+  - first:
+      1: 100016
+    second: Character1_Ctrl_Head
+  - first:
+      1: 100018
+    second: Character1_Ctrl_HeadEffector
+  - first:
+      1: 100020
+    second: Character1_Ctrl_Hips
+  - first:
+      1: 100022
+    second: Character1_Ctrl_HipsEffector
+  - first:
+      1: 100024
+    second: Character1_Ctrl_LeftAnkleEffector
+  - first:
+      1: 100026
+    second: Character1_Ctrl_LeftArm
+  - first:
+      1: 100028
+    second: Character1_Ctrl_LeftElbowEffector
+  - first:
+      1: 100030
+    second: Character1_Ctrl_LeftFoot
+  - first:
+      1: 100032
+    second: Character1_Ctrl_LeftForeArm
+  - first:
+      1: 100034
+    second: Character1_Ctrl_LeftHand
+  - first:
+      1: 100036
+    second: Character1_Ctrl_LeftHipEffector
+  - first:
+      1: 100038
+    second: Character1_Ctrl_LeftKneeEffector
+  - first:
+      1: 100040
+    second: Character1_Ctrl_LeftLeg
+  - first:
+      1: 100042
+    second: Character1_Ctrl_LeftShoulderEffector
+  - first:
+      1: 100044
+    second: Character1_Ctrl_LeftUpLeg
+  - first:
+      1: 100046
+    second: Character1_Ctrl_LeftWristEffector
+  - first:
+      1: 100048
+    second: Character1_Ctrl_Neck
+  - first:
+      1: 100050
+    second: Character1_Ctrl_Reference
+  - first:
+      1: 100052
+    second: Character1_Ctrl_RightAnkleEffector
+  - first:
+      1: 100054
+    second: Character1_Ctrl_RightArm
+  - first:
+      1: 100056
+    second: Character1_Ctrl_RightElbowEffector
+  - first:
+      1: 100058
+    second: Character1_Ctrl_RightFoot
+  - first:
+      1: 100060
+    second: Character1_Ctrl_RightForeArm
+  - first:
+      1: 100062
+    second: Character1_Ctrl_RightHand
+  - first:
+      1: 100064
+    second: Character1_Ctrl_RightHipEffector
+  - first:
+      1: 100066
+    second: Character1_Ctrl_RightKneeEffector
+  - first:
+      1: 100068
+    second: Character1_Ctrl_RightLeg
+  - first:
+      1: 100070
+    second: Character1_Ctrl_RightShoulderEffector
+  - first:
+      1: 100072
+    second: Character1_Ctrl_RightUpLeg
+  - first:
+      1: 100074
+    second: Character1_Ctrl_RightWristEffector
+  - first:
+      1: 100076
+    second: Character1_Ctrl_Spine
+  - first:
+      1: 100078
+    second: //RootNode
+  - first:
+      1: 100080
+    second: Dino_Back
+  - first:
+      1: 100082
+    second: Dino_Body
+  - first:
+      1: 100084
+    second: Dino_Center
+  - first:
+      1: 100086
+    second: Dino_Face
+  - first:
+      1: 100088
+    second: Dino_Teeth
+  - first:
+      1: 100090
+    second: Head
+  - first:
+      1: 100092
+    second: Head_End
+  - first:
+      1: 100094
+    second: LegL1
+  - first:
+      1: 100096
+    second: LegL2
+  - first:
+      1: 100098
+    second: LegL3
+  - first:
+      1: 100100
+    second: LegR1
+  - first:
+      1: 100102
+    second: LegR2
+  - first:
+      1: 100104
+    second: LegR3
+  - first:
+      1: 100106
+    second: Mesh
+  - first:
+      1: 100108
+    second: Mouth_Top1
+  - first:
+      1: 100110
+    second: Mouth_Top2
+  - first:
+      1: 100112
+    second: Mouth_Under1
+  - first:
+      1: 100114
+    second: Mouth_Under2
+  - first:
+      1: 100116
+    second: Spine1
+  - first:
+      1: 100118
+    second: Spine2
+  - first:
+      1: 100120
+    second: Tail1
+  - first:
+      1: 100122
+    second: Tail2
+  - first:
+      1: 100124
+    second: Tail3
+  - first:
+      1: 100126
+    second: Tail4
+  - first:
+      1: 100128
+    second: Tail5
+  - first:
+      4: 400000
+    second: ArmL1
+  - first:
+      4: 400002
+    second: ArmL2
+  - first:
+      4: 400004
+    second: ArmL3
+  - first:
+      4: 400006
+    second: ArmR1
+  - first:
+      4: 400008
+    second: ArmR2
+  - first:
+      4: 400010
+    second: ArmR3
+  - first:
+      4: 400012
+    second: Character1_Ctrl_ChestEndEffector
+  - first:
+      4: 400014
+    second: Character1_Ctrl_ChestOriginEffector
+  - first:
+      4: 400016
+    second: Character1_Ctrl_Head
+  - first:
+      4: 400018
+    second: Character1_Ctrl_HeadEffector
+  - first:
+      4: 400020
+    second: Character1_Ctrl_Hips
+  - first:
+      4: 400022
+    second: Character1_Ctrl_HipsEffector
+  - first:
+      4: 400024
+    second: Character1_Ctrl_LeftAnkleEffector
+  - first:
+      4: 400026
+    second: Character1_Ctrl_LeftArm
+  - first:
+      4: 400028
+    second: Character1_Ctrl_LeftElbowEffector
+  - first:
+      4: 400030
+    second: Character1_Ctrl_LeftFoot
+  - first:
+      4: 400032
+    second: Character1_Ctrl_LeftForeArm
+  - first:
+      4: 400034
+    second: Character1_Ctrl_LeftHand
+  - first:
+      4: 400036
+    second: Character1_Ctrl_LeftHipEffector
+  - first:
+      4: 400038
+    second: Character1_Ctrl_LeftKneeEffector
+  - first:
+      4: 400040
+    second: Character1_Ctrl_LeftLeg
+  - first:
+      4: 400042
+    second: Character1_Ctrl_LeftShoulderEffector
+  - first:
+      4: 400044
+    second: Character1_Ctrl_LeftUpLeg
+  - first:
+      4: 400046
+    second: Character1_Ctrl_LeftWristEffector
+  - first:
+      4: 400048
+    second: Character1_Ctrl_Neck
+  - first:
+      4: 400050
+    second: Character1_Ctrl_Reference
+  - first:
+      4: 400052
+    second: Character1_Ctrl_RightAnkleEffector
+  - first:
+      4: 400054
+    second: Character1_Ctrl_RightArm
+  - first:
+      4: 400056
+    second: Character1_Ctrl_RightElbowEffector
+  - first:
+      4: 400058
+    second: Character1_Ctrl_RightFoot
+  - first:
+      4: 400060
+    second: Character1_Ctrl_RightForeArm
+  - first:
+      4: 400062
+    second: Character1_Ctrl_RightHand
+  - first:
+      4: 400064
+    second: Character1_Ctrl_RightHipEffector
+  - first:
+      4: 400066
+    second: Character1_Ctrl_RightKneeEffector
+  - first:
+      4: 400068
+    second: Character1_Ctrl_RightLeg
+  - first:
+      4: 400070
+    second: Character1_Ctrl_RightShoulderEffector
+  - first:
+      4: 400072
+    second: Character1_Ctrl_RightUpLeg
+  - first:
+      4: 400074
+    second: Character1_Ctrl_RightWristEffector
+  - first:
+      4: 400076
+    second: Character1_Ctrl_Spine
+  - first:
+      4: 400078
+    second: //RootNode
+  - first:
+      4: 400080
+    second: Dino_Back
+  - first:
+      4: 400082
+    second: Dino_Body
+  - first:
+      4: 400084
+    second: Dino_Center
+  - first:
+      4: 400086
+    second: Dino_Face
+  - first:
+      4: 400088
+    second: Dino_Teeth
+  - first:
+      4: 400090
+    second: Head
+  - first:
+      4: 400092
+    second: Head_End
+  - first:
+      4: 400094
+    second: LegL1
+  - first:
+      4: 400096
+    second: LegL2
+  - first:
+      4: 400098
+    second: LegL3
+  - first:
+      4: 400100
+    second: LegR1
+  - first:
+      4: 400102
+    second: LegR2
+  - first:
+      4: 400104
+    second: LegR3
+  - first:
+      4: 400106
+    second: Mesh
+  - first:
+      4: 400108
+    second: Mouth_Top1
+  - first:
+      4: 400110
+    second: Mouth_Top2
+  - first:
+      4: 400112
+    second: Mouth_Under1
+  - first:
+      4: 400114
+    second: Mouth_Under2
+  - first:
+      4: 400116
+    second: Spine1
+  - first:
+      4: 400118
+    second: Spine2
+  - first:
+      4: 400120
+    second: Tail1
+  - first:
+      4: 400122
+    second: Tail2
+  - first:
+      4: 400124
+    second: Tail3
+  - first:
+      4: 400126
+    second: Tail4
+  - first:
+      4: 400128
+    second: Tail5
+  - first:
+      21: 2100000
+    second: dino_face_01
+  - first:
+      21: 2100002
+    second: dino_00
+  - first:
+      43: 4300000
+    second: Dino_Face
+  - first:
+      43: 4300002
+    second: Dino_Teeth
+  - first:
+      43: 4300004
+    second: Dino_Back
+  - first:
+      43: 4300006
+    second: Dino_Body
+  - first:
+      95: 9500000
+    second: //RootNode
+  - first:
+      137: 13700000
+    second: Dino_Back
+  - first:
+      137: 13700002
+    second: Dino_Body
+  - first:
+      137: 13700004
+    second: Dino_Face
+  - first:
+      137: 13700006
+    second: Dino_Teeth
   externalObjects:
   - first:
       type: UnityEngine:Material
@@ -156,7 +438,7 @@ ModelImporter:
       name: dino_face_01
     second: {fileID: 2100000, guid: fd522d915c89c234185aa429839595a5, type: 2}
   materials:
-    importMaterials: 1
+    materialImportMode: 1
     materialName: 0
     materialSearch: 2
     materialLocation: 0
@@ -182,40 +464,47 @@ ModelImporter:
     extraExposedTransformPaths: []
     extraUserProperties: []
     clipAnimations: []
-    isReadable: 1
+    isReadable: 0
   meshes:
     lODScreenPercentages: []
     globalScale: 0.5
     meshCompression: 0
     addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
     importLights: 1
+    fileIdsGeneration: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
     preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
     useFileScale: 1
-    previousCalculatedGlobalScale: 0.01
-    hasPreviousCalculatedGlobalScale: 1
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
   importAnimation: 1
-  copyAvatar: 0
   humanDescription:
-    serializedVersion: 2
+    serializedVersion: 3
     human: []
     skeleton: []
     armTwist: 0.5
@@ -225,14 +514,16 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
+    globalScale: 0.5
     rootMotionBoneName: 
-    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
+  avatarSetup: 1
   additionalBone: 0
   userData: 
   assetBundleName: 

@@ -58,9 +58,9 @@ namespace Ryzm.EndlessRunner
         #endregion
 
         #region Protected Functions
-        protected bool IsInFront(Vector3 targetPosition)
+        protected bool IsInFront(Vector3 targetPosition, float offset = 0)
         {
-            return Vector3.Dot(trans.forward, trans.InverseTransformPoint(targetPosition)) > 0;
+            return Vector3.Dot(trans.forward, trans.InverseTransformPoint(targetPosition)) > offset;
         }
 
         protected virtual void Attack() {}

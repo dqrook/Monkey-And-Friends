@@ -10,6 +10,7 @@ namespace Ryzm.EndlessRunner
     {
         public float distanceTraveled;
         public int coinsCollected;
+        public int gemsCollected;
 
         void Awake()
         {
@@ -17,6 +18,7 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<CollectCoin>(OnCollectCoin);
             Message.AddListener<RunnerDistanceResponse>(OnRunnerDistanceResponse);
             Message.AddListener<TotalCoinsRequest>(OnTotalCoinsRequest);
+            Message.AddListener<CollectGem>(OnCollectGem);
         }
 
         void OnDestroy()
@@ -25,6 +27,7 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<CollectCoin>(OnCollectCoin);
             Message.RemoveListener<RunnerDistanceResponse>(OnRunnerDistanceResponse);
             Message.RemoveListener<TotalCoinsRequest>(OnTotalCoinsRequest);
+            Message.RemoveListener<CollectGem>(OnCollectGem);
         }
 
         #region Listener Functions
@@ -34,6 +37,7 @@ namespace Ryzm.EndlessRunner
             {
                 coinsCollected = 0;
                 distanceTraveled = 0;
+                gemsCollected = 0;
                 UpdateCoins();
             }
         }
@@ -52,6 +56,11 @@ namespace Ryzm.EndlessRunner
         void OnTotalCoinsRequest(TotalCoinsRequest request)
         {
             UpdateCoins();
+        }
+
+        void OnCollectGem(CollectGem collectGem)
+        {
+            gemsCollected += 1;
         }
         #endregion
 

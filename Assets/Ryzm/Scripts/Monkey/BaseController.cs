@@ -25,7 +25,6 @@ namespace Ryzm.Monkey
 		public SkinnedMeshRenderer blush;
 
 		MonkeyEmotion currentEmotion = MonkeyEmotion.Happy;
-		protected Player playerInput;
 
 		protected float timeToIdle = 0f;
 		protected bool isBlocking = true;
@@ -44,7 +43,6 @@ namespace Ryzm.Monkey
         {
 			trans = GetComponent<Transform> ();
 			ctrl = GetComponent<CharacterController> ();
-			playerInput = new Player();
 			if(emotions == null)
 			{
 				emotions = gameObject.GetComponent<MonkeyEmotions>();
@@ -54,12 +52,10 @@ namespace Ryzm.Monkey
 		
 		protected virtual void OnEnable()
 		{
-			playerInput.Enable();
 		}
 
 		protected virtual void OnDisable()
 		{
-			playerInput.Disable();
 		}
 
 		protected virtual void ChangeEmotion(MonkeyEmotion emotion)
@@ -107,7 +103,7 @@ namespace Ryzm.Monkey
         protected virtual void GetMovement()
         {
 			// Debug.Log(playerInput.Touch.Primary.ReadValue<float>());
-			_temp = playerInput.PlayerMain.Move.ReadValue<Vector2>();
+			_temp = new Vector2();
 			input.x = _temp.x;
 			input.z = _temp.y;
 			// Debug.Log(input);
@@ -122,7 +118,7 @@ namespace Ryzm.Monkey
 
         protected virtual bool IsJumping()
         {
-			return playerInput.PlayerMain.Jump.WasPressedThisFrame();
+			return false;
 			// return playerInput.PlayerMain.Jump.ReadValue<float>() > 0;
             // # if UNITY_STANDALONE || UNITY_EDITOR
             // return Input.GetKey(keyJump);
@@ -153,7 +149,7 @@ namespace Ryzm.Monkey
 
         protected virtual bool IsAttacking()
         {
-			return playerInput.PlayerMain.Attack.WasPressedThisFrame();
+			return false;
 			// return playerInput.PlayerMain.Attack.ReadValue<float>() > 0;
             // # if UNITY_STANDALONE || UNITY_EDITOR
             // return Input.GetKeyDown(keyAttack);

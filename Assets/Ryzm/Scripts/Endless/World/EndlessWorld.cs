@@ -9,6 +9,7 @@ namespace Ryzm.EndlessRunner
     public class EndlessWorld : MonoBehaviour
     {
         #region Public Variables
+        public EndlessMonsterMetadata monsterMetadata;
         public Transform startingSpawn;
         public Camera mainCamera;
         public Light mainLight;
@@ -43,6 +44,7 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<WorldItemsRequest>(OnWorldItemsRequest);
             Message.AddListener<MapSettingsRequest>(OnMapSettingsRequest);
             Message.AddListener<CurrentMapRequest>(OnCurrentMapRequest);
+            Message.AddListener<MonsterMetadataRequest>(OnMonsterMetadataRequest);
         }
 
         void OnDestroy()
@@ -53,6 +55,7 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<WorldItemsRequest>(OnWorldItemsRequest);
             Message.RemoveListener<MapSettingsRequest>(OnMapSettingsRequest);
             Message.RemoveListener<CurrentMapRequest>(OnCurrentMapRequest);
+            Message.RemoveListener<MonsterMetadataRequest>(OnMonsterMetadataRequest);
         }
         #endregion
 
@@ -117,6 +120,10 @@ namespace Ryzm.EndlessRunner
             Message.Send(new CurrentMapResponse(mapOrder[prefabIndex]));
         }
 
+        void OnMonsterMetadataRequest(MonsterMetadataRequest request)
+        {
+            Message.Send(new MonsterMetadataResponse(monsterMetadata));
+        }
         #endregion
 
         #region Private Functions

@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Ryzm.EndlessRunner.Messages;
 using UnityEngine;
+using CodeControl;
 
 namespace Ryzm.EndlessRunner
 {
@@ -11,14 +13,46 @@ namespace Ryzm.EndlessRunner
         #endregion
 
         #region Protected Variables
-        protected float dropSpeed = 10;
+        protected float dropSpeed = 5;
+        protected bool hasSpecialHit;
         #endregion
 
+        #region Event Functions
         protected override void Awake()
         {
             base.Awake();
             barrierType = BarrierType.DiveDragon;
+            attackDistance = 40;
         }
+
+        protected override void OnTriggerEnter(Collider other)
+        {
+            if(!hasSpecialHit && other.GetComponent<EndlessController>())
+            {
+                hasSpecialHit = true;
+                Message.Send(new RunnerHit(monsterMetadata.monsterType, AttackType.Special));
+            }
+        }
+        #endregion
+
+        #region Listener Functions
+        protected override void OnMonsterMetadataResponse(MonsterMetadataResponse response)
+        {
+            if(!gotMetadata)
+            {
+                base.OnMonsterMetadataResponse(response);
+                fire.monsterMetadata = monsterMetadata;
+            }
+        }
+        #endregion
+
+        #region Public Functions
+        public override void Reset()
+        {
+            base.Reset();
+            hasSpecialHit = false;
+        }
+        #endregion
 
         #region Coroutines
         protected override IEnumerator MoveThenAttack()
@@ -28,7 +62,7 @@ namespace Ryzm.EndlessRunner
             bool openedMouth = false;
             bool startedFire = false;
             float diff = childTransform.localPosition.sqrMagnitude;
-            Vector3 targetEuler = new Vector3(0, childTransform.localEulerAngles.y, 0);
+            Vector3 targetEuler = new Vector3(trans.eulerAngles.x, childTransform.eulerAngles.y, trans.eulerAngles.y);
             float fireTime = 0;
             while(diff > 0.01f)
             {
@@ -46,8 +80,12 @@ namespace Ryzm.EndlessRunner
                         fire.Play();
                     }
                 }
-                childTransform.localPosition = Vector3.Lerp(childTransform.localPosition, Vector3.zero, Time.deltaTime * dropSpeed);
-                childTransform.localEulerAngles = Vector3.Lerp(childTransform.localEulerAngles, targetEuler, Time.deltaTime * dropSpeed);
+                Vector3 worldPos = Vector3.Lerp(childTransform.position, trans.position, Time.deltaTime * dropSpeed);
+                Quaternion worldQ = Quaternion.Euler(Vector3.Lerp(childTransform.eulerAngles, targetEuler, Time.deltaTime * dropSpeed));
+                
+                childTransform.SetPositionAndRotation(worldPos, worldQ);
+                // childTransform.localPosition = Vector3.Lerp(childTransform.localPosition, Vector3.zero, Time.deltaTime * dropSpeed);
+                // childTransform.localEulerAngles = Vector3.Lerp(childTransform.localEulerAngles, targetEuler, Time.deltaTime * dropSpeed);
                 diff = childTransform.localPosition.sqrMagnitude;
                 yield return null;
             }

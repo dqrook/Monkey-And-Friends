@@ -12,8 +12,12 @@ namespace Ryzm.EndlessRunner
         #region Public Variables
         public MapType type;
         public EndlessTransition transition;
-        public HeightFogGlobal fog;
         public Transform initialDragonSpawn;
+
+        [Header("Fog & Sky")]
+        public FogType fogType = FogType.AtmosphericHeightFog;
+        public HeightFogGlobal fog;
+        public Color fogColor;
 
         [Header("Settings")]
         public int gameClipPlane = 50;
@@ -84,11 +88,24 @@ namespace Ryzm.EndlessRunner
         void OnWorldItemsResponse(WorldItemsResponse response)
         {
             mainCamera = response.mainCamera;
-            if(fog != null)
+            if(fogType == FogType.AtmosphericHeightFog && fog != null)
             {
+                RenderSettings.fog = false;
                 fog.mainCamera = response.mainCamera;
                 fog.mainDirectional = response.mainLight;
                 fog.gameObject.SetActive(true);
+            }
+            else if(fogType == FogType.BuiltIn)
+            {
+                RenderSettings.fog = true;
+                RenderSettings.fogColor = fogColor;
+                response.mainCamera.clearFlags = CameraClearFlags.SolidColor;
+                response.mainCamera.backgroundColor = fogColor;
+            }
+            else
+            {
+                RenderSettings.fog = false;
+                response.mainCamera.clearFlags = CameraClearFlags.Skybox;
             }
         }
 
@@ -125,7 +142,6 @@ namespace Ryzm.EndlessRunner
 
         void OnStartRunway(StartRunway start)
         {
-            Debug.Log("start runway");
             runway.gameObject.SetActive(true);
             if(start.type == type && !startedRunway)
             {
@@ -267,5 +283,12 @@ namespace Ryzm.EndlessRunner
     {
         Floating,
         Water
+    }
+
+    public enum FogType
+    {
+        AtmosphericHeightFog,
+        BuiltIn,
+        None
     }
 }

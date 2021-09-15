@@ -86,7 +86,6 @@ namespace Ryzm.EndlessRunner
 
         protected virtual void UpdateSectionsRowId()
         {
-            Debug.Log("rowId " + rowId);
             foreach(EndlessSection section in sections)
             {
                 section.rowId = rowId;

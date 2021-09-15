@@ -33,12 +33,22 @@ namespace Ryzm.Dragon
         #region Public Functions
         public override void Enable()
         {
+            if(isEnabled)
+            {
+                PlayParticles(false);
+            }
+            if(shrinkThenDisable != null)
+            {
+                StopCoroutine(shrinkThenDisable);
+                shrinkThenDisable = null;
+            }
             ResetTransform();
             base.Enable();
             trans.parent = null;
             trans.rotation = Quaternion.identity;
-            expandCollider = ExpandCollider();
-            StartCoroutine(expandCollider);
+            // expandCollider = ExpandCollider();
+            // StartCoroutine(expandCollider);
+            explosionCollider.radius = finRadius;
             explosionCollider.enabled = true;
         }
 
@@ -54,6 +64,14 @@ namespace Ryzm.Dragon
             StartCoroutine(shrinkThenDisable);
         }
 
+        public void InstantDisable()
+        {
+            PlayParticles(false);
+            ResetTransform();
+            isEnabled = false;
+            explosionCollider.radius = finRadius;
+        }
+
         public void OnTrigger(Collider other)
         {
             hasHit = false;
@@ -61,22 +79,22 @@ namespace Ryzm.Dragon
         }
         #endregion
 
-        protected override void PlayParticles(bool shouldPlay)
-        {
-            foreach(ParticleSystem system in particleSystems)
-            {
-                if(shouldPlay)
-                {
-                    system.transform.localScale = Vector3.one * scale;
-                    system.Play();
-                }
-                else
-                {
-                    system.transform.localScale = Vector3.zero;
-                    system.Stop();
-                }
-            }
-        }
+        // protected override void PlayParticles(bool shouldPlay)
+        // {
+        //     foreach(ParticleSystem system in particleSystems)
+        //     {
+        //         if(shouldPlay)
+        //         {
+        //             system.transform.localScale = Vector3.one * scale;
+        //             system.Play();
+        //         }
+        //         else
+        //         {
+        //             system.transform.localScale = Vector3.zero;
+        //             system.Stop();
+        //         }
+        //     }
+        // }
 
         #region Private Functions
         void ResetTransform()
@@ -98,25 +116,22 @@ namespace Ryzm.Dragon
             {
                 t += Time.deltaTime;
                 explosionCollider.radius = finRadius * t / expansionTime;
-                // colliderTransform.localScale = colliderStartScale * t / expansionTime;
                 yield return null;
             }
-            // colliderTransform.localScale = colliderStartScale;
             explosionCollider.radius = finRadius;
+            yield break;
             
         }
 
         IEnumerator ShrinkThenDisable(float shrinkTime)
         {
             float t = 0;
-            // Vector3 start = colliderTransform.localScale;
             float _start = explosionCollider.radius;
             while(t < shrinkTime)
             {
                 t += Time.deltaTime;
                 float multiplier = 1 - t / shrinkTime;
                 multiplier = multiplier > 0 ? multiplier : 0;
-                // colliderTransform.localScale = start * multiplier;
                 explosionCollider.radius = _start * multiplier;
                 yield return null;
             }

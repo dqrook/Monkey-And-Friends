@@ -105,8 +105,8 @@ SkinnedMeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 616152489225806510}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
@@ -189,8 +189,8 @@ SkinnedMeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 694372246908891355}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
@@ -486,8 +486,8 @@ SkinnedMeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1937460438704770816}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
@@ -574,8 +574,8 @@ SkinnedMeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1960062312626528892}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
@@ -1145,8 +1145,8 @@ SkinnedMeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5274457284033436400}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
@@ -1299,8 +1299,8 @@ SkinnedMeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6214387326515860759}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
@@ -1393,6 +1393,7 @@ GameObject:
   - component: {fileID: 298724248454388084}
   - component: {fileID: 5785093174038253015}
   - component: {fileID: 7663308523879818446}
+  - component: {fileID: 5491917686041956634}
   m_Layer: 0
   m_Name: Dive Draze
   m_TagString: Untagged
@@ -1447,15 +1448,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 7
-  bodyRenderer: {fileID: 0}
   renderers: []
-  bodyCollider: {fileID: 0}
   colliders: []
   materials: []
   parentSection: {fileID: 0}
   childTransform: {fileID: 8603361226416412109}
   enableDynamicSpawn: 0
   fire: {fileID: 6104779466073363985}
+--- !u!54 &5491917686041956634
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6332275303252239903}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &6837964933997296513
 GameObject:
   m_ObjectHideFlags: 0
@@ -1858,11 +1873,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1436258973306710752, guid: badc794e1f0af4f3487538d444a36028,
-        type: 3}
-      propertyPath: InitialModule.startSpeed.scalar
-      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 1436258973306710754, guid: badc794e1f0af4f3487538d444a36028,
         type: 3}

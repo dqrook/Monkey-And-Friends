@@ -205,7 +205,7 @@ namespace Ryzm.Dragon
         public Texture texture;
         Renderer _renderer;
 
-        Renderer R
+        Renderer _Renderer
         {
             get
             {
@@ -221,18 +221,18 @@ namespace Ryzm.Dragon
         {
             get
             {
-                return R.material;
+                return _Renderer.material;
             }
         }
 
         public void Disable()
         {
-            R.enabled = false;
+            _Renderer.enabled = false;
         }
 
         public void Enable()
         {
-            R.enabled = true;
+            _Renderer.enabled = true;
         }
 
         public void SetTexture(Texture texture)

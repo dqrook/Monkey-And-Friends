@@ -72,11 +72,6 @@ namespace Ryzm.EndlessRunner
                 currentDragonPosition = response.position;
                 currentDistance = trans.InverseTransformPoint(currentDragonPosition).z;
                 bool inFront = IsInFront(currentDragonPosition);
-                // float diff = Mathf.Abs((currentDragonPosition - trans.position).z);
-                // if(type == MonsterType.SideDraze)
-                // {
-                //     Debug.Log("this is such faggy bullshit " + inFront + " " + trans.localEulerAngles + " " + diff);
-                // }
                 if(!startedAttack && inFront && currentDistance < attackDistance)
                 {
                     Attack();

@@ -210,8 +210,8 @@ SkinnedMeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 650690543820815800}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
@@ -617,6 +617,11 @@ MonoBehaviour:
     type: 3}
   customParticles: []
   maxParticles: 4
+  monsterMetadata:
+    difficultyPoints: 0
+    monsterType: 0
+    physicalDamage: 0
+    specialDamage: 0
 --- !u!1 &650690545286723779
 GameObject:
   m_ObjectHideFlags: 0

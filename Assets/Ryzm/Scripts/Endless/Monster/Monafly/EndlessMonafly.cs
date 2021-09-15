@@ -31,6 +31,20 @@ namespace Ryzm.EndlessRunner
         }
         #endregion
 
+        #region Listener Functions
+        protected override void OnMonsterMetadataResponse(MonsterMetadataResponse response)
+        {
+            if(!gotMetadata)
+            {
+                base.OnMonsterMetadataResponse(response);
+                if(particlesContainer != null)
+                {
+                    particlesContainer.monsterMetadata = monsterMetadata;
+                }
+            }
+        }
+        #endregion
+
         #region Public Functions
         public override void Reset()
         {

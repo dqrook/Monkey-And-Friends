@@ -1,29 +1,70 @@
 fileFormatVersion: 2
 guid: 3426e6e4e6c49c24ebf093a97ccab00c
 ModelImporter:
-  serializedVersion: 23
-  fileIDToRecycleName:
-    100000: body
-    100002: //RootNode
-    100004: Devil_Tree
-    100006: head
-    100008: mouth_top
-    100010: mouth_under
-    100012: Root
-    400000: body
-    400002: //RootNode
-    400004: Devil_Tree
-    400006: head
-    400008: mouth_top
-    400010: mouth_under
-    400012: Root
-    2100000: M_Devil_Tree_01
-    4300000: Devil_Tree
-    9500000: //RootNode
-    13700000: Devil_Tree
-  externalObjects: {}
+  serializedVersion: 19301
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: body
+  - first:
+      1: 100002
+    second: //RootNode
+  - first:
+      1: 100004
+    second: Devil_Tree
+  - first:
+      1: 100006
+    second: head
+  - first:
+      1: 100008
+    second: mouth_top
+  - first:
+      1: 100010
+    second: mouth_under
+  - first:
+      1: 100012
+    second: Root
+  - first:
+      4: 400000
+    second: body
+  - first:
+      4: 400002
+    second: //RootNode
+  - first:
+      4: 400004
+    second: Devil_Tree
+  - first:
+      4: 400006
+    second: head
+  - first:
+      4: 400008
+    second: mouth_top
+  - first:
+      4: 400010
+    second: mouth_under
+  - first:
+      4: 400012
+    second: Root
+  - first:
+      21: 2100000
+    second: M_Devil_Tree_01
+  - first:
+      43: 4300000
+    second: Devil_Tree
+  - first:
+      95: 9500000
+    second: //RootNode
+  - first:
+      137: 13700000
+    second: Devil_Tree
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Devil_Tree_01
+    second: {fileID: 2100000, guid: fcd0ca40badd00044bc63f1436171907, type: 2}
   materials:
-    importMaterials: 1
+    materialImportMode: 1
     materialName: 0
     materialSearch: 2
     materialLocation: 0
@@ -49,32 +90,35 @@ ModelImporter:
     extraExposedTransformPaths: []
     extraUserProperties: []
     clipAnimations: []
-    isReadable: 1
+    isReadable: 0
   meshes:
     lODScreenPercentages: []
     globalScale: 1
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
     importLights: 1
+    fileIdsGeneration: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
     preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
     useFileScale: 1
-    previousCalculatedGlobalScale: 0.01
-    hasPreviousCalculatedGlobalScale: 1
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -83,10 +127,10 @@ ModelImporter:
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0
+  referencedClips: []
   importAnimation: 1
-  copyAvatar: 0
   humanDescription:
-    serializedVersion: 2
+    serializedVersion: 3
     human: []
     skeleton: []
     armTwist: 0.5
@@ -96,13 +140,16 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
+    globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
+  avatarSetup: 1
   additionalBone: 0
   userData: 
   assetBundleName: 

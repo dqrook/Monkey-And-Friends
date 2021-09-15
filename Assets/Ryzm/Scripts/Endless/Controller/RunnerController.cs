@@ -29,7 +29,6 @@ namespace Ryzm.EndlessRunner
 		public SkinnedMeshRenderer blush;
 
 		MonkeyEmotion currentEmotion = MonkeyEmotion.Happy;
-		Player playerInput;
 		Vector3 move;
 		Transform trans;
         int _currentPosition = 1;
@@ -69,7 +68,6 @@ namespace Ryzm.EndlessRunner
 		void Awake()
 		{
             trans = GetComponent<Transform> ();
-			playerInput = new Player();
 			if(emotions == null)
 			{
 				emotions = gameObject.GetComponent<MonkeyEmotions>();
@@ -96,13 +94,11 @@ namespace Ryzm.EndlessRunner
 
         void OnEnable()
         {
-            playerInput.Enable();
             // Message.Send(new GameStatusRequest());
         }
 
         void OnDisable()
 		{
-			playerInput.Disable();
 		}
 
         void OnDestroy()
@@ -274,12 +270,12 @@ namespace Ryzm.EndlessRunner
 
         bool IsJumping()
         {
-			return playerInput.PlayerMain.Jump.WasPressedThisFrame();
+			return false;
         }
 
         bool IsAttacking()
         {
-			return playerInput.PlayerMain.Attack.WasPressedThisFrame();
+			return false;
         }
 
         void ChangeEmotion(MonkeyEmotion emotion)
@@ -348,11 +344,11 @@ namespace Ryzm.EndlessRunner
         {
             if(direction == Direction.Left)
             {
-                return playerInput.Endless.ShiftLeft.WasPressedThisFrame();
+                return false;
             }
             if(direction == Direction.Right)
             {
-                return playerInput.Endless.ShiftRight.WasPressedThisFrame();
+                return false;
             }
             return false;
         }

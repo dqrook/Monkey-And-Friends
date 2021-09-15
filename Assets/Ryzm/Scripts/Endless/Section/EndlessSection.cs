@@ -157,6 +157,10 @@ namespace Ryzm.EndlessRunner
 
         public void CancelDeactivation()
         {
+            if(deactivate.dScheduled)
+            {
+                // Debug.Log("ya got it " + transform.position);
+            }
             deactivate.CancelDeactivation();
         }
 
@@ -342,6 +346,7 @@ namespace Ryzm.EndlessRunner
         FloatingMonster1,
         FloatingMonster2,
         FloatingMonster3,
-        FloatingMonster4
+        FloatingMonster4,
+        FloatingMonster5
     }
 }

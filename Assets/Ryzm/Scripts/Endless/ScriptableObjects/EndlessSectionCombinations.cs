@@ -67,11 +67,11 @@ namespace Ryzm.EndlessRunner
 
         public SectionCombination GetSectionCombinationByDistance(float runnerDistance)
         {
-            int value = Mathf.FloorToInt(runnerDistance / 100);
-            value = value < combinationsGroups.Count ? value : combinationsGroups.Count - 1;
+            int difficultyLevel = Mathf.FloorToInt((runnerDistance + 50) / 100);
+            difficultyLevel = difficultyLevel < combinationsGroups.Count ? difficultyLevel : combinationsGroups.Count - 1;
 
-            int randCombo = Random.Range(0, combinationsGroups[value].sectionCombinations.Count);
-            return combinationsGroups[value].sectionCombinations[randCombo];
+            int randCombo = Random.Range(0, combinationsGroups[difficultyLevel].sectionCombinations.Count);
+            return combinationsGroups[difficultyLevel].sectionCombinations[randCombo];
         }
     }
 

@@ -10,6 +10,7 @@ namespace Ryzm.EndlessRunner
     {
         #region Public Variables
         public EndlessCamera endlessCamera;
+        public CameraCull[] culls;
         public Transform startTransform;
         public int startClipPlane = 1000;
         public int mainMenuFieldOfView = 50;
@@ -27,6 +28,16 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
             Message.AddListener<CameraRequest>(OnCameraRequest);
             cameraTrans = endlessCamera.gameObject.transform;
+        }
+
+        void Start()
+        {
+            float[] distances = new float[32];
+            foreach (CameraCull c in culls)
+            {
+                distances[c.layer] = c.distance;
+            }
+            endlessCamera.cam.layerCullDistances = distances;
         }
 
         void OnDestroy()
@@ -58,5 +69,12 @@ namespace Ryzm.EndlessRunner
             Message.Send(new CameraResponse(endlessCamera.gameObject));
         }
         #endregion
+    }
+
+    [System.Serializable]
+    public struct CameraCull
+    {
+        public int layer;
+        public float distance;
     }
 }

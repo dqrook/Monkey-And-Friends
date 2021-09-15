@@ -1,40 +1,104 @@
 fileFormatVersion: 2
 guid: 70b2001f2fac3bd45a18981429f7f2ed
 ModelImporter:
-  serializedVersion: 23
-  fileIDToRecycleName:
-    100000: antenna_l1
-    100002: antenna_l2
-    100004: antenna_l3
-    100006: antenna_l4
-    100008: //RootNode
-    100010: Beez
-    100012: bottom
-    100014: Center
-    100016: head
-    100018: Root
-    100020: wing_l1
-    100022: wing_l2
-    100024: wing_r1
-    100026: wingrl2
-    400000: antenna_l1
-    400002: antenna_l2
-    400004: antenna_l3
-    400006: antenna_l4
-    400008: //RootNode
-    400010: Beez
-    400012: bottom
-    400014: Center
-    400016: head
-    400018: Root
-    400020: wing_l1
-    400022: wing_l2
-    400024: wing_r1
-    400026: wingrl2
-    2100000: M_Beez_01
-    4300000: Beez
-    9500000: //RootNode
-    13700000: Beez
+  serializedVersion: 19301
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: antenna_l1
+  - first:
+      1: 100002
+    second: antenna_l2
+  - first:
+      1: 100004
+    second: antenna_l3
+  - first:
+      1: 100006
+    second: antenna_l4
+  - first:
+      1: 100008
+    second: //RootNode
+  - first:
+      1: 100010
+    second: Beez
+  - first:
+      1: 100012
+    second: bottom
+  - first:
+      1: 100014
+    second: Center
+  - first:
+      1: 100016
+    second: head
+  - first:
+      1: 100018
+    second: Root
+  - first:
+      1: 100020
+    second: wing_l1
+  - first:
+      1: 100022
+    second: wing_l2
+  - first:
+      1: 100024
+    second: wing_r1
+  - first:
+      1: 100026
+    second: wingrl2
+  - first:
+      4: 400000
+    second: antenna_l1
+  - first:
+      4: 400002
+    second: antenna_l2
+  - first:
+      4: 400004
+    second: antenna_l3
+  - first:
+      4: 400006
+    second: antenna_l4
+  - first:
+      4: 400008
+    second: //RootNode
+  - first:
+      4: 400010
+    second: Beez
+  - first:
+      4: 400012
+    second: bottom
+  - first:
+      4: 400014
+    second: Center
+  - first:
+      4: 400016
+    second: head
+  - first:
+      4: 400018
+    second: Root
+  - first:
+      4: 400020
+    second: wing_l1
+  - first:
+      4: 400022
+    second: wing_l2
+  - first:
+      4: 400024
+    second: wing_r1
+  - first:
+      4: 400026
+    second: wingrl2
+  - first:
+      21: 2100000
+    second: M_Beez_01
+  - first:
+      43: 4300000
+    second: Beez
+  - first:
+      95: 9500000
+    second: //RootNode
+  - first:
+      137: 13700000
+    second: Beez
   externalObjects:
   - first:
       type: UnityEngine:Material
@@ -42,7 +106,7 @@ ModelImporter:
       name: M_Beez_01
     second: {fileID: 2100000, guid: 45e3386bc33bf3b45a3d8ccbe6fec2d0, type: 2}
   materials:
-    importMaterials: 1
+    materialImportMode: 1
     materialName: 0
     materialSearch: 2
     materialLocation: 0
@@ -68,32 +132,35 @@ ModelImporter:
     extraExposedTransformPaths: []
     extraUserProperties: []
     clipAnimations: []
-    isReadable: 1
+    isReadable: 0
   meshes:
     lODScreenPercentages: []
     globalScale: 1
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
     importLights: 1
+    fileIdsGeneration: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
     preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
     useFileScale: 1
-    previousCalculatedGlobalScale: 0.01
-    hasPreviousCalculatedGlobalScale: 1
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -102,10 +169,10 @@ ModelImporter:
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0
+  referencedClips: []
   importAnimation: 1
-  copyAvatar: 0
   humanDescription:
-    serializedVersion: 2
+    serializedVersion: 3
     human: []
     skeleton: []
     armTwist: 0.5
@@ -115,13 +182,16 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
+    globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
+  avatarSetup: 1
   additionalBone: 0
   userData: 
   assetBundleName: 

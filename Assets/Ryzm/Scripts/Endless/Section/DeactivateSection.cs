@@ -11,7 +11,7 @@ namespace Ryzm.EndlessRunner
         public EndlessSection section;
         public float deactivationTime = 2.5f;
 
-        bool dScheduled = false;
+        public bool dScheduled = false;
         bool stopDeactivation;
 
         public void Deactivate()

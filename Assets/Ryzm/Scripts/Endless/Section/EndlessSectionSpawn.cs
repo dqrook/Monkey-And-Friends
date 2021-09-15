@@ -11,9 +11,23 @@ namespace Ryzm.EndlessRunner
         public MonsterType monsterType;
         public SubSectionPosition subSectionPosition;
         public List<AddOnSpawn> addOnSpawns = new List<AddOnSpawn>();
+        public List<EndlessMonster> monsters = new List<EndlessMonster>();
+        #endregion
+
+        #region Event Functions
+        protected virtual void Awake() {}
+        
+        void OnDisable()
+        {
+            Reset();
+        }
+
+        protected virtual void OnDestroy() {}
         #endregion
 
         #region Public Functions
+        public virtual void Activate() {}
+
         public AddOnSpawn GetAddOnSpawn()
         {
             int numAddOnSpawns = addOnSpawns.Count;
@@ -35,6 +49,10 @@ namespace Ryzm.EndlessRunner
             }
             return new AddOnSpawn();
         }
+        #endregion
+
+        #region Protected Functions
+        protected virtual void Reset() {}
         #endregion
     }
 }
