@@ -8,18 +8,42 @@ namespace Ryzm.EndlessRunner
 {
     public class InputManager : MonoBehaviour
     {
+        #region Public Variables
         public KeyCode leftPress = KeyCode.A;
         public KeyCode rightPress = KeyCode.D;
         public KeyCode upPress = KeyCode.Space;
         public KeyCode downPress = KeyCode.S;
-
-        private static InputManager _instance;
+        public EndlessRyz ryz;
         public static InputManager Instance { get { return _instance; } }
+        #endregion
+        
+        #region Private Variables
+        static InputManager _instance;
         EndlessController monkey;
         EndlessController dragon;
         ControllerMode mode;
         GameStatus status;
+        #endregion
 
+        #region Properties
+        EndlessController CurrentController
+        {
+            get
+            {
+                if(ryz != null)
+                {
+                    return ryz;
+                }
+                if(mode == ControllerMode.Monkey)
+                {
+                    return monkey;
+                }
+                return dragon;
+            }
+        }
+        #endregion
+
+        #region Event Functions
         void Awake()
         {
             if (_instance != null && _instance != this)
@@ -35,13 +59,6 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
         }
 
-        void OnDestroy()
-        {
-            Message.RemoveListener<ControllersResponse>(OnControllersResponse);
-            Message.RemoveListener<ControllerModeResponse>(OnControllerModeResponse);
-            Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
-        }
-
         void Start()
         {
             Message.Send(new ControllersRequest());
@@ -52,22 +69,31 @@ namespace Ryzm.EndlessRunner
         {
             if(Input.GetKeyDown(leftPress))
             {
-                Shift(Direction.Left);
+                SetInput(Direction.Left);
             }
             else if(Input.GetKeyDown(rightPress))
             {
-                Shift(Direction.Right);
+                SetInput(Direction.Right);
             }
             else if(Input.GetKeyDown(upPress))
             {
-                Jump();
+                SetInput(Direction.Up);
             }
             else if(Input.GetKeyDown(downPress))
             {
-                Down();
+                SetInput(Direction.Down);
             }
         }
 
+        void OnDestroy()
+        {
+            Message.RemoveListener<ControllersResponse>(OnControllersResponse);
+            Message.RemoveListener<ControllerModeResponse>(OnControllerModeResponse);
+            Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
+        }
+        #endregion
+
+        #region Listener Functions
         void OnGameStatusResponse(GameStatusResponse response)
         {
             status = response.status;
@@ -83,58 +109,36 @@ namespace Ryzm.EndlessRunner
         {
             mode = response.mode;
         }
+        #endregion
 
-        public void Shift(Direction direction)
+        #region Public Functions
+        public void SetInput(Direction direction)
         {
             if(!CanMove())
             {
                 return;
             }
-            if(mode == ControllerMode.Dragon || mode == ControllerMode.MonkeyDragon)
+
+            if(direction == Direction.Up)
             {
-                dragon.Shift(direction);
+                CurrentController.UpInput();
             }
-            else if(mode == ControllerMode.Monkey)
+            else if(direction == Direction.Down)
             {
-                monkey.Shift(direction);
+                CurrentController.DownInput();
+            }
+            else
+            {
+                CurrentController.Shift(direction);
             }
         }
+        #endregion
 
-        public void Jump()
-        {
-            if(!CanMove())
-            {
-                return;
-            }
-            if(mode == ControllerMode.Dragon || mode == ControllerMode.MonkeyDragon)
-            {
-                dragon.Jump();
-            }
-            else if(mode == ControllerMode.Monkey)
-            {
-                monkey.Jump();
-            }
-        }
-
-        public void Down()
-        {
-            if(!CanMove())
-            {
-                return;
-            }
-            if(mode == ControllerMode.Dragon || mode == ControllerMode.MonkeyDragon)
-            {
-                dragon.Attack();
-            }
-            else if(mode == ControllerMode.Monkey)
-            {
-                monkey.Slide();
-            }
-        }
-
+        #region Private Functions
         bool CanMove()
         {
             return status == GameStatus.Active || status == GameStatus.Starting;
         }
+        #endregion
     }
 }

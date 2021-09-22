@@ -205,7 +205,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 103b1a5b7ccc742caa7551b25c67c9f9, type: 2}
-  m_CullingMode: 0
+  m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -226,9 +226,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 12
+  colliders:
+  - {fileID: 8184883598990954114}
   renderers: []
-  colliders: []
   materials: []
+  targetMaterialIndex: 0
 --- !u!54 &8184883598990954115
 Rigidbody:
   m_ObjectHideFlags: 0

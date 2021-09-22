@@ -10,7 +10,7 @@ namespace Ryzm.EndlessRunner
     public class EndlessBombee : EndlessWaitingMonster
     {
         #region Public Variables
-        public CustomParticles explosionParticles;
+        public ExplosionParticles explosionParticles;
         #endregion
 
         #region Private Variables
@@ -24,6 +24,12 @@ namespace Ryzm.EndlessRunner
             attackDistance = 10;
         }
         #endregion
+
+        protected override void OnMonsterMetadataResponse(MonsterMetadataResponse response)
+        {
+            base.OnMonsterMetadataResponse(response);
+            explosionParticles.monsterMetadata = monsterMetadata;
+        }
 
         #region Public Functions
         public override void TakeDamage()

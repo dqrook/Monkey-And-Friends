@@ -14,18 +14,18 @@ namespace Ryzm.EndlessRunner
 
     public class EndlessSectionLine : MonoBehaviour
     {
-        public EndlessSection section;
+        public EndlessBasePath section;
         public LineType type;
         
         void OnTriggerEnter(Collider other)
         {
             if(type == LineType.Start)
             {
-                section.EnterSection();
+                section.Enter();
             }
             else
             {
-                section.ExitSection();
+                section.Exit();
             }
             // EndlessController runner = other.GetComponent<EndlessController>();
             // if(runner != null)

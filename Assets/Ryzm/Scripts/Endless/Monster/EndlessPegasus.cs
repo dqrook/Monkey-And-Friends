@@ -78,6 +78,7 @@ namespace Ryzm.EndlessRunner
         }
         #endregion
 
+        #region Coroutines
         IEnumerator _Attack()
         {
             ActivateAttack(true);
@@ -94,5 +95,6 @@ namespace Ryzm.EndlessRunner
             }
             ActivateAttack(false);
         }
+        #endregion
     }
 }

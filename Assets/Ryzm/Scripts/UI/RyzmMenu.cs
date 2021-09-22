@@ -210,6 +210,7 @@ namespace Ryzm.UI
         MyDragons,
         LoadingFade,
         Health,
-        Special
+        Special,
+        Settings
     }
 }

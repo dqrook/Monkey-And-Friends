@@ -4,9 +4,9 @@ namespace Ryzm.EndlessRunner.Messages
 {
     public class TailSlapAttackStateResponse : Message
     {
-        public AttackState tailSlapAttackState;
+        public ActionState tailSlapAttackState;
 
-        public TailSlapAttackStateResponse(AttackState tailSlapAttackState)
+        public TailSlapAttackStateResponse(ActionState tailSlapAttackState)
         {
             this.tailSlapAttackState = tailSlapAttackState;
         }

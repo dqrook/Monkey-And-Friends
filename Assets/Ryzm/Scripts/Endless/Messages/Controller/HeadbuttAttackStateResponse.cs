@@ -4,9 +4,9 @@ namespace Ryzm.EndlessRunner.Messages
 {
     public class HeadbuttAttackStateResponse : Message
     {
-        public AttackState headbuttAttackState;
+        public ActionState headbuttAttackState;
 
-        public HeadbuttAttackStateResponse(AttackState headbuttAttackState)
+        public HeadbuttAttackStateResponse(ActionState headbuttAttackState)
         {
             this.headbuttAttackState = headbuttAttackState;
         }

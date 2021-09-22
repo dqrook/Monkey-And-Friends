@@ -5,9 +5,9 @@ namespace Ryzm.EndlessRunner
 {
     public class EndlessStonePillar : EndlessTregon
     {
-        #region Private Variables
-        bool startedFallDown;
-        IEnumerator fallDown;
+        #region Protected Variables
+        protected bool startedFallDown;
+        protected IEnumerator fallDown;
         #endregion
 
         #region Public Functions
@@ -37,7 +37,7 @@ namespace Ryzm.EndlessRunner
         #endregion
 
         #region Coroutines
-        IEnumerator FallDown()
+        protected virtual IEnumerator FallDown()
         {
             Die();
             startedFallDown = true;

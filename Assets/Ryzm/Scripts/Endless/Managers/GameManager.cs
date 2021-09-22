@@ -107,7 +107,6 @@ namespace Ryzm.EndlessRunner
 
         void OnStartGame(StartGame start)
         {
-            Debug.Log("start game");
             UpdateGameStatus(GameStatus.Active);
             // deactivateHomeIsland = null;
             // deactivateHomeIsland = DeactivateHomeIsland();
@@ -172,6 +171,7 @@ namespace Ryzm.EndlessRunner
             {
                 gotRunwayResponse = true;
                 hasRunway = response.hasRunway;
+                UpdateGameStatus(GameStatus.Starting);
             }
         }
 
@@ -290,7 +290,6 @@ namespace Ryzm.EndlessRunner
                 yield return null;
             }
 
-            UpdateGameStatus(GameStatus.Starting);
             Message.Send(new StartRunway(currentMap));
             while(!gotRunwayResponse)
             {

@@ -17,6 +17,12 @@ namespace Ryzm.EndlessRunner
         #endregion
 
         #region Event Functions
+        protected override void Awake()
+        {
+            base.Awake();
+            move = Vector3.zero;
+        }
+        
         protected override void OnEnable()
         {
             base.OnEnable();

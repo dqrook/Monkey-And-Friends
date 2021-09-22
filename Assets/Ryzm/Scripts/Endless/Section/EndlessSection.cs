@@ -6,7 +6,7 @@ using Ryzm.EndlessRunner.Messages;
 
 namespace Ryzm.EndlessRunner
 {
-    public class EndlessSection : EndlessScroller
+    public class EndlessSection : EndlessBasePath
     {
         #region Public Variables
         public SectionType type;
@@ -144,23 +144,19 @@ namespace Ryzm.EndlessRunner
             this.rowId = rowId;
         }
 
-        public virtual void EnterSection()
+        public override void Enter()
         {
             Message.Send(new CurrentSectionChange(gameObject, rowId));
         }
 
-        public virtual void ExitSection()
+        public override void Exit()
         {
             // rowId = 0;
             deactivate.Deactivate();
         }
 
-        public void CancelDeactivation()
+        public override void CancelDeactivation()
         {
-            if(deactivate.dScheduled)
-            {
-                // Debug.Log("ya got it " + transform.position);
-            }
             deactivate.CancelDeactivation();
         }
 

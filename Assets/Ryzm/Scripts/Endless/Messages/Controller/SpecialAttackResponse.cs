@@ -4,9 +4,9 @@ namespace Ryzm.EndlessRunner.Messages
 {
     public class SpecialAttackResponse : Message
     {
-        public AttackState state;
+        public ActionState state;
 
-        public SpecialAttackResponse(AttackState state)
+        public SpecialAttackResponse(ActionState state)
         {
             this.state = state;
         }

@@ -15,6 +15,7 @@ namespace Ryzm.EndlessRunner
         #region Protected Variables
         protected float dropSpeed = 5;
         protected bool hasSpecialHit;
+        protected float collisionTime;
         #endregion
 
         #region Event Functions
@@ -27,11 +28,12 @@ namespace Ryzm.EndlessRunner
 
         protected override void OnTriggerEnter(Collider other)
         {
-            if(!hasSpecialHit && other.GetComponent<EndlessController>())
-            {
-                hasSpecialHit = true;
-                Message.Send(new RunnerHit(monsterMetadata.monsterType, AttackType.Special));
-            }
+            CheckCollision(other);
+        }
+
+        protected override void OnTriggerStay(Collider other)
+        {
+            CheckCollision(other);
         }
         #endregion
 
@@ -51,6 +53,22 @@ namespace Ryzm.EndlessRunner
         {
             base.Reset();
             hasSpecialHit = false;
+            collisionTime = 0;
+        }
+        #endregion
+
+        #region Private Functions
+        void CheckCollision(Collider other)
+        {
+            if(!hasSpecialHit && other.GetComponent<EndlessController>())
+            {
+                collisionTime += Time.deltaTime;
+                if(collisionTime > 3 * Time.deltaTime)
+                {
+                    hasSpecialHit = true;
+                    Message.Send(new RunnerHit(monsterMetadata.monsterType, AttackType.Special));
+                }
+            }
         }
         #endregion
 

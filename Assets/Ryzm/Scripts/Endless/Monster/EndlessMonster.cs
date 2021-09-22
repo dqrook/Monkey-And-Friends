@@ -22,6 +22,7 @@ namespace Ryzm.EndlessRunner
         protected MonsterMetadata monsterMetadata;
         protected Animator animator;
         protected Vector3 startPosition;
+        protected Vector3 startEulerAngles;
         protected Transform trans;
         protected bool _isActive;
         protected GameStatus gameStatus;
@@ -52,6 +53,7 @@ namespace Ryzm.EndlessRunner
             animator = GetComponent<Animator>();
             trans = transform;
             startPosition = trans.localPosition;
+            startEulerAngles = trans.localEulerAngles;
             deadAnimHash = Animator.StringToHash("dead");
         }
 
@@ -177,6 +179,11 @@ namespace Ryzm.EndlessRunner
         Deyon,
         Azel,
         MovingFawks,
-        Pegasus
+        Pegasus,
+        Monodon,
+        MovingMonodon,
+        Kraystation,
+        CoconutTree,
+        Octayna
     }
 }

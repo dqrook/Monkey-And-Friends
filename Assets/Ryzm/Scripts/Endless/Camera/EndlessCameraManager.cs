@@ -14,6 +14,9 @@ namespace Ryzm.EndlessRunner
         public Transform startTransform;
         public int startClipPlane = 1000;
         public int mainMenuFieldOfView = 50;
+        public List<Vector3> cameraLocations = new List<Vector3>();
+        public EndlessCameraSpawns cameraSpawns;
+        public int currentCameraSpawn;
         #endregion
 
         #region Private Variables
@@ -27,6 +30,9 @@ namespace Ryzm.EndlessRunner
         {
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
             Message.AddListener<CameraRequest>(OnCameraRequest);
+            Message.AddListener<CameraSpawnsRequest>(OnCameraSpawnsRequest);
+            Message.AddListener<LocalCameraSpawnRequest>(OnLocalCameraSpawnRequest);
+            Message.AddListener<UpdateCurrentCameraSpawn>(OnUpdateCurrentCameraSpawn);
             cameraTrans = endlessCamera.gameObject.transform;
         }
 
@@ -44,6 +50,9 @@ namespace Ryzm.EndlessRunner
         {
             Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
             Message.RemoveListener<CameraRequest>(OnCameraRequest);
+            Message.RemoveListener<CameraSpawnsRequest>(OnCameraSpawnsRequest);
+            Message.RemoveListener<LocalCameraSpawnRequest>(OnLocalCameraSpawnRequest);
+            Message.RemoveListener<UpdateCurrentCameraSpawn>(OnUpdateCurrentCameraSpawn);
         }
         #endregion
 
@@ -67,6 +76,30 @@ namespace Ryzm.EndlessRunner
         void OnCameraRequest(CameraRequest request)
         {
             Message.Send(new CameraResponse(endlessCamera.gameObject));
+        }
+
+        void OnCameraSpawnsRequest(CameraSpawnsRequest request)
+        {
+            Message.Send(new CameraSpawnsResponse(cameraSpawns));
+        }
+
+        void OnLocalCameraSpawnRequest(LocalCameraSpawnRequest request)
+        {
+            UpdateCameraSpawn();
+        }
+
+        void OnUpdateCurrentCameraSpawn(UpdateCurrentCameraSpawn update)
+        {
+            cameraSpawns.currentCameraSpawn = update.currentCameraSpawn;
+            UpdateCameraSpawn();
+        }
+        #endregion
+
+        #region Private Functions
+        void UpdateCameraSpawn()
+        {
+            CameraSpawn camSpawn = cameraSpawns.CurrentCameraSpawn;
+            Message.Send(new LocalCameraSpawnResponse(camSpawn));
         }
         #endregion
     }

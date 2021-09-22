@@ -18,7 +18,7 @@ namespace Ryzm.UI
 
         #region Private Variables
         List<MenuType> loginMenus = new List<MenuType>();
-        List<MenuType> mainMenus = new List<MenuType>();
+        List<MenuType> settingsMenus = new List<MenuType>();
         #endregion
 
         #region Properties
@@ -37,14 +37,13 @@ namespace Ryzm.UI
                         Message.AddListener<LoginResponse>(OnLoginResponse);
                         Message.AddListener<MenuSetResponse>(OnMenuSetResponse);
                         Message.Send(new LoginRequest());
-                        // Message.Send(new DisableHeaderBackButton());
-                        Message.Send(new MenuSetRequest(MenuSet.MainMenu));
                         Message.Send(new MenuSetRequest(MenuSet.LoginMenu));
+                        Message.Send(new MenuSetRequest(MenuSet.SettingsMenu));
                     }
                     else
                     {
                         Message.RemoveListener<LoginResponse>(OnLoginResponse);
-                        Message.AddListener<MenuSetResponse>(OnMenuSetResponse);
+                        Message.RemoveListener<MenuSetResponse>(OnMenuSetResponse);
                     }
                     base.IsActive = value;
                 }
@@ -71,9 +70,9 @@ namespace Ryzm.UI
 
         void OnMenuSetResponse(MenuSetResponse response)
         {
-            if(response.set == MenuSet.MainMenu)
+            if(response.set == MenuSet.SettingsMenu)
             {
-                mainMenus = response.menus;
+                settingsMenus = response.menus;
             }
             else if(response.set == MenuSet.LoginMenu)
             {
@@ -90,10 +89,17 @@ namespace Ryzm.UI
 
         public void OnClickLogin()
         {
-            Debug.Log("on click login");
             if(IsActive)
             {
-                Message.Send(new ActivateMenu(activatedTypes: loginMenus));
+                Message.Send(new ActivateMenu(loginMenus));
+            }
+        }
+
+        public void OnClickSettings()
+        {
+            if(IsActive)
+            {
+                Message.Send(new ActivateMenu(settingsMenus));
             }
         }
         #endregion

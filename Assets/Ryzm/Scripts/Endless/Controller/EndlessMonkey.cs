@@ -102,13 +102,9 @@ namespace Ryzm.EndlessRunner
             {
                 Jump(isGrounded);
 			}
-            if(IsAttacking())
+            if(IsDownInput())
             {
-                Attack();
-            }
-            if(IsSliding())
-            {
-                Slide();
+                DownInput();
             }
         }
         
@@ -159,7 +155,7 @@ namespace Ryzm.EndlessRunner
 			return false;
         }
 
-        bool IsSliding()
+        bool IsDownInput()
         {
             return false;
         }
@@ -208,7 +204,7 @@ namespace Ryzm.EndlessRunner
             }
         }
 
-        public override void Jump()
+        public override void UpInput()
         {
             bool isGrounded = IsGrounded();
             Jump(isGrounded);
@@ -219,16 +215,17 @@ namespace Ryzm.EndlessRunner
             inSlide = false;
         }
 
-        public override void Slide() 
+        public override void DownInput() 
         {
             if(!InJump && !inShift && !inSlide)
             {
                 animator.SetTrigger("slide");
                 inSlide = true;
             }
+            // animator.SetTrigger("kamehameha");
         }
 
-        public void Jump(bool isGrounded)
+        void Jump(bool isGrounded)
         {
             if(!InJump && isGrounded && !inShift)
             {
@@ -311,14 +308,7 @@ namespace Ryzm.EndlessRunner
             yield break;
         }
 
-        public override void Attack()
-        {
-            // animator.SetTrigger("attack");
-            animator.SetTrigger("kamehameha");
-            // AirAttack();
-        }
-
-        public override void Die()
+        protected override void Die()
         {
             State = 2;
             // state = 2;

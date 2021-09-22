@@ -50,7 +50,6 @@ namespace Ryzm.UI
 		/// </summary>
 		public void OnPointerDown(PointerEventData data)
 		{
-			// Debug.Log("on pointer down");
 			_OnPointerDown();
 		}
 
@@ -67,7 +66,6 @@ namespace Ryzm.UI
 		/// </summary>
 		public void OnPointerEnter(PointerEventData data)
 		{
-			// Debug.Log("on point enter");
 			_OnPointerDown();
 		}
 
@@ -129,7 +127,6 @@ namespace Ryzm.UI
 					trackPosition = null;
 				}
 				CheckForSwipe();
-				Debug.Log("pointer up " + Time.time);
 				checkingSwipe = false;
 			}
 		}
@@ -163,22 +160,12 @@ namespace Ryzm.UI
 
         void Swipe()
 		{
-			if(_swipeDirection == Direction.Up)
-			{
-				InputManager.Instance.Jump();
-			}
-			else if(_swipeDirection == Direction.Down)
-			{
-				InputManager.Instance.Down();
-			}
-			else
-			{
-				InputManager.Instance.Shift(_swipeDirection);
-			}
+			InputManager.Instance.SetInput(_swipeDirection);
 			taps = 0;
 		}
 		#endregion
 
+		#region Coroutines
 		IEnumerator TrackPosition()
 		{
 			while(checkingSwipe)
@@ -187,5 +174,6 @@ namespace Ryzm.UI
 				yield return null;
 			}
 		}
+		#endregion
     }
 }

@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 210070630078753152}
   m_LocalRotation: {x: 0.5816333, y: 0.8134512, z: 0.000000007256701, w: 0.000000007639543}
   m_LocalPosition: {x: 0.009371094, y: -0.21967755, z: -0.1891611}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.1, y: 0.9, z: 0.9}
   m_Children:
   - {fileID: 210070630078461370}
   m_Father: {fileID: 210070630078461322}
@@ -56,7 +56,7 @@ Transform:
   m_GameObject: {fileID: 210070630078753154}
   m_LocalRotation: {x: 0.6816971, y: 0.73163456, z: -0.000000008423194, w: -0.000000009776669}
   m_LocalPosition: {x: -0.057745006, y: -0.18358228, z: -0.1891611}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.1, y: 0.9, z: 0.9}
   m_Children:
   - {fileID: 210070630078461364}
   m_Father: {fileID: 210070630078461324}
@@ -515,7 +515,7 @@ Transform:
   m_GameObject: {fileID: 210070630078753180}
   m_LocalRotation: {x: 0.8134512, y: -0.5816333, z: 7.0020646e-16, w: -9.394445e-16}
   m_LocalPosition: {x: 0.009370748, y: -0.21967806, z: 0.18916099}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.1, y: 0.9, z: 0.9}
   m_Children:
   - {fileID: 210070630078461366}
   m_Father: {fileID: 210070630078461322}
@@ -546,7 +546,7 @@ Transform:
   m_GameObject: {fileID: 210070630078753182}
   m_LocalRotation: {x: 0.73163456, y: -0.6816971, z: 3.5427224e-16, w: -3.605833e-16}
   m_LocalPosition: {x: -0.057744894, y: -0.18358223, z: 0.18916099}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.1, y: 0.9, z: 0.9}
   m_Children:
   - {fileID: 210070630078461360}
   m_Father: {fileID: 210070630078461324}
@@ -1084,15 +1084,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 17
+  colliders:
+  - {fileID: 3432178336774198492}
+  - {fileID: 3432178337369434570}
   renderers:
   - {fileID: 210070630073541774}
   - {fileID: 210070630073541768}
   - {fileID: 210070630073541772}
-  colliders:
-  - {fileID: 3432178336774198492}
-  - {fileID: 3432178337369434570}
   materials:
   - {fileID: 2100000, guid: 75aaca5c9d9cbe849a3d647b723503d0, type: 2}
+  targetMaterialIndex: 0
   bodyTrailEffect: {fileID: 3432178337159050841}
 --- !u!54 &6783255956988724448
 Rigidbody:

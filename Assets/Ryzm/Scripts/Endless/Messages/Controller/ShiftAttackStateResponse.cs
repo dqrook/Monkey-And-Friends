@@ -4,9 +4,9 @@ namespace Ryzm.EndlessRunner.Messages
 {
     public class ShiftAttackStateResponse : Message
     {
-        public AttackState shiftAttackState;
+        public ActionState shiftAttackState;
 
-        public ShiftAttackStateResponse(AttackState shiftAttackState)
+        public ShiftAttackStateResponse(ActionState shiftAttackState)
         {
             this.shiftAttackState = shiftAttackState;
         }

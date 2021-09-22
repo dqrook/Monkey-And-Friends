@@ -115,6 +115,7 @@ namespace Ryzm.UI
         MyDragonsMenu,
         LoadingMenu,
         ExitMenu,
-        StartingMenu
+        StartingMenu,
+        SettingsMenu
     }
 }

@@ -11,13 +11,13 @@ GameObject:
   - component: {fileID: 3867840085662387260}
   - component: {fileID: 3990824943799255472}
   - component: {fileID: 3991914223791467420}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: ParticlesStay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3867840085662387260
 Transform:
   m_ObjectHideFlags: 0
@@ -27,10 +27,10 @@ Transform:
   m_GameObject: {fileID: 3864515888416701412}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0.4000001, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 3867862671900557812}
-  m_RootOrder: 5
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &3990824943799255472
 ParticleSystem:
@@ -4785,8 +4785,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3867862671900557812}
-  - component: {fileID: 3864586650839761181}
-  m_Layer: 14
+  - component: {fileID: 4405231065502790406}
+  - component: {fileID: 8725079717143732248}
+  m_Layer: 13
   m_Name: vfx_Hit_Fireball03_Orange_Mobile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4801,23 +4802,23 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3864586650839761180}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.19085692, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0.493, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
-  - {fileID: 3869314135884870592}
-  - {fileID: 3869308415073586230}
-  - {fileID: 3869470671151465862}
-  - {fileID: 3867923415393715970}
-  - {fileID: 3869549437886819270}
-  - {fileID: 3867840085662387260}
+  - {fileID: 3867886680690083146}
   - {fileID: 3867959022021715282}
+  - {fileID: 3869549437886819270}
+  - {fileID: 3869470671151465862}
+  - {fileID: 3869308415073586230}
+  - {fileID: 3867923415393715970}
+  - {fileID: 3869314135884870592}
+  - {fileID: 3867840085662387260}
   - {fileID: 3868006477326227198}
   - {fileID: 3867762540699699958}
-  - {fileID: 3867886680690083146}
   m_Father: {fileID: 4136729574491370208}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3864586650839761181
+--- !u!114 &4405231065502790406
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4826,7 +4827,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3864586650839761180}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b9aaa7a5629bf48cf8b04395895e6136, type: 3}
+  m_Script: {fileID: 11500000, guid: 3e85b2af6552645cba6ae91da9f31ff6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   target: 2
@@ -4838,6 +4839,22 @@ MonoBehaviour:
     monsterType: 0
     physicalDamage: 0
     specialDamage: 0
+  hitParticles: {fileID: 0}
+  explosionCollider: {fileID: 8725079717143732248}
+  keepParent: 1
+--- !u!135 &8725079717143732248
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3864586650839761180}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Radius: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &3864640327074418082
 GameObject:
   m_ObjectHideFlags: 0
@@ -4849,13 +4866,13 @@ GameObject:
   - component: {fileID: 3869314135884870592}
   - component: {fileID: 3990687658487173134}
   - component: {fileID: 3990422875402927184}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: SphereBlue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3869314135884870592
 Transform:
   m_ObjectHideFlags: 0
@@ -4868,7 +4885,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3867862671900557812}
-  m_RootOrder: 0
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!199 &3990687658487173134
 ParticleSystemRenderer:
@@ -9625,7 +9642,7 @@ GameObject:
   - component: {fileID: 3867923415393715970}
   - component: {fileID: 3991121959024784028}
   - component: {fileID: 3990606587944457986}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: BeamAB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9641,10 +9658,10 @@ Transform:
   m_GameObject: {fileID: 3865300200771060236}
   m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
   m_LocalPosition: {x: 0, y: 0.4000001, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
   m_Children: []
   m_Father: {fileID: 3867862671900557812}
-  m_RootOrder: 3
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 90, y: 90, z: 0}
 --- !u!198 &3991121959024784028
 ParticleSystem:
@@ -14239,13 +14256,13 @@ GameObject:
   - component: {fileID: 3868006477326227198}
   - component: {fileID: 3990927858360633164}
   - component: {fileID: 3992195498336598716}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: SmokeLocal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3868006477326227198
 Transform:
   m_ObjectHideFlags: 0
@@ -14255,10 +14272,10 @@ Transform:
   m_GameObject: {fileID: 3865303792319576312}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: -0.7071068}
   m_LocalPosition: {x: 0, y: 0.4000001, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 3867862671900557812}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 270, y: 0, z: 0}
 --- !u!198 &3990927858360633164
 ParticleSystem:
@@ -19006,7 +19023,7 @@ GameObject:
   - component: {fileID: 3869549437886819270}
   - component: {fileID: 3991217185210375494}
   - component: {fileID: 3991436367893494082}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: Particles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19022,10 +19039,10 @@ Transform:
   m_GameObject: {fileID: 3865335733886752278}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: -0.7071068}
   m_LocalPosition: {x: 0, y: 0.4000001, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
   m_Children: []
   m_Father: {fileID: 3867862671900557812}
-  m_RootOrder: 4
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 270, y: 0, z: 0}
 --- !u!198 &3991217185210375494
 ParticleSystem:
@@ -23782,7 +23799,7 @@ GameObject:
   - component: {fileID: 3867886680690083146}
   - component: {fileID: 3990940948260841890}
   - component: {fileID: 3991451403945449886}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: Swirl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23798,10 +23815,10 @@ Transform:
   m_GameObject: {fileID: 3865384892926670372}
   m_LocalRotation: {x: 0, y: -0.7071068, z: -0.7071068, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
   m_Children: []
   m_Father: {fileID: 3867862671900557812}
-  m_RootOrder: 9
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 270, y: 180, z: 0}
 --- !u!198 &3990940948260841890
 ParticleSystem:
@@ -28558,13 +28575,13 @@ GameObject:
   - component: {fileID: 3867762540699699958}
   - component: {fileID: 3991061470833711180}
   - component: {fileID: 3992125813346436546}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: FireLocal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3867762540699699958
 Transform:
   m_ObjectHideFlags: 0
@@ -28574,10 +28591,10 @@ Transform:
   m_GameObject: {fileID: 3865427083448755106}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: -0.7071068}
   m_LocalPosition: {x: 0, y: 0.4000001, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 3867862671900557812}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 270, y: 0, z: 0}
 --- !u!198 &3991061470833711180
 ParticleSystem:
@@ -33334,7 +33351,7 @@ GameObject:
   - component: {fileID: 3867959022021715282}
   - component: {fileID: 3990805854496145704}
   - component: {fileID: 3992231304810461380}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: Circle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33350,10 +33367,10 @@ Transform:
   m_GameObject: {fileID: 3865434776254290238}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
   m_Children: []
   m_Father: {fileID: 3867862671900557812}
-  m_RootOrder: 6
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!198 &3990805854496145704
 ParticleSystem:
@@ -38110,7 +38127,7 @@ GameObject:
   - component: {fileID: 3869308415073586230}
   - component: {fileID: 3990269483810369918}
   - component: {fileID: 3990727248247034910}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: RingOrange
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38126,10 +38143,10 @@ Transform:
   m_GameObject: {fileID: 3866149620554134246}
   m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
   m_LocalPosition: {x: 0, y: 0.4000001, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
   m_Children: []
   m_Father: {fileID: 3867862671900557812}
-  m_RootOrder: 1
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 90, y: 90, z: 0}
 --- !u!198 &3990269483810369918
 ParticleSystem:
@@ -42886,7 +42903,7 @@ GameObject:
   - component: {fileID: 3869470671151465862}
   - component: {fileID: 3991248083404153356}
   - component: {fileID: 3991446095567626168}
-  m_Layer: 14
+  m_Layer: 13
   m_Name: Beam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42902,10 +42919,10 @@ Transform:
   m_GameObject: {fileID: 3866267497455165310}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0.4000001, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
   m_Children: []
   m_Father: {fileID: 3867862671900557812}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &3991248083404153356
 ParticleSystem:
@@ -47773,12 +47790,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 4
-  renderers:
-  - {fileID: 4136729574496936898}
   colliders:
   - {fileID: 4136729574491729605}
+  renderers:
+  - {fileID: 4136729574496936898}
   materials: []
-  explosionParticles: {fileID: 3864586650839761181}
+  targetMaterialIndex: 0
+  explosionParticles: {fileID: 4405231065502790406}
 --- !u!54 &3434516167528883963
 Rigidbody:
   m_ObjectHideFlags: 0

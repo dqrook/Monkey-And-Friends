@@ -19,9 +19,9 @@ namespace Ryzm.EndlessRunner
         Quaternion targetRotation;
         Transform dragonTrans;
         EndlessDragon dragon;
-        AttackState shiftAttackState;
-        AttackState headbuttAttackState;
-        AttackState tailSlapAttackState;
+        ActionState shiftAttackState;
+        ActionState headbuttAttackState;
+        ActionState tailSlapAttackState;
         bool canKill;
         bool checkedShift;
         Vector3 _distanceVec;
@@ -71,7 +71,7 @@ namespace Ryzm.EndlessRunner
         void OnShiftAttackStateResponse(ShiftAttackStateResponse response)
         {
             shiftAttackState = response.shiftAttackState;
-            if(checkedShift && shiftAttackState == AttackState.Off)
+            if(checkedShift && shiftAttackState == ActionState.Off)
             {
                 checkedShift = false;
             }
@@ -159,15 +159,15 @@ namespace Ryzm.EndlessRunner
             _distanceVec = trans.InverseTransformPoint(currentDragonPosition);
             float curX = Mathf.Abs(_distanceVec.x);
             // Debug.Log(tailSlapAttackState + " " + curX);
-            if(tailSlapAttackState == AttackState.On)
+            if(tailSlapAttackState == ActionState.On)
             {
                 canKill = false;
             }
-            else if(headbuttAttackState != AttackState.Off || tailSlapAttackState != AttackState.Off)
+            else if(headbuttAttackState != ActionState.Off || tailSlapAttackState != ActionState.Off)
             {
                 canKill = curX > 0.5f;
             }
-            else if(headbuttAttackState == AttackState.Off && tailSlapAttackState == AttackState.Off && shiftAttackState == AttackState.Off)
+            else if(headbuttAttackState == ActionState.Off && tailSlapAttackState == ActionState.Off && shiftAttackState == ActionState.Off)
             {
                 canKill = true;
             }
@@ -249,7 +249,7 @@ namespace Ryzm.EndlessRunner
                 //     dragon.MoveWithMultiplier(1);
                 // }
 
-                if(shiftAttackState != AttackState.Off)
+                if(shiftAttackState != ActionState.Off)
                 {
                     checkShiftDirection = true;
                     prevX = curX;

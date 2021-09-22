@@ -66,7 +66,7 @@ namespace Ryzm.UI
 
         void OnSpecialAttackResponse(SpecialAttackResponse response)
         {
-            if(response.state == EndlessRunner.AttackState.On)
+            if(response.state == EndlessRunner.ActionState.On)
             {
                 SetSpecialBadge(false);
             }

@@ -548,7 +548,7 @@ namespace Ryzm.EndlessRunner
 
         int GetMonsterMax(MonsterType monsterType)
         {
-            if(monsterType == MonsterType.Rabby || monsterType == MonsterType.Bombee || monsterType == MonsterType.Deyon || monsterType == MonsterType.Fawks)
+            if(monsterType == MonsterType.Rabby || monsterType == MonsterType.Bombee || monsterType == MonsterType.Deyon || monsterType == MonsterType.Fawks || monsterType == MonsterType.Monodon)
             {
                 return 3;
             }
@@ -560,6 +560,16 @@ namespace Ryzm.EndlessRunner
             {
                 return 1;
             }
+        }
+
+        bool IsSingleRowMonster(MonsterType mType)
+        {
+            return mType == MonsterType.SideDraze || mType == MonsterType.Reyflora || mType == MonsterType.Azel;
+        }
+
+        bool IsBarrierMonster(MonsterType mType)
+        {
+            return mType == MonsterType.Tregon || mType == MonsterType.StonePillar;
         }
 
         bool CheckIfValid(SelectionMetadata metadata, List<SelectionMetadata> subSectionMetadatas)
@@ -577,33 +587,33 @@ namespace Ryzm.EndlessRunner
             else if(metadata.rowIndex == 0)
             {
                 MonsterType prevMType = subSectionMetadatas[previousIndex].monsterType;
-                if(mType == prevMType && (mType == MonsterType.Tregon || mType == MonsterType.StonePillar))
+                if(mType == prevMType && IsBarrierMonster(mType))
                 {
                     return false;
                 }
-                if(metadata.subSectionIndex == 1)
+                if(metadata.subSectionIndex == 2)
                 {
-                    if(prevMType == MonsterType.SideDraze || prevMType == MonsterType.Reyflora || prevMType == MonsterType.Azel)
+                    MonsterType prevMType2 = subSectionMetadatas[previousIndex2].monsterType;
+                    if(mType == prevMType && mType == prevMType2)
                     {
                         return false;
                     }
-                    if((mType == MonsterType.SideDraze || mType == MonsterType.Reyflora || mType == MonsterType.Azel) && prevMType != MonsterType.None)
+                    if(IsSingleRowMonster(prevMType) || IsSingleRowMonster(prevMType2))
+                    {
+                        return false;
+                    }
+                    if(IsSingleRowMonster(mType) && (prevMType2 != MonsterType.None || prevMType != MonsterType.None))
                     {
                         return false;
                     }
                 }
-                else if(metadata.subSectionIndex == 2)
+                else if(metadata.subSectionIndex == 1)
                 {
-                    MonsterType prevMType2 = subSectionMetadatas[previousIndex2].monsterType;
-                    if(prevMType2 == MonsterType.SideDraze || prevMType == MonsterType.SideDraze || prevMType == MonsterType.Reyflora || prevMType == MonsterType.Azel)
+                    if(IsSingleRowMonster(prevMType))
                     {
                         return false;
                     }
-                    if(mType == MonsterType.SideDraze && (prevMType2 != MonsterType.None || prevMType != MonsterType.None))
-                    {
-                        return false;
-                    }
-                    if((mType == MonsterType.Reyflora || mType == MonsterType.Azel) && prevMType != MonsterType.None)
+                    if(IsSingleRowMonster(mType) && prevMType != MonsterType.None)
                     {
                         return false;
                     }
@@ -626,39 +636,35 @@ namespace Ryzm.EndlessRunner
                     {
                         return false;
                     }
-                    if(mType == prevMType && (mType == MonsterType.Tregon || mType == MonsterType.StonePillar))
+                    if(mType == prevMType && IsBarrierMonster(mType))
                     {
                         return false;
                     }
-                    if(prevMType == MonsterType.SideDraze || prevMType2 == MonsterType.SideDraze || prevMType == MonsterType.Reyflora || prevMType == MonsterType.Azel)
+                    if(IsSingleRowMonster(prevMType) || IsSingleRowMonster(prevMType2))
                     {
                         return false;
                     }
-                    if(mType == MonsterType.SideDraze && (prevMType != MonsterType.None || prevMType2 != MonsterType.None))
-                    {
-                        return false;
-                    }
-                    if((mType == MonsterType.Reyflora || mType == MonsterType.Azel) && prevMType != MonsterType.None)
+                    if(IsSingleRowMonster(mType) && (prevMType != MonsterType.None || prevMType2 != MonsterType.None))
                     {
                         return false;
                     }
                 }
                 else if(metadata.subSectionIndex == 1)
                 {
-                    if(mType == prevMType && (mType == MonsterType.Tregon || mType == MonsterType.StonePillar))
+                    if(mType == prevMType && IsBarrierMonster(mType))
                     {
                         return false;
                     }
-                    if(prevMType == MonsterType.SideDraze || prevMType == MonsterType.Reyflora || prevMType == MonsterType.Azel)
+                    if(IsSingleRowMonster(prevMType))
                     {
                         return false;
                     }
-                    if((mType == MonsterType.SideDraze || mType == MonsterType.Reyflora || mType == MonsterType.Azel) && prevMType != MonsterType.None)
+                    if(IsSingleRowMonster(mType) && prevMType != MonsterType.None)
                     {
                         return false;
                     }
                 }
-                if(mType == MonsterType.DiveDraze || mType == MonsterType.SpecialMonafly || mType == MonsterType.PhysicalMonafly || mType == MonsterType.Pegasus)
+                if(mType == MonsterType.DiveDraze || mType == MonsterType.SpecialMonafly || mType == MonsterType.PhysicalMonafly || mType == MonsterType.Pegasus || mType == MonsterType.MovingMonodon)
                 {
                     if(metadata.rowIndex == 2)
                     {

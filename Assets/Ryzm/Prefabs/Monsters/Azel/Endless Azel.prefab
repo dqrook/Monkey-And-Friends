@@ -140,7 +140,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 4ac06090b2b5fe343bb5e0bb27eee186, type: 3}
   m_Controller: {fileID: 9100000, guid: 4e67926c513d0408ba4bff667d452f4e, type: 2}
-  m_CullingMode: 0
+  m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -161,13 +161,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 15
-  renderers:
-  - {fileID: 4773791048593230806}
   colliders:
   - {fileID: 2188138146957652270}
   - {fileID: 2188138148211663528}
   - {fileID: 5102196238811713975}
+  renderers:
+  - {fileID: 4773791048593230806}
   materials: []
+  targetMaterialIndex: 0
   rootTransform: {fileID: 4773791048596052708}
 --- !u!54 &910437266
 Rigidbody:

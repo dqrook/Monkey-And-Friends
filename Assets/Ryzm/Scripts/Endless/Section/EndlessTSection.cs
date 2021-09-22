@@ -43,14 +43,14 @@ namespace Ryzm.EndlessRunner
             }
         }
 
-        public override void EnterSection()
+        public override void Enter()
         {
-            base.EnterSection();
+            base.Enter();
         }
         
-        public override void ExitSection() 
+        public override void Exit() 
         {
-            base.ExitSection();
+            base.Exit();
         }
 
         public override void Shift(Direction direction, EndlessController controller, ref bool turned)

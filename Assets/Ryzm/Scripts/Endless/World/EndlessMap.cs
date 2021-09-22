@@ -69,6 +69,7 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<AddTransitionRequest>(OnAddTransitionRequest);
             Message.AddListener<ControllersResponse>(OnControllersResponse);
             Message.AddListener<StartRunway>(OnStartRunway);
+            Message.AddListener<EnterTransition>(OnEnterTransition);
             Message.Send(new WorldItemsRequest());
             Message.Send(new ControllersRequest());
         }
@@ -81,6 +82,7 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<AddTransitionRequest>(OnAddTransitionRequest);
             Message.RemoveListener<ControllersResponse>(OnControllersResponse);
             Message.RemoveListener<StartRunway>(OnStartRunway);
+            Message.RemoveListener<EnterTransition>(OnEnterTransition);
         }
         #endregion
 
@@ -166,6 +168,11 @@ namespace Ryzm.EndlessRunner
                 startedRunway = true;
             }
         }
+
+        void OnEnterTransition(EnterTransition enter)
+        {
+            AddRow(enter.nextSpawn);
+        }
         #endregion
 
         #region Public Functions
@@ -191,35 +198,6 @@ namespace Ryzm.EndlessRunner
                 AddRow(spawnTransform);
             }
             initialized = true;
-        }
-
-        public void AddRow(Transform spawnTransform)
-        {
-            string prefabType = prefabOrder[prefabIndex];
-            int currentRowId = currentRow == null || currentRow.row == null ? 0 : currentRow.row.rowId;
-            // cant place the same row one after each other
-            // if(currentRow != null && prefabType == currentRow.Id)
-            // {
-            //     prefabType = "default";
-            // }
-            currentRow = GetPrefab(prefabType);
-            
-            if(currentRow.Id == "default" || currentRow.row == null)
-            {
-                currentRow.row = GameObject.Instantiate(currentRow.rowPrefab).GetComponent<EndlessRow>();
-            }
-
-            currentRow.row.transform.position = spawnTransform.position;
-            currentRow.row.transform.rotation = spawnTransform.rotation;
-            currentRow.row.Initialize(5);
-            prefabIndex++;
-            if(prefabIndex > prefabOrder.Count - 1)
-            {
-                prefabIndex = 0;
-                numberOfRowLoopsCompleted++;
-            }
-            
-            Message.Send(new RowChange(currentRowId, currentRow.row.rowId));
         }
 
         public void Reset()
@@ -253,6 +231,35 @@ namespace Ryzm.EndlessRunner
         #endregion
 
         #region Private Functions
+        void AddRow(Transform spawnTransform)
+        {
+            string prefabType = prefabOrder[prefabIndex];
+            int currentRowId = currentRow == null || currentRow.row == null ? 0 : currentRow.row.rowId;
+            // cant place the same row one after each other
+            // if(currentRow != null && prefabType == currentRow.Id)
+            // {
+            //     prefabType = "default";
+            // }
+            currentRow = GetPrefab(prefabType);
+            
+            if(currentRow.Id == "default" || currentRow.row == null)
+            {
+                currentRow.row = GameObject.Instantiate(currentRow.rowPrefab).GetComponent<EndlessRow>();
+            }
+
+            currentRow.row.transform.position = spawnTransform.position;
+            currentRow.row.transform.rotation = spawnTransform.rotation;
+            currentRow.row.Initialize(5);
+            prefabIndex++;
+            if(prefabIndex > prefabOrder.Count - 1)
+            {
+                prefabIndex = 0;
+                numberOfRowLoopsCompleted++;
+            }
+            
+            Message.Send(new RowChange(currentRowId, currentRow.row.rowId));
+        }
+
         void AddTransition(Transform spawnTransform)
         {
             transition.transform.position = spawnTransform.position;
