@@ -11,7 +11,7 @@ namespace Ryzm.EndlessRunner
     {
         #region Public Variables
         public int maxHealth = 100;
-        public int maxSpecial = 50;
+        public int maxSpecial = 150;
         public RuntimeAnimatorController animatorController;
         public float forwardSpeed = 10;
 		public Animator animator;

@@ -8,8 +8,8 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: SWS_IslandDemo_Material
-  m_Shader: {fileID: 4800000, guid: 4bcc0b68579a5c740ad31644411ffb54, type: 3}
-  m_ShaderKeywords: _LIGHTING_ON _MACRONORMALS_ON _MACRO_WAVES_ON _NORMAL_MAP_ON
+  m_Shader: {fileID: 4800000, guid: 644d4419f6d30214892dd65158332ba7, type: 3}
+  m_ShaderKeywords: _ENABLEDEPTHTEXTURE_ON _LIGHTING_ON _MACRONORMALS_ON _MACRO_WAVES_ON
     _SECONDARYFOAMALWAYSVISIBLE_ON _TOGGLESWITCH0_ON _WORLDSPACETILING_ON
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
@@ -60,6 +60,7 @@ Material:
     - _ENABLE_SHADOWS: 0
     - _ENABLE_VC: 0
     - _EdgeFade: 1.74
+    - _EnableDepthTexture: 1
     - _FoamDistortion: 0.61
     - _FoamOpacity: 0.07
     - _FoamSize: 0

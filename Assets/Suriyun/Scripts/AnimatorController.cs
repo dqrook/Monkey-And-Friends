@@ -2,8 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
-namespace Suriyun
-{
+
     public class AnimatorController : MonoBehaviour
     {
 
@@ -77,4 +76,3 @@ namespace Suriyun
             }
         }
     }
-}
