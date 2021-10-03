@@ -48,6 +48,7 @@ namespace Ryzm.EndlessRunner
         private Vector3 lastOuterNormal = Vector3.zero;
         Vector3 moveInputVector;
         float ySpeed;
+        float defaultGravity;
 
         public bool IsGrounded
         {
@@ -67,6 +68,7 @@ namespace Ryzm.EndlessRunner
 
         private void Awake()
         {
+            defaultGravity = Gravity.y;
             // Handle initial state
             TransitionToState(CharacterState.Default);
 
@@ -293,7 +295,7 @@ namespace Ryzm.EndlessRunner
                             // Drag
                             currentVelocity *= (1f / (1f + (drag * deltaTime)));
                             
-                            ySpeed -= 20f * Time.deltaTime;
+                            ySpeed += defaultGravity * Time.deltaTime;
                         }
 
                         // Handle jumping

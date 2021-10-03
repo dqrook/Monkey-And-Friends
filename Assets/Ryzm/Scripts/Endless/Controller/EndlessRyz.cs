@@ -154,7 +154,7 @@ namespace Ryzm.EndlessRunner
                     AttackState = ActionState.On;
                     SetBodyColliders(true);
                     SetAttackColliders(false);
-                    // SetBodyTrailEffect(true);
+                    SetBodyTrailEffect(true);
                 }
                 else
                 {

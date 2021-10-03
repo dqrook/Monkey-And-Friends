@@ -31,6 +31,7 @@ namespace Ryzm.EndlessRunner
         [Header("Trail Effects")]
         public TrailEffect bodyTrailEffect;
         public TrailEffect wingTrailEffect;
+        public TrailEffect shiftTrailEffect;
         #endregion
 
         #region Events
@@ -56,7 +57,7 @@ namespace Ryzm.EndlessRunner
         protected EndlessTurnSection _endlessTurnSection;
         protected GameStatus gameStatus;
         protected float distanceTraveled;
-        public float shiftSpeed;
+        protected float shiftSpeed;
 		protected ControllerMode mode;
         protected Camera mainCamera;
         protected bool inSlide;
@@ -400,7 +401,7 @@ namespace Ryzm.EndlessRunner
                     //     xDistance = 1.5f;
                     //     CurrentPosition++;
                     // }
-                    xDistance = direction == Direction.Left ? -1.5f : 1.5f;
+                    xDistance = direction == Direction.Left ? -1.25f : 1.25f;
                     if(xDistance != 0)
                     {
                         shift = _Shift(trans.TransformPoint(new Vector3(xDistance, 0, 0)));
@@ -476,7 +477,16 @@ namespace Ryzm.EndlessRunner
             }
         }
 
+        protected void SetShiftTrailEffect(bool active)
+        {
+            if(shiftTrailEffect != null)
+            {
+                shiftTrailEffect.active = active;
+            }
+        }
+
         protected virtual void Die() {}
+        
         protected virtual bool IsGrounded()
         {
             checkGround = new Ray(rootTransform.position, Vector3.down);
@@ -525,6 +535,7 @@ namespace Ryzm.EndlessRunner
         {
             ResetDamaged();
             StopAllCoroutines();
+            SetShiftTrailEffect(false);
             turned = false;
             State = 0;
             InJump = false;
@@ -619,6 +630,7 @@ namespace Ryzm.EndlessRunner
         }
         protected IEnumerator _Shift(Vector3 targetPosition)
         {
+            SetShiftTrailEffect(true);
             inShift = true;
             float _shiftDistance = GetShiftDistance(targetPosition);
             float _distance = Mathf.Lerp(0, _shiftDistance, 0.1f);
@@ -651,6 +663,7 @@ namespace Ryzm.EndlessRunner
                 cooldownTime += Time.deltaTime;
                 yield return null;
             }
+            SetShiftTrailEffect(false);
             _shiftDistance = GetShiftDistance(targetPosition);
             trans.Translate(_shiftDistance, 0, 0);
             inShift = false;
