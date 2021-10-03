@@ -253,6 +253,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   OnEnter: 2
+--- !u!1102 &-4544538545405829679
+AnimatorState:
+  serializedVersion: 5
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: H_Fly_Flap
+  m_Speed: 1
+  m_CycleOffset: 0
+  m_Transitions: []
+  m_StateMachineBehaviours: []
+  m_Position: {x: 50, y: 50, z: 0}
+  m_IKOnFeet: 0
+  m_WriteDefaultValues: 1
+  m_Mirror: 0
+  m_SpeedParameterActive: 0
+  m_MirrorParameterActive: 0
+  m_CycleOffsetParameterActive: 0
+  m_TimeParameterActive: 0
+  m_Motion: {fileID: 7400000, guid: f631a2212c1e04be5a2f7fe6eb73bb85, type: 2}
+  m_Tag: 
+  m_SpeedParameter: 
+  m_MirrorParameter: 
+  m_CycleOffsetParameter: 
+  m_TimeParameter: 
 --- !u!114 &-4444423780696373849
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -677,7 +703,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bb0760d49a965145a91f4deebab02e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Range: 16
+  Range:
+    UseConstant: 1
+    ConstantValue: 15
+    Variable: {fileID: 0}
+  Priority:
+    UseConstant: 1
+    ConstantValue: 0
+    Variable: {fileID: 0}
 --- !u!114 &114194939346512490
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -775,7 +808,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bb0760d49a965145a91f4deebab02e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Range: 4
+  Range:
+    UseConstant: 1
+    ConstantValue: 15
+    Variable: {fileID: 0}
+  Priority:
+    UseConstant: 1
+    ConstantValue: 0
+    Variable: {fileID: 0}
 --- !u!114 &114278267528106708
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7928,14 +7968,17 @@ AnimatorStateMachine:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Base Layer
-  m_ChildStates: []
+  m_ChildStates:
+  - serializedVersion: 1
+    m_State: {fileID: -4544538545405829679}
+    m_Position: {x: 300, y: 180, z: 0}
   m_ChildStateMachines:
   - serializedVersion: 1
     m_StateMachine: {fileID: 1107469501483250876}
     m_Position: {x: 320, y: 40, z: 0}
   - serializedVersion: 1
     m_StateMachine: {fileID: 1107231746298051510}
-    m_Position: {x: 324, y: -60, z: 0}
+    m_Position: {x: 320, y: -60, z: 0}
   - serializedVersion: 1
     m_StateMachine: {fileID: 1107070459965775536}
     m_Position: {x: 320, y: -10, z: 0}
