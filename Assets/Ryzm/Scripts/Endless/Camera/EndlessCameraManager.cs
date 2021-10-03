@@ -14,9 +14,7 @@ namespace Ryzm.EndlessRunner
         public Transform startTransform;
         public int startClipPlane = 1000;
         public int mainMenuFieldOfView = 50;
-        public List<Vector3> cameraLocations = new List<Vector3>();
         public EndlessCameraSpawns cameraSpawns;
-        public int currentCameraSpawn;
         #endregion
 
         #region Private Variables
@@ -69,6 +67,7 @@ namespace Ryzm.EndlessRunner
                 if(gameStatus == GameStatus.MainMenu)
                 {
                     endlessCamera.cam.fieldOfView = mainMenuFieldOfView;
+                    endlessCamera.cam.clearFlags = CameraClearFlags.Skybox;
                 }
             }
         }

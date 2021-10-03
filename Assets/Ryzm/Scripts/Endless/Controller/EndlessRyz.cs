@@ -25,6 +25,7 @@ namespace Ryzm.EndlessRunner
         int runAnimHash;
         int attackAnimHash;
         ActionState _attackState;
+        IEnumerator maintain;
         #endregion
 
         #region Properties
@@ -79,16 +80,9 @@ namespace Ryzm.EndlessRunner
             if(mode == ControllerMode.Monkey && gameStatus == GameStatus.Active)
             {
                 IsRunning = true;
+                StartMove();
                 UpdateCharacterInputs();
             }
-            // else if(shiftSpeed != 0)
-            // {
-            //     PlayerCharacterInputs characterInputs = new PlayerCharacterInputs();
-            //     characterInputs.zInput = 0;
-            //     characterInputs.xInput = shiftSpeed * 0.6f;
-            //     characterInputs.forwardAxis = playerController.motor.CharacterForward;
-            //     playerController.SetInputs(ref characterInputs);
-            // }
         }
 
         // void LateUpdate()
@@ -163,6 +157,11 @@ namespace Ryzm.EndlessRunner
             }
         }
 
+        public override void StartMove()
+        {
+            IsRunning = true;
+        }
+
         public void FinishSlide()
         {
             inSlide = false;
@@ -181,6 +180,12 @@ namespace Ryzm.EndlessRunner
             rb.isKinematic = true;
             playerCollider.enabled = false;
             State = 4;
+        }
+
+        public void MaintainZeroPosition()
+        {
+            maintain = _MaintainZeroPosition();
+            StartCoroutine(maintain);
         }
         #endregion
 
@@ -234,6 +239,15 @@ namespace Ryzm.EndlessRunner
             animator.SetBool(jumpAnimHash, false);
             yield return jumpCooldownWait;
             InJump = false;
+        }
+
+        IEnumerator _MaintainZeroPosition()
+        {
+            while(true)
+            {
+                trans.localPosition = new Vector3(0, trans.localPosition.y, trans.localPosition.z);
+                yield return null;
+            }
         }
         #endregion
     }

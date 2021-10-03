@@ -13,7 +13,7 @@ namespace Ryzm.EndlessRunner
         public Transform targetDragonPosition;
         public Transform startingDragonPosition;
 
-        EndlessMonkey monkey;
+        EndlessRyz ryz;
         EndlessDragon dragon;
         Vector3 launchPosition = new Vector3();
         Vector3 dragonPosOffset = new Vector3();
@@ -41,7 +41,7 @@ namespace Ryzm.EndlessRunner
 
         void OnControllersResponse(ControllersResponse response)
         {
-            monkey = response.monkey;
+            ryz = response.ryz;
             dragon = response.dragon;
         }
 
@@ -70,7 +70,7 @@ namespace Ryzm.EndlessRunner
         
         IEnumerator MonitorMonkey(Vector3 finalPos, Transform monkeyPos)
         {
-            Transform monkeyTrans = monkey.gameObject.transform;
+            Transform monkeyTrans = ryz.gameObject.transform;
             float difference = Vector3.Distance(monkeyTrans.position, finalPos);
             while(difference > 1)
             {
@@ -90,7 +90,7 @@ namespace Ryzm.EndlessRunner
             }
             monkeyTrans.rotation = monkeyPos.rotation;
             monkeyTrans.localPosition = Vector3.zero;
-            monkey.MaintainZeroPosition();
+            ryz.MaintainZeroPosition();
             yield break;
         }
     }

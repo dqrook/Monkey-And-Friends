@@ -79,7 +79,7 @@ namespace Ryzm.EndlessRunner
                 float zMove = Time.deltaTime * forwardSpeed;
                 while(currentDistance > 2)
                 {
-                    currentDistance = trans.InverseTransformPoint(currentDragonPosition).z;
+                    currentDistance = trans.InverseTransformPoint(currentControllerPosition).z;
                     move.z = zMove;
                     trans.Translate(move);
                     yield return null;
@@ -89,7 +89,7 @@ namespace Ryzm.EndlessRunner
             SetIsAttacking(true);
             while(currentDistance > -2)
             {
-                currentDistance = trans.InverseTransformPoint(currentDragonPosition).z;
+                currentDistance = trans.InverseTransformPoint(currentControllerPosition).z;
                 yield return null;
             }
             ResetAnim();

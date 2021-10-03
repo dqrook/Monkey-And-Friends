@@ -36,6 +36,10 @@ namespace Ryzm.EndlessRunner
         public int rowId;
         #endregion
 
+        #region Protected Variables
+        protected ShiftDistanceType shiftDistanceType;
+        #endregion
+
         #region Private Variables
         List<BarrierType> _possibleBarrierTypes = new List<BarrierType>();
         GameDifficulty difficulty = GameDifficulty.Easy;
@@ -139,9 +143,10 @@ namespace Ryzm.EndlessRunner
         #endregion
 
         #region Public Functions
-        public virtual void Initialize(int rowId)
+        public virtual void Initialize(int rowId, ShiftDistanceType shiftDistanceType = ShiftDistanceType.x)
         {
             this.rowId = rowId;
+            this.shiftDistanceType = shiftDistanceType;
         }
 
         public override void Enter()
@@ -220,7 +225,7 @@ namespace Ryzm.EndlessRunner
                 Transform pos = GetPosition(currentPosition - 1);
                 if(pos != null)
                 {
-                    controller.ShiftToPosition(pos, ShiftDistanceType.x);
+                    controller.ShiftToPosition(pos, shiftDistanceType);
                     controller.CurrentPosition--;
                 }
             }
@@ -229,7 +234,7 @@ namespace Ryzm.EndlessRunner
                 Transform pos = GetPosition(currentPosition + 1);
                 if(pos != null)
                 {
-                    controller.ShiftToPosition(pos, ShiftDistanceType.x);
+                    controller.ShiftToPosition(pos, shiftDistanceType);
                     controller.CurrentPosition++;
                 }
             }

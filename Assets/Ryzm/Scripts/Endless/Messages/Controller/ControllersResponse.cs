@@ -4,12 +4,12 @@ namespace Ryzm.EndlessRunner.Messages
 {
     public class ControllersResponse : Message
     {
-        public EndlessMonkey monkey;
         public EndlessDragon dragon;
+        public EndlessRyz ryz;
 
-        public ControllersResponse(EndlessMonkey monkey, EndlessDragon dragon)
+        public ControllersResponse(EndlessRyz ryz, EndlessDragon dragon)
         {
-            this.monkey = monkey;
+            this.ryz = ryz;
             this.dragon = dragon;
         }
     }

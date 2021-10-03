@@ -79,8 +79,17 @@ Shader "FlatKit/Stylized Surface Curved World"
         #pragma shader_feature_local CURVEDWORLD_NORMAL_TRANSFORMATION_ON
         #include "Assets/Amazing Assets/Curved World/Shaders/Core/CurvedWorldTransform.cginc"
 
-        void vert (inout appdata_full v) 
-        {
+        // Doc: https://docs.unity3d.com/Manual/SL-SurfaceShaders.html
+        #include "DustyroomStylizedLighting.cginc"
+        #pragma surface surfObject DustyroomStylized vertex:vertObject2 fullforwardshadows
+        #pragma target 3.0
+        #pragma require interpolators15
+        #define Input InputObject
+
+        void vertObject2(inout appdata_full v, out InputObject o) {
+            UNITY_INITIALIZE_OUTPUT(InputObject, o);
+            o.lightDir = WorldSpaceLightDir(v.vertex);
+
             #if defined(CURVEDWORLD_IS_INSTALLED) && !defined(CURVEDWORLD_DISABLED_ON)
                 #ifdef CURVEDWORLD_NORMAL_TRANSFORMATION_ON
                     CURVEDWORLD_TRANSFORM_VERTEX_AND_NORMAL(v.vertex, v.normal, v.tangent)
@@ -89,13 +98,6 @@ Shader "FlatKit/Stylized Surface Curved World"
                 #endif
             #endif
         }
-
-        // Doc: https://docs.unity3d.com/Manual/SL-SurfaceShaders.html
-        #include "DustyroomStylizedLighting.cginc"
-        #pragma surface surfObject DustyroomStylized vertex:vertObject fullforwardshadows
-        #pragma target 3.0
-        #pragma require interpolators15
-        #define Input InputObject
         
 
 //#if UNITY_VERSION >= 201910

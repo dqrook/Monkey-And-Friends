@@ -15,13 +15,15 @@ namespace Ryzm.EndlessRunner
         public EndlessSection turnSection;
         public List<GameObject> environments = new List<GameObject>();
         public int rowId;
+        public ShiftDistanceType shiftDistanceType;
         #endregion
 
         #region Public Functions
-        public virtual void Initialize(int numberOfSections)
+        public virtual void Initialize(int numberOfSections, ShiftDistanceType shiftDistanceType)
         {
             CreateRowId();
             Transform trans = gameObject.transform;
+            this.shiftDistanceType = shiftDistanceType;
 
             // only create sections if none provided
             if(sections.Count == 0)
@@ -142,7 +144,7 @@ namespace Ryzm.EndlessRunner
             newSection.transform.rotation = spawnTransform.rotation;
 
             EndlessSection _section = newSection.GetComponent<EndlessSection>();
-            _section.Initialize(rowId);
+            _section.Initialize(rowId, shiftDistanceType);
             _section.CancelDeactivation();
             newSection.SetActive(true);
             _section.gameObject.SetActive(true);

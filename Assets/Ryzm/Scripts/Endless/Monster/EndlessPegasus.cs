@@ -87,7 +87,7 @@ namespace Ryzm.EndlessRunner
             float zMove = Time.deltaTime * forwardSpeed;
             while(currentDistance > -10 && distanceTraveled < 25)
             {
-                currentDistance = trans.InverseTransformPoint(currentDragonPosition).z;
+                currentDistance = trans.InverseTransformPoint(currentControllerPosition).z;
                 move.z = zMove;
                 trans.Translate(move);
                 distanceTraveled = Mathf.Abs(trans.InverseTransformPoint(attackStartPosition).z);

@@ -24,8 +24,10 @@ namespace Ryzm.EndlessRunner
         #endregion
 
         #region Private Variables
-        EndlessDragon dragon;
+        EndlessController dragon;
+        EndlessController ryz;
         Transform dragonTrans;
+        Transform ryzTrans;
         Camera mainCamera;
         Transform camTrans;
         int gameClipPlane;
@@ -36,6 +38,26 @@ namespace Ryzm.EndlessRunner
         IEnumerator waitAndDeactivate;
         List<MenuType> activeMenus = new List<MenuType>();
         Vector3 currentSectionPos;
+        ControllerMode controllerMode;
+        bool gotControllerMode;
+        #endregion
+
+        #region Properties
+        EndlessController CurrentController
+        {
+            get
+            {
+                return controllerMode == ControllerMode.Monkey ? ryz : dragon;
+            }
+        }
+
+        Transform CurrentTransform
+        {
+            get
+            {
+                return controllerMode == ControllerMode.Monkey ? ryzTrans : dragonTrans;
+            }
+        }
         #endregion
 
         #region Event Functions
@@ -45,9 +67,11 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<ControllersResponse>(OnControllersResponse);
             Message.AddListener<GameStatusResponse>(OnGameStatusResponse);
             Message.AddListener<MenuSetResponse>(OnMenuSetResponse);
+            Message.AddListener<ControllerModeResponse>(OnControllerModeResponse);
             Message.Send(new WorldItemsRequest());
             Message.Send(new ControllersRequest());
             Message.Send(new MenuSetRequest(MenuSet.ActiveMenu));
+            Message.Send(new ControllerModeRequest());
             deactivationWaitForSeconds = new WaitForSeconds(deactivationTime);
         }
 
@@ -57,6 +81,7 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<ControllersResponse>(OnControllersResponse);
             Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
             Message.RemoveListener<MenuSetResponse>(OnMenuSetResponse);
+            Message.RemoveListener<ControllerModeResponse>(OnControllerModeResponse);
         }
         #endregion
 
@@ -71,7 +96,15 @@ namespace Ryzm.EndlessRunner
         void OnControllersResponse(ControllersResponse response)
         {
             dragon = response.dragon;
+            ryz = response.ryz;
             dragonTrans = dragon.transform;
+            ryzTrans = ryz.transform;
+        }
+
+        void OnControllerModeResponse(ControllerModeResponse response)
+        {
+            controllerMode = response.mode;
+            gotControllerMode = true;
         }
 
         void OnGameStatusResponse(GameStatusResponse response)
@@ -89,8 +122,8 @@ namespace Ryzm.EndlessRunner
         public void Run(int gameClipPlane)
         {
             this.gameClipPlane = gameClipPlane;
-            float initialX = Mathf.Abs(dragonTrans.position.x - nextSpawn.position.x);
-            float initialZ = Mathf.Abs(dragonTrans.position.z - nextSpawn.position.z);
+            float initialX = Mathf.Abs(CurrentTransform.position.x - nextSpawn.position.x);
+            float initialZ = Mathf.Abs(CurrentTransform.position.z - nextSpawn.position.z);
             float initialDistance = initialX > initialZ ? initialX : initialZ;
             bool useX = initialX > initialZ;
             run = _Run(initialDistance, useX);
@@ -111,26 +144,25 @@ namespace Ryzm.EndlessRunner
         #region Private Functions
         float GetCurrentDistance(bool useX)
         {
-            return useX ? Mathf.Abs(dragonTrans.position.x - nextSpawn.position.x) : Mathf.Abs(dragonTrans.position.z - nextSpawn.position.z);
+            return useX ? Mathf.Abs(CurrentTransform.position.x - nextSpawn.position.x) : Mathf.Abs(CurrentTransform.position.z - nextSpawn.position.z);
         }
         #endregion
-
 
         #region Coroutines
         IEnumerator _Run(float initialDistance, bool useX)
         {
-            while(dragon == null || mainCamera == null)
+            while(CurrentController == null || mainCamera == null || !gotControllerMode)
             {
                 yield return null;
             }
-            dragon.Fly();
-            camTrans.parent = dragon.transform;
+            CurrentController.StartMove();
+            camTrans.parent = CurrentTransform;
             camTrans.position = initialCameraSpawn.position;
             camTrans.rotation = initialCameraSpawn.rotation;
             Vector3 initialPos = camTrans.localPosition;
-            Vector3 finalPos = dragon.localCameraSpawn.localPosition;
+            Vector3 finalPos = CurrentController.localCameraSpawn.localPosition;
             Quaternion initialRot = camTrans.localRotation;
-            Quaternion finalRot = dragon.localCameraSpawn.localRotation;
+            Quaternion finalRot = CurrentController.localCameraSpawn.localRotation;
 
             mainCamera.farClipPlane = initialClipPlane;
             mainCamera.fieldOfView = initialFieldOfView;
@@ -151,7 +183,7 @@ namespace Ryzm.EndlessRunner
                     float multiplier = initialMultiplier + (1 - initialMultiplier) * (cutoff - fraction) / denom;
                     multiplier *= 1.1f;
                     multiplier = multiplier < 0 ? multiplier : multiplier > 1 ? 1 : multiplier;
-                    dragon.MoveWithMultiplier(multiplier);
+                    CurrentController.MoveWithMultiplier(multiplier);
                     lerpTime += Time.deltaTime;
                     float lerpFraction = lerpTime / maxLerpTime;
                     if(lerpFraction < 0.9)
@@ -171,11 +203,11 @@ namespace Ryzm.EndlessRunner
                 }
                 else
                 {
-                    dragon.MoveWithMultiplier(initialMultiplier);
+                    CurrentController.MoveWithMultiplier(initialMultiplier);
                 }
                 yield return null;
             }
-            dragon.MoveWithMultiplier(1);
+            CurrentController.MoveWithMultiplier(1);
             if(!activatedMenus)
             {
                 activatedMenus = true;

@@ -12,7 +12,7 @@ namespace Ryzm.EndlessRunner
         protected bool startedAttack;
         protected float attackDistance = 20;
         protected float currentDistance = 100;
-        protected Vector3 currentDragonPosition;
+        protected Vector3 currentControllerPosition;
         protected Vector3 move;
         #endregion
 
@@ -51,9 +51,9 @@ namespace Ryzm.EndlessRunner
         {
             if(gameStatus == GameStatus.Active)
             {
-                currentDragonPosition = response.position;
-                currentDistance = trans.InverseTransformPoint(currentDragonPosition).z;
-                bool inFront = IsInFront(currentDragonPosition);
+                currentControllerPosition = response.position;
+                currentDistance = trans.InverseTransformPoint(currentControllerPosition).z;
+                bool inFront = IsInFront(currentControllerPosition);
                 float diff = Mathf.Abs((response.position - trans.position).z);
                 if(inFront && currentDistance < attackDistance)
                 {

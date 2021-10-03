@@ -74,9 +74,9 @@ namespace Ryzm.EndlessRunner
         #endregion
 
         #region Public Functions
-        public override void Initialize(int numberOfSections)
+        public override void Initialize(int numberOfSections, ShiftDistanceType shiftDistanceType = ShiftDistanceType.x)
         {
-            base.Initialize(numberOfSections);
+            base.Initialize(numberOfSections, shiftDistanceType);
             InitializeEnvironment();
         }
         #endregion

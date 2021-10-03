@@ -69,7 +69,7 @@ namespace Ryzm.EndlessRunner
         {
             dragon = response.dragon;
             forwardSpeed = dragon.forwardSpeed;
-            dragonTrans = response.dragon.transform;
+            dragonTrans = dragon.transform;
             initialPos = dragonTrans.position;
             initialEul = dragonTrans.eulerAngles;
             if(dragonTrans != null && moveDragon == null)

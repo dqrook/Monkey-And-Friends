@@ -18,7 +18,8 @@ namespace Ryzm.EndlessRunner
         Vector3 currentPosition;
         Quaternion targetRotation;
         Transform dragonTrans;
-        EndlessDragon dragon;
+        Transform ryzTrans;
+        ControllerMode controllerMode;
         ActionState shiftAttackState;
         ActionState headbuttAttackState;
         ActionState tailSlapAttackState;
@@ -27,12 +28,23 @@ namespace Ryzm.EndlessRunner
         Vector3 _distanceVec;
         #endregion
 
+        #region Properties
+        Transform CurrentTransform
+        {
+            get
+            {
+                return controllerMode == ControllerMode.Monkey ? ryzTrans : dragonTrans;
+            }
+        }
+        #endregion
+
         #region Event Functions
         protected override void Awake()
         {
             base.Awake();
             attackDistance = 15;
             EnableCollider(false);
+            Message.AddListener<ControllerModeResponse>(OnControllerModeResponse);
         }
         
         void Start()
@@ -58,14 +70,23 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<TailSlapAttackStateResponse>(OnTailSlapAttackStateResponse);
         }
 
-        
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            Message.RemoveListener<ControllerModeResponse>(OnControllerModeResponse);
+        }
         #endregion
 
         #region Listener Functions
         void OnControllersResponse(ControllersResponse response)
         {
-            dragon = response.dragon;
-            dragonTrans = dragon.transform;
+            dragonTrans = response.dragon.transform;
+            ryzTrans = response.ryz.transform;
+        }
+
+        void OnControllerModeResponse(ControllerModeResponse response)
+        {
+            controllerMode = response.mode;
         }
 
         void OnShiftAttackStateResponse(ShiftAttackStateResponse response)
@@ -109,7 +130,6 @@ namespace Ryzm.EndlessRunner
             {
                 animator.SetBool("dead", true);
                 EnableCollider(false);
-                // StartCoroutine(FinishDaJob());
             }
         }
 
@@ -156,7 +176,7 @@ namespace Ryzm.EndlessRunner
 
         void UpdateCanKill()
         {
-            _distanceVec = trans.InverseTransformPoint(currentDragonPosition);
+            _distanceVec = trans.InverseTransformPoint(currentControllerPosition);
             float curX = Mathf.Abs(_distanceVec.x);
             // Debug.Log(tailSlapAttackState + " " + curX);
             if(tailSlapAttackState == ActionState.On)
@@ -177,22 +197,21 @@ namespace Ryzm.EndlessRunner
         #region Coroutines
         IEnumerator _Attack()
         {
-            bool inFront = IsInFront(currentDragonPosition);
+            bool inFront = IsInFront(currentControllerPosition);
             bool startedAttackAnim = false;
             bool lockRotation = false;
             bool checkShiftDirection = false;
             bool canAttack = true;
             // bool startedShift = false;
-            Vector3 distanceVec = trans.InverseTransformPoint(currentDragonPosition);
+            Vector3 distanceVec = trans.InverseTransformPoint(currentControllerPosition);
             float prevX = 0;
             EnableCollider(true);
             while(inFront)
             {
-                // dragon.MoveWithMultiplier(1);
-                currentDragonPosition = dragonTrans.position;
-                currentDragonPosition.y = rootTransform.position.y;
-                inFront = IsInFront(currentDragonPosition);
-                distanceVec = trans.InverseTransformPoint(currentDragonPosition);
+                currentControllerPosition = CurrentTransform.position;
+                currentControllerPosition.y = rootTransform.position.y;
+                inFront = IsInFront(currentControllerPosition);
+                distanceVec = trans.InverseTransformPoint(currentControllerPosition);
                 float curX = Mathf.Abs(distanceVec.x);
                 if(checkShiftDirection && !checkedShift)
                 {
@@ -269,24 +288,13 @@ namespace Ryzm.EndlessRunner
                 }
                 if(!lockRotation)
                 {
-                    rootTransform.LookAt(currentDragonPosition);
+                    rootTransform.LookAt(currentControllerPosition);
                 }
                 UpdateCanKill();
                 // Debug.Log("canKill " + canKill + " tailslapattackstate " + tailSlapAttackState);
                 yield return null;
             }
             animator.SetBool("attack", false);
-        }
-
-        IEnumerator FinishDaJob()
-        {
-            float t = 0;
-            while(t < 0.5f)
-            {
-                t += Time.deltaTime;
-                dragon.MoveWithMultiplier(1);
-                yield return null;
-            }
         }
         #endregion
     }

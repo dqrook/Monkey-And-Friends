@@ -41,16 +41,6 @@ namespace Ryzm.EndlessRunner
         #endregion
 
         #region Public Functions
-        public override void Enter()
-        {
-            base.Enter();
-        }
-        
-        public override void Exit() 
-        {
-            base.Exit();
-        }
-
         public virtual void Shift(Direction direction, EndlessController controller, ref bool turned)
         {
             if(direction != turnDirection && !turned)
@@ -65,12 +55,13 @@ namespace Ryzm.EndlessRunner
         {
             Transform trans = controller.gameObject.transform;
             int currentPosition = controller.CurrentPosition;
+            ShiftDistanceType _shiftDistancetype = shiftDistanceType == ShiftDistanceType.x ? ShiftDistanceType.z : ShiftDistanceType.x;
             if(direction == Direction.Left && currentPosition > 0)
             {
                 Transform pos = GetPosition(currentPosition - 1);
                 if(pos != null)
                 {
-                    controller.ShiftToPosition(pos, ShiftDistanceType.z);
+                    controller.ShiftToPosition(pos, _shiftDistancetype);
                     controller.CurrentPosition--;
                 }
             }
@@ -79,7 +70,7 @@ namespace Ryzm.EndlessRunner
                 Transform pos = GetPosition(currentPosition + 1);
                 if(pos != null)
                 {
-                    controller.ShiftToPosition(pos, ShiftDistanceType.z);
+                    controller.ShiftToPosition(pos, _shiftDistancetype);
                     controller.CurrentPosition++;
                 }
             }

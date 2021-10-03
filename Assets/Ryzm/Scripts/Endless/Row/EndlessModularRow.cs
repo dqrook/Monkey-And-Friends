@@ -15,9 +15,10 @@ namespace Ryzm.EndlessRunner
         #endregion
 
         #region Public Functions
-        public override void Initialize(int numberOfSections)
+        public override void Initialize(int numberOfSections, ShiftDistanceType shiftDistanceType = ShiftDistanceType.x)
         {
             CreateRowId();
+            this.shiftDistanceType = shiftDistanceType;
             sections.Clear();
             turnSection = null;
             Transform trans = gameObject.transform;
@@ -101,7 +102,7 @@ namespace Ryzm.EndlessRunner
             newSection.transform.rotation = spawnTransform.rotation;
 
             EndlessSection _section = newSection.GetComponent<EndlessSection>();
-            _section.Initialize(rowId);
+            _section.Initialize(rowId, shiftDistanceType);
             _section.CancelDeactivation();
             newSection.SetActive(true);
             return _section;

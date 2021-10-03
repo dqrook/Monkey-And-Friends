@@ -8,13 +8,17 @@ namespace Ryzm.EndlessRunner
 {
     public class HomeIsland : MonoBehaviour
     {
+        #region Public Variables
         public GameObject island;
         public Transform monkeySpawn;
-        public Transform dragonSpawn;
-        EndlessMonkey monkey;
-        EndlessDragon dragon;
-        
+        #endregion
 
+        #region Private Variables
+        Transform ryzTrans;
+        #endregion
+
+        
+        #region Event Functions
         void Awake() 
         {
             Message.AddListener<ActivateHome>(OnActivateHome);
@@ -35,7 +39,9 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<ControllersResponse>(OnControllersResponse);
             Message.RemoveListener<GameStatusResponse>(OnGameStatusResponse);
         }
+        #endregion
 
+        #region Listener Functions
         void OnActivateHome(ActivateHome activate)
         {
             island.SetActive(true);
@@ -48,18 +54,21 @@ namespace Ryzm.EndlessRunner
 
         void OnControllersResponse(ControllersResponse response)
         {
-            monkey = response.monkey;
-            dragon = response.dragon;
+            ryzTrans = response.ryz.transform;
         }
 
         void OnGameStatusResponse(GameStatusResponse response)
         {
-            if(response.status == GameStatus.Restart)
+            if(ryzTrans != null)
             {
-                island.SetActive(true);
-                monkey.transform.position = monkeySpawn.position;
-                monkey.transform.rotation = monkeySpawn.rotation;
+                if(response.status == GameStatus.MainMenu || response.status == GameStatus.Exit)
+                {
+                    island.SetActive(true);
+                    ryzTrans.position = monkeySpawn.position;
+                    ryzTrans.rotation = monkeySpawn.rotation;
+                }
             }
         }
+        #endregion
     }
 }

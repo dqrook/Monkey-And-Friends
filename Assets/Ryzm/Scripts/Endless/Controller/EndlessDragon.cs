@@ -52,7 +52,6 @@ namespace Ryzm.EndlessRunner
         IEnumerator tailSlap;
         IEnumerator simulateTailSlap;
         IEnumerator finishShiftThenTailSlap;
-        float _speedMultiplier;
         IEnumerator shiftAttack;
         ActionState _shiftAttackState;
         ActionState _headbuttAttackState;
@@ -71,7 +70,6 @@ namespace Ryzm.EndlessRunner
         int tailSlapUpAnimHash;
         int tailSlapDownAnimHash;
         int headbuttAnimHash;
-        int speedMultiplierAnimHash;
         #endregion
 
         #region Properties
@@ -89,19 +87,6 @@ namespace Ryzm.EndlessRunner
                     animator.SetBool(flyAnimHash, value);
                     flyingInitialized = true;
                 }
-            }
-        }
-
-        float SpeedMultiplier 
-        {
-            get
-            {
-                return _speedMultiplier;
-            }
-            set
-            {
-                _speedMultiplier = value;
-                animator.SetFloat(speedMultiplierAnimHash, _speedMultiplier);
             }
         }
 
@@ -163,7 +148,6 @@ namespace Ryzm.EndlessRunner
             tailSlapUpAnimHash = Animator.StringToHash("tailSlapUp");
             tailSlapDownAnimHash = Animator.StringToHash("tailSlapDown");
             headbuttAnimHash = Animator.StringToHash("headbutt");
-            speedMultiplierAnimHash = Animator.StringToHash("speedMultiplier");
 
             base.Awake();
             monkeyOffset = monkeyPos.position - trans.position;
@@ -210,7 +194,7 @@ namespace Ryzm.EndlessRunner
             // animator.SetInteger("state", state);
             if((mode == ControllerMode.MonkeyDragon || mode == ControllerMode.Dragon) && gameStatus == GameStatus.Active)
             {
-                IsFlying = true;
+                StartMove();
                 Move();
             }
 
@@ -329,7 +313,6 @@ namespace Ryzm.EndlessRunner
         #endregion
 
         #region Public Functions
-
         public void GetTextures()
         {
             baseDragon.GetTextures();
@@ -466,15 +449,14 @@ namespace Ryzm.EndlessRunner
             animator.SetBool(tailSlapDownAnimHash, false);
         }
 
-        public void Fly(bool shouldFly = true)
+        public override void StartMove()
         {
-            IsFlying = shouldFly;
+            IsFlying = true;
         }
 
-        public void MoveWithMultiplier(float multi)
+        public override void MoveWithMultiplier(float multi)
         {
-            SpeedMultiplier = multi;
-            zSpeedMultiplier = multi;
+            base.MoveWithMultiplier(multi);
             Move(multi);
         }
 
@@ -1199,7 +1181,7 @@ namespace Ryzm.EndlessRunner
 
         IEnumerator TestFlyUpWithDamage()
         {
-            Fly();
+            Move();
             UpInput();
             float t = 0;
             while(t < 0.1f)

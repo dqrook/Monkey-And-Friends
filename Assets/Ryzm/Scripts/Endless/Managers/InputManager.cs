@@ -13,13 +13,12 @@ namespace Ryzm.EndlessRunner
         public KeyCode rightPress = KeyCode.D;
         public KeyCode upPress = KeyCode.Space;
         public KeyCode downPress = KeyCode.S;
-        public EndlessRyz ryz;
         public static InputManager Instance { get { return _instance; } }
         #endregion
         
         #region Private Variables
         static InputManager _instance;
-        EndlessController monkey;
+        EndlessController ryz;
         EndlessController dragon;
         ControllerMode mode;
         GameStatus status;
@@ -30,13 +29,9 @@ namespace Ryzm.EndlessRunner
         {
             get
             {
-                if(ryz != null)
-                {
-                    return ryz;
-                }
                 if(mode == ControllerMode.Monkey)
                 {
-                    return monkey;
+                    return ryz;
                 }
                 return dragon;
             }
@@ -101,7 +96,7 @@ namespace Ryzm.EndlessRunner
 
         void OnControllersResponse(ControllersResponse response)
         {
-            monkey = response.monkey;
+            ryz = response.ryz;
             dragon = response.dragon;
         }
 

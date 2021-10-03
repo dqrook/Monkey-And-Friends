@@ -4,6 +4,7 @@ using UnityEngine;
 using Ryzm.EndlessRunner.Messages;
 using CodeControl;
 using AtmosphericHeightFog;
+using AmazingAssets.CurvedWorld;
 
 namespace Ryzm.EndlessRunner
 {
@@ -14,13 +15,22 @@ namespace Ryzm.EndlessRunner
         public EndlessTransition transition;
         public Transform initialDragonSpawn;
 
-        [Header("Fog & Sky")]
+        [Header("Fog & Sky Settings")]
         public FogType fogType = FogType.AtmosphericHeightFog;
         public HeightFogGlobal fog;
         public Color fogColor;
+        public Material skybox;
 
-        [Header("Settings")]
+        [Header("Camera Settings")]
+        public CameraClearFlags cameraClearFlags = CameraClearFlags.Skybox;
+        public Color cameraBackgroundColor;
+
+        [Header("Game Settings")]
         public int gameClipPlane = 50;
+        public ShiftDistanceType shiftDistanceType = ShiftDistanceType.x;
+
+        [Header("Curved World")]
+        public CurvedWorldController curvedWorldController;
         
         [Header("Runway")]
         public EndlessRunway runway;
@@ -38,10 +48,31 @@ namespace Ryzm.EndlessRunner
         EndlessRowPrefab defaultPrefab;
         int numberOfRowLoopsCompleted;
         bool initialized;
-        EndlessDragon dragon;
+        EndlessController dragon;
+        EndlessController ryz;
         Transform dragonTrans;
+        Transform ryzTrans;
         Camera mainCamera;
         bool startedRunway;
+        ControllerMode controllerMode;
+        #endregion
+
+        #region Properties
+        EndlessController CurrentController
+        {
+            get
+            {
+                return controllerMode == ControllerMode.Monkey ? ryz : dragon;
+            }
+        }
+
+        Transform CurrentTransform
+        {
+            get
+            {
+                return controllerMode == ControllerMode.Monkey ? ryzTrans : dragonTrans;
+            }
+        }
         #endregion
 
         #region Event Functions
@@ -70,8 +101,10 @@ namespace Ryzm.EndlessRunner
             Message.AddListener<ControllersResponse>(OnControllersResponse);
             Message.AddListener<StartRunway>(OnStartRunway);
             Message.AddListener<EnterTransition>(OnEnterTransition);
+            Message.AddListener<ControllerModeResponse>(OnControllerModeResponse);
             Message.Send(new WorldItemsRequest());
             Message.Send(new ControllersRequest());
+            Message.Send(new ControllerModeRequest());
         }
 
         protected override void OnDestroy()
@@ -83,6 +116,7 @@ namespace Ryzm.EndlessRunner
             Message.RemoveListener<ControllersResponse>(OnControllersResponse);
             Message.RemoveListener<StartRunway>(OnStartRunway);
             Message.RemoveListener<EnterTransition>(OnEnterTransition);
+            Message.RemoveListener<ControllerModeResponse>(OnControllerModeResponse);
         }
         #endregion
 
@@ -93,7 +127,7 @@ namespace Ryzm.EndlessRunner
             if(fogType == FogType.AtmosphericHeightFog && fog != null)
             {
                 RenderSettings.fog = false;
-                fog.mainCamera = response.mainCamera;
+                fog.mainCamera = mainCamera;
                 fog.mainDirectional = response.mainLight;
                 fog.gameObject.SetActive(true);
             }
@@ -101,13 +135,21 @@ namespace Ryzm.EndlessRunner
             {
                 RenderSettings.fog = true;
                 RenderSettings.fogColor = fogColor;
-                response.mainCamera.clearFlags = CameraClearFlags.SolidColor;
-                response.mainCamera.backgroundColor = fogColor;
+                mainCamera.clearFlags = CameraClearFlags.SolidColor;
+                mainCamera.backgroundColor = fogColor;
             }
             else
             {
                 RenderSettings.fog = false;
-                response.mainCamera.clearFlags = CameraClearFlags.Skybox;
+                mainCamera.clearFlags = cameraClearFlags;
+                if(cameraClearFlags == CameraClearFlags.SolidColor || cameraClearFlags == CameraClearFlags.Color)
+                {
+                    mainCamera.backgroundColor = cameraBackgroundColor;
+                }
+                if(skybox != null)
+                {
+                    RenderSettings.skybox = skybox;
+                }
             }
         }
 
@@ -139,7 +181,18 @@ namespace Ryzm.EndlessRunner
         void OnControllersResponse(ControllersResponse response)
         {
             dragon = response.dragon;
+            ryz = response.ryz;
             dragonTrans = dragon.transform;
+            ryzTrans = ryz.transform;
+        }
+
+        void OnControllerModeResponse(ControllerModeResponse response)
+        {
+            controllerMode = response.mode;
+            if(curvedWorldController != null)
+            {
+                curvedWorldController.bendPivotPoint = CurrentTransform;
+            }
         }
 
         void OnStartRunway(StartRunway start)
@@ -147,10 +200,10 @@ namespace Ryzm.EndlessRunner
             runway.gameObject.SetActive(true);
             if(start.type == type && !startedRunway)
             {
-                dragonTrans.position = initialDragonSpawn.position;
-                dragonTrans.rotation = initialDragonSpawn.rotation;
-                mainCamera.transform.position = dragon.localCameraSpawn.position;
-                mainCamera.transform.rotation = dragon.localCameraSpawn.rotation;
+                CurrentTransform.position = initialDragonSpawn.position;
+                CurrentTransform.rotation = initialDragonSpawn.rotation;
+                mainCamera.transform.position = CurrentController.localCameraSpawn.position;
+                mainCamera.transform.rotation = CurrentController.localCameraSpawn.rotation;
                 
                 if(runway != null)
                 {
@@ -181,17 +234,6 @@ namespace Ryzm.EndlessRunner
             if(!initialized && runway != null)
             {
                 AddRow(runway.nextRowSpawn);
-                // runway.Run();
-                // // has initial row
-                // currentRow = GetPrefab(initialRowType);
-                // if(currentRow.row == null)
-                // {
-                //     currentRow.row = GameObject.Instantiate(currentRow.rowPrefab).GetComponent<EndlessRow>();
-                // }
-                // currentRow.row.transform.position = spawnTransform.position;
-                // currentRow.row.transform.rotation = spawnTransform.rotation;
-                // currentRow.row.Initialize(5);
-                // Message.Send(new RowChange(0, currentRow.row.rowId));
             }
             else
             {
@@ -249,7 +291,7 @@ namespace Ryzm.EndlessRunner
 
             currentRow.row.transform.position = spawnTransform.position;
             currentRow.row.transform.rotation = spawnTransform.rotation;
-            currentRow.row.Initialize(5);
+            currentRow.row.Initialize(5, shiftDistanceType);
             prefabIndex++;
             if(prefabIndex > prefabOrder.Count - 1)
             {
@@ -289,7 +331,8 @@ namespace Ryzm.EndlessRunner
     public enum MapType
     {
         Floating,
-        Water
+        Water,
+        Baria
     }
 
     public enum FogType

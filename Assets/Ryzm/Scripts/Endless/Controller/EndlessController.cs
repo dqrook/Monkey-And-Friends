@@ -76,6 +76,8 @@ namespace Ryzm.EndlessRunner
         #endregion
 
         #region Private Variables
+        int speedMultiplierAnimHash;
+        float _speedMultiplier;
         Ray checkGround;
         #endregion
 
@@ -173,6 +175,19 @@ namespace Ryzm.EndlessRunner
                 Message.Send(new SpecialAttackResponse(_usingSpecial ? ActionState.On : ActionState.Off));
             }
         }
+
+        protected float SpeedMultiplier 
+        {
+            get
+            {
+                return _speedMultiplier;
+            }
+            set
+            {
+                _speedMultiplier = value;
+                animator.SetFloat(speedMultiplierAnimHash, _speedMultiplier);
+            }
+        }
         #endregion
         
         #region Event Functions
@@ -180,6 +195,7 @@ namespace Ryzm.EndlessRunner
 		{
             stateAnimHash = Animator.StringToHash("state");
             damagedAnimHash = Animator.StringToHash("damaged");
+            speedMultiplierAnimHash = Animator.StringToHash("speedMultiplier");
             trans = GetComponent<Transform> ();
             rb = GetComponent<Rigidbody>();
             if(playerCollider == null)
@@ -422,10 +438,17 @@ namespace Ryzm.EndlessRunner
             inShift = false;
         }
 
+        public virtual void MoveWithMultiplier(float multi)
+        {
+            SpeedMultiplier = multi;
+            zSpeedMultiplier = multi;
+        }
+
         public virtual void DownInput() {}
 
 		public virtual void UpInput() {}
 
+        public virtual void StartMove() {}
         #endregion
 
         #region Protected Functions

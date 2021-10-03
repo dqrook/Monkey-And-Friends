@@ -12,9 +12,9 @@ namespace Ryzm.EndlessRunner
         #endregion
 
         #region Public Functions
-        public override void Initialize(int rowId)
+        public override void Initialize(int rowId, ShiftDistanceType shiftDistanceType = ShiftDistanceType.x)
         {
-            base.Initialize(rowId);
+            base.Initialize(rowId, shiftDistanceType);
             foreach(WallSpawn spawn in wallSpawns)
             {
                 GameObject wallGO = EndlessPool.Instance.GetSpecifiedWall(spawn.type);

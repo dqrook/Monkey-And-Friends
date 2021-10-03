@@ -69,9 +69,9 @@ namespace Ryzm.EndlessRunner
         {
             if(gameStatus == GameStatus.Active)
             {
-                currentDragonPosition = response.position;
-                currentDistance = trans.InverseTransformPoint(currentDragonPosition).z;
-                bool inFront = IsInFront(currentDragonPosition);
+                currentControllerPosition = response.position;
+                currentDistance = trans.InverseTransformPoint(currentControllerPosition).z;
+                bool inFront = IsInFront(currentControllerPosition);
                 if(!startedAttack && inFront && currentDistance < attackDistance)
                 {
                     Attack();
@@ -134,7 +134,7 @@ namespace Ryzm.EndlessRunner
         {
             startedDisable = true;
             yield return wait2Seconds;
-            bool inFront = IsInFront(currentDragonPosition);
+            bool inFront = IsInFront(currentControllerPosition);
             bool setActive = !(!inFront && currentDistance < -10);
             childGO.SetActive(setActive);
         }

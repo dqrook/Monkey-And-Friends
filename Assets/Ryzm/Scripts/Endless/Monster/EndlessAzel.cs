@@ -15,7 +15,8 @@ namespace Ryzm.EndlessRunner
         #region Private Variables
         IEnumerator attack;
         Transform dragonTrans;
-        EndlessDragon dragon;
+        Transform ryzTrans;
+        ControllerMode controllerMode;
         ActionState shiftAttackState;
         ActionState headbuttAttackState;
         ActionState tailSlapAttackState;
@@ -24,12 +25,23 @@ namespace Ryzm.EndlessRunner
         Vector3 _distanceVec;
         #endregion
 
+        #region Properties
+        Transform CurrentTransform
+        {
+            get
+            {
+                return controllerMode == ControllerMode.Monkey ? ryzTrans : dragonTrans;
+            }
+        }
+        #endregion
+
         #region Event Functions
         protected override void Awake()
         {
             base.Awake();
             attackDistance = 15;
             EnableCollider(false);
+            Message.AddListener<ControllerModeResponse>(OnControllerModeResponse);
         }
         
         void Start()
@@ -78,13 +90,24 @@ namespace Ryzm.EndlessRunner
                 TakeDamage();
             }
         }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            Message.RemoveListener<ControllerModeResponse>(OnControllerModeResponse);
+        }
         #endregion
 
         #region Listener Functions
         void OnControllersResponse(ControllersResponse response)
         {
-            dragon = response.dragon;
-            dragonTrans = dragon.transform;
+            dragonTrans = response.dragon.transform;
+            ryzTrans = response.ryz.transform;
+        }
+
+        void OnControllerModeResponse(ControllerModeResponse response)
+        {
+            controllerMode = response.mode;
         }
 
         void OnShiftAttackStateResponse(ShiftAttackStateResponse response)
@@ -169,7 +192,7 @@ namespace Ryzm.EndlessRunner
 
         void UpdateCanKill()
         {
-            _distanceVec = trans.InverseTransformPoint(currentDragonPosition);
+            _distanceVec = trans.InverseTransformPoint(currentControllerPosition);
             float curX = Mathf.Abs(_distanceVec.x);
             if(headbuttAttackState != ActionState.Off || tailSlapAttackState != ActionState.Off)
             {
@@ -185,17 +208,17 @@ namespace Ryzm.EndlessRunner
         #region Coroutines
         IEnumerator _Attack()
         {
-            bool inFront = IsInFront(currentDragonPosition, -5);
+            bool inFront = IsInFront(currentControllerPosition, -5);
             bool startedAttackAnim = false;
             bool lockRotation = false;
-            Vector3 distanceVec = trans.InverseTransformPoint(currentDragonPosition);
+            Vector3 distanceVec = trans.InverseTransformPoint(currentControllerPosition);
             EnableCollider(true);
             while(inFront)
             {
-                currentDragonPosition = dragonTrans.position;
-                currentDragonPosition.y = rootTransform.position.y;
-                inFront = IsInFront(currentDragonPosition);
-                distanceVec = trans.InverseTransformPoint(currentDragonPosition);
+                currentControllerPosition = CurrentTransform.position;
+                currentControllerPosition.y = rootTransform.position.y;
+                inFront = IsInFront(currentControllerPosition);
+                distanceVec = trans.InverseTransformPoint(currentControllerPosition);
                 float curX = Mathf.Abs(distanceVec.x);
 
                 currentDistance = distanceVec.z;
@@ -211,7 +234,7 @@ namespace Ryzm.EndlessRunner
                 }
                 if(!lockRotation)
                 {
-                    rootTransform.LookAt(currentDragonPosition);
+                    rootTransform.LookAt(currentControllerPosition);
                 }
                 UpdateCanKill();
                 yield return null;
