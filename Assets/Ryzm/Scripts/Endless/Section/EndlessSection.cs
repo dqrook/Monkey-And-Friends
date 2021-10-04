@@ -42,9 +42,6 @@ namespace Ryzm.EndlessRunner
 
         #region Private Variables
         List<BarrierType> _possibleBarrierTypes = new List<BarrierType>();
-        GameDifficulty difficulty = GameDifficulty.Easy;
-        bool gettingDifficulty;
-        IEnumerator waitForDifficulty;
         float runnerDistance;
         #endregion
 
@@ -70,23 +67,17 @@ namespace Ryzm.EndlessRunner
         protected override void Awake()
         {
             base.Awake();
-            Message.AddListener<GameDifficultyResponse>(OnGameDifficultyResponse);
             Message.AddListener<RunnerDistanceResponse>(OnRunnerDistanceResponse);
-            Message.Send(new GameDifficultyRequest());
         }
 
         protected override void OnEnable()
         {
             base.OnEnable();
-            // if(baseSection != null)
-            // {
-            //     baseSection.Deactivate();
-            // }
-            gettingDifficulty = true;
             Message.Send(new RunnerDistanceRequest());
-            Message.Send(new GameDifficultyRequest());
-            waitForDifficulty = WaitForDifficulty();
-            StartCoroutine(waitForDifficulty);
+            if(baseSection != null)
+            {
+                baseSection.Activate(runnerDistance);
+            }
             if(environments.Count > 0 && CanPlaceEnvironment(environmentLikelihood))
             {
                 EndlessUtils.Shuffle(environments);
@@ -101,7 +92,6 @@ namespace Ryzm.EndlessRunner
 
         protected override void OnDisable()
         {
-            gettingDifficulty = false;
             if(baseSection != null)
             {
                 baseSection.Deactivate();
@@ -111,7 +101,6 @@ namespace Ryzm.EndlessRunner
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            Message.RemoveListener<GameDifficultyResponse>(OnGameDifficultyResponse);
             Message.RemoveListener<RunnerDistanceResponse>(OnRunnerDistanceResponse);
         }
         #endregion
@@ -128,12 +117,6 @@ namespace Ryzm.EndlessRunner
             {
                 CancelDeactivation();
             }
-        }
-
-        void OnGameDifficultyResponse(GameDifficultyResponse response)
-        {
-            difficulty = response.difficulty;
-            gettingDifficulty = false;
         }
 
         void OnRunnerDistanceResponse(RunnerDistanceResponse response)
@@ -247,21 +230,6 @@ namespace Ryzm.EndlessRunner
             return Random.Range(0, 1f) <= likelihood;
         }
         #endregion
-
-        #region Coroutines
-        IEnumerator WaitForDifficulty()
-        {
-            while(gettingDifficulty)
-            {
-                yield return null;
-            }
-            if(baseSection != null)
-            {
-                // baseSection.Activate(difficulty);
-                baseSection.Activate(runnerDistance);
-            }
-        }
-        #endregion
     }
     [System.Serializable]
     public class BarrierSpawnLocation
@@ -348,6 +316,7 @@ namespace Ryzm.EndlessRunner
         FloatingMonster2,
         FloatingMonster3,
         FloatingMonster4,
-        FloatingMonster5
+        FloatingMonster5,
+        BariaMonster1
     }
 }
