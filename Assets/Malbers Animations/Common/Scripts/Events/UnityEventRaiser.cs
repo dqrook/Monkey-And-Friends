@@ -1,16 +1,15 @@
-﻿using MalbersAnimations.Scriptables;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Serialization;
 
 namespace MalbersAnimations.Events
 {
     /// <summary>Simple Event Raiser On Enable</summary>
     [AddComponentMenu("Malbers/Events/Unity Event Raiser")]
-    public class UnityEventRaiser : UnityUtils
+    public class UnityEventRaiser : MonoBehaviour
     {
         [Tooltip("Delayed time for invoking the Events, or the Repeated time  when Repeat is enable")]
-        public FloatReference Delayed = new FloatReference();
-        public FloatReference RepeatTime = new FloatReference();
+        public float Delayed;
+        public float RepeatTime;
         public bool Repeat;
 
 
@@ -39,6 +38,7 @@ namespace MalbersAnimations.Events
             }
         }
 
+        [ContextMenu("Invoke on Editor")]
         private void StartEvent() => onEnable.Invoke();
 
         private void OnDisable()
@@ -48,16 +48,11 @@ namespace MalbersAnimations.Events
         }
 
 
-        public virtual void Restart()
-        {
-            CancelInvoke();
-            OnEnable();
-        }
     } 
 
 
 #if UNITY_EDITOR
-    [UnityEditor.CustomEditor(typeof(UnityEventRaiser)),UnityEditor.CanEditMultipleObjects] 
+    [UnityEditor.CustomEditor(typeof(UnityEventRaiser))]
     public class UnityEventRaiserInspector : UnityEditor.Editor
     {
         UnityEditor.SerializedProperty Delayed, Repeat, RepeatTime, OnEnableEvent, ShowDescription, Description;
@@ -101,8 +96,8 @@ namespace MalbersAnimations.Events
             if (Repeat.boolValue)
             {
 
-                UnityEditor.EditorGUIUtility.labelWidth = 35;
-                UnityEditor.EditorGUILayout.PropertyField(RepeatTime, new GUIContent(" RT", "Repeat Time"), GUILayout.MinWidth(40));
+                UnityEditor.EditorGUIUtility.labelWidth = 20;
+                UnityEditor.EditorGUILayout.PropertyField(RepeatTime, new GUIContent("RT", "Repeat Time"), GUILayout.MinWidth(40));
                 UnityEditor.EditorGUIUtility.labelWidth = 0;
             }
 
@@ -121,7 +116,11 @@ namespace MalbersAnimations.Events
             bg.SetPixels(pix);
             bg.Apply();
 
+
             currentStyle.normal.background = bg;
+
+
+#if UNITY_2019_4 || UNITY_2020
             // MW 04-Jul-2020: Check if system supports newer graphics formats used by Unity GUI
             Texture2D bgActual = currentStyle.normal.scaledBackgrounds[0];
 
@@ -129,6 +128,7 @@ namespace MalbersAnimations.Events
             {
                 currentStyle.normal.scaledBackgrounds = new Texture2D[] { }; // This can't be null
             }
+#endif
             return currentStyle;
         }
     }
