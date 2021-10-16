@@ -128,7 +128,8 @@ namespace Ryzm.EndlessRunner
                 case CharacterState.Default:
                     {
                         _moveInputVector = Quaternion.LookRotation(inputs.forwardAxis, motor.CharacterUp) * moveInputVector;
-                        _lookInputVector = inputs.forwardAxis;
+                        // _lookInputVector = inputs.forwardAxis;
+                        _lookInputVector = _moveInputVector.normalized;
 
                         // Jumping input
                         if (inputs.requestJump)
