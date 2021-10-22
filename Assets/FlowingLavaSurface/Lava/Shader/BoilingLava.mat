@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: BoilingLava
+  m_Shader: {fileID: 4800000, guid: a224e6a69bd39f446b23f2d152b677e2, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _AlbedoTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CubeMap:
+        m_Texture: {fileID: 8900000, guid: 29d77068b43d3764db2d1b73076e440e, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FlameTex:
+        m_Texture: {fileID: 2800000, guid: 121d7a14c59abaa4d9f902a6f864b4af, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _LavaTex:
+        m_Texture: {fileID: 2800000, guid: fcf4c97cf2e1f7e4d868b47329405a8c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MaskTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NoiseTex:
+        m_Texture: {fileID: 2800000, guid: 2b71c7f5a6dd0204aa437e452b3e22dd, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NoiseTex3D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _BubbleRate: 0.12
+    - _BubbleScale: 0.95
+    - _FlameBias: -0.12
+    - _FlameScale: 0.82
+    - _FresnelBias: 0.1
+    - _FresnelPower: 2
+    - _FresnelScale: 1
+    - _LavaBright: 2
+    - _LavaDarkOffset: 0.1
+    - _LavaFlowSpeed: 0.01
+    - _LavaTile: 2.125
+    - _MorphRate: 0.05
+    - _NoiseScale: 0.21
+    - _NoiseTile: 2
+    - _Offset: 0.35
+    - _RefractionRatio: 1.02
+    - _Scale: 0.03
+    - _Speed: 1
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
