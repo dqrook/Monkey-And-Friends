@@ -4,11 +4,13 @@
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: IceCrystalWhite
-  m_Shader: {fileID: 4800000, guid: 4c5b48e76c3e60e4c81e91714d6db20c, type: 3}
+  m_Shader: {fileID: 4800000, guid: 644d4419f6d30214892dd65158332ba7, type: 3}
   m_ShaderKeywords: EnableFresnel EnableLayer0 EnableRefraction EnableSpecular EnableSurfaceMask
+    _ENABLEDEPTHTEXTURE_ON _LIGHTING_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -66,12 +68,20 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Normals:
+        m_Texture: {fileID: 2800000, guid: 6a4951be050ccf74380a80c3b9814cbf, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Shadermap:
+        m_Texture: {fileID: 2800000, guid: 9bd30382eea6b4385bc37f5c74da882e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SurfaceAlphaMaskTex:
@@ -83,9 +93,14 @@ Material:
     - _CausticBrightness: 0.26
     - _CausticScrollSpeed: 0
     - _Cutoff: 0.5
+    - _Depth: 0
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _ENABLE_VC: 0
+    - _EdgeFade: 0.31
     - _EnableCaustic: 0
+    - _EnableDepthTexture: 1
+    - _EnableFog: 0
     - _EnableFresnel: 1
     - _EnableFresnelUseSkybox: 0
     - _EnableInnerLight: 0
@@ -95,14 +110,19 @@ Material:
     - _EnableRefraction: 1
     - _EnableSpecular: 1
     - _EnableSurfaceMask: 1
+    - _FoamOpacity: 0.07
+    - _FoamSize: 0.048
+    - _FoamSpeed: 0
+    - _FoamTiling: 3
     - _FresnelTightness: 1.88
     - _GlossMapScale: 1
-    - _Glossiness: 0.5
+    - _Glossiness: 1
     - _GlossyReflections: 1
     - _HeightBias: 0.1
     - _HeightBiasStep: 0.1
     - _HeightScale: 0.1
     - _InnerLightTightness: 0
+    - _LIGHTING: 0
     - _Layer0Speed: 0
     - _Layer0SpeedX: 0
     - _Layer0SpeedY: -0.1
@@ -119,17 +139,35 @@ Material:
     - _MarbleHeightCausticOffset: 0
     - _MarbleHeightScale: 0.25
     - _Metallic: 0
+    - _Metallicness: 0.551
     - _Mode: 0
+    - _NORMAL_MAP: 0
+    - _NormalStrength: 0.269
+    - _NormalTiling: 5
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _RefractionStrength: 0.459
+    - _RimSize: 4.6
+    - _Rimfalloff: 1.1
+    - _Rimtiling: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularBrightness: 0.884
     - _SpecularHighlights: 1
     - _SpecularTightness: 27.2
     - _SrcBlend: 1
+    - _Transparency: 1
+    - _USE_VC_INTERSECTION: 0
     - _UVSec: 0
+    - _Unlit: 0
+    - _UseIntersectionFoam: 0
+    - _WaveFoam: 0
+    - _WaveHeight: 0
+    - _WaveSize: 1
+    - _Wavesspeed: 0.075
+    - _Wavetint: 0.5
+    - _Worldspacetiling: 0
     - _ZWrite: 1
+    - __dirty: 1
     m_Colors:
     - _CausticTint: {r: 0, g: 0, b: 0, a: 0.891}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
@@ -143,4 +181,8 @@ Material:
     - _Layer2Tint: {r: 1, g: 1, b: 1, a: 1}
     - _MeiosisPos: {r: 0, g: 0, b: 0, a: 0}
     - _MyVector: {r: 0, g: 0, b: 0, a: 0}
+    - _RimColor: {r: 1, g: 1, b: 1, a: 0.50980395}
     - _SurfaceAlphaColor: {r: 0.2973616, g: 0.53595936, b: 0.7352941, a: 1}
+    - _WaterColor: {r: 0.11018325, g: 0.58924055, b: 0.915, a: 1}
+    - _WaterShallowColor: {r: 0.42408377, g: 1, b: 0.87958115, a: 1}
+    - _WaveDirection: {r: 0, g: 0, b: 0, a: 0}
