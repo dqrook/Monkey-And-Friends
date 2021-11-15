@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 1355568772}
-  m_IndirectSpecularColor: {r: 0.73045343, g: 0.79851073, b: 0.8354537, a: 1}
+  m_IndirectSpecularColor: {r: 0.7324436, g: 0.7991141, b: 0.8366562, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1662,6 +1662,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8448145411873597766, guid: 7ff777a8079f99d4085e253e754a13a2,
+        type: 3}
+      propertyPath: Editor_Tabs1
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8448145411873597766, guid: 7ff777a8079f99d4085e253e754a13a2,
+        type: 3}
+      propertyPath: Editor_Tabs2
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8448145411873597767, guid: 7ff777a8079f99d4085e253e754a13a2,
         type: 3}
       propertyPath: m_Name
@@ -2868,14 +2878,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c40057955ac3324f9b900fad19f1651, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Delayed:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
-  RepeatTime:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
+  Delayed: 0
+  RepeatTime: 0
   Repeat: 0
   onEnable:
     m_PersistentCalls:
@@ -6557,6 +6561,51 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 737325540507112241, guid: a44c26a86f5792f4d821689873dc39ac,
+        type: 3}
+      propertyPath: Editor_Tabs1
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 737325540507112241, guid: a44c26a86f5792f4d821689873dc39ac,
+        type: 3}
+      propertyPath: Editor_Tabs2
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1364871103390872073, guid: a44c26a86f5792f4d821689873dc39ac,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: dbcaf2e0cb9c14c4f9b885d4191a6cfc, type: 2}
+    - target: {fileID: 1365126557606316891, guid: a44c26a86f5792f4d821689873dc39ac,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: dbcaf2e0cb9c14c4f9b885d4191a6cfc, type: 2}
+    - target: {fileID: 1376989747375081873, guid: a44c26a86f5792f4d821689873dc39ac,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1377126534339941903, guid: a44c26a86f5792f4d821689873dc39ac,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1751521343274975836, guid: a44c26a86f5792f4d821689873dc39ac,
+        type: 3}
+      propertyPath: Meshes.Array.data[0].Current
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1751521343274975836, guid: a44c26a86f5792f4d821689873dc39ac,
+        type: 3}
+      propertyPath: Meshes.Array.data[2].Current
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2401383787979210986, guid: a44c26a86f5792f4d821689873dc39ac,
+        type: 3}
+      propertyPath: materialList.Array.data[0].current
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 5368407099425543318, guid: a44c26a86f5792f4d821689873dc39ac,
         type: 3}
       propertyPath: m_TranslationOffsets.Array.data[0].y

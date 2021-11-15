@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 1355568772}
-  m_IndirectSpecularColor: {r: 0.73045343, g: 0.79851073, b: 0.8354537, a: 1}
+  m_IndirectSpecularColor: {r: 0.7324436, g: 0.7991141, b: 0.8366562, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -144,6 +144,14 @@ PrefabInstance:
     - target: {fileID: 1375954372, guid: d3aa6de16e8fb9a4ca8d48506859e701, type: 3}
       propertyPath: m_LocalPosition.z
       value: 1.1917343
+      objectReference: {fileID: 0}
+    - target: {fileID: 1375954372, guid: d3aa6de16e8fb9a4ca8d48506859e701, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.2225746
+      objectReference: {fileID: 0}
+    - target: {fileID: 1375954372, guid: d3aa6de16e8fb9a4ca8d48506859e701, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.21558358
       objectReference: {fileID: 0}
     - target: {fileID: 1214760538398376, guid: d3aa6de16e8fb9a4ca8d48506859e701, type: 3}
       propertyPath: m_Name
@@ -1406,14 +1414,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c40057955ac3324f9b900fad19f1651, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Delayed:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
-  RepeatTime:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
+  Delayed: 0
+  RepeatTime: 0
   Repeat: 0
   onEnable:
     m_PersistentCalls:
@@ -1497,14 +1499,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c40057955ac3324f9b900fad19f1651, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Delayed:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
-  RepeatTime:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
+  Delayed: 0
+  RepeatTime: 0
   Repeat: 0
   onEnable:
     m_PersistentCalls:
@@ -2054,14 +2050,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c40057955ac3324f9b900fad19f1651, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Delayed:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
-  RepeatTime:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
+  Delayed: 0
+  RepeatTime: 0
   Repeat: 0
   onEnable:
     m_PersistentCalls:
@@ -2159,14 +2149,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c40057955ac3324f9b900fad19f1651, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Delayed:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
-  RepeatTime:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
+  Delayed: 0
+  RepeatTime: 0
   Repeat: 0
   onEnable:
     m_PersistentCalls:
@@ -3937,14 +3921,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c40057955ac3324f9b900fad19f1651, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Delayed:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
-  RepeatTime:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
+  Delayed: 0
+  RepeatTime: 0
   Repeat: 0
   onEnable:
     m_PersistentCalls:
@@ -4215,7 +4193,7 @@ PrefabInstance:
     - target: {fileID: 4893266125441169742, guid: 251e7237fe2b3c341b886399433fe106,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.22257464
+      value: 0.2225746
       objectReference: {fileID: 0}
     - target: {fileID: 4893266125441169742, guid: 251e7237fe2b3c341b886399433fe106,
         type: 3}
@@ -4225,7 +4203,7 @@ PrefabInstance:
     - target: {fileID: 4893266125441169742, guid: 251e7237fe2b3c341b886399433fe106,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.21558361
+      value: -0.21558358
       objectReference: {fileID: 0}
     - target: {fileID: 4893266125441169742, guid: 251e7237fe2b3c341b886399433fe106,
         type: 3}
@@ -4717,14 +4695,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c40057955ac3324f9b900fad19f1651, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Delayed:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
-  RepeatTime:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
+  Delayed: 0
+  RepeatTime: 0
   Repeat: 0
   onEnable:
     m_PersistentCalls:
@@ -5218,14 +5190,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c40057955ac3324f9b900fad19f1651, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Delayed:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
-  RepeatTime:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
+  Delayed: 0
+  RepeatTime: 0
   Repeat: 0
   onEnable:
     m_PersistentCalls:
@@ -5410,6 +5376,14 @@ PrefabInstance:
     - target: {fileID: 342225391, guid: d3aa6de16e8fb9a4ca8d48506859e701, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0.691475
+      objectReference: {fileID: 0}
+    - target: {fileID: 342225391, guid: d3aa6de16e8fb9a4ca8d48506859e701, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.27501342
+      objectReference: {fileID: 0}
+    - target: {fileID: 342225391, guid: d3aa6de16e8fb9a4ca8d48506859e701, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.27501014
       objectReference: {fileID: 0}
     - target: {fileID: 1375954372, guid: d3aa6de16e8fb9a4ca8d48506859e701, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5932,6 +5906,7 @@ MonoBehaviour:
   debugGizmos: 1
   ShowMovement: 0
   ShowGround: 0
+  ShowFreeMovement: 1
   showGeneral: 1
   showExposedVariables: 0
   showReferences: 0
@@ -6038,7 +6013,15 @@ MonoBehaviour:
     UseConstant: 1
     ConstantValue: 1
     Variable: {fileID: 11400000, guid: e48d7c5d72ee7fe47bee7b78e710ce18, type: 2}
-  UpDownLerp:
+  PitchLerpOn:
+    UseConstant: 1
+    ConstantValue: 10
+    Variable: {fileID: 0}
+  PitchLerpOff:
+    UseConstant: 1
+    ConstantValue: 10
+    Variable: {fileID: 0}
+  BankLerp:
     UseConstant: 1
     ConstantValue: 10
     Variable: {fileID: 0}
@@ -6062,7 +6045,7 @@ MonoBehaviour:
     UseConstant: 1
     ConstantValue: 1
     Variable: {fileID: 0}
-  DebreeTag:
+  DebrisTag:
     UseConstant: 1
     ConstantValue: Stair
     Variable: {fileID: 0}
@@ -6101,6 +6084,8 @@ MonoBehaviour:
         Variable: {fileID: 0}
       Properties:
         Status: 0
+        clip: {fileID: 0}
+        modifier: {fileID: 0}
         HoldByTime:
           UseConstant: 1
           ConstantValue: 0
@@ -6139,6 +6124,7 @@ MonoBehaviour:
     OnExitMode:
       m_PersistentCalls:
         m_Calls: []
+    m_Source: {fileID: 0}
     ModeActivationTime: 0
     showGeneral: 0
     showIndex: 1
@@ -7389,14 +7375,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c40057955ac3324f9b900fad19f1651, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Delayed:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
-  RepeatTime:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
+  Delayed: 0
+  RepeatTime: 0
   Repeat: 0
   onEnable:
     m_PersistentCalls:
@@ -8990,14 +8970,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c40057955ac3324f9b900fad19f1651, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Delayed:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
-  RepeatTime:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
+  Delayed: 0
+  RepeatTime: 0
   Repeat: 0
   onEnable:
     m_PersistentCalls:
@@ -9156,14 +9130,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c40057955ac3324f9b900fad19f1651, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Delayed:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
-  RepeatTime:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
+  Delayed: 0
+  RepeatTime: 0
   Repeat: 0
   onEnable:
     m_PersistentCalls:
@@ -10084,6 +10052,14 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 1.1917341
       objectReference: {fileID: 0}
+    - target: {fileID: 1375954372, guid: d3aa6de16e8fb9a4ca8d48506859e701, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.2225746
+      objectReference: {fileID: 0}
+    - target: {fileID: 1375954372, guid: d3aa6de16e8fb9a4ca8d48506859e701, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.21558358
+      objectReference: {fileID: 0}
     - target: {fileID: 137398531946276588, guid: d3aa6de16e8fb9a4ca8d48506859e701,
         type: 3}
       propertyPath: m_AABB.m_Center.x
@@ -10192,6 +10168,16 @@ PrefabInstance:
     - target: {fileID: 2974462592779614213, guid: d3aa6de16e8fb9a4ca8d48506859e701,
         type: 3}
       propertyPath: Editor_Tabs1
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3228759555410194487, guid: d3aa6de16e8fb9a4ca8d48506859e701,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3723566041985603129, guid: d3aa6de16e8fb9a4ca8d48506859e701,
+        type: 3}
+      propertyPath: internalComponents.Array.data[0].active
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6456104305765487363, guid: d3aa6de16e8fb9a4ca8d48506859e701,
@@ -10575,14 +10561,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c40057955ac3324f9b900fad19f1651, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Delayed:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
-  RepeatTime:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
+  Delayed: 0
+  RepeatTime: 0
   Repeat: 0
   onEnable:
     m_PersistentCalls:
@@ -10712,14 +10692,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c40057955ac3324f9b900fad19f1651, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Delayed:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
-  RepeatTime:
-    UseConstant: 1
-    ConstantValue: 0
-    Variable: {fileID: 0}
+  Delayed: 0
+  RepeatTime: 0
   Repeat: 0
   onEnable:
     m_PersistentCalls:
@@ -15879,6 +15853,16 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 1.1914896
       objectReference: {fileID: 0}
+    - target: {fileID: 7122688321273662274, guid: 47d20c194f5aa554596cb4628d0394ea,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.2225746
+      objectReference: {fileID: 0}
+    - target: {fileID: 7122688321273662274, guid: 47d20c194f5aa554596cb4628d0394ea,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.21558358
+      objectReference: {fileID: 0}
     - target: {fileID: 7124037739781057386, guid: 47d20c194f5aa554596cb4628d0394ea,
         type: 3}
       propertyPath: m_IsActive
@@ -16260,7 +16244,7 @@ PrefabInstance:
     - target: {fileID: 4893266125441169742, guid: 251e7237fe2b3c341b886399433fe106,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.22257464
+      value: 0.2225746
       objectReference: {fileID: 0}
     - target: {fileID: 4893266125441169742, guid: 251e7237fe2b3c341b886399433fe106,
         type: 3}
@@ -16270,7 +16254,7 @@ PrefabInstance:
     - target: {fileID: 4893266125441169742, guid: 251e7237fe2b3c341b886399433fe106,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.21558361
+      value: -0.21558358
       objectReference: {fileID: 0}
     - target: {fileID: 4893266125441169742, guid: 251e7237fe2b3c341b886399433fe106,
         type: 3}

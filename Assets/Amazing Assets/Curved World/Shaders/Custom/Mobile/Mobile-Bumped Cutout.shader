@@ -20,6 +20,7 @@ Shader "Amazing Assets/Curved World/Mobile/Bumped Cutout"
     SubShader 
     {
         Tags { "Queue"="AlphaTest" "IgnoreProjector"="True" "RenderType"="TransparentCutout" }
+        Cull Off
         LOD 250
 
         CGPROGRAM

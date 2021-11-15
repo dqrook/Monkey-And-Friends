@@ -65,6 +65,10 @@ MonoBehaviour:
     Variable: {fileID: 0}
   ExitFrame: 1
   ExitOnMain: 1
+  EnterCooldown:
+    UseConstant: 1
+    ConstantValue: 0
+    Variable: {fileID: 0}
   ExitCooldown:
     UseConstant: 1
     ConstantValue: 0
@@ -73,7 +77,7 @@ MonoBehaviour:
   MovementStrafe: 1
   IdleStrafe: 0.1
   debug: 1
-  Editor_Tabs1: 3
+  Editor_Tabs1: 0
   ID: {fileID: 11400000, guid: c44e7e8d6840aa243b6c33ec85052763, type: 2}
   Bank: 30
   Ylimit: 80
@@ -135,9 +139,19 @@ MonoBehaviour:
   SurfaceLayer:
     serializedVersion: 2
     m_Bits: 16
+  FlapSpeed: 1
+  GlideSpeed: 2
   GlideOnly:
     UseConstant: 1
     ConstantValue: 0
+    Variable: {fileID: 0}
+  GlideOnlyIdleS:
+    UseConstant: 1
+    ConstantValue: 0.5
+    Variable: {fileID: 0}
+  GlideOnlyIdleV:
+    UseConstant: 1
+    ConstantValue: 1
     Variable: {fileID: 0}
   AutoGlide:
     UseConstant: 1
@@ -149,8 +163,6 @@ MonoBehaviour:
   FlapChange:
     minValue: 2
     maxValue: 8
-  FlapSpeed: 1
-  GlideSpeed: 2
   Variation: 0.3
   GravityDrag:
     UseConstant: 1
